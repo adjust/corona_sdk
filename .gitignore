@@ -1,0 +1,25 @@
+# android
+gen/
+android/assets
+android/*.apk
+
+#ios
+ios/*.ipa
+ios/*.xcarchive
+ios/DerivedData
+
+# eclipse
+bin/
+.classpath
+.project
+.settings/
+
+# gradle
+.gradle/
+build/
+
+# macos
+.DS_Store
+
+.buildpath
+xcuserdata/
