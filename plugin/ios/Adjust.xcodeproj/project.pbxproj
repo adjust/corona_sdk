@@ -68,6 +68,48 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		208A309A1F66913C00ADC99D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 208A308B1F66913B00ADC99D /* Adjust.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9679920D18BBAE2800394606;
+			remoteInfo = Adjust;
+		};
+		208A309C1F66913C00ADC99D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 208A308B1F66913B00ADC99D /* Adjust.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9DFA37AD1C0F219400782607;
+			remoteInfo = AdjustSdk;
+		};
+		208A309E1F66913C00ADC99D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 208A308B1F66913B00ADC99D /* Adjust.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9DFB06101D747070006D48FC;
+			remoteInfo = AdjustSdkTv;
+		};
+		208A30A01F66913C00ADC99D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 208A308B1F66913B00ADC99D /* Adjust.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9615158F1CD2CB2C0022D336;
+			remoteInfo = AdjustBridge;
+		};
+		208A30A21F66913C00ADC99D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 208A308B1F66913B00ADC99D /* Adjust.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9679921D18BBAE2800394606;
+			remoteInfo = AdjustTests;
+		};
+		208A30A41F66913C00ADC99D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 208A308B1F66913B00ADC99D /* Adjust.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9D7431E61EB9F9B700969F14;
+			remoteInfo = AdjustExampleTests;
+		};
 		A4E253E1166DE7C800DCDC2C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A4E253DA166DE7C800DCDC2C /* Plugin.xcodeproj */;
@@ -85,6 +127,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		208A308B1F66913B00ADC99D /* Adjust.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Adjust.xcodeproj; path = ../../../ios_sdk/Adjust.xcodeproj; sourceTree = "<group>"; };
 		A447B60E165D72FB009EA762 /* AppCoronaDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppCoronaDelegate.h; sourceTree = SOURCE_ROOT; };
 		A447B60F165D72FB009EA762 /* AppCoronaDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppCoronaDelegate.mm; sourceTree = SOURCE_ROOT; };
 		A447B6641666FD02009EA762 /* MainWindow-iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "MainWindow-iPad.xib"; path = "Corona/ios/resource/MainWindow-iPad.xib"; sourceTree = "<group>"; };
@@ -92,13 +135,13 @@
 		A447B6691666FD43009EA762 /* Corona3rdPartyLicenses.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Corona3rdPartyLicenses.txt; path = Corona/shared/resource/Corona3rdPartyLicenses.txt; sourceTree = "<group>"; };
 		A447B824166856F3009EA762 /* main.lua */ = {isa = PBXFileReference; lastKnownFileType = text; name = main.lua; path = ../Corona/main.lua; sourceTree = SOURCE_ROOT; };
 		A46885F318068C2900381941 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
-		A484111915114F700074BD57 /* App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = App.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A484111915114F700074BD57 /* Adjust.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Adjust.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A484111D15114F700074BD57 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		A484111F15114F700074BD57 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A484112115114F700074BD57 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		A484112315114F700074BD57 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		A484112515114F700074BD57 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
-		A484112915114F700074BD57 /* App-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "App-Info.plist"; sourceTree = SOURCE_ROOT; };
+		A484112915114F700074BD57 /* Adjust-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Adjust-Info.plist"; sourceTree = "<group>"; };
 		A484112B15114F700074BD57 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A484112D15114F700074BD57 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = SOURCE_ROOT; };
 		A484112F15114F700074BD57 /* Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = SOURCE_ROOT; };
@@ -186,6 +229,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		208A308C1F66913B00ADC99D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				208A309B1F66913C00ADC99D /* libAdjust.a */,
+				208A309D1F66913C00ADC99D /* AdjustSdk.framework */,
+				208A309F1F66913C00ADC99D /* AdjustSdkTv.framework */,
+				208A30A11F66913C00ADC99D /* libAdjustBridge.a */,
+				208A30A31F66913C00ADC99D /* AdjustTests.xctest */,
+				208A30A51F66913C00ADC99D /* AdjustExampleTests.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		A447B66F16670015009EA762 /* CoronaNative */ = {
 			isa = PBXGroup;
 			children = (
@@ -221,7 +277,7 @@
 		A484111A15114F700074BD57 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A484111915114F700074BD57 /* App.app */,
+				A484111915114F700074BD57 /* Adjust.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -229,6 +285,7 @@
 		A484111C15114F700074BD57 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				208A308B1F66913B00ADC99D /* Adjust.xcodeproj */,
 				E640B2F31BFC00BA0031FAE9 /* Photos.framework */,
 				E640B2F11BFC00B00031FAE9 /* AssetsLibrary.framework */,
 				F5E548081BE7FF0200091810 /* GameController.framework */,
@@ -271,7 +328,7 @@
 			isa = PBXGroup;
 			children = (
 				C277D3B51EBB9F8E00966BA1 /* _CoronaSplashScreen.png */,
-				A484112915114F700074BD57 /* App-Info.plist */,
+				A484112915114F700074BD57 /* Adjust-Info.plist */,
 				A484112A15114F700074BD57 /* InfoPlist.strings */,
 				C22C1E4A1E981D9000D74196 /* LaunchScreen.storyboardc */,
 				A484112D15114F700074BD57 /* main.mm */,
@@ -305,9 +362,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A484111815114F700074BD57 /* App */ = {
+		A484111815114F700074BD57 /* Adjust */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A484114215114F700074BD57 /* Build configuration list for PBXNativeTarget "App" */;
+			buildConfigurationList = A484114215114F700074BD57 /* Build configuration list for PBXNativeTarget "Adjust" */;
 			buildPhases = (
 				C28A3B451EE9F8FD00F08609 /* Corona Native */,
 				A484111715114F700074BD57 /* Resources */,
@@ -323,9 +380,9 @@
 			dependencies = (
 				A4E253E4166DE7D800DCDC2C /* PBXTargetDependency */,
 			);
-			name = App;
+			name = Adjust;
 			productName = App;
-			productReference = A484111915114F700074BD57 /* App.app */;
+			productReference = A484111915114F700074BD57 /* Adjust.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -343,7 +400,7 @@
 					};
 				};
 			};
-			buildConfigurationList = A484111315114F700074BD57 /* Build configuration list for PBXProject "App" */;
+			buildConfigurationList = A484111315114F700074BD57 /* Build configuration list for PBXProject "Adjust" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -355,19 +412,65 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = 208A308C1F66913B00ADC99D /* Products */;
+					ProjectRef = 208A308B1F66913B00ADC99D /* Adjust.xcodeproj */;
+				},
+				{
 					ProductGroup = A4E253DB166DE7C800DCDC2C /* Products */;
 					ProjectRef = A4E253DA166DE7C800DCDC2C /* Plugin.xcodeproj */;
 				},
 			);
 			projectRoot = "";
 			targets = (
-				A484111815114F700074BD57 /* App */,
+				A484111815114F700074BD57 /* Adjust */,
 				F597AC6E1ED8CA3E0085F5E5 /* Download Plugins */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		208A309B1F66913C00ADC99D /* libAdjust.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libAdjust.a;
+			remoteRef = 208A309A1F66913C00ADC99D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		208A309D1F66913C00ADC99D /* AdjustSdk.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AdjustSdk.framework;
+			remoteRef = 208A309C1F66913C00ADC99D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		208A309F1F66913C00ADC99D /* AdjustSdkTv.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = AdjustSdkTv.framework;
+			remoteRef = 208A309E1F66913C00ADC99D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		208A30A11F66913C00ADC99D /* libAdjustBridge.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libAdjustBridge.a;
+			remoteRef = 208A30A01F66913C00ADC99D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		208A30A31F66913C00ADC99D /* AdjustTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = AdjustTests.xctest;
+			remoteRef = 208A30A21F66913C00ADC99D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		208A30A51F66913C00ADC99D /* AdjustExampleTests.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = AdjustExampleTests.app;
+			remoteRef = 208A30A41F66913C00ADC99D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		A4E253E2166DE7C800DCDC2C /* libplugin_library.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -611,8 +714,8 @@
 				GCC_PREFIX_HEADER = Prefix.pch;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
-				INFOPLIST_FILE = "App-Info.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.mycompany.${PRODUCT_NAME:rfc1034identifier}";
+				INFOPLIST_FILE = "Adjust-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.adjust.examples;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SEPARATE_STRIP = YES;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -631,8 +734,8 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Prefix.pch;
 				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
-				INFOPLIST_FILE = "App-Info.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.mycompany.${PRODUCT_NAME:rfc1034identifier}";
+				INFOPLIST_FILE = "Adjust-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.adjust.examples;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SEPARATE_STRIP = YES;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -662,7 +765,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A484111315114F700074BD57 /* Build configuration list for PBXProject "App" */ = {
+		A484111315114F700074BD57 /* Build configuration list for PBXProject "Adjust" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A484114015114F700074BD57 /* Debug */,
@@ -671,7 +774,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A484114215114F700074BD57 /* Build configuration list for PBXNativeTarget "App" */ = {
+		A484114215114F700074BD57 /* Build configuration list for PBXNativeTarget "Adjust" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A484114315114F700074BD57 /* Debug */,
