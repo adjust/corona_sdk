@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:/Users/ab/Dev/corona_sdk/plugin/ios/Adjust.xcodeproj">
+      location = "self:/Users/ab/Dev/corona_sdk/plugin/ios/App.xcodeproj">
    </FileRef>
 </Workspace>

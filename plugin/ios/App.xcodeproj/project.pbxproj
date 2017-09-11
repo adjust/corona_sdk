@@ -92,7 +92,7 @@
 		A447B6691666FD43009EA762 /* Corona3rdPartyLicenses.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Corona3rdPartyLicenses.txt; path = Corona/shared/resource/Corona3rdPartyLicenses.txt; sourceTree = "<group>"; };
 		A447B824166856F3009EA762 /* main.lua */ = {isa = PBXFileReference; lastKnownFileType = text; name = main.lua; path = ../Corona/main.lua; sourceTree = SOURCE_ROOT; };
 		A46885F318068C2900381941 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
-		A484111915114F700074BD57 /* Adjust.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Adjust.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A484111915114F700074BD57 /* App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = App.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A484111D15114F700074BD57 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		A484111F15114F700074BD57 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A484112115114F700074BD57 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -221,7 +221,7 @@
 		A484111A15114F700074BD57 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A484111915114F700074BD57 /* Adjust.app */,
+				A484111915114F700074BD57 /* App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -305,9 +305,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A484111815114F700074BD57 /* Adjust */ = {
+		A484111815114F700074BD57 /* App */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A484114215114F700074BD57 /* Build configuration list for PBXNativeTarget "Adjust" */;
+			buildConfigurationList = A484114215114F700074BD57 /* Build configuration list for PBXNativeTarget "App" */;
 			buildPhases = (
 				C28A3B451EE9F8FD00F08609 /* Corona Native */,
 				A484111715114F700074BD57 /* Resources */,
@@ -323,9 +323,9 @@
 			dependencies = (
 				A4E253E4166DE7D800DCDC2C /* PBXTargetDependency */,
 			);
-			name = Adjust;
+			name = App;
 			productName = App;
-			productReference = A484111915114F700074BD57 /* Adjust.app */;
+			productReference = A484111915114F700074BD57 /* App.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -346,7 +346,7 @@
 					};
 				};
 			};
-			buildConfigurationList = A484111315114F700074BD57 /* Build configuration list for PBXProject "Adjust" */;
+			buildConfigurationList = A484111315114F700074BD57 /* Build configuration list for PBXProject "App" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -364,7 +364,7 @@
 			);
 			projectRoot = "";
 			targets = (
-				A484111815114F700074BD57 /* Adjust */,
+				A484111815114F700074BD57 /* App */,
 				F597AC6E1ED8CA3E0085F5E5 /* Download Plugins */,
 			);
 		};
@@ -675,7 +675,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A484111315114F700074BD57 /* Build configuration list for PBXProject "Adjust" */ = {
+		A484111315114F700074BD57 /* Build configuration list for PBXProject "App" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A484114015114F700074BD57 /* Debug */,
@@ -684,7 +684,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A484114215114F700074BD57 /* Build configuration list for PBXNativeTarget "Adjust" */ = {
+		A484114215114F700074BD57 /* Build configuration list for PBXNativeTarget "App" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A484114315114F700074BD57 /* Debug */,
