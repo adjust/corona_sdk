@@ -24,7 +24,7 @@ echo -e "${GREEN}[*build.sh*] Running Gradle tasks: clean makeJar ${NC}"
 cd ${ROOT_DIR}/${ANDROID_SUBMODULE_DIR}/${BUILD_DIR}
 ./gradlew clean :adjust:makeJar
 
-echo -e "${GREEN}[*build.sh*] Moving the ci testing jar from ${JAR_IN_DIR} to ${JAR_OUT_DIR} ${NC}"
+echo -e "${GREEN}[*build.sh*] Moving the jar from ${JAR_IN_DIR} to ${JAR_OUT_DIR} ${NC}"
 mv -v ${JAR_IN_DIR}/*.jar ${ROOT_DIR}/${JAR_OUT_DIR}/adjust-android.jar
 
 echo -e "${GREEN}[*build.sh*] DONE ${NC}"
