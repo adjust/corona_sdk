@@ -1,3 +1,4 @@
+
 //
 //  PluginLibrary.mm
 //  TemplateApp
@@ -5,11 +6,11 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "Adjust.h"
 #import "PluginLibrary.h"
 
 #include <CoronaRuntime.h>
 #import <UIKit/UIKit.h>
+#import "Adjust.h"
 
 
 // ----------------------------------------------------------------------------
@@ -27,10 +28,10 @@ class PluginLibrary
     PluginLibrary();
 
   public:
-    bool Initialize( CoronaLuaRef listener );
+    bool InitializeAttributionListener( CoronaLuaRef listener );
 
   public:
-    CoronaLuaRef GetListener() const { return fListener; }
+    CoronaLuaRef GetAttributionChangedListener() const { return attributionChangedListener; }
 
   public:
     static int Open( lua_State *L );
@@ -45,9 +46,10 @@ class PluginLibrary
     static int init( lua_State *L );
     static int show( lua_State *L );
     static int create( lua_State *L );
+    static int setAttributionListener( lua_State *L );
 
   private:
-    CoronaLuaRef fListener;
+    CoronaLuaRef attributionChangedListener;
 };
 
 // ----------------------------------------------------------------------------
@@ -59,19 +61,19 @@ const char PluginLibrary::kName[] = "plugin.adjust";
 const char PluginLibrary::kEvent[] = "AdjustListener";
 
 PluginLibrary::PluginLibrary()
-  :	fListener( NULL )
+  :	attributionChangedListener( NULL )
 {
 }
 
   bool
-PluginLibrary::Initialize( CoronaLuaRef listener )
+PluginLibrary::InitializeAttributionListener( CoronaLuaRef listener )
 {
   // Can only initialize listener once
-  bool result = ( NULL == fListener );
+  bool result = ( NULL == attributionChangedListener );
 
   if ( result )
   {
-    fListener = listener;
+    attributionChangedListener = listener;
   }
 
   return result;
@@ -90,6 +92,7 @@ PluginLibrary::Open( lua_State *L )
     { "init", init },
     { "show", show },
     { "create", create },
+    { "setAttributionListener", setAttributionListener },
 
     { NULL, NULL }
   };
@@ -108,7 +111,7 @@ PluginLibrary::Finalizer( lua_State *L )
 {
   Self *library = (Self *)CoronaLuaToUserdata( L, 1 );
 
-  CoronaLuaDeleteRef( L, library->GetListener() );
+  CoronaLuaDeleteRef( L, library->GetAttributionChangedListener() );
 
   delete library;
 
@@ -134,7 +137,7 @@ PluginLibrary::init( lua_State *L )
     Self *library = ToLibrary( L );
 
     CoronaLuaRef listener = CoronaLuaNewRef( L, listenerIndex );
-    library->Initialize( listener );
+    library->InitializeAttributionListener( listener );
   }
 
   return 0;
@@ -173,7 +176,7 @@ PluginLibrary::show( lua_State *L )
   lua_setfield( L, -2, "message" );
 
   // Dispatch event to library's listener
-  CoronaLuaDispatchEvent( L, library->GetListener(), 0 );
+  CoronaLuaDispatchEvent( L, library->GetAttributionChangedListener(), 0 );
 
   return 0;
 }
@@ -191,7 +194,7 @@ PluginLibrary::create( lua_State *L )
   BOOL eventBufferingEnabled = NO;
   NSString * userAgent = nil;
   BOOL sendInBackground = NO;
-  NSNumber* delayStart;
+  double delayStart;
 
   if(lua_istable(L, 1)) {
     //log level
@@ -254,8 +257,8 @@ PluginLibrary::create( lua_State *L )
     //AppToken
     //lua_getfield(L, 1, "appToken");
     //if (!lua_isnil(L, 2)) {
-      //const char *appToken_char = luaL_checkstring(L, 2);
-      //appToken = [NSString stringWithUTF8String:appToken_char];
+    //const char *appToken_char = luaL_checkstring(L, 2);
+    //appToken = [NSString stringWithUTF8String:appToken_char];
     //}
     //lua_pop(L, 1);
 
@@ -268,7 +271,68 @@ PluginLibrary::create( lua_State *L )
     lua_pop(L, 1);
     NSLog(@"eventBuffering: %d", eventBufferingEnabled);
 
+    //Sdk prefix
+    lua_getfield(L, 1, "sdkPrefix");
+    if (!lua_isnil(L, 2)) {
+      const char *sdkPrefix_char = luaL_checkstring(L, 2);
+      sdkPrefix = [NSString stringWithUTF8String:sdkPrefix_char];
+      [adjustConfig setSdkPrefix:sdkPrefix];
+    }
+    lua_pop(L, 1);
+
+    // Default tracker
+    lua_getfield(L, 1, "defaultTracker");
+    if (!lua_isnil(L, 2)) {
+      const char *defaultTracker_char = luaL_checkstring(L, 2);
+      defaultTracker = [NSString stringWithUTF8String:defaultTracker_char];
+      [adjustConfig setDefaultTracker:defaultTracker];
+    }
+    lua_pop(L, 1);
+
+    // User agent
+    lua_getfield(L, 1, "userAgent");
+    if (!lua_isnil(L, 2)) {
+      const char *userAgent_char = luaL_checkstring(L, 2);
+      userAgent = [NSString stringWithUTF8String:userAgent_char];
+      [adjustConfig setUserAgent:userAgent];
+    }
+    lua_pop(L, 1);
+
+
+    // Delay start
+    lua_getfield(L, 1, "delayStart");
+    if (!lua_isnil(L, 2)) {
+      delayStart = lua_tonumber(L, 2);
+      [adjustConfig setDelayStart:delayStart];
+    }
+    lua_pop(L, 1);
+      
+    Self *library = ToLibrary( L );
+    if(library->GetAttributionChangedListener() != NULL) {
+
+    }
   }
+
+  // Attribution delegate & other delegates
+  //BOOL shouldLaunchDeferredDeeplink = [self isFieldValid:shouldLaunchDeeplink] ? [shouldLaunchDeeplink boolValue] : YES;
+
+  //if (_isAttributionCallbackImplemented ||
+  //_isEventTrackingSucceededCallbackImplemented ||
+  //_isEventTrackingFailedCallbackImplemented ||
+  //_isSessionTrackingSucceededCallbackImplemented ||
+  //_isSessionTrackingFailedCallbackImplemented ||
+  //_isDeferredDeeplinkCallbackImplemented) {
+  //[adjustConfig setDelegate:
+  //[AdjustSdkDelegate getInstanceWithSwizzleOfAttributionCallback:_isAttributionCallbackImplemented
+  //eventSucceededCallback:_isEventTrackingSucceededCallbackImplemented
+  //eventFailedCallback:_isEventTrackingFailedCallbackImplemented
+  //sessionSucceededCallback:_isSessionTrackingSucceededCallbackImplemented
+  //sessionFailedCallback:_isSessionTrackingFailedCallbackImplemented
+  //deferredDeeplinkCallback:_isDeferredDeeplinkCallbackImplemented
+  //shouldLaunchDeferredDeeplink:shouldLaunchDeferredDeeplink
+  //withBridge:_bridge]];
+  //}
+
 
 
   //  if ( [UIReferenceLibraryViewController class] )
@@ -298,7 +362,23 @@ PluginLibrary::create( lua_State *L )
   //  lua_setfield( L, -2, "message" );
   //
   //  // Dispatch event to library's listener
-  //  CoronaLuaDispatchEvent( L, library->GetListener(), 0 );
+  //  CoronaLuaDispatchEvent( L, library->GetAttributionChangedListener(), 0 );
+
+  return 0;
+}
+
+  int
+PluginLibrary::setAttributionListener( lua_State *L )
+{
+  int listenerIndex = 1;
+    
+    if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
+    {
+        Self *library = ToLibrary( L );
+        
+        CoronaLuaRef listener = CoronaLuaNewRef( L, listenerIndex );
+        library->InitializeAttributionListener( listener );
+    }
 
   return 0;
 }
