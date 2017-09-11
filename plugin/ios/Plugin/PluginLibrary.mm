@@ -5,11 +5,11 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
+#import "Adjust.h"
 #import "PluginLibrary.h"
 
 #include <CoronaRuntime.h>
 #import <UIKit/UIKit.h>
-#import <AdjustSdk/Adjust.h>
 
 
 // ----------------------------------------------------------------------------
@@ -245,7 +245,7 @@ PluginLibrary::create( lua_State *L )
     // Log level
     if (nil != logLevel) {
       if (NO == allowSuppressLogLevel) {
-        [adjustConfig setLogLevel:[ADJLogger LogLevelFromString:[logLevel lowercaseString]]];
+        [adjustConfig setLogLevel:[ADJLogger logLevelFromString:[logLevel lowercaseString]]];
       } else {
         [adjustConfig setLogLevel:ADJLogLevelSuppress];
       }
