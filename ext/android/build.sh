@@ -12,7 +12,7 @@ ROOT_DIR="$(dirname "$ROOT_DIR")"
 ANDROID_SUBMODULE_DIR=ext/android
 BUILD_DIR=sdk/Adjust
 JAR_IN_DIR=adjust/build/outputs
-JAR_OUT_DIR=ext/Android/
+JAR_OUT_DIR=ext/android/
 
 RED='\033[0;31m' # Red color
 GREEN='\033[0;32m' # Green color
