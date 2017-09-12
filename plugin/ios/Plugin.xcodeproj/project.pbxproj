@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		206A39B91F67D0B2007D8F71 /* AdjustSdkDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 206A39B81F67D0B2007D8F71 /* AdjustSdkDelegate.m */; };
 		9D0FAA711F66C66E00DE28D1 /* AdjustSdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D0FAA701F66C66E00DE28D1 /* AdjustSdk.a */; };
 		A4E253C9166D716900DCDC2C /* PluginLibrary.mm in Sources */ = {isa = PBXBuildFile; fileRef = A447B617165D734C009EA762 /* PluginLibrary.mm */; };
 /* End PBXBuildFile section */
@@ -24,6 +25,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		206A39B71F67D0B2007D8F71 /* AdjustSdkDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AdjustSdkDelegate.h; path = Plugin/AdjustSdkDelegate.h; sourceTree = "<group>"; };
+		206A39B81F67D0B2007D8F71 /* AdjustSdkDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AdjustSdkDelegate.m; path = Plugin/AdjustSdkDelegate.m; sourceTree = "<group>"; };
 		9D0FAA661F66C65F00DE28D1 /* ADJAttribution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJAttribution.h; path = Plugin/ADJAttribution.h; sourceTree = "<group>"; };
 		9D0FAA671F66C65F00DE28D1 /* ADJConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJConfig.h; path = Plugin/ADJConfig.h; sourceTree = "<group>"; };
 		9D0FAA681F66C65F00DE28D1 /* ADJEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJEvent.h; path = Plugin/ADJEvent.h; sourceTree = "<group>"; };
@@ -80,6 +83,8 @@
 			isa = PBXGroup;
 			children = (
 				9D0FAA651F66C64F00DE28D1 /* Adjust */,
+				206A39B71F67D0B2007D8F71 /* AdjustSdkDelegate.h */,
+				206A39B81F67D0B2007D8F71 /* AdjustSdkDelegate.m */,
 				A447B616165D734C009EA762 /* PluginLibrary.h */,
 				A447B617165D734C009EA762 /* PluginLibrary.mm */,
 			);
@@ -181,6 +186,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				206A39B91F67D0B2007D8F71 /* AdjustSdkDelegate.m in Sources */,
 				A4E253C9166D716900DCDC2C /* PluginLibrary.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

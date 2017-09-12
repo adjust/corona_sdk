@@ -11,6 +11,7 @@
 #include <CoronaRuntime.h>
 #import <UIKit/UIKit.h>
 #import "Adjust.h"
+#import "AdjustSdkDelegate.h"
 
 
 // ----------------------------------------------------------------------------
