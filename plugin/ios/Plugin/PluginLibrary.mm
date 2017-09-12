@@ -9,6 +9,7 @@
 #import "PluginLibrary.h"
 
 #include <CoronaRuntime.h>
+#include "CoronaLuaIOS.h"
 #import <UIKit/UIKit.h>
 #import "Adjust.h"
 #import "AdjustSdkDelegate.h"
@@ -55,6 +56,19 @@ class PluginLibrary
 
   public:
     static int create( lua_State *L );
+    static int trackEvent( lua_State *L );
+    static int setEnabled( lua_State *L );
+    static int setPushToken( lua_State *L );
+    static int appWillOpenUrl( lua_State *L );
+    static int sendFirstPackages( lua_State *L );
+    static int addSessionCallbackParameter( lua_State *L );
+    static int addSessionPartnerParameter( lua_State *L );
+    static int removeSessionCallbackParameter( lua_State *L );
+    static int removeSessionPartnerParameter( lua_State *L );
+    static int resetSessionCallbackParameters( lua_State *L );
+    static int resetSessionPartnerParameters( lua_State *L );
+    static int setOfflineMode( lua_State *L );
+
     static int setAttributionListener( lua_State *L );
     static int setEventTrackingSucceededListener( lua_State *L );
     static int setEventTrackingFailedListener( lua_State *L );
@@ -170,7 +184,6 @@ PluginLibrary::InitializeDeferredDeeplinkListener( CoronaLuaRef listener )
   return result;
 }
 
-
   int
 PluginLibrary::Open( lua_State *L )
 {
@@ -182,6 +195,18 @@ PluginLibrary::Open( lua_State *L )
   const luaL_Reg kVTable[] =
   {
     { "create", create },
+    { "trackEvent", trackEvent },
+    { "setEnabled", setEnabled },
+    { "setPushToken", setPushToken },
+    { "appWillOpenUrl", appWillOpenUrl },
+    { "sendFirstPackages", sendFirstPackages },
+    { "addSessionCallbackParameter", addSessionCallbackParameter },
+    { "addSessionPartnerParameter", addSessionPartnerParameter },
+    { "removeSessionCallbackParameter", removeSessionCallbackParameter },
+    { "removeSessionPartnerParameter", removeSessionPartnerParameter },
+    { "resetSessionCallbackParameters", resetSessionCallbackParameters },
+    { "resetSessionPartnerParameters", resetSessionPartnerParameters },
+    { "setOfflineMode", setOfflineMode },
     { "setAttributionListener", setAttributionListener },
     { "setEventTrackingSucceededListener", setEventTrackingSucceededListener },
     { "setEventTrackingFailedListener", setEventTrackingFailedListener },
@@ -220,61 +245,6 @@ PluginLibrary::ToLibrary( lua_State *L )
   Self *library = (Self *)CoronaLuaToUserdata( L, lua_upvalueindex( 1 ) );
   return library;
 }
-
-// [Lua] library.init( listener )
-//  int
-//PluginLibrary::init( lua_State *L )
-//{
-//  int listenerIndex = 1;
-//
-//  if ( CoronaLuaIsListener( L, listenerIndex, kEvent ) )
-//  {
-//    Self *library = ToLibrary( L );
-//
-//    CoronaLuaRef listener = CoronaLuaNewRef( L, listenerIndex );
-//    library->InitializeAttributionListener( listener );
-//  }
-//
-//  return 0;
-//}
-
-// [Lua] library.show( word )
-//  int
-//PluginLibrary::show( lua_State *L )
-//{
-//  NSString *message = @"Error: Could not display UIReferenceLibraryViewController. This feature requires iOS 5 or later.";
-//
-//  if ( [UIReferenceLibraryViewController class] )
-//  {
-//    id<CoronaRuntime> runtime = (id<CoronaRuntime>)CoronaLuaGetContext( L );
-//
-//    const char kDefaultWord[] = "corona";
-//    const char *word = lua_tostring( L, 1 );
-//    if ( ! word )
-//    {
-//      word = kDefaultWord;
-//    }
-//
-//    UIReferenceLibraryViewController *controller = [[[UIReferenceLibraryViewController alloc] initWithTerm:[NSString stringWithUTF8String:word]] autorelease];
-//
-//    // Present the controller modally.
-//    [runtime.appViewController presentViewController:controller animated:YES completion:nil];
-//
-//    message = @"Success. Displaying UIReferenceLibraryViewController for 'corona'.";
-//  }
-//
-//  Self *library = ToLibrary( L );
-//
-//  // Create event and add message to it
-//  CoronaLuaNewEvent( L, kEvent );
-//  lua_pushstring( L, [message UTF8String] );
-//  lua_setfield( L, -2, "message" );
-//
-//  // Dispatch event to library's listener
-//  CoronaLuaDispatchEvent( L, library->GetAttributionChangedListener(), 0 );
-//
-//  return 0;
-//}
 
   int
 PluginLibrary::create( lua_State *L )
@@ -337,7 +307,7 @@ PluginLibrary::create( lua_State *L )
     allowSuppressLogLevel:allowSuppressLogLevel];
 
   if(![adjustConfig isValid]) {
-    NSLog(@"adjust config is not working");
+    NSLog(@"adjust config is not valid");
     return 0;
   }
 
@@ -423,12 +393,6 @@ PluginLibrary::create( lua_State *L )
   BOOL isSessionTrackingSucceededListenerImplmented = library->GetSessionTrackingSucceededListener() != NULL;
   BOOL isSessionTrackingFailedListenerImplmented = library->GetSessionTrackingFailedListener() != NULL;
   BOOL isDeferredDeeplinkListenerImplemented = library->GetDeferredDeeplinkListener() != NULL;
-  NSLog(@"isAttributionImplemented: %d", isAttributionChangedListenerImplmented);
-  NSLog(@"isEventTrackingSucceededListenerImplmented: %d", isEventTrackingSucceededListenerImplmented);
-  NSLog(@"isEventTrackingFailedListenerImplmented: %d", isEventTrackingFailedListenerImplmented);
-  NSLog(@"isSessionTrackingSucceededListenerImplmented: %d", isSessionTrackingSucceededListenerImplmented);
-  NSLog(@"isSessionTrackingFailedListenerImplmented: %d", isSessionTrackingFailedListenerImplmented);
-  NSLog(@"isDeferredDeeplink: %d", isDeferredDeeplinkListenerImplemented);
 
   if(
       isAttributionChangedListenerImplmented ||
@@ -449,34 +413,95 @@ PluginLibrary::create( lua_State *L )
           withLuaState:L]];
   }
 
-  //  if ( [UIReferenceLibraryViewController class] )
-  //  {
-  //    id<CoronaRuntime> runtime = (id<CoronaRuntime>)CoronaLuaGetContext( L );
-  //
-  //    const char kDefaultWord[] = "corona";
-  //    const char *word = lua_tostring( L, 1 );
-  //    if ( ! word )
-  //    {
-  //      word = kDefaultWord;
-  //    }
-  //
-  //    UIReferenceLibraryViewController *controller = [[[UIReferenceLibraryViewController alloc] initWithTerm:[NSString stringWithUTF8String:word]] autorelease];
-  //
-  //    // Present the controller modally.
-  //    [runtime.appViewController presentViewController:controller animated:YES completion:nil];
-  //
-  //    message = @"Success. Displaying UIReferenceLibraryViewController for 'corona'.";
-  //  }
-  //
-  //  Self *library = ToLibrary( L );
-  //
-  //  // Create event and add message to it
-  //  CoronaLuaNewEvent( L, kEvent );
-  //  lua_pushstring( L, [message UTF8String] );
-  //  lua_setfield( L, -2, "message" );
-  //
-  //  // Dispatch event to library's listener
-  //  CoronaLuaDispatchEvent( L, library->GetAttributionChangedListener(), 0 );
+  [Adjust appDidLaunch:adjustConfig];
+  [Adjust trackSubsessionStart];
+
+  return 0;
+}
+
+  int
+PluginLibrary::trackEvent( lua_State *L )
+{
+  if(!lua_istable(L, 1)) {
+    return 0;
+  }
+
+  NSString *eventToken = nil;
+  NSString *currency = nil;
+  double revenue = 0.0;
+  NSString *transactionId = nil;
+
+  //Event Token
+  lua_getfield(L, 1, "eventToken");
+  if(!lua_isnil(L, 2)) {
+    const char *eventToken_char = lua_tostring(L, 2);
+    eventToken = [NSString stringWithUTF8String:eventToken_char];
+  }
+  lua_pop(L, 1);
+  NSLog(@"eventToken: %@", eventToken);
+
+  ADJEvent *event = [ADJEvent eventWithEventToken:eventToken];
+
+  if(![event isValid]) {
+    NSLog(@"adjust event is not valid");
+    return 0;
+  }
+
+  // Revenue
+  lua_getfield(L, 1, "revenue");
+  if (!lua_isnil(L, 2)) {
+    revenue = lua_tonumber(L, 2);
+  }
+  lua_pop(L, 1);
+  NSLog(@"revenue: %f", revenue);
+
+  // Currency
+  lua_getfield(L, 1, "currency");
+  if(!lua_isnil(L, 2)) {
+    const char *currency_char = lua_tostring(L, 2);
+    currency = [NSString stringWithUTF8String:currency_char];
+  }
+  lua_pop(L, 1);
+  NSLog(@"currency: %@", currency);
+
+  //set revenue and currency if any
+  if(currency != nil) {
+    [event setRevenue:revenue currency:currency];
+  }
+
+  // Transaction ID
+  lua_getfield(L, 1, "transactionId");
+  if(!lua_isnil(L, 2)) {
+    const char *transactionId_char = lua_tostring(L, 2);
+    transactionId = [NSString stringWithUTF8String:transactionId_char];
+    [event setTransactionId:transactionId];
+  }
+  lua_pop(L, 1);
+  NSLog(@"transactionId: %@", transactionId);
+
+  // Callback Parameters
+  lua_getfield(L, 1, "callbackParameters");
+  if(!lua_isnil(L, 2) && lua_istable(L, 2)) {
+    NSDictionary *dict = CoronaLuaCreateDictionary(L, 2);
+    for(id key in dict) {
+      NSDictionary *callbackParams = [dict objectForKey:key];
+      NSLog(@"key = %@ | value = %@", callbackParams[@"key"], callbackParams[@"value"]);
+      [event addCallbackParameter:callbackParams[@"key"] value:callbackParams[@"value"]];
+    }
+  }
+
+  // Partner Parameters
+  lua_getfield(L, 1, "partnerParameters");
+  if(!lua_isnil(L, 2) && lua_istable(L, 2)) {
+    NSDictionary *dict = CoronaLuaCreateDictionary(L, 2);
+    for(id key in dict) {
+      NSDictionary *partnerParams = [dict objectForKey:key];
+      NSLog(@"key = %@ | value = %@", partnerParams[@"key"], partnerParams[@"value"]);
+      [event addPartnerParameter:partnerParams[@"key"] value:partnerParams[@"value"]];
+    }
+  }
+
+  [Adjust trackEvent:event];
 
   return 0;
 }
@@ -577,6 +602,107 @@ PluginLibrary::setDeferredDeeplinkListener( lua_State *L )
 
   return 0;
 }
+
+  int
+PluginLibrary::setEnabled( lua_State *L )
+{
+  NSLog(@"setEnabled");
+  BOOL enabled = lua_toboolean(L, 1);
+  [Adjust setEnabled:enabled];
+  return 0;
+}
+
+  int
+PluginLibrary::setPushToken( lua_State *L )
+{
+  NSLog(@"setPushToken");
+  const char *pushToken = lua_tostring(L, 1);
+  NSString *pushToken_ns =[NSString stringWithUTF8String:pushToken];
+  [Adjust setDeviceToken:[pushToken_ns dataUsingEncoding:NSUTF8StringEncoding]];
+  return 0;
+}
+
+  int
+PluginLibrary::appWillOpenUrl( lua_State *L )
+{
+  NSLog(@"appWillOpenUrl");
+  const char *urlStr = lua_tostring(L, 1);
+  NSURL *url = [NSURL URLWithString:[[NSString stringWithUTF8String:urlStr] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+  [Adjust appWillOpenUrl:url];
+  return 0;
+}
+
+  int
+PluginLibrary::sendFirstPackages( lua_State *L )
+{
+  NSLog(@"sendFirstPackages");
+  [Adjust sendFirstPackages];
+  return 0;
+}
+
+  int
+PluginLibrary::addSessionCallbackParameter( lua_State *L )
+{
+  NSLog(@"addSessionCallbackParameter");
+  const char *key = lua_tostring(L, 1);
+  const char *value = lua_tostring(L, 2);
+  [Adjust addSessionCallbackParameter:[NSString stringWithUTF8String:key] value:[NSString stringWithUTF8String:value]];
+  return 0;
+}
+
+  int
+PluginLibrary::addSessionPartnerParameter( lua_State *L )
+{
+  NSLog(@"addSessionPartnerParameter");
+  const char *key = lua_tostring(L, 1);
+  const char *value = lua_tostring(L, 2);
+  [Adjust addSessionPartnerParameter:[NSString stringWithUTF8String:key] value:[NSString stringWithUTF8String:value]];
+  return 0;
+}
+
+  int
+PluginLibrary::removeSessionCallbackParameter( lua_State *L )
+{
+  NSLog(@"removeSessionCallbackParameter");
+  const char *key = lua_tostring(L, 1);
+  [Adjust removeSessionCallbackParameter:[NSString stringWithUTF8String:key]];
+  return 0;
+}
+
+  int
+PluginLibrary::removeSessionPartnerParameter( lua_State *L )
+{
+  NSLog(@"removeSessionPartnerParameter");
+  const char *key = lua_tostring(L, 1);
+  [Adjust removeSessionPartnerParameter:[NSString stringWithUTF8String:key]];
+  return 0;
+}
+
+  int
+PluginLibrary::resetSessionCallbackParameters( lua_State *L )
+{
+  NSLog(@"resetSessionCallbackParameters");
+  [Adjust resetSessionCallbackParameters];
+  return 0;
+}
+
+  int
+PluginLibrary::resetSessionPartnerParameters( lua_State *L )
+{
+  NSLog(@"resetSessionPartnerParameters");
+  [Adjust resetSessionPartnerParameters];
+  return 0;
+}
+
+  int
+PluginLibrary::setOfflineMode( lua_State *L )
+{
+  NSLog(@"setOfflineMode");
+  BOOL enabled = lua_toboolean(L, 1);
+  [Adjust setOfflineMode:enabled];
+  return 0;
+}
+
 
 // ----------------------------------------------------------------------------
 
