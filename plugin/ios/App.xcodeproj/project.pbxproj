@@ -21,6 +21,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		20FB94611F681FE6009B8A6E /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20FB94601F681FE6009B8A6E /* AdSupport.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		20FB94631F681FF0009B8A6E /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20FB94621F681FF0009B8A6E /* iAd.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		A447B610165D72FB009EA762 /* AppCoronaDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = A447B60F165D72FB009EA762 /* AppCoronaDelegate.mm */; };
 		A447B6671666FD02009EA762 /* MainWindow-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = A447B6641666FD02009EA762 /* MainWindow-iPad.xib */; };
 		A447B6681666FD02009EA762 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = A447B6651666FD02009EA762 /* MainWindow.xib */; };
@@ -85,6 +87,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		20FB94601F681FE6009B8A6E /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
+		20FB94621F681FF0009B8A6E /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
 		A447B60E165D72FB009EA762 /* AppCoronaDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppCoronaDelegate.h; sourceTree = SOURCE_ROOT; };
 		A447B60F165D72FB009EA762 /* AppCoronaDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppCoronaDelegate.mm; sourceTree = SOURCE_ROOT; };
 		A447B6641666FD02009EA762 /* MainWindow-iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "MainWindow-iPad.xib"; path = "Corona/ios/resource/MainWindow-iPad.xib"; sourceTree = "<group>"; };
@@ -145,6 +149,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				20FB94631F681FF0009B8A6E /* iAd.framework in Frameworks */,
+				20FB94611F681FE6009B8A6E /* AdSupport.framework in Frameworks */,
 				F51C66D61EE0D3B20040E4BE /* libplugin_library.a in Frameworks */,
 				E640B2F41BFC00BA0031FAE9 /* Photos.framework in Frameworks */,
 				E640B2F21BFC00B00031FAE9 /* AssetsLibrary.framework in Frameworks */,
@@ -229,6 +235,8 @@
 		A484111C15114F700074BD57 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				20FB94621F681FF0009B8A6E /* iAd.framework */,
+				20FB94601F681FE6009B8A6E /* AdSupport.framework */,
 				E640B2F31BFC00BA0031FAE9 /* Photos.framework */,
 				E640B2F11BFC00B00031FAE9 /* AssetsLibrary.framework */,
 				F5E548081BE7FF0200091810 /* GameController.framework */,
