@@ -635,7 +635,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
     private int adjust_setReferrer(LuaState L) {
         String referrer = L.checkString(1);
-        Adjust.setReferrer(referrer, CoronaEnvironment.getCoronaActivity());
+//        Adjust.setReferrer(referrer, CoronaEnvironment.getCoronaActivity());
+        Adjust.setReferrer(referrer);
         return 0;
     }
 
