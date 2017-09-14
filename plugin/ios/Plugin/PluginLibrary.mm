@@ -14,6 +14,12 @@
 #import "Adjust.h"
 #import "AdjustSdkDelegate.h"
 
+#define EVENT_IS_ADJUST_ENABLED @"adjust_isEnabled"
+#define EVENT_GET_IDFA @"adjust_getAttribution"
+#define EVENT_GET_ATTRIBUTION @"adjust_getAttribution"
+#define EVENT_GET_ADID @"adjust_getAdid"
+#define EVENT_GET_GOOGLEADID @"adjust_getGoogleAdId"
+#define EVENT_GET_AMAZONADID @"adjust_getAmazonAdId"
 
 // ----------------------------------------------------------------------------
 
@@ -37,6 +43,13 @@ class PluginLibrary
     bool InitializeSessionTrackingFailedListener( CoronaLuaRef listener );
     bool InitializeDeferredDeeplinkListener( CoronaLuaRef listener );
 
+    bool InitializeIsEnabledListener( CoronaLuaRef listener );
+    bool InitializeGetIdfaListener( CoronaLuaRef listener );
+    bool InitializeGetAttributionListener( CoronaLuaRef listener );
+    bool InitializeGetAdidListener( CoronaLuaRef listener );
+    bool InitializeGetGoogleAdidListener( CoronaLuaRef listener );
+    bool InitializeGetAmazonAdidListener( CoronaLuaRef listener );
+
   public:
     CoronaLuaRef GetAttributionChangedListener() const { return attributionChangedListener; }
     CoronaLuaRef GetEventTrackingSucceededListener() const { return eventTrackingSucceededListener; }
@@ -44,6 +57,13 @@ class PluginLibrary
     CoronaLuaRef GetSessionTrackingSucceededListener() const { return sessionTrackingSucceededListener; }
     CoronaLuaRef GetSessionTrackingFailedListener() const { return sessionTrackingFailedListener; }
     CoronaLuaRef GetDeferredDeeplinkListener() const { return deferredDeeplinkListener; }
+
+    CoronaLuaRef GetisEnabledListener() const { return isEnabledListener; }
+    CoronaLuaRef GetgetIdfaListener() const { return getIdfaListener; }
+    CoronaLuaRef GetgetAttributionListener() const { return getAttributionListener; }
+    CoronaLuaRef GetgetAdidListener() const { return getAdidListener; }
+    CoronaLuaRef GetgetGoogleAdIdListener() const { return getGoogleAdIdListener; }
+    CoronaLuaRef GetgetAmazonAdIdListener() const { return getAmazonAdIdListener; }
 
   public:
     static int Open( lua_State *L );
@@ -68,6 +88,12 @@ class PluginLibrary
     static int resetSessionCallbackParameters( lua_State *L );
     static int resetSessionPartnerParameters( lua_State *L );
     static int setOfflineMode( lua_State *L );
+    static int isEnabled( lua_State *L );
+    static int getIdfa( lua_State *L );
+    static int getAttribution( lua_State *L );
+    static int getAdid( lua_State *L );
+    static int getGoogleAdId( lua_State *L );
+    static int getAmazonAdId( lua_State *L );
 
     static int setAttributionListener( lua_State *L );
     static int setEventTrackingSucceededListener( lua_State *L );
@@ -83,6 +109,13 @@ class PluginLibrary
     CoronaLuaRef sessionTrackingSucceededListener;
     CoronaLuaRef sessionTrackingFailedListener;
     CoronaLuaRef deferredDeeplinkListener;
+
+    CoronaLuaRef isEnabledListener;
+    CoronaLuaRef getIdfaListener;
+    CoronaLuaRef getAttributionListener;
+    CoronaLuaRef getAdidListener;
+    CoronaLuaRef getGoogleAdIdListener;
+    CoronaLuaRef getAmazonAdIdListener;
 };
 
 // ----------------------------------------------------------------------------
@@ -96,7 +129,8 @@ PluginLibrary::PluginLibrary()
   eventTrackingFailedListener( NULL ),
   sessionTrackingSucceededListener( NULL ),
   sessionTrackingFailedListener( NULL ),
-  deferredDeeplinkListener( NULL )
+  deferredDeeplinkListener( NULL ),
+  isEnabledListener( NULL )
 {
 }
 
@@ -184,6 +218,91 @@ PluginLibrary::InitializeDeferredDeeplinkListener( CoronaLuaRef listener )
   return result;
 }
 
+
+  bool
+PluginLibrary::InitializeIsEnabledListener( CoronaLuaRef listener )
+{
+  // Can only initialize listener once
+  bool result = ( NULL == isEnabledListener );
+
+  if ( result )
+  {
+    isEnabledListener = listener;
+  }
+
+  return result;
+}
+
+  bool
+PluginLibrary::InitializeGetIdfaListener( CoronaLuaRef listener )
+{
+  // Can only initialize listener once
+  bool result = ( NULL == getIdfaListener );
+
+  if ( result )
+  {
+    getIdfaListener = listener;
+  }
+
+  return result;
+}
+
+  bool
+PluginLibrary::InitializeGetAttributionListener( CoronaLuaRef listener )
+{
+  // Can only initialize listener once
+  bool result = ( NULL == getAttributionListener );
+
+  if ( result )
+  {
+    getAttributionListener = listener;
+  }
+
+  return result;
+}
+
+  bool
+PluginLibrary::InitializeGetAdidListener( CoronaLuaRef listener )
+{
+  // Can only initialize listener once
+  bool result = ( NULL == getAdidListener );
+
+  if ( result )
+  {
+    getAdidListener = listener;
+  }
+
+  return result;
+}
+
+  bool
+PluginLibrary::InitializeGetGoogleAdidListener( CoronaLuaRef listener )
+{
+  // Can only initialize listener once
+  bool result = ( NULL == getGoogleAdIdListener );
+
+  if ( result )
+  {
+    getGoogleAdIdListener = listener;
+  }
+
+  return result;
+}
+
+  bool
+PluginLibrary::InitializeGetAmazonAdidListener( CoronaLuaRef listener )
+{
+  // Can only initialize listener once
+  bool result = ( NULL == getAmazonAdIdListener );
+
+  if ( result )
+  {
+    getAmazonAdIdListener = listener;
+  }
+
+  return result;
+}
+
   int
 PluginLibrary::Open( lua_State *L )
 {
@@ -213,6 +332,12 @@ PluginLibrary::Open( lua_State *L )
     { "setSessionTrackingSucceededListener", setSessionTrackingSucceededListener },
     { "setSessionTrackingFailedListener", setSessionTrackingFailedListener },
     { "setDeferredDeeplinkListener", setDeferredDeeplinkListener },
+    { "isEnabled", isEnabled },
+    { "getIdfa", getIdfa },
+    { "getAttribution", getAttribution },
+    { "getAdid", getAdid },
+    { "getGoogleAdId", getGoogleAdId },
+    { "getAmazonAdId", getAmazonAdId },
 
     { NULL, NULL }
   };
@@ -703,10 +828,154 @@ PluginLibrary::setOfflineMode( lua_State *L )
   return 0;
 }
 
+  int
+PluginLibrary::isEnabled( lua_State *L )
+{
+  NSLog(@"isEnabled");
+  int listenerIndex = 1;
+
+  if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
+  {
+    Self *library = ToLibrary( L );
+
+    CoronaLuaRef listener = CoronaLuaNewRef( L, listenerIndex );
+    library->InitializeIsEnabledListener( listener );
+
+    BOOL isEnabled = [Adjust isEnabled];
+    NSString *result = isEnabled ? @"true" : @"false";
+    [AdjustSdkDelegate dispatchEvent:L withListener:library->GetisEnabledListener() withEventName:EVENT_IS_ADJUST_ENABLED withMessage:result];
+  }
+
+  return 0;
+}
+
+  int
+PluginLibrary::getIdfa( lua_State *L )
+{
+  NSLog(@"getIdfa");
+  int listenerIndex = 1;
+
+  if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
+  {
+    Self *library = ToLibrary( L );
+
+    CoronaLuaRef listener = CoronaLuaNewRef( L, listenerIndex );
+    library->InitializeGetIdfaListener( listener );
+
+    NSString *idfa = [Adjust idfa];
+    if (nil == idfa) {
+      idfa = @"";
+    }
+
+    [AdjustSdkDelegate dispatchEvent:L withListener:library->GetgetIdfaListener() withEventName:EVENT_GET_IDFA withMessage:idfa];
+  }
+
+  return 0;
+}
+
+  int
+PluginLibrary::getAttribution( lua_State *L )
+{
+  NSLog(@"getAttribution");
+  int listenerIndex = 1;
+
+  if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
+  {
+    Self *library = ToLibrary( L );
+
+    CoronaLuaRef listener = CoronaLuaNewRef( L, listenerIndex );
+    library->InitializeGetAttributionListener( listener );
+
+      //TODO: send JSON
+    ADJAttribution *attribution = [Adjust attribution];
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    if (nil != attribution) {
+      [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"trackerToken" value:attribution.trackerToken];
+      [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"trackerName" value:attribution.trackerName];
+      [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"network" value:attribution.network];
+      [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"campaign" value:attribution.campaign];
+      [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"creative" value:attribution.creative];
+      [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"adgroup" value:attribution.adgroup];
+      [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"clickLabel" value:attribution.clickLabel];
+      [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"adid" value:attribution.adid];
+    }
+
+    NSString *strDict = [NSString stringWithFormat:@"%@", dictionary];
+    [AdjustSdkDelegate dispatchEvent:L withListener:library->GetgetAttributionListener() withEventName:EVENT_GET_ATTRIBUTION withMessage:strDict];
+  }
+
+  return 0;
+}
+
+  int
+PluginLibrary::getAdid( lua_State *L )
+{
+  NSLog(@"getAdid");
+  int listenerIndex = 1;
+
+  if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
+  {
+    Self *library = ToLibrary( L );
+
+    CoronaLuaRef listener = CoronaLuaNewRef( L, listenerIndex );
+    library->InitializeGetAdidListener( listener );
+
+    NSString *adid = [Adjust adid];
+    if (nil == adid) {
+      adid = @"";
+    }
+
+    [AdjustSdkDelegate dispatchEvent:L withListener:library->GetgetAdidListener() withEventName:EVENT_GET_ADID withMessage:adid];
+  }
+
+  return 0;
+}
+
+  int
+PluginLibrary::getGoogleAdId( lua_State *L )
+{
+  NSLog(@"getGoogleAdId");
+  int listenerIndex = 1;
+
+  if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
+  {
+    Self *library = ToLibrary( L );
+
+    CoronaLuaRef listener = CoronaLuaNewRef( L, listenerIndex );
+    library->InitializeGetGoogleAdidListener( listener );
+
+    NSString *googleAdid = @"";
+
+    [AdjustSdkDelegate dispatchEvent:L withListener:library->GetgetGoogleAdIdListener() withEventName:EVENT_GET_GOOGLEADID withMessage:googleAdid];
+  }
+
+  return 0;
+}
+
+  int
+PluginLibrary::getAmazonAdId( lua_State *L )
+{
+  NSLog(@"getAmazonAdId");
+  int listenerIndex = 1;
+
+  if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
+  {
+    Self *library = ToLibrary( L );
+
+    CoronaLuaRef listener = CoronaLuaNewRef( L, listenerIndex );
+    library->InitializeGetAmazonAdidListener( listener );
+
+    NSString *amazonAdid = @"";
+
+    [AdjustSdkDelegate dispatchEvent:L withListener:library->GetgetAmazonAdIdListener() withEventName:EVENT_GET_AMAZONADID withMessage:amazonAdid];
+  }
+
+  return 0;
+}
 
 // ----------------------------------------------------------------------------
-
 CORONA_EXPORT int luaopen_plugin_adjust( lua_State *L )
 {
   return PluginLibrary::Open( L );
 }
+
