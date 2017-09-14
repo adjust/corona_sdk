@@ -10,12 +10,12 @@
 
 #include <CoronaLua.h>
 
-#define ADJUSTEVENT_ATTRIBUTION_CHANGED @"adjust_attributionChanged"
-#define ADJUSTEVENT_EVENT_TRACKING_SUCCEEDED @"adjust_eventTrackingSucceeded"
-#define ADJUSTEVENT_EVENT_TRACKING_FAILED @"adjust_eventTrackingFailed"
-#define ADJUSTEVENT_SESSION_TRACKING_SUCCEEDED @"adjust_sessionTrackingSucceeded"
-#define ADJUSTEVENT_SESSION_TRACKING_FAILED @"adjust_sessionTrackingFailed"
-#define ADJUSTEVENT_DEFERRED_DEEPLINK @"adjust_deferredDeeplink"
+#define EVENT_ATTRIBUTION_CHANGED @"adjust_attributionChanged"
+#define EVENT_EVENT_TRACKING_SUCCEEDED @"adjust_eventTrackingSucceeded"
+#define EVENT_EVENT_TRACKING_FAILED @"adjust_eventTrackingFailed"
+#define EVENT_SESSION_TRACKING_SUCCEEDED @"adjust_sessionTrackingSucceeded"
+#define EVENT_SESSION_TRACKING_FAILED @"adjust_sessionTrackingFailed"
+#define EVENT_DEFERRED_DEEPLINK @"adjust_deferredDeeplink"
 
 @interface AdjustSdkDelegate : NSObject<AdjustDelegate>
 
