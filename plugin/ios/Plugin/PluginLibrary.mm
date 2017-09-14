@@ -427,7 +427,6 @@ PluginLibrary::create( lua_State *L )
     allowSuppressLogLevel:logLevel == ADJLogLevelSuppress];
 
   if(![adjustConfig isValid]) {
-    //NSLog(@"adjust config is not valid");
     return 0;
   }
 
@@ -441,7 +440,6 @@ PluginLibrary::create( lua_State *L )
     [adjustConfig setEventBufferingEnabled:eventBufferingEnabled];
   }
   lua_pop(L, 1);
-  NSLog(@"eventBuffering: %d", eventBufferingEnabled);
 
   //Sdk prefix
   lua_getfield(L, 1, "sdkPrefix");
@@ -451,7 +449,6 @@ PluginLibrary::create( lua_State *L )
     [adjustConfig setSdkPrefix:sdkPrefix];
   }
   lua_pop(L, 1);
-  NSLog(@"sdkPRefix: %@", sdkPrefix);
 
   // Default tracker
   lua_getfield(L, 1, "defaultTracker");
@@ -461,7 +458,6 @@ PluginLibrary::create( lua_State *L )
     [adjustConfig setDefaultTracker:defaultTracker];
   }
   lua_pop(L, 1);
-  NSLog(@"defaultTracker: %@", defaultTracker);
 
   // User agent
   lua_getfield(L, 1, "userAgent");
@@ -471,7 +467,6 @@ PluginLibrary::create( lua_State *L )
     [adjustConfig setUserAgent:userAgent];
   }
   lua_pop(L, 1);
-  NSLog(@"userAgent: %@", userAgent);
 
   //Send in background
   lua_getfield(L, 1, "sendInBackground");
@@ -480,7 +475,6 @@ PluginLibrary::create( lua_State *L )
     [adjustConfig setSendInBackground:sendInBackground];
   }
   lua_pop(L, 1);
-  NSLog(@"sendInBackground: %d", sendInBackground);
 
   // Launching deferred deep link
   lua_getfield(L, 1, "shouldLaunchDeeplink");
@@ -489,7 +483,6 @@ PluginLibrary::create( lua_State *L )
     shouldLaunchDeferredDeeplink = lua_toboolean(L, 2);
   }
   lua_pop(L, 1);
-  NSLog(@"shouldLaunchDeeplink: %d", shouldLaunchDeferredDeeplink);
 
   // Delay start
   lua_getfield(L, 1, "delayStart");
@@ -498,7 +491,6 @@ PluginLibrary::create( lua_State *L )
     [adjustConfig setDelayStart:delayStart];
   }
   lua_pop(L, 1);
-  NSLog(@"delayStart: %f", delayStart);
 
   Self *library = ToLibrary( L );
   BOOL isAttributionChangedListenerImplmented = library->GetAttributionChangedListener() != NULL;
@@ -552,12 +544,10 @@ PluginLibrary::trackEvent( lua_State *L )
     eventToken = [NSString stringWithUTF8String:eventToken_char];
   }
   lua_pop(L, 1);
-  NSLog(@"eventToken: %@", eventToken);
 
   ADJEvent *event = [ADJEvent eventWithEventToken:eventToken];
 
   if(![event isValid]) {
-    NSLog(@"adjust event is not valid");
     return 0;
   }
 
@@ -567,7 +557,6 @@ PluginLibrary::trackEvent( lua_State *L )
     revenue = lua_tonumber(L, 2);
   }
   lua_pop(L, 1);
-  NSLog(@"revenue: %f", revenue);
 
   // Currency
   lua_getfield(L, 1, "currency");
@@ -576,7 +565,6 @@ PluginLibrary::trackEvent( lua_State *L )
     currency = [NSString stringWithUTF8String:currency_char];
   }
   lua_pop(L, 1);
-  NSLog(@"currency: %@", currency);
 
   //set revenue and currency if any
   if(currency != nil) {
@@ -591,7 +579,6 @@ PluginLibrary::trackEvent( lua_State *L )
     [event setTransactionId:transactionId];
   }
   lua_pop(L, 1);
-  NSLog(@"transactionId: %@", transactionId);
 
   // Callback Parameters
   lua_getfield(L, 1, "callbackParameters");
@@ -599,7 +586,6 @@ PluginLibrary::trackEvent( lua_State *L )
     NSDictionary *dict = CoronaLuaCreateDictionary(L, 2);
     for(id key in dict) {
       NSDictionary *callbackParams = [dict objectForKey:key];
-      NSLog(@"key = %@ | value = %@", callbackParams[@"key"], callbackParams[@"value"]);
       [event addCallbackParameter:callbackParams[@"key"] value:callbackParams[@"value"]];
     }
   }
@@ -610,7 +596,6 @@ PluginLibrary::trackEvent( lua_State *L )
     NSDictionary *dict = CoronaLuaCreateDictionary(L, 2);
     for(id key in dict) {
       NSDictionary *partnerParams = [dict objectForKey:key];
-      NSLog(@"key = %@ | value = %@", partnerParams[@"key"], partnerParams[@"value"]);
       [event addPartnerParameter:partnerParams[@"key"] value:partnerParams[@"value"]];
     }
   }
@@ -623,7 +608,6 @@ PluginLibrary::trackEvent( lua_State *L )
   int
 PluginLibrary::setAttributionListener( lua_State *L )
 {
-  NSLog(@"setAttronitionListener");
   int listenerIndex = 1;
 
   if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
@@ -720,7 +704,6 @@ PluginLibrary::setDeferredDeeplinkListener( lua_State *L )
   int
 PluginLibrary::setEnabled( lua_State *L )
 {
-  NSLog(@"setEnabled");
   BOOL enabled = lua_toboolean(L, 1);
   [Adjust setEnabled:enabled];
   return 0;
@@ -729,7 +712,6 @@ PluginLibrary::setEnabled( lua_State *L )
   int
 PluginLibrary::setPushToken( lua_State *L )
 {
-  NSLog(@"setPushToken");
   const char *pushToken = lua_tostring(L, 1);
   NSString *pushToken_ns =[NSString stringWithUTF8String:pushToken];
   [Adjust setDeviceToken:[pushToken_ns dataUsingEncoding:NSUTF8StringEncoding]];
@@ -749,7 +731,6 @@ PluginLibrary::appWillOpenUrl( lua_State *L )
   int
 PluginLibrary::sendFirstPackages( lua_State *L )
 {
-  NSLog(@"sendFirstPackages");
   [Adjust sendFirstPackages];
   return 0;
 }
@@ -757,7 +738,6 @@ PluginLibrary::sendFirstPackages( lua_State *L )
   int
 PluginLibrary::addSessionCallbackParameter( lua_State *L )
 {
-  NSLog(@"addSessionCallbackParameter");
   const char *key = lua_tostring(L, 1);
   const char *value = lua_tostring(L, 2);
   [Adjust addSessionCallbackParameter:[NSString stringWithUTF8String:key] value:[NSString stringWithUTF8String:value]];
@@ -767,7 +747,6 @@ PluginLibrary::addSessionCallbackParameter( lua_State *L )
   int
 PluginLibrary::addSessionPartnerParameter( lua_State *L )
 {
-  NSLog(@"addSessionPartnerParameter");
   const char *key = lua_tostring(L, 1);
   const char *value = lua_tostring(L, 2);
   [Adjust addSessionPartnerParameter:[NSString stringWithUTF8String:key] value:[NSString stringWithUTF8String:value]];
@@ -777,7 +756,6 @@ PluginLibrary::addSessionPartnerParameter( lua_State *L )
   int
 PluginLibrary::removeSessionCallbackParameter( lua_State *L )
 {
-  NSLog(@"removeSessionCallbackParameter");
   const char *key = lua_tostring(L, 1);
   [Adjust removeSessionCallbackParameter:[NSString stringWithUTF8String:key]];
   return 0;
@@ -786,7 +764,6 @@ PluginLibrary::removeSessionCallbackParameter( lua_State *L )
   int
 PluginLibrary::removeSessionPartnerParameter( lua_State *L )
 {
-  NSLog(@"removeSessionPartnerParameter");
   const char *key = lua_tostring(L, 1);
   [Adjust removeSessionPartnerParameter:[NSString stringWithUTF8String:key]];
   return 0;
@@ -795,7 +772,6 @@ PluginLibrary::removeSessionPartnerParameter( lua_State *L )
   int
 PluginLibrary::resetSessionCallbackParameters( lua_State *L )
 {
-  NSLog(@"resetSessionCallbackParameters");
   [Adjust resetSessionCallbackParameters];
   return 0;
 }
@@ -803,7 +779,6 @@ PluginLibrary::resetSessionCallbackParameters( lua_State *L )
   int
 PluginLibrary::resetSessionPartnerParameters( lua_State *L )
 {
-  NSLog(@"resetSessionPartnerParameters");
   [Adjust resetSessionPartnerParameters];
   return 0;
 }
@@ -811,7 +786,6 @@ PluginLibrary::resetSessionPartnerParameters( lua_State *L )
   int
 PluginLibrary::setOfflineMode( lua_State *L )
 {
-  NSLog(@"setOfflineMode");
   BOOL enabled = lua_toboolean(L, 1);
   [Adjust setOfflineMode:enabled];
   return 0;
@@ -820,7 +794,6 @@ PluginLibrary::setOfflineMode( lua_State *L )
   int
 PluginLibrary::isEnabled( lua_State *L )
 {
-  NSLog(@"isEnabled");
   int listenerIndex = 1;
 
   if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
@@ -841,7 +814,6 @@ PluginLibrary::isEnabled( lua_State *L )
   int
 PluginLibrary::getIdfa( lua_State *L )
 {
-  NSLog(@"getIdfa");
   int listenerIndex = 1;
 
   if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
@@ -865,7 +837,6 @@ PluginLibrary::getIdfa( lua_State *L )
   int
 PluginLibrary::getAttribution( lua_State *L )
 {
-  NSLog(@"getAttribution");
   int listenerIndex = 1;
 
   if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
@@ -899,7 +870,6 @@ PluginLibrary::getAttribution( lua_State *L )
   int
 PluginLibrary::getAdid( lua_State *L )
 {
-  NSLog(@"getAdid");
   int listenerIndex = 1;
 
   if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
@@ -923,7 +893,6 @@ PluginLibrary::getAdid( lua_State *L )
   int
 PluginLibrary::getGoogleAdId( lua_State *L )
 {
-  NSLog(@"getGoogleAdId");
   int listenerIndex = 1;
 
   if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
@@ -944,7 +913,6 @@ PluginLibrary::getGoogleAdId( lua_State *L )
   int
 PluginLibrary::getAmazonAdId( lua_State *L )
 {
-  NSLog(@"getAmazonAdId");
   int listenerIndex = 1;
 
   if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
