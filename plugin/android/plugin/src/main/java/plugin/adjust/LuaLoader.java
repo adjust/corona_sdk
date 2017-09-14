@@ -500,7 +500,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         //Event Token
         L.getField(1, "eventToken");
         eventToken = L.checkString(2);
-        Log.d(TAG, "adjust_trackEvent: eventToken: " + eventToken);
         L.pop(1);
 
         final AdjustEvent event = new AdjustEvent(eventToken);
@@ -514,7 +513,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         L.getField(1, "revenue");
         if (!L.isNil(2)) {
             revenue = L.checkNumber(2);
-            Log.d(TAG, "adjust_trackEvent: revenue: " + revenue);
         }
         L.pop(1);
 
@@ -522,7 +520,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         L.getField(1, "currency");
         if (!L.isNil(2)) {
             currency = L.checkString(2);
-            Log.d(TAG, "adjust_trackEvent: currency: " + currency);
         }
         L.pop(1);
 
@@ -535,7 +532,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         L.getField(1, "transactionId");
         if (!L.isNil(2)) {
             transactionId = L.checkString(2);
-            Log.d(TAG, "adjust_trackEvent: transactionId: " + transactionId);
             event.setOrderId(transactionId);
         }
         L.pop(1);
