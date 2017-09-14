@@ -86,18 +86,17 @@
     }
     
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-
-    [self addValueOrEmpty:dictionary key:@"trackerToken" value:attribution.trackerToken];
-    [self addValueOrEmpty:dictionary key:@"trackerName" value:attribution.trackerName];
-    [self addValueOrEmpty:dictionary key:@"network" value:attribution.network];
-    [self addValueOrEmpty:dictionary key:@"campaign" value:attribution.campaign];
-    [self addValueOrEmpty:dictionary key:@"creative" value:attribution.creative];
-    [self addValueOrEmpty:dictionary key:@"adgroup" value:attribution.adgroup];
-    [self addValueOrEmpty:dictionary key:@"clickLabel" value:attribution.clickLabel];
-    [self addValueOrEmpty:dictionary key:@"adid" value:attribution.adid];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"trackerToken" value:attribution.trackerToken];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"trackerName" value:attribution.trackerName];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"network" value:attribution.network];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"campaign" value:attribution.campaign];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"creative" value:attribution.creative];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"adgroup" value:attribution.adgroup];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"clickLabel" value:attribution.clickLabel];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"adid" value:attribution.adid];
 
     NSString *strDict = [NSString stringWithFormat:@"%@", dictionary];
-    [self dispatchEvent:_luaState withListener:_attributionChangedListener withEventName:ADJUSTEVENT_ATTRIBUTION_CHANGED withMessage:strDict];
+    [AdjustSdkDelegate dispatchEvent:_luaState withListener:_attributionChangedListener withEventName:EVENT_ATTRIBUTION_CHANGED withMessage:strDict];
 }
 
 - (void)adjustEventTrackingSucceededWannabe:(ADJEventSuccess *)eventSuccessResponseData {
@@ -107,14 +106,14 @@
 
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
 
-    [self addValueOrEmpty:dictionary key:@"message" value:eventSuccessResponseData.message];
-    [self addValueOrEmpty:dictionary key:@"timestamp" value:eventSuccessResponseData.timeStamp];
-    [self addValueOrEmpty:dictionary key:@"adid" value:eventSuccessResponseData.adid];
-    [self addValueOrEmpty:dictionary key:@"eventToken" value:eventSuccessResponseData.eventToken];
-    [self addValueOrEmpty:dictionary key:@"jsonResponse" value:eventSuccessResponseData.jsonResponse];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"message" value:eventSuccessResponseData.message];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"timestamp" value:eventSuccessResponseData.timeStamp];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"adid" value:eventSuccessResponseData.adid];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"eventToken" value:eventSuccessResponseData.eventToken];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"jsonResponse" value:eventSuccessResponseData.jsonResponse];
 
     NSString *strDict = [NSString stringWithFormat:@"%@", dictionary];
-    [self dispatchEvent:_luaState withListener:_eventTrackingSucceededListener withEventName:ADJUSTEVENT_EVENT_TRACKING_SUCCEEDED withMessage:strDict];
+    [AdjustSdkDelegate dispatchEvent:_luaState withListener:_eventTrackingSucceededListener withEventName:EVENT_EVENT_TRACKING_SUCCEEDED withMessage:strDict];
 }
 
 - (void)adjustEventTrackingFailedWannabe:(ADJEventFailure *)eventFailureResponseData {
@@ -124,15 +123,15 @@
 
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
 
-    [self addValueOrEmpty:dictionary key:@"message" value:eventFailureResponseData.message];
-    [self addValueOrEmpty:dictionary key:@"timestamp" value:eventFailureResponseData.timeStamp];
-    [self addValueOrEmpty:dictionary key:@"adid" value:eventFailureResponseData.adid];
-    [self addValueOrEmpty:dictionary key:@"eventToken" value:eventFailureResponseData.eventToken];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"message" value:eventFailureResponseData.message];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"timestamp" value:eventFailureResponseData.timeStamp];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"adid" value:eventFailureResponseData.adid];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"eventToken" value:eventFailureResponseData.eventToken];
     [dictionary setObject:(eventFailureResponseData.willRetry ? @"true" : @"false") forKey:@"willRetry"];
-    [self addValueOrEmpty:dictionary key:@"jsonResponse" value:eventFailureResponseData.jsonResponse];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"jsonResponse" value:eventFailureResponseData.jsonResponse];
 
     NSString *strDict = [NSString stringWithFormat:@"%@", dictionary];
-    [self dispatchEvent:_luaState withListener:_eventTrackingFailedListener withEventName:ADJUSTEVENT_EVENT_TRACKING_FAILED withMessage:strDict];
+    [AdjustSdkDelegate dispatchEvent:_luaState withListener:_eventTrackingFailedListener withEventName:EVENT_EVENT_TRACKING_FAILED withMessage:strDict];
 }
 
 
@@ -143,13 +142,13 @@
 
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
 
-    [self addValueOrEmpty:dictionary key:@"message" value:sessionSuccessResponseData.message];
-    [self addValueOrEmpty:dictionary key:@"timestamp" value:sessionSuccessResponseData.timeStamp];
-    [self addValueOrEmpty:dictionary key:@"adid" value:sessionSuccessResponseData.adid];
-    [self addValueOrEmpty:dictionary key:@"jsonResponse" value:sessionSuccessResponseData.jsonResponse];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"message" value:sessionSuccessResponseData.message];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"timestamp" value:sessionSuccessResponseData.timeStamp];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"adid" value:sessionSuccessResponseData.adid];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"jsonResponse" value:sessionSuccessResponseData.jsonResponse];
 
     NSString *strDict = [NSString stringWithFormat:@"%@", dictionary];
-    [self dispatchEvent:_luaState withListener:_sessionTrackingSucceededListener withEventName:ADJUSTEVENT_SESSION_TRACKING_SUCCEEDED withMessage:strDict];
+    [AdjustSdkDelegate dispatchEvent:_luaState withListener:_sessionTrackingSucceededListener withEventName:EVENT_SESSION_TRACKING_SUCCEEDED withMessage:strDict];
 }
 
 - (void)adjustSessionTrackingFailedWananbe:(ADJSessionFailure *)sessionFailureResponseData {
@@ -159,19 +158,19 @@
 
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
 
-    [self addValueOrEmpty:dictionary key:@"message" value:sessionFailureResponseData.message];
-    [self addValueOrEmpty:dictionary key:@"timestamp" value:sessionFailureResponseData.timeStamp];
-    [self addValueOrEmpty:dictionary key:@"adid" value:sessionFailureResponseData.adid];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"message" value:sessionFailureResponseData.message];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"timestamp" value:sessionFailureResponseData.timeStamp];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"adid" value:sessionFailureResponseData.adid];
     [dictionary setObject:(sessionFailureResponseData.willRetry ? @"true" : @"false") forKey:@"willRetry"];
-    [self addValueOrEmpty:dictionary key:@"jsonResponse" value:sessionFailureResponseData.jsonResponse];
+    [AdjustSdkDelegate addValueOrEmpty:dictionary key:@"jsonResponse" value:sessionFailureResponseData.jsonResponse];
 
     NSString *strDict = [NSString stringWithFormat:@"%@", dictionary];
-    [self dispatchEvent:_luaState withListener:_sessionTrackingFailedListener withEventName:ADJUSTEVENT_SESSION_TRACKING_FAILED withMessage:strDict];
+    [AdjustSdkDelegate dispatchEvent:_luaState withListener:_sessionTrackingFailedListener withEventName:EVENT_SESSION_TRACKING_FAILED withMessage:strDict];
 }
 
 - (BOOL)adjustDeeplinkResponseWannabe:(NSURL *)deeplink {
     NSString *path = [deeplink absoluteString];
-    [self dispatchEvent:_luaState withListener:_deferredDeeplinkListener withEventName:ADJUSTEVENT_DEFERRED_DEEPLINK withMessage:path];
+    [AdjustSdkDelegate dispatchEvent:_luaState withListener:_deferredDeeplinkListener withEventName:EVENT_DEFERRED_DEEPLINK withMessage:path];
     
     return _shouldLaunchDeferredDeeplink;
 }
@@ -198,7 +197,7 @@
     }
 }
 
-- (void)addValueOrEmpty:(NSMutableDictionary *)dictionary
++ (void)addValueOrEmpty:(NSMutableDictionary *)dictionary
                     key:(NSString *)key
                   value:(NSObject *)value {
     if (nil != value) {
@@ -208,11 +207,10 @@
     }
 }
 
-
-- (void)dispatchEvent:(lua_State *)luaState
-       withListener:(CoronaLuaRef)listener
-      withEventName:(NSString*)eventName
-        withMessage:(NSString*)message {
++ (void)dispatchEvent:(lua_State *)luaState
+         withListener:(CoronaLuaRef)listener
+        withEventName:(NSString*)eventName
+          withMessage:(NSString*)message {
     
     // Create event and add message to it
     CoronaLuaNewEvent(luaState, [eventName UTF8String]);
@@ -222,6 +220,5 @@
     // Dispatch event to library's listener
     CoronaLuaDispatchEvent(luaState, listener, 0);
 }
-
 
 @end
