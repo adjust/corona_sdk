@@ -28,6 +28,11 @@ import com.naef.jnlua.JavaFunction;
 import com.naef.jnlua.LuaState;
 import com.naef.jnlua.NamedJavaFunction;
 
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Implements the Lua interface for a Corona plugin.
  * <p>
@@ -414,7 +419,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             adjustConfig.setOnAttributionChangedListener(new OnAttributionChangedListener() {
                 @Override
                 public void onAttributionChanged(AdjustAttribution adjustAttribution) {
-                    dispatchEvent(L, LuaLoader.this.attributionChangedListener, EVENT_ATTRIBUTION_CHANGED, adjustAttribution.toString());
+                    dispatchEvent(L, LuaLoader.this.attributionChangedListener, EVENT_ATTRIBUTION_CHANGED, new JSONObject(LuaUtil.attributionToMap(adjustAttribution)).toString());
                 }
             });
         }
@@ -424,7 +429,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             adjustConfig.setOnEventTrackingSucceededListener(new OnEventTrackingSucceededListener() {
                 @Override
                 public void onFinishedEventTrackingSucceeded(AdjustEventSuccess adjustEventSuccess) {
-                    dispatchEvent(L, LuaLoader.this.eventTrackingSucceededListener, EVENT_EVENT_TRACKING_SUCCEEDED, adjustEventSuccess.toString());
+                    dispatchEvent(L, LuaLoader.this.eventTrackingSucceededListener, EVENT_EVENT_TRACKING_SUCCEEDED, new JSONObject(LuaUtil.eventSuccessToMap(adjustEventSuccess)).toString());
                 }
             });
         }
@@ -434,7 +439,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             adjustConfig.setOnEventTrackingFailedListener(new OnEventTrackingFailedListener() {
                 @Override
                 public void onFinishedEventTrackingFailed(AdjustEventFailure adjustEventFailure) {
-                    dispatchEvent(L, LuaLoader.this.eventTrackingFailedListener, EVENT_EVENT_TRACKING_FAILED, adjustEventFailure.toString());
+                    dispatchEvent(L, LuaLoader.this.eventTrackingFailedListener, EVENT_EVENT_TRACKING_FAILED, new JSONObject(LuaUtil.eventFailureToMap(adjustEventFailure)).toString());
                 }
             });
         }
@@ -444,7 +449,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             adjustConfig.setOnSessionTrackingSucceededListener(new OnSessionTrackingSucceededListener() {
                 @Override
                 public void onFinishedSessionTrackingSucceeded(AdjustSessionSuccess adjustSessionSuccess) {
-                    dispatchEvent(L, LuaLoader.this.sessionTrackingSucceededListener, EVENT_SESSION_TRACKING_SUCCEEDED, adjustSessionSuccess.toString());
+                    dispatchEvent(L, LuaLoader.this.sessionTrackingSucceededListener, EVENT_SESSION_TRACKING_SUCCEEDED, new JSONObject(LuaUtil.sessionSuccessToMap(adjustSessionSuccess)).toString());
                 }
             });
         }
@@ -454,7 +459,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             adjustConfig.setOnSessionTrackingFailedListener(new OnSessionTrackingFailedListener() {
                 @Override
                 public void onFinishedSessionTrackingFailed(AdjustSessionFailure adjustSessionFailure) {
-                    dispatchEvent(L, LuaLoader.this.sessionTrackingFailedListener, EVENT_SESSION_TRACKING_FAILED, adjustSessionFailure.toString());
+                    dispatchEvent(L, LuaLoader.this.sessionTrackingFailedListener, EVENT_SESSION_TRACKING_FAILED, new JSONObject(LuaUtil.sessionFailureToMap(adjustSessionFailure)).toString());
                 }
             });
         }
@@ -464,7 +469,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             adjustConfig.setOnDeeplinkResponseListener(new OnDeeplinkResponseListener() {
                 @Override
                 public boolean launchReceivedDeeplink(Uri uri) {
-                    dispatchEvent(L, LuaLoader.this.deferredDeeplinkListener, EVENT_DEFERRED_DEEPLINK, uri.toString());
+                    dispatchEvent(L, LuaLoader.this.deferredDeeplinkListener, EVENT_DEFERRED_DEEPLINK, new JSONObject(LuaUtil.deferredDeeplinkToMap(uri)).toString());
                     return LuaLoader.this.shouldLaunchDeeplink;
                 }
             });
@@ -662,6 +667,15 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     }
 
     private int adjust_getIdfa(LuaState L) {
+        //Hardcoded listener index for ADJUST
+        int listenerIndex = 1;
+
+        //Assign and dispatch event immediately
+        if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
+            this.getIdfaListener = CoronaLua.newRef(L, listenerIndex);
+            dispatchEvent(L, this.getIdfaListener, EVENT_GET_IDFA, "");
+        }
+
         return 0;
     }
 
@@ -691,17 +705,26 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
             this.getAdidListener = CoronaLua.newRef(L, listenerIndex);
             String adid = Adjust.getAdid();
-            if (adid != null) {
-                dispatchEvent(L, this.getAdidListener, EVENT_GET_ADID, Adjust.getAdid());
-            } else {
-                Log.e(TAG, "adjust_getAdid: Couldn't acquire adid");
+            if (adid == null) {
+                adid = "";
             }
+
+            dispatchEvent(L, this.getAdidListener, EVENT_GET_ADID, adid);
         }
 
         return 0;
     }
 
     private int adjust_getAmazonAdId(final LuaState L) {
+        //Hardcoded listener index for ADJUST
+        int listenerIndex = 1;
+
+        //Assign and dispatch event immediately
+        if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
+            this.getAmazonAdIdListener = CoronaLua.newRef(L, listenerIndex);
+            dispatchEvent(L, this.getAmazonAdIdListener, EVENT_GET_AMAZONADID, "");
+        }
+
         return 0;
     }
 
@@ -713,11 +736,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
             this.getAttributionListener = CoronaLua.newRef(L, listenerIndex);
             AdjustAttribution attribution = Adjust.getAttribution();
-            if (attribution != null) {
-                dispatchEvent(L, this.getAttributionListener, EVENT_GET_ATTRIBUTION, attribution.toString());
-            } else {
-                Log.e(TAG, "adjust_getAttribution: Couldn't acquire attribution object");
-            }
+            dispatchEvent(L, this.getAttributionListener, EVENT_GET_ATTRIBUTION, new JSONObject(LuaUtil.attributionToMap(attribution)).toString());
         }
 
         return 0;
