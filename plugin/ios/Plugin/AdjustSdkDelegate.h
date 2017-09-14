@@ -37,4 +37,12 @@
                      shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink
                                        withLuaState:(lua_State *)luaState;
 
++ (void)dispatchEvent:(lua_State *)luaState
+         withListener:(CoronaLuaRef)listener
+        withEventName:(NSString*)eventName
+          withMessage:(NSString*)message;
+
++ (void)addValueOrEmpty:(NSMutableDictionary *)dictionary
+                    key:(NSString *)key
+                  value:(NSObject *)value;
 @end
