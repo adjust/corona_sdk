@@ -130,7 +130,12 @@ PluginLibrary::PluginLibrary()
   sessionTrackingSucceededListener( NULL ),
   sessionTrackingFailedListener( NULL ),
   deferredDeeplinkListener( NULL ),
-  isEnabledListener( NULL )
+  isEnabledListener( NULL ),
+  getIdfaListener( NULL ),
+  getAttributionListener( NULL ),
+  getAdidListener( NULL ),
+  getGoogleAdIdListener( NULL ),
+  getAmazonAdIdListener( NULL )
 {
 }
 
@@ -886,7 +891,7 @@ PluginLibrary::getAttribution( lua_State *L )
     CoronaLuaRef listener = CoronaLuaNewRef( L, listenerIndex );
     library->InitializeGetAttributionListener( listener );
 
-      //TODO: send JSON
+    //TODO: send JSON
     ADJAttribution *attribution = [Adjust attribution];
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     if (nil != attribution) {
