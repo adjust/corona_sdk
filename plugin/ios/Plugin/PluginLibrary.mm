@@ -1,4 +1,3 @@
-
 //
 //  PluginLibrary.mm
 //  TemplateApp
@@ -379,8 +378,7 @@ PluginLibrary::ToLibrary( lua_State *L )
   int
 PluginLibrary::create( lua_State *L )
 {
-  NSString *logLevel = nil;
-  BOOL allowSuppressLogLevel = NO;
+  ADJLogLevel logLevel = ADJLogLevelInfo;
   NSString *appToken = nil;
   NSString *environment = nil;
   NSString * defaultTracker = nil;
@@ -397,14 +395,9 @@ PluginLibrary::create( lua_State *L )
   lua_getfield(L, 1, "logLevel");
   if(!lua_isnil(L, 2)) {
     const char *logLevel_char = lua_tostring(L, 2);
-    logLevel = [NSString stringWithUTF8String:logLevel_char];
-    if([[logLevel uppercaseString] isEqualToString:@"SUPPRESS"]) {
-      allowSuppressLogLevel = YES;
-    }
+    logLevel = [ADJLogger logLevelFromString:[NSString stringWithUTF8String:logLevel_char]];
   }
   lua_pop(L, 1);
-  NSLog(@"logLevel: %@", logLevel);
-  NSLog(@"logLevel: %d", allowSuppressLogLevel);
 
   //AppToken
   lua_getfield(L, 1, "appToken");
@@ -413,7 +406,6 @@ PluginLibrary::create( lua_State *L )
     appToken = [NSString stringWithUTF8String:appToken_char];
   }
   lua_pop(L, 1);
-  NSLog(@"appToken: %@", appToken);
 
   //Environment
   lua_getfield(L, 1, "environment");
@@ -428,27 +420,19 @@ PluginLibrary::create( lua_State *L )
     }
   }
 
-  NSLog(@"environment: %@", environment);
-
   lua_pop(L, 1);
 
   ADJConfig *adjustConfig = [ADJConfig configWithAppToken:appToken
     environment:environment
-    allowSuppressLogLevel:allowSuppressLogLevel];
+    allowSuppressLogLevel:logLevel == ADJLogLevelSuppress];
 
   if(![adjustConfig isValid]) {
-    NSLog(@"adjust config is not valid");
+    //NSLog(@"adjust config is not valid");
     return 0;
   }
 
   // Log level
-  if (nil != logLevel) {
-    if (NO == allowSuppressLogLevel) {
-      [adjustConfig setLogLevel:[ADJLogger logLevelFromString:[logLevel lowercaseString]]];
-    } else {
-      [adjustConfig setLogLevel:ADJLogLevelSuppress];
-    }
-  }
+  [adjustConfig setLogLevel:logLevel];
 
   //Event Buffering Enabled
   lua_getfield(L, 1, "eventBufferingEnabled");
