@@ -40,6 +40,8 @@ local function deferredDeeplinkListener(event)
   print("[*] Lua: Received event from deferredDeeplinkListener (" .. event.name .. "): ", event.message )
 end
 
+adjust.isEnabled(function (event) print("[*] Lua: isEnabled (" .. event.message .. ")") end)
+
 adjust.setAttributionListener(attributionListener)
 adjust.setEventTrackingSucceededListener(eventTrackingSucceededListener)
 adjust.setEventTrackingFailedListener(eventTrackingFailedListener)
@@ -63,7 +65,7 @@ local background = display.newImageRect("background.png", 360, 570)
 background.x = display.contentCenterX
 background.y = display.contentCenterY
 
-local platform = display.newImageRect("platform.png", 300, 50)
+local platform = display.newImageRect("platform.png", 300, 25)
 platform.x = display.contentCenterX
 platform.y = display.contentHeight
 platform.yScale = 0.5
@@ -106,8 +108,8 @@ local function handleTrackRevenueEvent(event)
 end
 
 widget.newButton({
-  left = display.contentCenterX - 50,
-  top = 75 + (0*40),
+  left = display.contentCenterX - 25,
+  top = 5 + (0*40),
   id = "button1",
   label = "Track Revenue Event",
   onEvent = handleTrackRevenueEvent
@@ -135,8 +137,8 @@ local function handleTrackCallbackEvent(event)
 end
 
 widget.newButton({
-  left = display.contentCenterX - 50,
-  top = 75 + (1*40),
+  left = display.contentCenterX - 25,
+  top = 5 + (1*40),
   id = "button1",
   label = "Track Callback Event",
   onEvent = handleTrackCallbackEvent
@@ -164,8 +166,8 @@ local function handleTrackPartnerEvent(event)
 end
 
 widget.newButton({
-  left = display.contentCenterX - 50,
-  top = 75 + (2*40),
+  left = display.contentCenterX - 25,
+  top = 5 + (2*40),
   id = "button1",
   label = "Track Partner Event",
   onEvent = handleTrackPartnerEvent
@@ -181,8 +183,8 @@ local function handleEnableOfflineMode(event)
 end
 
 widget.newButton({
-  left = display.contentCenterX - 50,
-  top = 75 + (3*40),
+  left = display.contentCenterX - 25,
+  top = 5 + (3*40),
   id = "button1",
   label = "Enable offline mode",
   onEvent = handleEnableOfflineMode
@@ -198,8 +200,8 @@ local function handleDisableOfflineMode(event)
 end
 
 widget.newButton({
-  left = display.contentCenterX - 50,
-  top = 75 + (4*40),
+  left = display.contentCenterX - 25,
+  top = 5 + (4*40),
   id = "button1",
   label = "Disable offline mode",
   onEvent = handleDisableOfflineMode
@@ -215,12 +217,96 @@ local function handleToggleEnabled(event)
   end
 end
 
-local setEnabledBtn = widget.newButton({
-  left = display.contentCenterX - 50,
-  top = 225,
-  top = 75 + (5*40),
+widget.newButton({
+  left = display.contentCenterX - 25,
+  top = 5 + (5*40),
   id = "button1",
   label = "Toggle Enabled",
   onEvent = handleToggleEnabled
+}
+)
+
+-- is Enabled
+-- ------------------------
+local function handleIsEnabled(event)
+  if("ended" == event.phase) then
+    adjust.isEnabled(function (event) print("[*] Lua: isEnabled (" .. event.message .. ")") end)
+  end
+end
+
+widget.newButton({
+  left = display.contentCenterX - 25,
+  top = 5 + (6*40),
+  id = "button1",
+  label = "Is Enabled",
+  onEvent = handleIsEnabled
+}
+)
+
+-- Get Adid
+-- ------------------------
+local function handleGetAdid(event)
+  if("ended" == event.phase) then
+    adjust.getAdid(function (event) print("[*] Lua: getAdid (" .. event.message .. ")") end)
+  end
+end
+
+widget.newButton({
+  left = display.contentCenterX - 25,
+  top = 5 + (7*40),
+  id = "button1",
+  label = "Get Adid",
+  onEvent = handleGetAdid
+}
+)
+
+-- Get Google Adid
+-- ------------------------
+local function handleGetAdid(event)
+  if("ended" == event.phase) then
+    adjust.getGoogleAdId(function (event) print("[*] Lua: getGoogleAdid (" .. event.message .. ")") end)
+  end
+end
+
+widget.newButton({
+  left = display.contentCenterX - 25,
+  top = 5 + (8*40),
+  id = "button1",
+  label = "Get Google Adid",
+  onEvent = handleGetAdid
+}
+)
+
+-- Get Idfa
+-- ------------------------
+local function handleGetIdfa(event)
+  if("ended" == event.phase) then
+    adjust.getIdfa(function (event) print("[*] Lua: getIdfa (" .. event.message .. ")") end)
+  end
+end
+
+widget.newButton({
+  left = display.contentCenterX - 25,
+  top = 5 + (9*40),
+  id = "button1",
+  label = "Get Idfa",
+  onEvent = handleGetIdfa
+}
+)
+
+-- Get Attribution
+-- ------------------------
+local function handleGetAttribution(event)
+  if("ended" == event.phase) then
+    adjust.getAttribution(function (event) print("[*] Lua: getAttribution (" .. event.message .. ")") end)
+  end
+end
+
+widget.newButton({
+  left = display.contentCenterX - 25,
+  top = 5 + (10*40),
+  id = "button1",
+  label = "Get Attribution",
+  onEvent = handleGetAttribution
 }
 )
