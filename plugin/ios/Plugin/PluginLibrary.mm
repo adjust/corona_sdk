@@ -721,9 +721,8 @@ PluginLibrary::setPushToken( lua_State *L )
   int
 PluginLibrary::appWillOpenUrl( lua_State *L )
 {
-  NSLog(@"appWillOpenUrl");
   const char *urlStr = lua_tostring(L, 1);
-  NSURL *url = [NSURL URLWithString:[[NSString stringWithUTF8String:urlStr] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+  NSURL *url = [NSURL URLWithString:[NSString stringWithUTF8String:urlStr]];
   [Adjust appWillOpenUrl:url];
   return 0;
 }
