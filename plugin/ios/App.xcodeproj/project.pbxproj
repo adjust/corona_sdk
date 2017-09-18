@@ -23,6 +23,7 @@
 /* Begin PBXBuildFile section */
 		20FB94611F681FE6009B8A6E /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20FB94601F681FE6009B8A6E /* AdSupport.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		20FB94631F681FF0009B8A6E /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20FB94621F681FF0009B8A6E /* iAd.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		9DDBFCD21F6FEC9F0085C237 /* App-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9DDBFCD11F6FEC9F0085C237 /* App-Info.plist */; };
 		A447B610165D72FB009EA762 /* AppCoronaDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = A447B60F165D72FB009EA762 /* AppCoronaDelegate.mm */; };
 		A447B6671666FD02009EA762 /* MainWindow-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = A447B6641666FD02009EA762 /* MainWindow-iPad.xib */; };
 		A447B6681666FD02009EA762 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = A447B6651666FD02009EA762 /* MainWindow.xib */; };
@@ -89,6 +90,8 @@
 /* Begin PBXFileReference section */
 		20FB94601F681FE6009B8A6E /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		20FB94621F681FF0009B8A6E /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
+		9DDBFCD11F6FEC9F0085C237 /* App-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "App-Info.plist"; sourceTree = "<group>"; };
+		9DDBFCD41F6FF17B0085C237 /* App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = App.entitlements; sourceTree = "<group>"; };
 		A447B60E165D72FB009EA762 /* AppCoronaDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppCoronaDelegate.h; sourceTree = SOURCE_ROOT; };
 		A447B60F165D72FB009EA762 /* AppCoronaDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppCoronaDelegate.mm; sourceTree = SOURCE_ROOT; };
 		A447B6641666FD02009EA762 /* MainWindow-iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "MainWindow-iPad.xib"; path = "Corona/ios/resource/MainWindow-iPad.xib"; sourceTree = "<group>"; };
@@ -102,7 +105,6 @@
 		A484112115114F700074BD57 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		A484112315114F700074BD57 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		A484112515114F700074BD57 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
-		A484112915114F700074BD57 /* Adjust-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Adjust-Info.plist"; sourceTree = "<group>"; };
 		A484112B15114F700074BD57 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A484112D15114F700074BD57 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = SOURCE_ROOT; };
 		A484112F15114F700074BD57 /* Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = SOURCE_ROOT; };
@@ -278,8 +280,9 @@
 		A484112715114F700074BD57 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				9DDBFCD41F6FF17B0085C237 /* App.entitlements */,
+				9DDBFCD11F6FEC9F0085C237 /* App-Info.plist */,
 				C277D3B51EBB9F8E00966BA1 /* _CoronaSplashScreen.png */,
-				A484112915114F700074BD57 /* Adjust-Info.plist */,
 				A484112A15114F700074BD57 /* InfoPlist.strings */,
 				C22C1E4A1E981D9000D74196 /* LaunchScreen.storyboardc */,
 				A484112D15114F700074BD57 /* main.mm */,
@@ -346,6 +349,11 @@
 				TargetAttributes = {
 					A484111815114F700074BD57 = {
 						DevelopmentTeam = QGUGW9AUMK;
+						SystemCapabilities = {
+							com.apple.SafariKeychain = {
+								enabled = 1;
+							};
+						};
 					};
 					F597AC6E1ED8CA3E0085F5E5 = {
 						CreatedOnToolsVersion = 8.3.2;
@@ -395,6 +403,7 @@
 			files = (
 				A484112C15114F700074BD57 /* InfoPlist.strings in Resources */,
 				A447B6671666FD02009EA762 /* MainWindow-iPad.xib in Resources */,
+				9DDBFCD21F6FEC9F0085C237 /* App-Info.plist in Resources */,
 				A447B6681666FD02009EA762 /* MainWindow.xib in Resources */,
 				F5C9F4811ED39AD100D34A2D /* _CoronaSplashScreen.png in Resources */,
 				A447B66A1666FD43009EA762 /* Corona3rdPartyLicenses.txt in Resources */,
@@ -616,6 +625,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F55829801ED23E1200E5808C /* CoronaApp.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = App.entitlements;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = QGUGW9AUMK;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -641,6 +651,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F55829801ED23E1200E5808C /* CoronaApp.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = App.entitlements;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = QGUGW9AUMK;
 				FRAMEWORK_SEARCH_PATHS = (
