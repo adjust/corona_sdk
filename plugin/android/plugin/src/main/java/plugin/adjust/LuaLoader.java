@@ -520,7 +520,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         L.pop(1);
 
         //set revenue and currency if any
-        event.setRevenue(revenue, currency);
+        if (currency != null) {
+            event.setRevenue(revenue, currency);
+        }
 
         //transaction id
         L.getField(1, "transactionId");
