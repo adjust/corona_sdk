@@ -17,8 +17,8 @@
 #define EVENT_GET_IDFA @"adjust_getAttribution"
 #define EVENT_GET_ATTRIBUTION @"adjust_getAttribution"
 #define EVENT_GET_ADID @"adjust_getAdid"
-#define EVENT_GET_GOOGLEADID @"adjust_getGoogleAdId"
-#define EVENT_GET_AMAZONADID @"adjust_getAmazonAdId"
+#define EVENT_GET_GOOGLEADID @"adjust_getGoogleAdid"
+#define EVENT_GET_AMAZONADID @"adjust_getAmazonAdid"
 
 // ----------------------------------------------------------------------------
 
@@ -61,8 +61,8 @@ class PluginLibrary
     CoronaLuaRef GetgetIdfaListener() const { return getIdfaListener; }
     CoronaLuaRef GetgetAttributionListener() const { return getAttributionListener; }
     CoronaLuaRef GetgetAdidListener() const { return getAdidListener; }
-    CoronaLuaRef GetgetGoogleAdIdListener() const { return getGoogleAdIdListener; }
-    CoronaLuaRef GetgetAmazonAdIdListener() const { return getAmazonAdIdListener; }
+    CoronaLuaRef GetgetGoogleAdidListener() const { return getGoogleAdidListener; }
+    CoronaLuaRef GetgetAmazonAdidListener() const { return getAmazonAdidListener; }
 
   public:
     static int Open( lua_State *L );
@@ -91,8 +91,8 @@ class PluginLibrary
     static int getIdfa( lua_State *L );
     static int getAttribution( lua_State *L );
     static int getAdid( lua_State *L );
-    static int getGoogleAdId( lua_State *L );
-    static int getAmazonAdId( lua_State *L );
+    static int getGoogleAdid( lua_State *L );
+    static int getAmazonAdid( lua_State *L );
 
     static int setAttributionListener( lua_State *L );
     static int setEventTrackingSucceededListener( lua_State *L );
@@ -113,8 +113,8 @@ class PluginLibrary
     CoronaLuaRef getIdfaListener;
     CoronaLuaRef getAttributionListener;
     CoronaLuaRef getAdidListener;
-    CoronaLuaRef getGoogleAdIdListener;
-    CoronaLuaRef getAmazonAdIdListener;
+    CoronaLuaRef getGoogleAdidListener;
+    CoronaLuaRef getAmazonAdidListener;
 };
 
 // ----------------------------------------------------------------------------
@@ -133,8 +133,8 @@ PluginLibrary::PluginLibrary()
   getIdfaListener( NULL ),
   getAttributionListener( NULL ),
   getAdidListener( NULL ),
-  getGoogleAdIdListener( NULL ),
-  getAmazonAdIdListener( NULL )
+  getGoogleAdidListener( NULL ),
+  getAmazonAdidListener( NULL )
 {
 }
 
@@ -283,11 +283,11 @@ PluginLibrary::InitializeGetAdidListener( CoronaLuaRef listener )
 PluginLibrary::InitializeGetGoogleAdidListener( CoronaLuaRef listener )
 {
   // Can only initialize listener once
-  bool result = ( NULL == getGoogleAdIdListener );
+  bool result = ( NULL == getGoogleAdidListener );
 
   if ( result )
   {
-    getGoogleAdIdListener = listener;
+    getGoogleAdidListener = listener;
   }
 
   return result;
@@ -297,11 +297,11 @@ PluginLibrary::InitializeGetGoogleAdidListener( CoronaLuaRef listener )
 PluginLibrary::InitializeGetAmazonAdidListener( CoronaLuaRef listener )
 {
   // Can only initialize listener once
-  bool result = ( NULL == getAmazonAdIdListener );
+  bool result = ( NULL == getAmazonAdidListener );
 
   if ( result )
   {
-    getAmazonAdIdListener = listener;
+    getAmazonAdidListener = listener;
   }
 
   return result;
@@ -340,8 +340,8 @@ PluginLibrary::Open( lua_State *L )
     { "getIdfa", getIdfa },
     { "getAttribution", getAttribution },
     { "getAdid", getAdid },
-    { "getGoogleAdId", getGoogleAdId },
-    { "getAmazonAdId", getAmazonAdId },
+    { "getGoogleAdid", getGoogleAdid },
+    { "getAmazonAdid", getAmazonAdid },
 
     { NULL, NULL }
   };
@@ -890,7 +890,7 @@ PluginLibrary::getAdid( lua_State *L )
 }
 
   int
-PluginLibrary::getGoogleAdId( lua_State *L )
+PluginLibrary::getGoogleAdid( lua_State *L )
 {
   int listenerIndex = 1;
 
@@ -903,14 +903,14 @@ PluginLibrary::getGoogleAdId( lua_State *L )
 
     NSString *googleAdid = @"";
 
-    [AdjustSdkDelegate dispatchEvent:L withListener:library->GetgetGoogleAdIdListener() withEventName:EVENT_GET_GOOGLEADID withMessage:googleAdid];
+    [AdjustSdkDelegate dispatchEvent:L withListener:library->GetgetGoogleAdidListener() withEventName:EVENT_GET_GOOGLEADID withMessage:googleAdid];
   }
 
   return 0;
 }
 
   int
-PluginLibrary::getAmazonAdId( lua_State *L )
+PluginLibrary::getAmazonAdid( lua_State *L )
 {
   int listenerIndex = 1;
 
@@ -923,7 +923,7 @@ PluginLibrary::getAmazonAdId( lua_State *L )
 
     NSString *amazonAdid = @"";
 
-    [AdjustSdkDelegate dispatchEvent:L withListener:library->GetgetAmazonAdIdListener() withEventName:EVENT_GET_AMAZONADID withMessage:amazonAdid];
+    [AdjustSdkDelegate dispatchEvent:L withListener:library->GetgetAmazonAdidListener() withEventName:EVENT_GET_AMAZONADID withMessage:amazonAdid];
   }
 
   return 0;
