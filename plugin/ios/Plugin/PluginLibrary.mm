@@ -577,7 +577,9 @@ PluginLibrary::trackEvent( lua_State *L )
   lua_pop(L, 1);
 
   //set revenue and currency if any
-  [event setRevenue:revenue currency:currency];
+  if(currency != nil) {
+    [event setRevenue:revenue currency:currency];
+  }
 
   // Transaction ID
   lua_getfield(L, 1, "transactionId");
