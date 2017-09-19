@@ -395,7 +395,7 @@ PluginLibrary::create( lua_State *L )
   lua_getfield(L, 1, "logLevel");
   if(!lua_isnil(L, 2)) {
     const char *logLevel_char = lua_tostring(L, 2);
-    logLevel = [ADJLogger logLevelFromString:[NSString stringWithUTF8String:logLevel_char]];
+    logLevel = [ADJLogger logLevelFromString:[[NSString stringWithUTF8String:logLevel_char] lowercaseString]];
   }
   lua_pop(L, 1);
 
@@ -413,9 +413,9 @@ PluginLibrary::create( lua_State *L )
     const char *environment_char = lua_tostring(L, 2);
     environment = [NSString stringWithUTF8String:environment_char];
 
-    if([[environment uppercaseString] isEqualToString:@"SANDBOX"]) {
+    if([[environment lowercaseString] isEqualToString:@"sandbox"]) {
       environment = ADJEnvironmentSandbox;
-    } else if([[environment uppercaseString] isEqualToString:@"PRODUCTION"]) {
+    } else if([[environment lowercaseString] isEqualToString:@"production"]) {
       environment = ADJEnvironmentProduction;
     }
   }
