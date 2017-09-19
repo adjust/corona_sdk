@@ -426,10 +426,6 @@ PluginLibrary::create( lua_State *L )
     environment:environment
     allowSuppressLogLevel:logLevel == ADJLogLevelSuppress];
 
-  if(![adjustConfig isValid]) {
-    return 0;
-  }
-
   // Log level
   [adjustConfig setLogLevel:logLevel];
 
@@ -547,10 +543,6 @@ PluginLibrary::trackEvent( lua_State *L )
 
   ADJEvent *event = [ADJEvent eventWithEventToken:eventToken];
 
-  if(![event isValid]) {
-    return 0;
-  }
-
   // Revenue
   lua_getfield(L, 1, "revenue");
   if (!lua_isnil(L, 2)) {
@@ -567,9 +559,7 @@ PluginLibrary::trackEvent( lua_State *L )
   lua_pop(L, 1);
 
   //set revenue and currency if any
-  if(currency != nil) {
-    [event setRevenue:revenue currency:currency];
-  }
+  [event setRevenue:revenue currency:currency];
 
   // Transaction ID
   lua_getfield(L, 1, "transactionId");
