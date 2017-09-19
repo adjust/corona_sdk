@@ -314,7 +314,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         L.getField(1, "environment");
         environment = L.checkString(2);
         if (environment != null) {
-            if (environment.toLowerCase().equals("suppress")) {
+            if (environment.toLowerCase().equals("sandbox")) {
                 environment = AdjustConfig.ENVIRONMENT_SANDBOX;
             } else if (environment.toLowerCase().equals("production")) {
                 environment = AdjustConfig.ENVIRONMENT_PRODUCTION;
