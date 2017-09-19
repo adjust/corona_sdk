@@ -325,11 +325,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         final AdjustConfig adjustConfig =
                 new AdjustConfig(CoronaEnvironment.getCoronaActivity(), appToken, environment, isLogLevelSuppress);
 
-        if (!adjustConfig.isValid()) {
-            Log.e(TAG, "adjust_create: AdjustConfig is not valid");
-            return 0;
-        }
-
         // process log level
         if (logLevel != null) {
             if (logLevel.toUpperCase().equals("VERBOSE")) {
@@ -504,11 +499,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         final AdjustEvent event = new AdjustEvent(eventToken);
 
-        if (!event.isValid()) {
-            Log.e(TAG, "adjust_trackEvent: AdjustEvent() not valid");
-            return 0;
-        }
-
         //revenue
         L.getField(1, "revenue");
         if (!L.isNil(2)) {
@@ -524,9 +514,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         L.pop(1);
 
         //set revenue and currency if any
-        if (currency != null) {
-            event.setRevenue(revenue, currency);
-        }
+        event.setRevenue(revenue, currency);
 
         //transaction id
         L.getField(1, "transactionId");
