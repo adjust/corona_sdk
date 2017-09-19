@@ -75,6 +75,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private int getAmazonAdIdListener;
 
     private boolean shouldLaunchDeeplink = true;
+    private Uri uri = null;
 
     /**
      * Creates a new Lua interface to this plugin.
@@ -473,6 +474,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         Adjust.onCreate(adjustConfig);
         Adjust.onResume();
 
+        if(this.uri != null) {
+            Adjust.appWillOpenUrl(uri);
+            this.uri = null;
+        }
+
         return 0;
     }
 
@@ -605,7 +611,12 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
     private int adjust_appWillOpenUrl(LuaState L) {
         final Uri uri = Uri.parse(L.checkString(1));
-        Adjust.appWillOpenUrl(uri);
+        if(Adjust.isEnabled()) {
+            Adjust.appWillOpenUrl(uri);
+            return 0;
+        }
+
+        this.uri = uri;
         return 0;
     }
 

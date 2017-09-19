@@ -7,12 +7,19 @@ local isAdjustEnabled = false -- flag to indicate if Adjust SDK is enabled
 -- ---------------------------------------------------------
 local function onSystemEvent(event)
   if event.type == "applicationOpen" and event.url then
+  print("[*] Lua: event url is (" .. event.url .. ")")
     -- Capture app event opened from deep link
     adjust.appWillOpenUrl(event.url)
   end
 end
 
 Runtime:addEventListener("system", onSystemEvent)
+
+local launchArgs = ...
+if launchArgs and launchArgs.url then
+  print("[*] Lua: launchArgs url is (" .. launchArgs.url .. ")")
+  adjust.appWillOpenUrl(launchArgs.url)
+end
 
 -- Setup listeners
 -- ------------------------
@@ -39,8 +46,6 @@ end
 local function deferredDeeplinkListener(event)
   print("[*] Lua: Received event from deferredDeeplinkListener (" .. event.name .. "): ", event.message )
 end
-
-adjust.isEnabled(function (event) print("[*] Lua: isEnabled (" .. event.message .. ")") end)
 
 adjust.setAttributionListener(attributionListener)
 adjust.setEventTrackingSucceededListener(eventTrackingSucceededListener)
