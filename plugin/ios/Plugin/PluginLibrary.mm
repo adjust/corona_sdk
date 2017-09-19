@@ -49,6 +49,8 @@ class PluginLibrary
     bool InitializeGetGoogleAdidListener( CoronaLuaRef listener );
     bool InitializeGetAmazonAdidListener( CoronaLuaRef listener );
 
+    void setDeeplinkUrl( NSURL* url );
+
   public:
     CoronaLuaRef GetAttributionChangedListener() const { return attributionChangedListener; }
     CoronaLuaRef GetEventTrackingSucceededListener() const { return eventTrackingSucceededListener; }
@@ -63,6 +65,8 @@ class PluginLibrary
     CoronaLuaRef GetgetAdidListener() const { return getAdidListener; }
     CoronaLuaRef GetgetGoogleAdidListener() const { return getGoogleAdidListener; }
     CoronaLuaRef GetgetAmazonAdidListener() const { return getAmazonAdidListener; }
+
+    NSURL* getDeeplinkUrl() const { return deeplinkUrl; }
 
   public:
     static int Open( lua_State *L );
@@ -115,6 +119,7 @@ class PluginLibrary
     CoronaLuaRef getAdidListener;
     CoronaLuaRef getGoogleAdidListener;
     CoronaLuaRef getAmazonAdidListener;
+    NSURL* deeplinkUrl = NULL;
 };
 
 // ----------------------------------------------------------------------------
@@ -134,7 +139,8 @@ PluginLibrary::PluginLibrary()
   getAttributionListener( NULL ),
   getAdidListener( NULL ),
   getGoogleAdidListener( NULL ),
-  getAmazonAdidListener( NULL )
+  getAmazonAdidListener( NULL ),
+  deeplinkUrl(NULL)
 {
 }
 
@@ -305,6 +311,12 @@ PluginLibrary::InitializeGetAmazonAdidListener( CoronaLuaRef listener )
   }
 
   return result;
+}
+
+  void
+PluginLibrary::setDeeplinkUrl( NSURL* url )
+{
+  deeplinkUrl = url;
 }
 
   int
@@ -518,6 +530,12 @@ PluginLibrary::create( lua_State *L )
   [Adjust appDidLaunch:adjustConfig];
   [Adjust trackSubsessionStart];
 
+  NSURL* deeplinkUrl = library->getDeeplinkUrl();
+  if(deeplinkUrl != NULL) {
+    [Adjust appWillOpenUrl:deeplinkUrl];
+    library->setDeeplinkUrl(NULL);
+  }
+
   return 0;
 }
 
@@ -713,7 +731,14 @@ PluginLibrary::appWillOpenUrl( lua_State *L )
 {
   const char *urlStr = lua_tostring(L, 1);
   NSURL *url = [NSURL URLWithString:[NSString stringWithUTF8String:urlStr]];
-  [Adjust appWillOpenUrl:url];
+  BOOL isEnabled = [Adjust isEnabled];
+  if(isEnabled) {
+    [Adjust appWillOpenUrl:url];
+    return 0;
+  }
+
+  Self *library = ToLibrary( L );
+  library->setDeeplinkUrl(url);
   return 0;
 }
 
