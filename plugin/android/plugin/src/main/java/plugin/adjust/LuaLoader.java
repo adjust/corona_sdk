@@ -298,7 +298,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         L.getField(1, "logLevel");
         if (!L.isNil(2)) {
             logLevel = L.checkString(2);
-            if (logLevel.toUpperCase().equals("SUPPRESS")) {
+            if (logLevel.toLowerCase().equals("suppress")) {
                 isLogLevelSuppress = true;
             }
         }
@@ -313,9 +313,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         L.getField(1, "environment");
         environment = L.checkString(2);
         if (environment != null) {
-            if (environment.toUpperCase().equals("SANDBOX")) {
+            if (environment.toLowerCase().equals("suppress")) {
                 environment = AdjustConfig.ENVIRONMENT_SANDBOX;
-            } else if (environment.toUpperCase().equals("PRODUCTION")) {
+            } else if (environment.toLowerCase().equals("production")) {
                 environment = AdjustConfig.ENVIRONMENT_PRODUCTION;
             }
         }
@@ -327,19 +327,19 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         // process log level
         if (logLevel != null) {
-            if (logLevel.toUpperCase().equals("VERBOSE")) {
+            if (logLevel.toLowerCase().equals("verbose")) {
                 adjustConfig.setLogLevel(LogLevel.VERBOSE);
-            } else if (logLevel.toUpperCase().equals("DEBUG")) {
+            } else if (logLevel.toLowerCase().equals("debug")) {
                 adjustConfig.setLogLevel(LogLevel.DEBUG);
-            } else if (logLevel.toUpperCase().equals("INFO")) {
+            } else if (logLevel.toLowerCase().equals("info")) {
                 adjustConfig.setLogLevel(LogLevel.INFO);
-            } else if (logLevel.toUpperCase().equals("WARN")) {
+            } else if (logLevel.toLowerCase().equals("warn")) {
                 adjustConfig.setLogLevel(LogLevel.WARN);
-            } else if (logLevel.toUpperCase().equals("ERROR")) {
+            } else if (logLevel.toLowerCase().equals("error")) {
                 adjustConfig.setLogLevel(LogLevel.ERROR);
-            } else if (logLevel.toUpperCase().equals("ASSERT")) {
+            } else if (logLevel.toLowerCase().equals("assert")) {
                 adjustConfig.setLogLevel(LogLevel.ASSERT);
-            } else if (logLevel.toUpperCase().equals("SUPPRESS")) {
+            } else if (logLevel.toLowerCase().equals("suppress")) {
                 adjustConfig.setLogLevel(LogLevel.SUPRESS);
             } else {
                 adjustConfig.setLogLevel(LogLevel.INFO);
