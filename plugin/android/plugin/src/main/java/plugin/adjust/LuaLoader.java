@@ -30,9 +30,6 @@ import com.naef.jnlua.NamedJavaFunction;
 
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Implements the Lua interface for a Corona plugin.
  * <p>
@@ -66,14 +63,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private int sessionTrackingFailedListener;
     private int deferredDeeplinkListener;
 
-    // Immediate dispatch listeners
-    private int isEnabledListener;
-    private int getIdfaListener;
-    private int getAttributionListener;
-    private int getAdidListener;
-    private int getGoogleAdIdListener;
-    private int getAmazonAdIdListener;
-
     private boolean shouldLaunchDeeplink = true;
     private Uri uri = null;
 
@@ -93,13 +82,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         sessionTrackingSucceededListener = CoronaLua.REFNIL;
         sessionTrackingFailedListener = CoronaLua.REFNIL;
         deferredDeeplinkListener = CoronaLua.REFNIL;
-
-        isEnabledListener = CoronaLua.REFNIL;
-        getIdfaListener = CoronaLua.REFNIL;
-        getAttributionListener = CoronaLua.REFNIL;
-        getAdidListener = CoronaLua.REFNIL;
-        getGoogleAdIdListener = CoronaLua.REFNIL;
-        getAmazonAdIdListener = CoronaLua.REFNIL;
 
         // Set up this plugin to listen for Corona runtime events to be received by methods
         // onLoaded(), onStarted(), onSuspended(), onResumed(), and onExiting().
@@ -231,26 +213,12 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         CoronaLua.deleteRef(runtime.getLuaState(), eventTrackingFailedListener);
         CoronaLua.deleteRef(runtime.getLuaState(), deferredDeeplinkListener);
 
-        CoronaLua.deleteRef(runtime.getLuaState(), isEnabledListener);
-        CoronaLua.deleteRef(runtime.getLuaState(), getIdfaListener);
-        CoronaLua.deleteRef(runtime.getLuaState(), getAttributionListener);
-        CoronaLua.deleteRef(runtime.getLuaState(), getAdidListener);
-        CoronaLua.deleteRef(runtime.getLuaState(), getGoogleAdIdListener);
-        CoronaLua.deleteRef(runtime.getLuaState(), getAmazonAdIdListener);
-
         attributionChangedListener = CoronaLua.REFNIL;
         eventTrackingSucceededListener = CoronaLua.REFNIL;
         eventTrackingFailedListener = CoronaLua.REFNIL;
         sessionTrackingSucceededListener = CoronaLua.REFNIL;
         sessionTrackingFailedListener = CoronaLua.REFNIL;
         deferredDeeplinkListener = CoronaLua.REFNIL;
-
-        isEnabledListener = CoronaLua.REFNIL;
-        getIdfaListener = CoronaLua.REFNIL;
-        getAttributionListener = CoronaLua.REFNIL;
-        getAdidListener = CoronaLua.REFNIL;
-        getGoogleAdIdListener = CoronaLua.REFNIL;
-        getAmazonAdIdListener = CoronaLua.REFNIL;
     }
 
     private void dispatchEvent(final LuaState luaState, final int listener, final String name, final String message) {
@@ -355,13 +323,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
-        //Sdk prefix
-        L.getField(1, "sdkPrefix");
-        if (!L.isNil(2)) {
-            sdkPrefix = L.checkString(2);
-            adjustConfig.setSdkPrefix(sdkPrefix);
-        }
-        L.pop(1);
+        //Sdk prefix - hardcoded
+        adjustConfig.setSdkPrefix("corona4.11.5");
 
         // Main process name
         L.getField(1, "processName");
@@ -474,7 +437,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         Adjust.onCreate(adjustConfig);
         Adjust.onResume();
 
-        if(this.uri != null) {
+        if (this.uri != null) {
             Adjust.appWillOpenUrl(uri);
             this.uri = null;
         }
@@ -595,11 +558,12 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private int adjust_isEnabled(LuaState L) {
         //Hardcoded listener index for ADJUST
         int listenerIndex = 1;
+        int listener = CoronaLua.REFNIL;
 
         //Assign and dispatch event immediately
         if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
-            this.isEnabledListener = CoronaLua.newRef(L, listenerIndex);
-            dispatchEvent(L, this.isEnabledListener, EVENT_IS_ADJUST_ENABLED, String.valueOf(Adjust.isEnabled()));
+            listener = CoronaLua.newRef(L, listenerIndex);
+            dispatchEvent(L, listener, EVENT_IS_ADJUST_ENABLED, Adjust.isEnabled() ? "true" : "false");
         }
 
         return 0;
@@ -613,7 +577,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
     private int adjust_appWillOpenUrl(LuaState L) {
         final Uri uri = Uri.parse(L.checkString(1));
-        if(Adjust.isEnabled()) {
+        if (Adjust.isEnabled()) {
             Adjust.appWillOpenUrl(uri);
             return 0;
         }
@@ -666,11 +630,12 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private int adjust_getIdfa(LuaState L) {
         //Hardcoded listener index for ADJUST
         int listenerIndex = 1;
+        int listener = CoronaLua.REFNIL;
 
         //Assign and dispatch event immediately
         if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
-            this.getIdfaListener = CoronaLua.newRef(L, listenerIndex);
-            dispatchEvent(L, this.getIdfaListener, EVENT_GET_IDFA, "");
+            listener = CoronaLua.newRef(L, listenerIndex);
+            dispatchEvent(L, listener, EVENT_GET_IDFA, "");
         }
 
         return 0;
@@ -679,14 +644,16 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private int adjust_getGoogleAdId(final LuaState L) {
         //Hardcoded listener index for ADJUST
         int listenerIndex = 1;
+        int listener = CoronaLua.REFNIL;
 
         //Assign and dispatch event immediately
         if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
-            this.getGoogleAdIdListener = CoronaLua.newRef(L, listenerIndex);
+            listener = CoronaLua.newRef(L, listenerIndex);
+            final int finalListener = listener;
             Adjust.getGoogleAdId(CoronaEnvironment.getCoronaActivity(), new OnDeviceIdsRead() {
                 @Override
                 public void onGoogleAdIdRead(String googleAdId) {
-                    dispatchEvent(L, LuaLoader.this.getGoogleAdIdListener, EVENT_GET_GOOGLEADID, googleAdId);
+                    dispatchEvent(L, finalListener, EVENT_GET_GOOGLEADID, googleAdId);
                 }
             });
         }
@@ -697,16 +664,17 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private int adjust_getAdid(final LuaState L) {
         //Hardcoded listener index for ADJUST
         int listenerIndex = 1;
+        int listener = CoronaLua.REFNIL;
 
         //Assign and dispatch event immediately
         if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
-            this.getAdidListener = CoronaLua.newRef(L, listenerIndex);
+            listener = CoronaLua.newRef(L, listenerIndex);
             String adid = Adjust.getAdid();
             if (adid == null) {
                 adid = "";
             }
 
-            dispatchEvent(L, this.getAdidListener, EVENT_GET_ADID, adid);
+            dispatchEvent(L, listener, EVENT_GET_ADID, adid);
         }
 
         return 0;
@@ -715,11 +683,12 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private int adjust_getAmazonAdId(final LuaState L) {
         //Hardcoded listener index for ADJUST
         int listenerIndex = 1;
+        int listener = CoronaLua.REFNIL;
 
         //Assign and dispatch event immediately
         if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
-            this.getAmazonAdIdListener = CoronaLua.newRef(L, listenerIndex);
-            dispatchEvent(L, this.getAmazonAdIdListener, EVENT_GET_AMAZONADID, "");
+            listener = CoronaLua.newRef(L, listenerIndex);
+            dispatchEvent(L, listener, EVENT_GET_AMAZONADID, "");
         }
 
         return 0;
@@ -728,12 +697,13 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private int adjust_getAttribution(LuaState L) {
         //Hardcoded listener index for ADJUST
         int listenerIndex = 1;
+        int listener = CoronaLua.REFNIL;
 
         //Assign and dispatch event immediately
         if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
-            this.getAttributionListener = CoronaLua.newRef(L, listenerIndex);
+            listener = CoronaLua.newRef(L, listenerIndex);
             AdjustAttribution attribution = Adjust.getAttribution();
-            dispatchEvent(L, this.getAttributionListener, EVENT_GET_ATTRIBUTION, new JSONObject(LuaUtil.attributionToMap(attribution)).toString());
+            dispatchEvent(L, listener, EVENT_GET_ATTRIBUTION, new JSONObject(LuaUtil.attributionToMap(attribution)).toString());
         }
 
         return 0;
