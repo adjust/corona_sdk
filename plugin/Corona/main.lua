@@ -127,7 +127,7 @@ local function handleTrackCallbackEvent(event)
   if("ended" == event.phase) then
     adjust.trackEvent({
       eventToken = "g3mfiw",
-      callbackParameters = { 
+      callbackParameters = {
         {
           key = "bunny1",
           value = "foofoo1",
@@ -156,7 +156,7 @@ local function handleTrackPartnerEvent(event)
   if("ended" == event.phase) then
     adjust.trackEvent({
       eventToken = "g3mfiw",
-      partnerParameters = { 
+      partnerParameters = {
         {
           key = "bunny1",
           value = "foofoo1",
