@@ -65,6 +65,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
     private boolean shouldLaunchDeeplink = true;
     private Uri uri = null;
+    private boolean didStartAdjustSdk = false;
 
     /**
      * Creates a new Lua interface to this plugin.
@@ -436,6 +437,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         Adjust.onCreate(adjustConfig);
         Adjust.onResume();
+        didStartAdjustSdk = true;
 
         if (this.uri != null) {
             Adjust.appWillOpenUrl(uri);
@@ -577,7 +579,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
     private int adjust_appWillOpenUrl(LuaState L) {
         final Uri uri = Uri.parse(L.checkString(1));
-        if (Adjust.isEnabled()) {
+        if (didStartAdjustSdk) {
             Adjust.appWillOpenUrl(uri);
             return 0;
         }
