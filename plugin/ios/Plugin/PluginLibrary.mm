@@ -54,8 +54,8 @@ class PluginLibrary
         CoronaLuaRef GetDeferredDeeplinkListener() const { return deferredDeeplinkListener; }
 
         NSURL* getDeeplinkUrl() const { return deeplinkUrl; }
-    
-    BOOL getDidStartAdjustSdk() const { return didStartAdjustSdk; }
+
+        BOOL getDidStartAdjustSdk() const { return didStartAdjustSdk; }
 
     public:
         static int Open( lua_State *L );
@@ -625,7 +625,7 @@ PluginLibrary::appWillOpenUrl( lua_State *L )
 {
     const char *urlStr = lua_tostring(L, 1);
     NSURL *url = [NSURL URLWithString:[NSString stringWithUTF8String:urlStr]];
-    
+
     Self *library = ToLibrary( L );
     BOOL isEnabled = library->getDidStartAdjustSdk();
     if(isEnabled) {
