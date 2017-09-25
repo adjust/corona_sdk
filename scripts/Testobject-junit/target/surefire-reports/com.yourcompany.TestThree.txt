@@ -1,0 +1,30 @@
+-------------------------------------------------------------------------------
+Test set: com.yourcompany.TestThree
+-------------------------------------------------------------------------------
+Tests run: 3, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 339.789 sec <<< FAILURE!
+testMethod[Samsung_Galaxy_Note_N7000_real](com.yourcompany.TestThree)  Time elapsed: 0 sec  <<< ERROR!
+java.lang.IllegalStateException: appium driver must be set using setRemoteWebDriver method
+	at org.testobject.appium.junit.TestObjectTestResultWatcher.reportPassed(TestObjectTestResultWatcher.java:79)
+	at org.testobject.appium.junit.TestObjectTestResultWatcher.failed(TestObjectTestResultWatcher.java:58)
+	at org.junit.rules.TestWatcher.failedQuietly(TestWatcher.java:84)
+	at org.junit.rules.TestWatcher.access$300(TestWatcher.java:46)
+	at org.junit.rules.TestWatcher$1.evaluate(TestWatcher.java:62)
+	at org.junit.rules.RunRules.evaluate(RunRules.java:20)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:271)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:70)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:50)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:238)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:63)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:236)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:53)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:229)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:309)
+	at org.junit.runners.Suite.runChild(Suite.java:127)
+	at org.junit.runners.Suite.runChild(Suite.java:26)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:238)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:748)
+

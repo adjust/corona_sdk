@@ -1,0 +1,54 @@
+#!/bin/bash
+
+#set -e
+
+USERNAME=uerceg
+API_KEY=D700B87EB6474CC59C211A47F32AA252
+TEST_SUITE_ID_ONE=7
+TEST_SUITE_ID_TWO=8
+UPLOAD_APK_ENDPOINT=https://app.testobject.com:443/api/storage/upload
+UPDATE_APK_ENDPOINT=https://app.testobject.com/api/rest/v2/appium/suites
+
+# Get the current directory (/scripts/ directory)
+ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# Traverse up to get to the root directory
+ROOT_DIR="$(dirname "$ROOT_DIR")"
+
+SCRIPTS_DIR=scripts
+JUNIT_PROJECT_DIR=Testobject-junit
+
+function upload {
+    echo '[*] Uploading...'
+    cd ${ROOT_DIR}/${SCRIPTS_DIR}
+
+    UPDATED_APP_VERSION_ID=$(curl -u "${USERNAME}:${API_KEY}" -X POST ${UPLOAD_APK_ENDPOINT} -H "Content-Type: application/octet-stream" --data-binary @app.apk)
+    echo '[*] Upload complete'
+}
+
+function runTestScript {
+    echo '[*] runTestScript(): ENTER'
+    cd ${ROOT_DIR}/${SCRIPTS_DIR}/${JUNIT_PROJECT_DIR}
+
+    echo "[*] Updating app to version ${UPDATED_APP_VERSION_ID}"
+    curl -u "${API_KEY}:" -X PUT --header 'Content-Type: application/json' --header 'Accept: application/json' -d "{\"appVersionId\": ${UPDATED_APP_VERSION_ID}}" "${UPDATE_APK_ENDPOINT}/${TEST_SUITE_ID_ONE}"
+    echo '[*] Update complete'
+
+    echo '[*] runTestScript(): Running test one'
+    mvn -Dtest=TestOne test
+
+    #echo "[*] Updating app to version ${UPDATED_APP_VERSION_ID}"
+    #curl -u "${API_KEY}:" -X PUT --header 'Content-Type: application/json' --header 'Accept: application/json' -d "{\"appVersionId\": ${UPDATED_APP_VERSION_ID}}" "${UPDATE_APK_ENDPOINT}/${TEST_SUITE_ID_TWO}"
+    #echo '[*] Update complete'
+
+    #echo '[*] runTestScript(): Running test two'
+    #mvn -Dtest=TestTwo test
+
+
+    echo '[*] runTestScript(): EXIT'
+}
+
+## Entry point
+cd $(dirname $0) 
+./makeproject
+upload
+runTestScript

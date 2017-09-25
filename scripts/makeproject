@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Get the current directory (/scripts/ directory)
+ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# Traverse up to get to the root directory
+ROOT_DIR="$(dirname "$ROOT_DIR")"
+
+PROJECT_DIR=example_ci/android
+SCRIPTS_DIR=scripts
+APP_DIR=app
+
+RED='\033[0;31m' # Red color
+GREEN='\033[0;32m' # Green color
+NC='\033[0m' # No Color
+
+echo -e "[*makeproject] START ${NC}"
+
+echo -e "[*makeproject] Removing old APK ${NC}"
+cd ${ROOT_DIR}
+rm -vf app.apk
+
+echo -e "[*makeproject] making plugin.adjust.jar ${NC}"
+cd ${ROOT_DIR}
+scripts/makeCoronaPluginJar.sh
+
+echo -e "[*makeproject] copy plugin.adjust.jar to example_ci project ${NC}"
+cd ${ROOT_DIR}
+cp plugin.adjust.jar ${ROOT_DIR}/${PROJECT_DIR}/${APP_DIR}/libs
+
+echo -e "[*makeproject] Building project ${NC}"
+cd ${ROOT_DIR}/${PROJECT_DIR}
+./gradlew clean :app:assemble
+
+echo -e "[*makeproject] Building project ${NC}"
+cd ${ROOT_DIR}/${PROJECT_DIR}/${APP_DIR}
+cp -v build/outputs/apk/testapp-debug.apk ${ROOT_DIR}/${SCRIPTS_DIR}/app.apk
+
+
+echo -e "[*makeproject] END ${NC}"

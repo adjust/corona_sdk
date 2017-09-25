@@ -1,0 +1,7 @@
+#surefire_0
+#Mon Sep 25 12:21:01 CEST 2017
+java.util.logging.config.file=src/test/resources/logging.properties
+test=TestOne
+basedir=/Users/ab/Dev/android_sdk/scripts/Testobject-junit
+user.dir=/Users/ab/Dev/android_sdk/scripts/Testobject-junit
+localRepository=/Users/ab/.m2/repository
