@@ -1,48 +1,48 @@
 //
 //  AdjustSdkDelegate.h
-//  Adjust
+//  Adjust SDK
 //
-//  Created by Abdullah on 2016-11-17
-//  Copyright (c) 2012-2016 adjust GmbH. All rights reserved.
+//  Created by Abdullah Obaied on 17th November 2016.
+//  Copyright (c) 2017 adjust GmbH. All rights reserved.
 //
 
 #import "Adjust.h"
-
 #include <CoronaLua.h>
 
 #define EVENT_ATTRIBUTION_CHANGED @"adjust_attributionChanged"
-#define EVENT_EVENT_TRACKING_SUCCEEDED @"adjust_eventTrackingSucceeded"
-#define EVENT_EVENT_TRACKING_FAILED @"adjust_eventTrackingFailed"
-#define EVENT_SESSION_TRACKING_SUCCEEDED @"adjust_sessionTrackingSucceeded"
-#define EVENT_SESSION_TRACKING_FAILED @"adjust_sessionTrackingFailed"
+#define EVENT_EVENT_TRACKING_SUCCESS @"adjust_eventTrackingSuccess"
+#define EVENT_EVENT_TRACKING_FAILURE @"adjust_eventTrackingFailure"
+#define EVENT_SESSION_TRACKING_SUCCESS @"adjust_sessionTrackingSuccess"
+#define EVENT_SESSION_TRACKING_FAILURE @"adjust_sessionTrackingFailure"
 #define EVENT_DEFERRED_DEEPLINK @"adjust_deferredDeeplink"
 
 @interface AdjustSdkDelegate : NSObject<AdjustDelegate>
 
-@property (nonatomic) CoronaLuaRef attributionChangedListener;
-@property (nonatomic) CoronaLuaRef eventTrackingSucceededListener;
-@property (nonatomic) CoronaLuaRef eventTrackingFailedListener;
-@property (nonatomic) CoronaLuaRef sessionTrackingSucceededListener;
-@property (nonatomic) CoronaLuaRef sessionTrackingFailedListener;
-@property (nonatomic) CoronaLuaRef deferredDeeplinkListener;
-@property (nonatomic) BOOL shouldLaunchDeferredDeeplink;
 @property (nonatomic) lua_State *luaState;
+@property (nonatomic) CoronaLuaRef attributionChangedCallback;
+@property (nonatomic) CoronaLuaRef eventTrackingSuccessCallback;
+@property (nonatomic) CoronaLuaRef eventTrackingFailureCallback;
+@property (nonatomic) CoronaLuaRef sessionTrackingSuccessCallback;
+@property (nonatomic) CoronaLuaRef sessionTrackingFailureCallback;
+@property (nonatomic) CoronaLuaRef deferredDeeplinkCallback;
+@property (nonatomic) BOOL shouldLaunchDeferredDeeplink;
 
-+ (id)getInstanceWithSwizzleOfAttributionChangedListener:(CoronaLuaRef)attributionChangedListener
-						   eventTrackingSucceededListener:(CoronaLuaRef)eventTrackingSucceededListener
-							  eventTrackingFailedListener:(CoronaLuaRef)eventTrackingFailedListener
-						 sessionTrackingSucceededListener:(CoronaLuaRef)sessionTrackingSucceededListener
-						    sessionTrackingFailedListener:(CoronaLuaRef)sessionTrackingFailedListener
-					     deferredDeeplinkListener:(CoronaLuaRef)deferredDeeplinkListener
-                     shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink
-                                       withLuaState:(lua_State *)luaState;
++ (id)getInstanceWithSwizzleOfAttributionChangedCallback:(CoronaLuaRef)attributionCallback
+                            eventTrackingSuccessCallback:(CoronaLuaRef)eventTrackingSuccessCallback
+                            eventTrackingFailureCallback:(CoronaLuaRef)eventTrackingFailureCallback
+                          sessionTrackingSuccessCallback:(CoronaLuaRef)sessionTrackingSuccessCallback
+                          sessionTrackingFailureCallback:(CoronaLuaRef)sessionTrackingFailureCallback
+                                deferredDeeplinkCallback:(CoronaLuaRef)deferredDeeplinkCallback
+                            shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink
+                                             andLuaState:(lua_State *)luaState;
 
 + (void)dispatchEvent:(lua_State *)luaState
          withListener:(CoronaLuaRef)listener
-        withEventName:(NSString*)eventName
-          withMessage:(NSString*)message;
+            eventName:(NSString *)eventName
+           andMessage:(NSString *)message;
 
-+ (void)addValueOrEmpty:(NSMutableDictionary *)dictionary
-                    key:(NSString *)key
-                  value:(NSObject *)value;
++ (void)addKey:(NSString *)key
+      andValue:(NSObject *)value
+  toDictionary:(NSMutableDictionary *)dictionary;
+
 @end

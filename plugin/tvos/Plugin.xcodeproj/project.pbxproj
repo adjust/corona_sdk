@@ -26,6 +26,7 @@
 		A49EC1991BD779C10093F529 /* PluginLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = A49EC1971BD779C10093F529 /* PluginLibrary.h */; };
 		A49EC19A1BD779C10093F529 /* PluginLibrary.mm in Sources */ = {isa = PBXBuildFile; fileRef = A49EC1981BD779C10093F529 /* PluginLibrary.mm */; };
 		F5815AC81EE5D7320027695F /* CoronaCards.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5815AC71EE5D7320027695F /* CoronaCards.framework */; };
+		F59D379C1F60896000400426 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F59D379B1F60895A00400426 /* UIKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -60,6 +61,7 @@
 		A49EC1981BD779C10093F529 /* PluginLibrary.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PluginLibrary.mm; path = Plugin/PluginLibrary.mm; sourceTree = "<group>"; };
 		F5815ABF1EE5CC7B0027695F /* CoronaNative.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CoronaNative.xcconfig; sourceTree = "<group>"; };
 		F5815AC71EE5D7320027695F /* CoronaCards.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CoronaCards.framework; sourceTree = "<group>"; };
+		F59D379B1F60895A00400426 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F59D379C1F60896000400426 /* UIKit.framework in Frameworks */,
 				F5815AC81EE5D7320027695F /* CoronaCards.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -91,6 +94,7 @@
 				A40A8FBE1BD96ED5001D2038 /* Plugin */,
 				F5815ABE1EE5CC680027695F /* CoronaNative */,
 				A49EC1871BD779560093F529 /* Products */,
+				F59D379A1F60895A00400426 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -117,8 +121,16 @@
 				F5815AC71EE5D7320027695F /* CoronaCards.framework */,
 			);
 			name = Frameworks;
-			path = "~/Library/Application Support/Corona/Native/Native/Corona/tvos/frameworks";
+			path = "~/Library/Application Support/Corona/Native/Corona/tvos/frameworks";
 			sourceTree = "<absolute>";
+		};
+		F59D379A1F60895A00400426 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F59D379B1F60895A00400426 /* UIKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 

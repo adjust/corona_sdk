@@ -9,8 +9,8 @@ def coronaNativeDir = System.getProperty("user.home") + "/Library/Application Su
 
 // Check to see if Corona Native has been properly setup
 def coronaNativeDirObj = new File(coronaNativeDir)
-if (!coronaNativeDirObj.exists()) {
-    throw new GradleException("error: Corona Native has not been setup.  Run 'Native/SetupCoronaNative.app' in your Corona install to set it up")
+if( ! coronaNativeDirObj.exists() ) {
+  throw new GradleException("error: Corona Native has not been setup.  Run 'Native/SetupCoronaNative.app' in your Corona install to set it up")
 }
 
 def assetsDir = "$projectDir/src/main/assets"
@@ -129,5 +129,6 @@ dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile project(':plugin')
-    compile 'com.google.android.gms:play-services-basement:11.0.4'
+    compile 'com.android.installreferrer:installreferrer:1.0'
+    compile 'com.google.android.gms:play-services-analytics:11.8.0'
 }
