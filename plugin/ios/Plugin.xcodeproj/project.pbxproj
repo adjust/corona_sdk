@@ -39,7 +39,7 @@
 		9D0D46AF1FE305E300287CAD /* AdjustSdkDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AdjustSdkDelegate.m; path = Plugin/AdjustSdkDelegate.m; sourceTree = "<group>"; };
 		9D0D46B01FE305E300287CAD /* AdjustSdkDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AdjustSdkDelegate.h; path = Plugin/AdjustSdkDelegate.h; sourceTree = "<group>"; };
 		9D0D46BA1FE4254700287CAD /* AdjustSdk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = AdjustSdk.a; path = Plugin/AdjustSdk.a; sourceTree = "<group>"; };
-		A4E253B6166D6FB300DCDC2C /* libadjust_plugin.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libadjust_plugin.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A4E253B6166D6FB300DCDC2C /* libplugin_adjust.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libplugin_adjust.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F572F81A1EE0705B001BC814 /* CoronaNative.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CoronaNative.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -104,7 +104,7 @@
 		A484111A15114F700074BD57 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A4E253B6166D6FB300DCDC2C /* libadjust_plugin.a */,
+				A4E253B6166D6FB300DCDC2C /* libplugin_adjust.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -120,9 +120,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A4E253B5166D6FB300DCDC2C /* adjust_plugin */ = {
+		A4E253B5166D6FB300DCDC2C /* plugin_adjust */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A4E253BF166D6FB300DCDC2C /* Build configuration list for PBXNativeTarget "adjust_plugin" */;
+			buildConfigurationList = A4E253BF166D6FB300DCDC2C /* Build configuration list for PBXNativeTarget "plugin_adjust" */;
 			buildPhases = (
 				C2E70B581EE9F110006E4570 /* Corona Native */,
 				A4E253B2166D6FB300DCDC2C /* Sources */,
@@ -133,9 +133,9 @@
 			);
 			dependencies = (
 			);
-			name = adjust_plugin;
+			name = plugin_adjust;
 			productName = plugin_library;
-			productReference = A4E253B6166D6FB300DCDC2C /* libadjust_plugin.a */;
+			productReference = A4E253B6166D6FB300DCDC2C /* libplugin_adjust.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -158,7 +158,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A4E253B5166D6FB300DCDC2C /* adjust_plugin */,
+				A4E253B5166D6FB300DCDC2C /* plugin_adjust */,
 			);
 		};
 /* End PBXProject section */
@@ -337,7 +337,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A4E253BF166D6FB300DCDC2C /* Build configuration list for PBXNativeTarget "adjust_plugin" */ = {
+		A4E253BF166D6FB300DCDC2C /* Build configuration list for PBXNativeTarget "plugin_adjust" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A4E253C0166D6FB300DCDC2C /* Debug */,
