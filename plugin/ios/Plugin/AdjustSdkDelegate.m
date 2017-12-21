@@ -117,7 +117,7 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
         NSLog(@"Error while trying to convert attribution dictionary to JSON string: %@", error);
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        [AdjustSdkDelegate dispatchEvent:_luaState withListener:_sessionTrackingSuccessCallback eventName:EVENT_ATTRIBUTION_CHANGED andMessage:jsonString];
+        [AdjustSdkDelegate dispatchEvent:_luaState withListener:_attributionChangedCallback eventName:EVENT_ATTRIBUTION_CHANGED andMessage:jsonString];
     }
 }
 
@@ -166,7 +166,7 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
         NSLog(@"Error while trying to convert session failure dictionary to JSON string: %@", error);
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        [AdjustSdkDelegate dispatchEvent:_luaState withListener:_sessionTrackingSuccessCallback eventName:EVENT_SESSION_TRACKING_FAILURE andMessage:jsonString];
+        [AdjustSdkDelegate dispatchEvent:_luaState withListener:_sessionTrackingFailureCallback eventName:EVENT_SESSION_TRACKING_FAILURE andMessage:jsonString];
     }
 }
 
@@ -191,7 +191,7 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
         NSLog(@"Error while trying to convert event success dictionary to JSON string: %@", error);
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        [AdjustSdkDelegate dispatchEvent:_luaState withListener:_sessionTrackingSuccessCallback eventName:EVENT_EVENT_TRACKING_SUCCESS andMessage:jsonString];
+        [AdjustSdkDelegate dispatchEvent:_luaState withListener:_eventTrackingSuccessCallback eventName:EVENT_EVENT_TRACKING_SUCCESS andMessage:jsonString];
     }
 }
 
@@ -217,7 +217,7 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
         NSLog(@"Error while trying to convert event failure dictionary to JSON string: %@", error);
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        [AdjustSdkDelegate dispatchEvent:_luaState withListener:_sessionTrackingSuccessCallback eventName:EVENT_EVENT_TRACKING_FAILURE andMessage:jsonString];
+        [AdjustSdkDelegate dispatchEvent:_luaState withListener:_eventTrackingFailureCallback eventName:EVENT_EVENT_TRACKING_FAILURE andMessage:jsonString];
     }
 }
 
