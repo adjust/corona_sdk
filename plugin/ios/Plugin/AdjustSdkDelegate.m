@@ -108,8 +108,66 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
     [AdjustSdkDelegate addKey:KEY_CLICK_LABEL andValue:attribution.clickLabel toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_ADID andValue:attribution.adid toDictionary:dictionary];
 
-    NSString *strDict = [NSString stringWithFormat:@"%@", dictionary];
-    [AdjustSdkDelegate dispatchEvent:_luaState withListener:_attributionChangedCallback eventName:EVENT_ATTRIBUTION_CHANGED andMessage:strDict];
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
+                                                       options:NSJSONWritingPrettyPrinted
+                                                         error:&error];
+
+    if (!jsonData) {
+        NSLog(@"Error while trying to convert attribution dictionary to JSON string: %@", error);
+    } else {
+        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        [AdjustSdkDelegate dispatchEvent:_luaState withListener:_sessionTrackingSuccessCallback eventName:EVENT_ATTRIBUTION_CHANGED andMessage:jsonString];
+    }
+}
+
+- (void)adjustSessionTrackingSucceededWannabe:(ADJSessionSuccess *)sessionSuccessResponseData {
+    if (nil == sessionSuccessResponseData) {
+        return;
+    }
+
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    [AdjustSdkDelegate addKey:KEY_MESSAGE andValue:sessionSuccessResponseData.message toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:sessionSuccessResponseData.timeStamp toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:KEY_ADID andValue:sessionSuccessResponseData.adid toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:KEY_JSON_RESPONSE andValue:sessionSuccessResponseData.jsonResponse toDictionary:dictionary];
+
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
+                                                       options:NSJSONWritingPrettyPrinted
+                                                         error:&error];
+
+    if (!jsonData) {
+        NSLog(@"Error while trying to convert session success dictionary to JSON string: %@", error);
+    } else {
+        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        [AdjustSdkDelegate dispatchEvent:_luaState withListener:_sessionTrackingSuccessCallback eventName:EVENT_SESSION_TRACKING_SUCCESS andMessage:jsonString];
+    }
+}
+
+- (void)adjustSessionTrackingFailedWananbe:(ADJSessionFailure *)sessionFailureResponseData {
+    if (nil == sessionFailureResponseData) {
+        return;
+    }
+
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    [AdjustSdkDelegate addKey:KEY_MESSAGE andValue:sessionFailureResponseData.message toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:sessionFailureResponseData.timeStamp toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:KEY_ADID andValue:sessionFailureResponseData.adid toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:KEY_WILL_RETRY andValue:(sessionFailureResponseData.willRetry ? @"true" : @"false") toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:KEY_JSON_RESPONSE andValue:sessionFailureResponseData.jsonResponse toDictionary:dictionary];
+
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
+                                                       options:NSJSONWritingPrettyPrinted
+                                                         error:&error];
+
+    if (!jsonData) {
+        NSLog(@"Error while trying to convert session failure dictionary to JSON string: %@", error);
+    } else {
+        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        [AdjustSdkDelegate dispatchEvent:_luaState withListener:_sessionTrackingSuccessCallback eventName:EVENT_SESSION_TRACKING_FAILURE andMessage:jsonString];
+    }
 }
 
 - (void)adjustEventTrackingSucceededWannabe:(ADJEventSuccess *)eventSuccessResponseData {
@@ -124,8 +182,17 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
     [AdjustSdkDelegate addKey:KEY_EVENT_TOKEN andValue:eventSuccessResponseData.eventToken toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_JSON_RESPONSE andValue:eventSuccessResponseData.jsonResponse toDictionary:dictionary];
 
-    NSString *strDict = [NSString stringWithFormat:@"%@", dictionary];
-    [AdjustSdkDelegate dispatchEvent:_luaState withListener:_eventTrackingSuccessCallback eventName:EVENT_EVENT_TRACKING_SUCCESS andMessage:strDict];
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
+                                                       options:NSJSONWritingPrettyPrinted
+                                                         error:&error];
+
+    if (!jsonData) {
+        NSLog(@"Error while trying to convert event success dictionary to JSON string: %@", error);
+    } else {
+        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        [AdjustSdkDelegate dispatchEvent:_luaState withListener:_sessionTrackingSuccessCallback eventName:EVENT_EVENT_TRACKING_SUCCESS andMessage:jsonString];
+    }
 }
 
 - (void)adjustEventTrackingFailedWannabe:(ADJEventFailure *)eventFailureResponseData {
@@ -141,40 +208,17 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
     [AdjustSdkDelegate addKey:KEY_WILL_RETRY andValue:(eventFailureResponseData.willRetry ? @"true" : @"false") toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_JSON_RESPONSE andValue:eventFailureResponseData.jsonResponse toDictionary:dictionary];
 
-    NSString *strDict = [NSString stringWithFormat:@"%@", dictionary];
-    [AdjustSdkDelegate dispatchEvent:_luaState withListener:_eventTrackingFailureCallback eventName:EVENT_EVENT_TRACKING_FAILURE andMessage:strDict];
-}
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
+                                                       options:NSJSONWritingPrettyPrinted
+                                                         error:&error];
 
-
-- (void)adjustSessionTrackingSucceededWannabe:(ADJSessionSuccess *)sessionSuccessResponseData {
-    if (nil == sessionSuccessResponseData) {
-        return;
+    if (!jsonData) {
+        NSLog(@"Error while trying to convert event failure dictionary to JSON string: %@", error);
+    } else {
+        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        [AdjustSdkDelegate dispatchEvent:_luaState withListener:_sessionTrackingSuccessCallback eventName:EVENT_EVENT_TRACKING_FAILURE andMessage:jsonString];
     }
-
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-    [AdjustSdkDelegate addKey:KEY_MESSAGE andValue:sessionSuccessResponseData.message toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:sessionSuccessResponseData.timeStamp toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_ADID andValue:sessionSuccessResponseData.adid toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_JSON_RESPONSE andValue:sessionSuccessResponseData.jsonResponse toDictionary:dictionary];
-
-    NSString *strDict = [NSString stringWithFormat:@"%@", dictionary];
-    [AdjustSdkDelegate dispatchEvent:_luaState withListener:_sessionTrackingSuccessCallback eventName:EVENT_SESSION_TRACKING_SUCCESS andMessage:strDict];
-}
-
-- (void)adjustSessionTrackingFailedWananbe:(ADJSessionFailure *)sessionFailureResponseData {
-    if (nil == sessionFailureResponseData) {
-        return;
-    }
-
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-    [AdjustSdkDelegate addKey:KEY_MESSAGE andValue:sessionFailureResponseData.message toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:sessionFailureResponseData.timeStamp toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_ADID andValue:sessionFailureResponseData.adid toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_WILL_RETRY andValue:(sessionFailureResponseData.willRetry ? @"true" : @"false") toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_JSON_RESPONSE andValue:sessionFailureResponseData.jsonResponse toDictionary:dictionary];
-    
-    NSString *strDict = [NSString stringWithFormat:@"%@", dictionary];
-    [AdjustSdkDelegate dispatchEvent:_luaState withListener:_sessionTrackingFailureCallback eventName:EVENT_SESSION_TRACKING_FAILURE andMessage:strDict];
 }
 
 - (BOOL)adjustDeeplinkResponseWannabe:(NSURL *)deeplink {
