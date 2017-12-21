@@ -1,5 +1,6 @@
 local adjust = require "plugin.adjust"
-local widget = require("widget")
+local widget = require "widget"
+local json = require "json"
 
 local isAdjustEnabled = false -- flag to indicate if Adjust SDK is enabled
 
@@ -24,23 +25,55 @@ end
 -- Setup listeners
 -- ------------------------
 local function attributionListener(event)
-    print("[*] Lua: Received event from Attribution listener (" .. event.name .. "): ", event.message)
+    local json_attribution = json.decode(event.message)
+    print("[*] Lua: Attribution changed!")
+    print("[*] Lua: Tracker token: " .. json_attribution.trackerToken)
+    print("[*] Lua: Tracker name: " .. json_attribution.trackerName)
+    print("[*] Lua: Campaign: " .. json_attribution.campaign)
+    print("[*] Lua: Network: " .. json_attribution.network)
+    print("[*] Lua: Creative: " .. json_attribution.creative)
+    print("[*] Lua: Adgroup: " .. json_attribution.adgroup)
+    print("[*] Lua: ADID: " .. json_attribution.adid)
 end
 
 local function sessionTrackingSuccessListener(event)
-    print("[*] Lua: Received event from sessionTrackingSuccessListener (" .. event.name .. "): ", event.message)
+    local json_session_success = json.decode(event.message)
+    print("[*] Lua: Session tracking success!")
+    print("[*] Lua: Message: " .. json_session_success.message)
+    print("[*] Lua: Timestamp: " .. json_session_success.timestamp)
+    print("[*] Lua: Adid: " .. json_session_success.adid)
+    print("[*] Lua: JSON Response: " .. json_session_success.jsonResponse)
 end
 
 local function sessionTrackingFailureListener(event)
-    print("[*] Lua: Received event from sessionTrackingFailureListener (" .. event.name .. "): ", event.message)
+    local json_session_failure = json.decode(event.message)
+    print("[*] Lua: Session tracking failure!")
+    print("[*] Lua: Message: " .. json_session_failure.message)
+    print("[*] Lua: Timestamp: " .. json_session_failure.timestamp)
+    print("[*] Lua: Adid: " .. json_session_failure.adid)
+    print("[*] Lua: Will Retry: " .. json_session_failure.adid)
+    print("[*] Lua: JSON Response: " .. json_session_failure.jsonResponse)
 end
 
 local function eventTrackingSuccessListener(event)
-    print("[*] Lua: Received event from eventTrackingSuccessListener (" .. event.name .. "): ", event.message)
+    local json_event_success = json.decode(event.message)
+    print("[*] Lua: Event tracking success!")
+    print("[*] Lua: Event Token: " .. json_event_success.eventToken)
+    print("[*] Lua: Message: " .. json_event_success.message)
+    print("[*] Lua: Timestamp: " .. json_event_success.timestamp)
+    print("[*] Lua: Adid: " .. json_event_success.adid)
+    print("[*] Lua: JSON Response: " .. json_event_success.jsonResponse)
 end
 
 local function eventTrackingFailureListener(event)
-    print("[*] Lua: Received event from eventTrackingFailureListener (" .. event.name .. "): ", event.message)
+    local json_event_failure = json.decode(event.message)
+    print("[*] Lua: Event tracking failure!")
+    print("[*] Lua: Event Token: " .. json_event_failure.eventToken)
+    print("[*] Lua: Message: " .. json_event_failure.message)
+    print("[*] Lua: Timestamp: " .. json_event_failure.timestamp)
+    print("[*] Lua: Adid: " .. json_event_failure.adid)
+    print("[*] Lua: Will Retry: " .. json_event_failure.willRetry)
+    print("[*] Lua: JSON Response: " .. json_event_failure.jsonResponse)
 end
 
 local function deferredDeeplinkListener(event)
