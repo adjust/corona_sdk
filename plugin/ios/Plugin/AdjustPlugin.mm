@@ -41,8 +41,6 @@ public:
     bool InitializeSessionTrackingSuccessListener( CoronaLuaRef listener );
     bool InitializeSessionTrackingFailureListener( CoronaLuaRef listener );
     bool InitializeDeferredDeeplinkListener( CoronaLuaRef listener );
-    void setDeeplinkUrl( NSURL* url );
-    void setStartAdjustSdk() { didStartAdjustSdk = YES; }
 
 public:
     CoronaLuaRef GetAttributionChangedListener() const { return attributionChangedListener; }
@@ -51,8 +49,6 @@ public:
     CoronaLuaRef GetSessionTrackingSuccessListener() const { return sessionTrackingSuccessListener; }
     CoronaLuaRef GetSessionTrackingFailureListener() const { return sessionTrackingFailureListener; }
     CoronaLuaRef GetDeferredDeeplinkListener() const { return deferredDeeplinkListener; }
-    NSURL* getDeeplinkUrl() const { return deeplinkUrl; }
-    BOOL getDidStartAdjustSdk() const { return didStartAdjustSdk; }
 
 public:
     static int Open( lua_State *L );
@@ -98,9 +94,6 @@ private:
     CoronaLuaRef sessionTrackingSuccessListener;
     CoronaLuaRef sessionTrackingFailureListener;
     CoronaLuaRef deferredDeeplinkListener;
-
-    NSURL *deeplinkUrl = NULL;
-    BOOL didStartAdjustSdk = NO;
 };
 
 // ----------------------------------------------------------------------------
@@ -115,8 +108,7 @@ eventTrackingSuccessListener( NULL ),
 eventTrackingFailureListener( NULL ),
 sessionTrackingSuccessListener( NULL ),
 sessionTrackingFailureListener( NULL ),
-deferredDeeplinkListener( NULL ),
-deeplinkUrl( NULL )
+deferredDeeplinkListener( NULL )
 {
 }
 
@@ -202,12 +194,6 @@ AdjustPlugin::InitializeDeferredDeeplinkListener( CoronaLuaRef listener )
     }
 
     return result;
-}
-
-void
-AdjustPlugin::setDeeplinkUrl( NSURL *url )
-{
-    deeplinkUrl = url;
 }
 
 int
@@ -464,15 +450,6 @@ AdjustPlugin::create( lua_State *L )
     [Adjust appDidLaunch:adjustConfig];
     [Adjust trackSubsessionStart];
 
-    // TODO: Why do we need this?
-    library->setStartAdjustSdk();
-
-    NSURL *deeplinkUrl = library->getDeeplinkUrl();
-    if (deeplinkUrl != NULL) {
-        [Adjust appWillOpenUrl:deeplinkUrl];
-        library->setDeeplinkUrl(NULL);
-    }
-
     return 0;
 }
 
@@ -672,16 +649,7 @@ AdjustPlugin::appWillOpenUrl( lua_State *L )
 {
     const char *urlStr = lua_tostring(L, 1);
     NSURL *url = [NSURL URLWithString:[NSString stringWithUTF8String:urlStr]];
-    Self *library = ToLibrary( L );
-    BOOL isEnabled = library->getDidStartAdjustSdk();
-
-    // TODO: Aha, okay, here's why we use this isEnabled information, still why?
-    if (isEnabled) {
-        [Adjust appWillOpenUrl:url];
-        return 0;
-    }
-
-    library->setDeeplinkUrl(url);
+    [Adjust appWillOpenUrl:url];
     return 0;
 }
 
