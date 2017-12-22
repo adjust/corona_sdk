@@ -785,7 +785,7 @@ AdjustPlugin::getAttribution( lua_State *L )
             NSLog(@"Error while trying to convert attribution dictionary to JSON string: %@", error);
         } else {
             NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-            [AdjustSdkDelegate dispatchEvent:L withListener:listener eventName:EVENT_ATTRIBUTION_CHANGED andMessage:jsonString];
+            [AdjustSdkDelegate dispatchEvent:L withListener:listener eventName:EVENT_GET_ATTRIBUTION andMessage:jsonString];
         }
     }
 
