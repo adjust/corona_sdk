@@ -113,13 +113,13 @@ adjust.create({
     -- isDeviceKnown = true,
     -- sendInBackground = true,
     -- defaultTracker = "abc123",
-    -- userAgent = "Crappy User Agent 6.6"
+    -- userAgent = "Random User Agent 6.6"
     -- readMobileEquipmentIdentity = true
-    -- secretId = 1,
-    -- info1 = 552143313,
-    -- info2 = 465657129,
-    -- info3 = 437714723,
-    -- info4 = 1932667013,
+    -- secretId = aaa,
+    -- info1 = bbb,
+    -- info2 = ccc,
+    -- info3 = ddd,
+    -- info4 = eee,
 })
 
 -- adjust.setPushToken("{YourPushToken}")
