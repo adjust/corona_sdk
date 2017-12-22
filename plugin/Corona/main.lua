@@ -2,13 +2,11 @@ local adjust = require "plugin.adjust"
 local widget = require "widget"
 local json = require "json"
 
-local isAdjustEnabled = false -- flag to indicate if Adjust SDK is enabled
-
 -- Setting up a system event listener for deeplink support
 -- ---------------------------------------------------------
 local function onSystemEvent(event)
     if event.type == "applicationOpen" and event.url then
-        print("[*] Lua: applicationOpen. Event url is (" .. event.url .. ")")
+        print("[Adjust]: applicationOpen event. url = " .. event.url)
         -- Capture app event opened from deep link
         adjust.appWillOpenUrl(event.url)
     end
@@ -18,7 +16,7 @@ Runtime:addEventListener("system", onSystemEvent)
 
 local launchArgs = ...
 if launchArgs and launchArgs.url then
-    print("[*] Lua: launchArgs url is (" .. launchArgs.url .. ")")
+    print("[Adjust]: launchArgs.url = (" .. launchArgs.url)
     adjust.appWillOpenUrl(launchArgs.url)
 end
 
@@ -26,58 +24,58 @@ end
 -- ------------------------
 local function attributionListener(event)
     local json_attribution = json.decode(event.message)
-    print("[*] Lua: Attribution changed!")
-    print("[*] Lua: Tracker token: " .. json_attribution.trackerToken)
-    print("[*] Lua: Tracker name: " .. json_attribution.trackerName)
-    print("[*] Lua: Campaign: " .. json_attribution.campaign)
-    print("[*] Lua: Network: " .. json_attribution.network)
-    print("[*] Lua: Creative: " .. json_attribution.creative)
-    print("[*] Lua: Adgroup: " .. json_attribution.adgroup)
-    print("[*] Lua: ADID: " .. json_attribution.adid)
+    print("[Adjust]: Attribution changed!")
+    print("[Adjust]: Tracker token: " .. json_attribution.trackerToken)
+    print("[Adjust]: Tracker name: " .. json_attribution.trackerName)
+    print("[Adjust]: Campaign: " .. json_attribution.campaign)
+    print("[Adjust]: Network: " .. json_attribution.network)
+    print("[Adjust]: Creative: " .. json_attribution.creative)
+    print("[Adjust]: Adgroup: " .. json_attribution.adgroup)
+    print("[Adjust]: ADID: " .. json_attribution.adid)
 end
 
 local function sessionTrackingSuccessListener(event)
     local json_session_success = json.decode(event.message)
-    print("[*] Lua: Session tracking success!")
-    print("[*] Lua: Message: " .. json_session_success.message)
-    print("[*] Lua: Timestamp: " .. json_session_success.timestamp)
-    print("[*] Lua: Adid: " .. json_session_success.adid)
-    print("[*] Lua: JSON Response: " .. json_session_success.jsonResponse)
+    print("[Adjust]: Session tracking success!")
+    print("[Adjust]: Message: " .. json_session_success.message)
+    print("[Adjust]: Timestamp: " .. json_session_success.timestamp)
+    print("[Adjust]: Adid: " .. json_session_success.adid)
+    print("[Adjust]: JSON response: " .. json_session_success.jsonResponse)
 end
 
 local function sessionTrackingFailureListener(event)
     local json_session_failure = json.decode(event.message)
-    print("[*] Lua: Session tracking failure!")
-    print("[*] Lua: Message: " .. json_session_failure.message)
-    print("[*] Lua: Timestamp: " .. json_session_failure.timestamp)
-    print("[*] Lua: Adid: " .. json_session_failure.adid)
-    print("[*] Lua: Will Retry: " .. json_session_failure.adid)
-    print("[*] Lua: JSON Response: " .. json_session_failure.jsonResponse)
+    print("[Adjust]: Session tracking failure!")
+    print("[Adjust]: Message: " .. json_session_failure.message)
+    print("[Adjust]: Timestamp: " .. json_session_failure.timestamp)
+    print("[Adjust]: Adid: " .. json_session_failure.adid)
+    print("[Adjust]: Will retry: " .. json_session_failure.adid)
+    print("[Adjust]: JSON response: " .. json_session_failure.jsonResponse)
 end
 
 local function eventTrackingSuccessListener(event)
     local json_event_success = json.decode(event.message)
-    print("[*] Lua: Event tracking success!")
-    print("[*] Lua: Event Token: " .. json_event_success.eventToken)
-    print("[*] Lua: Message: " .. json_event_success.message)
-    print("[*] Lua: Timestamp: " .. json_event_success.timestamp)
-    print("[*] Lua: Adid: " .. json_event_success.adid)
-    print("[*] Lua: JSON Response: " .. json_event_success.jsonResponse)
+    print("[Adjust]: Event tracking success!")
+    print("[Adjust]: Event token: " .. json_event_success.eventToken)
+    print("[Adjust]: Message: " .. json_event_success.message)
+    print("[Adjust]: Timestamp: " .. json_event_success.timestamp)
+    print("[Adjust]: Adid: " .. json_event_success.adid)
+    print("[Adjust]: JSON response: " .. json_event_success.jsonResponse)
 end
 
 local function eventTrackingFailureListener(event)
     local json_event_failure = json.decode(event.message)
-    print("[*] Lua: Event tracking failure!")
-    print("[*] Lua: Event Token: " .. json_event_failure.eventToken)
-    print("[*] Lua: Message: " .. json_event_failure.message)
-    print("[*] Lua: Timestamp: " .. json_event_failure.timestamp)
-    print("[*] Lua: Adid: " .. json_event_failure.adid)
-    print("[*] Lua: Will Retry: " .. json_event_failure.willRetry)
-    print("[*] Lua: JSON Response: " .. json_event_failure.jsonResponse)
+    print("[Adjust]: Event tracking failure!")
+    print("[Adjust]: Event token: " .. json_event_failure.eventToken)
+    print("[Adjust]: Message: " .. json_event_failure.message)
+    print("[Adjust]: Timestamp: " .. json_event_failure.timestamp)
+    print("[Adjust]: Adid: " .. json_event_failure.adid)
+    print("[Adjust]: Will retry: " .. json_event_failure.willRetry)
+    print("[Adjust]: JSON response: " .. json_event_failure.jsonResponse)
 end
 
 local function deferredDeeplinkListener(event)
-    print("[*] Lua: Received event from deferredDeeplinkListener (" .. event.name .. "): ", event.message)
+    print("[Adjust]: Received event from deferredDeeplinkListener (" .. event.name .. "): ", event.message)
 end
 
 adjust.setAttributionListener(attributionListener)
@@ -124,9 +122,8 @@ adjust.create({
     -- info4 = 1932667013,
 })
 
-adjust.setPushToken("crappy_omg_token")
-
-isAdjustEnabled = true
+-- adjust.setPushToken("{YourPushToken}")
+-- adjust.sendFirstPackages()
 
 -- Setting up assets
 -- ------------------------
@@ -139,14 +136,13 @@ local function handleTrackSimpleEvent(event)
         adjust.trackEvent({
             eventToken = "g3mfiw"
         })
-        adjust.setPushToken("le_crappy_token_le")
     end
 end
 
 widget.newButton({
     left = display.contentCenterX - 85,
     top = 40 + (0 * 30),
-    id = "button1",
+    id = "button0",
     label = "Track Simple Event",
     onEvent = handleTrackSimpleEvent
 })
@@ -156,7 +152,7 @@ widget.newButton({
 local function handleTrackRevenueEvent(event)
     if ("ended" == event.phase) then
         adjust.trackEvent({
-            eventToken = "g3mfiw",
+            eventToken = "a4fd35",
             revenue = 0.01,
             currency = "EUR",
             transactionId = "some_transaction_id"
@@ -167,7 +163,7 @@ end
 widget.newButton({
     left = display.contentCenterX - 85,
     top = 40 + (1 * 30),
-    id = "button2",
+    id = "button1",
     label = "Track Revenue Event",
     onEvent = handleTrackRevenueEvent
 })
@@ -177,15 +173,15 @@ widget.newButton({
 local function handleTrackCallbackEvent(event)
     if ("ended" == event.phase) then
         adjust.trackEvent({
-            eventToken = "g3mfiw",
+            eventToken = "34vgg9",
             callbackParameters = {
                 {
-                    key = "bunny1",
-                    value = "foofoo1",
+                    key = "callback_key1",
+                    value = "callback_value1",
                 },
                 {
-                    key = "bunny2",
-                    value = "foofoo2",
+                    key = "callback_key2",
+                    value = "callback_value2",
                 },
             },
         })
@@ -195,7 +191,7 @@ end
 widget.newButton({
     left = display.contentCenterX - 85,
     top = 40 + (2 * 30),
-    id = "button3",
+    id = "button2",
     label = "Track Callback Event",
     onEvent = handleTrackCallbackEvent
 })
@@ -205,15 +201,15 @@ widget.newButton({
 local function handleTrackPartnerEvent(event)
     if ("ended" == event.phase) then
         adjust.trackEvent({
-            eventToken = "g3mfiw",
+            eventToken = "w788qs",
             partnerParameters = {
                 {
-                    key = "bunny1",
-                    value = "foofoo1",
+                    key = "partner_key1",
+                    value = "partner_value2",
                 },
                 {
-                    key = "bunny2",
-                    value = "foofoo2",
+                    key = "partner_key2",
+                    value = "partner_key2",
                 },
             },
         })
@@ -223,7 +219,7 @@ end
 widget.newButton({
     left = display.contentCenterX - 85,
     top = 40 + (3 * 30),
-    id = "button4",
+    id = "button3",
     label = "Track Partner Event",
     onEvent = handleTrackPartnerEvent
 })
@@ -239,7 +235,7 @@ end
 widget.newButton({
     left = display.contentCenterX - 85,
     top = 40 + (4 * 30),
-    id = "button5",
+    id = "button4",
     label = "Enable offline mode",
     onEvent = handleEnableOfflineMode
 })
@@ -255,25 +251,40 @@ end
 widget.newButton({
     left = display.contentCenterX - 85,
     top = 40 + (5 * 30),
-    id = "button6",
+    id = "button5",
     label = "Disable offline mode",
     onEvent = handleDisableOfflineMode
 })
 
--- Toggle enabled mode
+-- Enable SDK
 -- ------------------------
 local function handleToggleEnabled(event)
     if ("ended" == event.phase) then
-        isAdjustEnabled = not isAdjustEnabled
-        adjust.setEnabled(isAdjustEnabled)
+        adjust.setEnabled(true)
     end
 end
 
 widget.newButton({
     left = display.contentCenterX - 85,
     top = 40 + (6 * 30),
+    id = "button6",
+    label = "Enable SDK",
+    onEvent = handleToggleEnabled
+})
+
+-- Disable SDK
+-- ------------------------
+local function handleToggleEnabled(event)
+    if ("ended" == event.phase) then
+        adjust.setEnabled(false)
+    end
+end
+
+widget.newButton({
+    left = display.contentCenterX - 85,
+    top = 40 + (7 * 30),
     id = "button7",
-    label = "Toggle Enabled",
+    label = "Disnable SDK",
     onEvent = handleToggleEnabled
 })
 
@@ -281,13 +292,15 @@ widget.newButton({
 -- ------------------------
 local function handleIsEnabled(event)
     if ("ended" == event.phase) then
-        adjust.isEnabled(function(event) print("[*] Lua: isEnabled (" .. event.message .. ")") end)
+        adjust.isEnabled(function(event)
+            print("[Adjust]: isEnabled = " .. event.message)
+        end)
     end
 end
 
 widget.newButton({
     left = display.contentCenterX - 85,
-    top = 40 + (7 * 30),
+    top = 40 + (8 * 30),
     id = "button8",
     label = "Is Enabled",
     onEvent = handleIsEnabled
@@ -297,13 +310,15 @@ widget.newButton({
 -- ------------------------
 local function handleGetAdid(event)
     if ("ended" == event.phase) then
-        adjust.getAdid(function(event) print("[*] Lua: getAdid (" .. event.message .. ")") end)
+        adjust.getAdid(function(event)
+            print("[Adjust]: adid = " .. event.message)
+        end)
     end
 end
 
 widget.newButton({
     left = display.contentCenterX - 85,
-    top = 40 + (8 * 30),
+    top = 40 + (9 * 30),
     id = "button9",
     label = "Get Adid",
     onEvent = handleGetAdid
@@ -313,14 +328,18 @@ widget.newButton({
 -- ------------------------
 local function handleGetAdid(event)
     if ("ended" == event.phase) then
-        adjust.getGoogleAdId(function(event) print("[*] Lua: getGoogleAdId (" .. event.message .. ")") end)
-        adjust.getAmazonAdId(function(event) print("[*] Lua: amazonAdId (" .. event.message .. ")") end)
+        adjust.getGoogleAdId(function(event)
+            print("[Adjust]: googleAdId = " .. event.message)
+        end)
+        adjust.getAmazonAdId(function(event)
+            print("[Adjust]: amazonAdId = " .. event.message)
+        end)
     end
 end
 
 widget.newButton({
     left = display.contentCenterX - 85,
-    top = 40 + (9 * 30),
+    top = 40 + (10 * 30),
     id = "button10",
     label = "Get Google Adid",
     onEvent = handleGetAdid
@@ -330,13 +349,15 @@ widget.newButton({
 -- ------------------------
 local function handleGetIdfa(event)
     if ("ended" == event.phase) then
-        adjust.getIdfa(function(event) print("[*] Lua: getIdfa (" .. event.message .. ")") end)
+        adjust.getIdfa(function(event)
+            print("[Adjust]: idfa = " .. event.message)
+        end)
     end
 end
 
 widget.newButton({
     left = display.contentCenterX - 85,
-    top = 40 + (10 * 30),
+    top = 40 + (11 * 30),
     id = "button11",
     label = "Get Idfa",
     onEvent = handleGetIdfa
@@ -346,13 +367,23 @@ widget.newButton({
 -- ------------------------
 local function handleGetAttribution(event)
     if ("ended" == event.phase) then
-        adjust.getAttribution(function(event) print("[*] Lua: getAttribution (" .. event.message .. ")") end)
+        adjust.getAttribution(function(event)
+            local json_attribution = json.decode(event.message)
+            print("Tracker token: " .. json_attribution.trackerToken)
+            print("Tracker name: " .. json_attribution.trackerName)
+            print("Campaign: " .. json_attribution.campaign)
+            print("Network: " .. json_attribution.network)
+            print("Creative: " .. json_attribution.creative)
+            print("Adgroup: " .. json_attribution.adgroup)
+            print("Click label: " .. json_attribution.clickLabel)
+            print("ADID: " .. json_attribution.adid)
+        end)
     end
 end
 
 widget.newButton({
     left = display.contentCenterX - 85,
-    top = 40 + (11 * 30),
+    top = 40 + (12 * 30),
     id = "button12",
     label = "Get Attribution",
     onEvent = handleGetAttribution
