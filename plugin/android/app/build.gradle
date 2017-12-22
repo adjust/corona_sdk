@@ -1,0 +1,134 @@
+apply plugin: 'com.android.application'
+
+// Application name variables
+def appName = new XmlSlurper().parse(file('src/main/AndroidManifest.xml')).@package.text()
+def apkName = appName.toString().split('\\.').last()
+
+// Paths used throughout the build process
+def coronaNativeDir = System.getProperty("user.home") + "/Library/Application Support/Corona/Native"
+
+// Check to see if Corona Native has been properly setup
+def coronaNativeDirObj = new File(coronaNativeDir)
+if( ! coronaNativeDirObj.exists() ) {
+  throw new GradleException("error: Corona Native has not been setup.  Run 'Native/SetupCoronaNative.app' in your Corona install to set it up")
+}
+
+def assetsDir = "$projectDir/src/main/assets"
+def jniLibsDir = "$projectDir/src/main/jniLibs"
+def coronaNativeMacBinDir = "$coronaNativeDir/Corona/mac/bin"
+def coronaNativeSharedDir = "$coronaNativeDir/Corona/shared"
+def coronaNativeAndroidLibDir = "$coronaNativeDir/Corona/android/lib/Corona"
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion '25.0.2'
+
+    defaultConfig {
+        applicationId "$appName"
+        minSdkVersion 15
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            output.outputFile = file(output.outputFile.getPath().replace('/app-', "/${apkName}-"))
+        }
+    }
+}
+
+task cleanAssets(type: Delete, description: 'remove Corona assets and libcorona.so') {
+    delete "$jniLibsDir/armeabi-v7a/libcorona.so"
+    delete "$assetsDir"
+
+    doFirst {
+        println "== cleanAssets =="
+    }
+
+    doLast {
+        new File("$assetsDir").mkdirs()
+    }
+}
+
+task compileLua(type: Exec, description: 'compile Lua source code') {
+    executable = "$coronaNativeMacBinDir/lua"
+    workingDir = "$coronaNativeMacBinDir"
+    args = [
+            '-e',
+            "package.path='$coronaNativeSharedDir/bin/?.lua;$coronaNativeSharedDir/bin/?/init.lua;'..package.path",
+            "$coronaNativeSharedDir/bin/Compile.lua",
+            'mac',
+            "$coronaNativeDir"
+    ]
+
+    environment = [
+            LUA_CPATH                   : "$coronaNativeMacBinDir/?.so",
+            TARGET_PLATFORM             : 'android',
+            PROJECT_DIR                 : "$rootDir",
+            CORONA_COPY_PNG_PRESERVE    : '--preserve',
+            CONFIGURATION               : 'release',
+            CORONA_ASSETS_DIR           : "$rootDir/../Corona",
+            CORONA_TARGET_RESOURCES_DIR : "$assetsDir",
+            CORONA_TARGET_EXECUTABLE_DIR: "$assetsDir"
+    ]
+
+    dependsOn 'cleanAssets'
+
+    doFirst {
+        println '== compileLua =='
+    }
+}
+
+task copyCoronaResources(type: Copy, description: 'include resources from Corona Native') {
+    from fileTree(dir: "$coronaNativeAndroidLibDir/res", include: '**/*')
+    into "$projectDir/src/main/res"
+
+    dependsOn 'compileLua'
+
+    doFirst {
+        println '== copyCoronaResources =='
+    }
+}
+
+task copyCoronaNativeLibs(type: Copy, description: 'include precompiled libraries from Corona Native') {
+    from fileTree(dir: "$coronaNativeAndroidLibDir/libs", include: '**/*.so')
+    into "$jniLibsDir"
+
+    dependsOn 'copyCoronaResources'
+
+    doFirst {
+        println '== copyCoronaNativeLibs =='
+    }
+}
+
+task certifyBuild(type: Exec, description: 'certify libcorona.so with resource.car hash and developerkey.cert') {
+    executable = "$coronaNativeMacBinDir/CoronaBuilder.app/Contents/MacOS/CoronaBuilder"
+    workingDir = "$coronaNativeMacBinDir"
+    args = [
+            'app_sign',
+            'sign',
+            "$coronaNativeSharedDir/resource/developerkey.cert",
+            "$assetsDir/resource.car",
+            "$jniLibsDir/armeabi-v7a/libcorona.so",
+            'little',
+            'android',
+            "$appName"
+    ]
+
+    dependsOn 'copyCoronaNativeLibs'
+
+    doFirst {
+        println '== certifyBuild =='
+    }
+}
+
+tasks.preBuild.dependsOn('certifyBuild')
+
+dependencies {
+    compile fileTree(dir: 'libs', include: '*.jar')
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile project(':plugin')
+    compile 'com.android.installreferrer:installreferrer:1.0'
+    compile 'com.google.android.gms:play-services-analytics:11.8.0'
+}
