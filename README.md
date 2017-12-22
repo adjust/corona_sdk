@@ -35,13 +35,16 @@ This is the Corona SDK of Adjust™. You can read more about Adjust™ at [adjus
     * [Disable tracking](#disable-tracking)
     * [Offline mode](#offline-mode)
     * [Event buffering](#event-buffering)
+    * [SDK signature](#sdk-signature)
     * [Background tracking](#background-tracking)
     * [Device IDs](#device-ids)
       * [iOS advertising identifier](#di-idfa)
       * [Google Play Services advertising identifier](#di-gps-adid)
+      * [Amazon advertising identifier](#di-fire-adid)
       * [Adjust device identifier](#di-adid)
     * [User attribution](#user-attribution)
     * [Push token](#push-token)
+    * [Track additional device identifiers](#track-additional-ids)
     * [Pre-installed trackers](#pre-installed-trackers)
     * [Deeplinking](#deeplinking)
         * [Standard deeplinking scenario](#deeplinking-standard)
@@ -63,7 +66,7 @@ These are the essential steps required to integrate the Adjust SDK into your Cor
 
 ### <a id="sdk-get"></a>Get the SDK
 
-You can get the latest version of the Adjust SDK modules from our [releases page][releases]. Please, download both, `plugin.adjust.jar` and `libplugin_adjust.a` file since you will need to add them to your app's projects.
+You can get the latest version of the Adjust SDK from our [releases page][releases]. Please, download both, `plugin.adjust.jar` and `libplugin_adjust.a` file since you will need to add them to your app's projects.
 
 ### <a id="sdk-add"></a>Add the SDK to your app
 
@@ -153,7 +156,7 @@ Open the `build.gradle` file of your app and find the `dependencies` block. Add 
 compile 'com.google.android.gms:play-services-analytics:11.8.0'
 ```
 
-To check whether the analytics part of the Google Play Services library has been successfully added to your app, you should start your app by configuring the SDK to run in `sandbox` mode and set the log level to `verbose`. After that, track a session or some events in your app and observe the list of parameters in the verbose logs which are being read once the session or event has been tracked. If you see a parameter called `gps_adid` in there, you have successfully added the analytics part of the Google Play Services library to your app and our SDK is reading the necessary information from it.
+To check whether the analytics part of the Google Play Services library has been successfully added to your app, you should start your app by configuring the SDK to run in `SANDBOX` mode and set the log level to `VERBOSE`. After that, track a session or some events in your app and observe the list of parameters in the verbose logs which are being read once the session or event has been tracked. If you see a parameter called `gps_adid` in there, you have successfully added the analytics part of the Google Play Services library to your app and our SDK is reading the necessary information from it.
 
 ### <a id="android-proguard"></a>Proguard settings
 
@@ -448,15 +451,15 @@ local json = require "json"
 
 local function attributionListener(event)
     local json_attribution = json.decode(event.message)
-    print("[*] Lua: Attribution changed!")
-    print("[*] Lua: Tracker token: " .. json_attribution.trackerToken)
-    print("[*] Lua: Tracker name: " .. json_attribution.trackerName)
-    print("[*] Lua: Campaign: " .. json_attribution.campaign)
-    print("[*] Lua: Network: " .. json_attribution.network)
-    print("[*] Lua: Creative: " .. json_attribution.creative)
-    print("[*] Lua: Adgroup: " .. json_attribution.adgroup)
-    print("[*] Lua: Click label: " .. json_attribution.clickLabel)
-    print("[*] Lua: ADID: " .. json_attribution.adid)
+    print("Attribution changed!")
+    print("Tracker token: " .. json_attribution.trackerToken)
+    print("Tracker name: " .. json_attribution.trackerName)
+    print("Campaign: " .. json_attribution.campaign)
+    print("Network: " .. json_attribution.network)
+    print("Creative: " .. json_attribution.creative)
+    print("Adgroup: " .. json_attribution.adgroup)
+    print("Click label: " .. json_attribution.clickLabel)
+    print("ADID: " .. json_attribution.adid)
 end
 
 -- ...
@@ -497,12 +500,12 @@ local json = require "json"
 
 local function eventTrackingSuccessListener(event)
     local json_event_success = json.decode(event.message)
-    print("[*] Lua: Event tracking success!")
-    print("[*] Lua: Event Token: " .. json_event_success.eventToken)
-    print("[*] Lua: Message: " .. json_event_success.message)
-    print("[*] Lua: Timestamp: " .. json_event_success.timestamp)
-    print("[*] Lua: Adid: " .. json_event_success.adid)
-    print("[*] Lua: JSON Response: " .. json_event_success.jsonResponse)
+    print("Event tracking success!")
+    print("Event token: " .. json_event_success.eventToken)
+    print("Message: " .. json_event_success.message)
+    print("Timestamp: " .. json_event_success.timestamp)
+    print("Adid: " .. json_event_success.adid)
+    print("JSON response: " .. json_event_success.jsonResponse)
 end
 
 -- ...
@@ -526,13 +529,13 @@ local json = require "json"
 
 local function eventTrackingFailureListener(event)
     local json_event_failure = json.decode(event.message)
-    print("[*] Lua: Event tracking failure!")
-    print("[*] Lua: Event Token: " .. json_event_failure.eventToken)
-    print("[*] Lua: Message: " .. json_event_failure.message)
-    print("[*] Lua: Timestamp: " .. json_event_failure.timestamp)
-    print("[*] Lua: Adid: " .. json_event_failure.adid)
-    print("[*] Lua: Will Retry: " .. json_event_failure.willRetry)
-    print("[*] Lua: JSON Response: " .. json_event_failure.jsonResponse)
+    print("Event tracking failure!")
+    print("Event token: " .. json_event_failure.eventToken)
+    print("Message: " .. json_event_failure.message)
+    print("Timestamp: " .. json_event_failure.timestamp)
+    print("Adid: " .. json_event_failure.adid)
+    print("Will retry: " .. json_event_failure.willRetry)
+    print("JSON response: " .. json_event_failure.jsonResponse)
 end
 
 -- ...
@@ -556,11 +559,11 @@ local json = require "json"
 
 local function sessionTrackingSuccessListener(event)
     local json_session_success = json.decode(event.message)
-    print("[*] Lua: Session tracking success!")
-    print("[*] Lua: Message: " .. json_session_success.message)
-    print("[*] Lua: Timestamp: " .. json_session_success.timestamp)
-    print("[*] Lua: Adid: " .. json_session_success.adid)
-    print("[*] Lua: JSON Response: " .. json_session_success.jsonResponse)
+    print("Session tracking success!")
+    print("Message: " .. json_session_success.message)
+    print("Timestamp: " .. json_session_success.timestamp)
+    print("Adid: " .. json_session_success.adid)
+    print("JSON response: " .. json_session_success.jsonResponse)
 end
 
 -- ...
@@ -584,12 +587,12 @@ local json = require "json"
 
 local function sessionTrackingFailureListener(event)
     local json_session_failure = json.decode(event.message)
-    print("[*] Lua: Session tracking failure!")
-    print("[*] Lua: Message: " .. json_session_failure.message)
-    print("[*] Lua: Timestamp: " .. json_session_failure.timestamp)
-    print("[*] Lua: Adid: " .. json_session_failure.adid)
-    print("[*] Lua: Will Retry: " .. json_session_failure.adid)
-    print("[*] Lua: JSON Response: " .. json_session_failure.jsonResponse)
+    print("Session tracking failure!")
+    print("Message: " .. json_session_failure.message)
+    print("Timestamp: " .. json_session_failure.timestamp)
+    print("Adid: " .. json_session_failure.adid)
+    print("Will retry: " .. json_session_failure.adid)
+    print("JSON response: " .. json_session_failure.jsonResponse)
 end
 
 -- ...
@@ -660,7 +663,7 @@ Unlike disabling tracking, **this setting is not remembered** between sessions. 
 
 ### <a id="event-buffering"></a>Event buffering
 
-If your app makes heavy use of event tracking, you might want to delay some HTTP requests in order to send them in one batch every minute. You can enable event buffering by passing the `setEventBufferingEnabled` parameter into `adjust.create` method call:
+If your app makes heavy use of event tracking, you might want to delay some HTTP requests in order to send them in one batch every minute. You can enable event buffering by passing the `eventBufferingEnabled` parameter into `adjust.create` method call:
 
 ```lua
 local adjust = require "plugin.adjust"
@@ -670,6 +673,29 @@ adjust.create({
     environment = "SANDBOX",
     logLevel = "VERBOSE",
     eventBufferingEnabled = true
+})
+```
+
+### <a id="sdk-signature"></a>SDK signature
+
+An account manager must activate the Adjust SDK signature. Contact Adjust support (support@adjust.com) if you are interested in using this feature.
+
+If the SDK signature has already been enabled on your account and you have access to App Secrets in your Adjust Dashboard, please use the method below to integrate the SDK signature into your app.
+
+An App Secret is set by passing all secret parameters (`secretId`, `info1`, `info2`, `info3`, `info4`) when making `adjust.create` method call:
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.create({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE",
+    secretId = aaa,
+    info1 = bbb,
+    info2 = ccc,
+    info3 = ddd,
+    info4 = eee
 })
 ```
 
@@ -718,6 +744,18 @@ adjust.getGoogleAdId(function(event)
 end)
 ```
 
+### <a id="di-fire-adid"></a>Amazon advertising identifier
+
+If you need to obtain the Amazon Advertising ID, you can call the `getAmazonAdId` method on `adjust` instance:
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.getAmazonAdId(function(event) 
+    print("amazonAdId = " .. event.message) 
+end)
+```
+
 ### <a id="di-adid"></a>Adjust device identifier
 
 For every device with your app installed on it, the Adjust backend generates a unique **Adjust device identifier** (**adid**). In order to obtain this identifier, call the `getAdid` method of the `adjust` instance. You need to pass a callback to that method in order to obtain the value:
@@ -742,14 +780,14 @@ local json = require "json"
 
 adjust.getAttribution(function(event) 
     local json_attribution = json.decode(event.message)
-    print("[*] Lua: Tracker token: " .. json_attribution.trackerToken)
-    print("[*] Lua: Tracker name: " .. json_attribution.trackerName)
-    print("[*] Lua: Campaign: " .. json_attribution.campaign)
-    print("[*] Lua: Network: " .. json_attribution.network)
-    print("[*] Lua: Creative: " .. json_attribution.creative)
-    print("[*] Lua: Adgroup: " .. json_attribution.adgroup)
-    print("[*] Lua: Click label: " .. json_attribution.clickLabel)
-    print("[*] Lua: ADID: " .. json_attribution.adid)
+    print("Tracker token: " .. json_attribution.trackerToken)
+    print("Tracker name: " .. json_attribution.trackerName)
+    print("Campaign: " .. json_attribution.campaign)
+    print("Network: " .. json_attribution.network)
+    print("Creative: " .. json_attribution.creative)
+    print("Adgroup: " .. json_attribution.adgroup)
+    print("Click label: " .. json_attribution.clickLabel)
+    print("ADID: " .. json_attribution.adid)
 end)
 ```
 
@@ -766,6 +804,29 @@ adjust.setPushToken("YourPushNotificationToken");
 ```
 
 Push tokens are used for Audience Builder and client callbacks, and they are required for the upcoming uninstall tracking feature.
+
+### <a id="track-additional-ids"></a>Track additional device identifiers
+
+If you are distributing your Android app **outside of the Google Play Store** and would like to track additional device identifiers (IMEI and MEID), you need to explicitly instruct the Adjust SDK to do so. You can do that by passing the `readMobileEquipmentIdentity` parameter when making the call to `adjust.create` method. **The Adjust SDK does not collect these identifiers by default**.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.create({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE",
+    readMobileEquipmentIdentity = true
+})
+```
+
+You will also need to add the `READ_PHONE_STATE` permission to your `AndroidManifest.xml` file:
+
+```xml
+<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+```
+
+In order to use this feature, additional steps are required within your Adjust Dashboard. For more information, please contact your dedicated account manager or write an email to support@adjust.com.
 
 ### <a id="pre-installed-trackers"></a>Pre-installed trackers
 
@@ -947,7 +1008,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 [google-play-services]:   http://developer.android.com/google/play-services/index.html
 [deeplinking-ios8-lower]: https://github.com/adjust/ios_sdk#deeplinking-setup-old
 
-[deeplinking-ios9-highjer]:     https://github.com/adjust/ios_sdk#deeplinking-setup-new
+[deeplinking-ios9-higher]:      https://github.com/adjust/ios_sdk#deeplinking-setup-new
 [bencooding-android-tools]: 	  https://github.com/benbahrenburg/benCoding.Android.Tools
 [broadcast-receiver-custom]:    https://github.com/adjust/android_sdk/blob/master/doc/english/referrer.md
 [reattribution-with-deeplinks]: https://docs.adjust.com/en/deeplinking/#manually-appending-attribution-data-to-a-deep-link
