@@ -66,15 +66,15 @@ These are the essential steps required to integrate the Adjust SDK into your Cor
 
 ### <a id="sdk-get"></a>Get the SDK
 
-You can get the latest version of the Adjust SDK from our [releases page][releases]. Please, download both, `plugin.adjust.jar` and `libplugin_adjust.a` file since you will need to add them to your app's projects.
+You can get the latest version of the Adjust SDK from our [releases page][releases]. Please, download both the `plugin.adjust.jar` and `libplugin_adjust.a` files, since you will need to add them to your app's projects.
 
 ### <a id="sdk-add"></a>Add the SDK to your app
 
-At this moment, you can add Adjust SDK to your Corona Enterprise app project. Adjust SDK will soon be published to Corona plugin marketplace and once added, this chapter will be updated with integration instructions for users who will be using it from plugin marketplace.
+You can now add the Adjust SDK to your Corona Enterprise app project. The Adjust SDK will soon be published to the Corona plugin marketplace. Once this happens, this chapter will be updated with integration instructions for users working from the plugin marketplace.
 
 #### <a id="sdk-add-android"></a>Add the SDK to your Android project
 
-Inside your Android Studio app project, create `libs` folder inside of your app folder and add `plugin.adjust.jar` file to it. After that, please update your app's `build.gradle` file and add following lines to your `dependencies` section:
+Inside your Android Studio app project, create a `libs` folder inside of your app folder and add the `plugin.adjust.jar` file to it. After that, please update your app's `build.gradle` file and add the following lines to your `dependencies` section:
 
 ```
 compile 'com.adjust.sdk:adjust-android:4.12.0'
@@ -83,7 +83,7 @@ compile 'com.android.installreferrer:installreferrer:1.0'
 
 #### <a id="sdk-add-ios"></a>Add the SDK to your iOS project
 
-Inside your Xcode app project, select your app's target, go to `General -> Linked Frameworks and Libraries` section, press `+` button and add `libplugin_adjust.a` library into the list.
+Inside your Xcode app project, select your app's target, go to `General -> Linked Frameworks and Libraries` section, press the `+` button and add the `libplugin_adjust.a` library into the list.
 
 ### <a id="sdk-integrate"></a>Integrate the SDK into your app
 
@@ -113,7 +113,7 @@ We use this environment to distinguish between real traffic and test traffic fro
 
 ### <a id="sdk-logging">Adjust logging
 
-You can increase or decrease the amount of logs you see in tests by setting `logLevel` parameter value when calling `adjust.create` method and assign one of the following string values to it:
+You can increase or decrease the amount of logs you see in tests by setting the `logLevel` parameter value when calling the `adjust.create` method and assign one of the following string values to it:
 
 ```lua
 "VERBOSE"   // enable all logging
@@ -127,7 +127,7 @@ You can increase or decrease the amount of logs you see in tests by setting `log
 
 ### <a id="sdk-project-settings">Adjust project settings
 
-Once the Adjust SDK has been added to your app, certain tweaks need to be performed so that the Adjust SDK can work properly. Below you can find a description of every additional things that you need to do after you've added Adjust SDK into to your app.
+Once the Adjust SDK has been added to your app, certain tweaks need to be performed so that the Adjust SDK can work properly. Below you can find a description of every additional thing that you need to do after you've added the Adjust SDK into to your app.
 
 ### <a id="android-permissions">Android permissions
 
@@ -144,7 +144,7 @@ If you are **not targeting the Google Play Store**, please also add the followin
 <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 ```
 
-The `INTERNET` permission is what our SDK might need at any point in time. The Adjust SDK needs the `ACCESS_WIFI_STATE` permission in case your app is not targeting the Google Play Store and doesn't use Google Play Services. If you are targeting the Google Play Store and you are using Google Play Services, the Adjust SDK doesn't need the `ACCESS_WIFI_STATE` permission and, if you don't need it anywhere else in your app, you can remove it.
+The Adjust SDK might need the `INTERNET` permission at any point in time. The Adjust SDK needs the `ACCESS_WIFI_STATE` permission in case your app is not targeting the Google Play Store and doesn't use Google Play Services. If you are targeting the Google Play Store and you are using Google Play Services, the Adjust SDK doesn't need the `ACCESS_WIFI_STATE` permission and, if you don't need it anywhere else in your app, you can remove it.
 
 ### <a id="android-gps"></a>Google Play Services
 
@@ -211,7 +211,7 @@ Also, make sure that you have paid attention to the [Proguard settings](#android
 -keep public class com.android.installreferrer.** { *; }
 ```
 
-This feature is supported if you are using **Adjust SDK v4.12.0 or above**.
+This feature is supported if you are using the **Adjust SDK v4.12.0 or above**.
 
 #### <a id="android-referrer-gps-intent"></a>Google Play Store intent
 
@@ -239,7 +239,7 @@ The Adjust SDK iOS module adds three iOS frameworks to your generated Xcode proj
 * `AdSupport.framework` - for reading the iOS advertising ID (IDFA)
 * `CoreTelephony.framework` - for reading MCC and MNC information
 
-If you are not running any iAd campaigns, you can feel free to remove the `iAd.framework` dependency.
+If you are not running any iAd campaigns, feel free to remove the `iAd.framework` dependency.
 
 ## <a id="additional-features"></a>Additional features
 
@@ -362,7 +362,7 @@ These session parameters can be called before the Adjust SDK is launched to make
 
 The same callback parameters that are registered for [events](#callback-parameters) can also be saved to be sent with every event or session of the Adjust SDK.
 
-Session callback parameters have a similar interface to event callback parameters. Except that, instead of adding the key and its value to an event, they are added through a call to the `addSessionCallbackParameter` method of the `adjust` instance:
+Session callback parameters have a similar interface to event callback parameters, except that, instead of adding the key and its value to an event, they are added through a call to the `addSessionCallbackParameter` method of the `adjust` instance:
 
 ```lua
 local adjust = require "plugin.adjust"
@@ -643,7 +643,7 @@ adjust.isEnabled(function(event)
 end)
 ```
 
-It is always possible to activate the Adjust SDK by invoking the `setEnabled` with the parameter set to `true`.
+It is always possible to activate the Adjust SDK by invoking `setEnabled` with the parameter set to `true`.
 
 ### <a id="offline-mode"></a>Offline mode
 
@@ -663,7 +663,7 @@ Unlike disabling tracking, **this setting is not remembered** between sessions. 
 
 ### <a id="event-buffering"></a>Event buffering
 
-If your app makes heavy use of event tracking, you might want to delay some HTTP requests in order to send them in one batch every minute. You can enable event buffering by passing the `eventBufferingEnabled` parameter into `adjust.create` method call:
+If your app makes heavy use of event tracking, you might want to delay some HTTP requests in order to send them in one batch every minute. You can enable event buffering by passing the `eventBufferingEnabled` parameter into the `adjust.create` method call:
 
 ```lua
 local adjust = require "plugin.adjust"
@@ -682,7 +682,7 @@ An account manager must activate the Adjust SDK signature. Contact Adjust suppor
 
 If the SDK signature has already been enabled on your account and you have access to App Secrets in your Adjust Dashboard, please use the method below to integrate the SDK signature into your app.
 
-An App Secret is set by passing all secret parameters (`secretId`, `info1`, `info2`, `info3`, `info4`) when making `adjust.create` method call:
+An App Secret is set by passing all secret parameters (`secretId`, `info1`, `info2`, `info3`, `info4`) when making the `adjust.create` method call:
 
 ```lua
 local adjust = require "plugin.adjust"
@@ -701,7 +701,7 @@ adjust.create({
 
 ### <a id="background-tracking"></a>Background tracking
 
-The default behavior of the Adjust SDK is to **pause sending HTTP requests while the app is in the background**. You can change this by passing the `sendInBackground` parameter into `adjust.create` method call:
+The default behavior of the Adjust SDK is to **pause sending HTTP requests while the app is in the background**. You can change this by passing the `sendInBackground` parameter into the `adjust.create` method call:
 
 ```lua
 local adjust = require "plugin.adjust"
@@ -746,7 +746,7 @@ end)
 
 ### <a id="di-fire-adid"></a>Amazon advertising identifier
 
-If you need to obtain the Amazon Advertising ID, you can call the `getAmazonAdId` method on `adjust` instance:
+If you need to obtain the Amazon advertising ID, you can call the `getAmazonAdId` method on `adjust` instance:
 
 ```lua
 local adjust = require "plugin.adjust"
@@ -833,7 +833,7 @@ In order to use this feature, additional steps are required within your Adjust D
 If you want to use the Adjust SDK to recognize users whose devices came with your app pre-installed, follow these steps.
 
 1. Create a new tracker in your [dashboard].
-2. Open your app delegate and add set the default tracker by passing `defaultTracker` parameter to `adjust.create` method call:
+2. Open your app delegate and set the default tracker by passing the `defaultTracker` parameter to the `adjust.create` method call:
 
     ```lua
     local adjust = require "plugin.adjust"
@@ -861,28 +861,27 @@ If you are using the Adjust tracker URL with an option to deep link into your ap
 - Standard deeplinking is when a user already has your app installed.
 - Deferred deeplinking is when a user does not have your app installed.
 
-**Note**: At this moment, due to Corona framework limitations, standard deeplinking is currently fully supported **only on Android platform**. Deferred deeplinking works well on both, iOS and Android platforms.
+**Note**: At this moment, due to Corona framework limitations, standard deeplinking is currently fully supported **only on the Android platform**. Deferred deeplinking works well on both the iOS and Android platforms.
 
 ### <a id="deeplinking-standard"></a>Standard deeplinking
 
-Standard deeplinking is a platform-specific feature and in order to support it you need to add some additional settings to your app. If your user already has the app installed and hits the tracker URL with deeplink information in it, your application will be opened and the content of the deep link will be sent to your app so that you can parse it and decide what to do next. 
+Standard deeplinking is a platform-specific feature and, in order to support it, you need to add some additional settings to your app. If your user already has the app installed and hits a tracker URL with deeplink information in it, your application will be opened and the content of the deep link will be sent to your app so that you can parse it and decide what to do next. 
 
-**Note for iOS**: With the introduction of iOS 9, Apple has changed the way deeplinking is handled in the app. Depending on which deeplinking scenario you want to use for your app (or if you want to use them both to support a wide range of devices), you need to set up your app to handle one or both of the following scenarios. 
+**Note for iOS**: With the introduction of iOS 9, Apple has changed the way deeplinking is handled in apps. Depending on which deeplinking scenario you want to use for your app (or if you want to use them both to support a wide range of devices), you need to set up your app to handle one or both of the following scenarios. 
 
-Like mentioned above, standard deeplinking is currently not supported due to Corona platform limitations, but never the less, setting it up in your Xcode project like described in chapters below is still needed for deferred deep linking.
+Like mentioned above, standard deeplinking is currently not supported due to Corona platform limitations, but, nevertheless, setting it up in your Xcode project as described in the chapters below is still required for deferred deep linking.
 
 ### <a id="deeplinking-ios-old"></a>Deeplinking on iOS 8 and earlier
 
-To support deeplink handling in your app for iOS 8 and earlier versions, you need to set a `Custom URL Scheme` setting for your iOS app. In order to do this, please follow our [official iOS SDK README instructions][deeplinking-ios8-lower]. There is **no need** to override methods inside of `AppDelegate.m` (in Corona case - `AppCoronaDelegate.mm`), just follow up Xcode project setting part of instructions.
+To support deeplink handling in your app for iOS 8 and earlier versions, you need to set a `Custom URL Scheme` setting for your iOS app. In order to do this, please follow our [official iOS SDK README instructions][deeplinking-ios8-lower]. There is **no need** to override methods inside of `AppDelegate.m` (in Corona's case: `AppCoronaDelegate.mm`), just follow the Xcode project setting part of the instructions.
 
 ### <a id="deeplinking-ios-new"></a>Deeplinking on iOS 9 and later
 
-Starting from **iOS 9**, Apple has introduced suppressed support for the old style deeplinking with custom URL schemes, as described above, in favor of `universal links`. If you want to support deeplinking in your app for iOS 9 and higher, you need to add support for universal link handling. In order to do this, please follow our [official iOS SDK README instructions][deeplinking-ios9-higher]. There is **no need** to override methods inside of `AppDelegate.m` (in Corona case - `AppCoronaDelegate.mm`), just follow up Xcode project setting part of instructions.
-
+Starting from **iOS 9**, Apple introduced suppressed support for the old style deeplinking with custom URL schemes, as described above, in favor of `universal links`. If you want to support deeplinking in your app for iOS 9 and higher, you need to add support for universal link handling. In order to do this, please follow our [official iOS SDK README instructions][deeplinking-ios9-higher]. There is **no need** to override methods inside of `AppDelegate.m` (in Corona's case: `AppCoronaDelegate.mm`), just follow the Xcode project setting part of the instructions.
 
 ### <a id="deeplinking-android"></a>Deeplinking on Android
 
-In order to support deeplinking on your Android app, you need to add support for handling the custom URL scheme that you want to use to open your Android app. In order to do this, please follow our [official Android SDK README instructions][deeplinking-android].
+In order to support deeplinking in your Android app, you need to add support for handling the custom URL scheme that you want to use to open your Android app. In order to do this, please follow our [official Android SDK README instructions][deeplinking-android].
 
 In order to obtain information about the link that caused your app to open, you need to add some additional code to your `main.lua` file:
 
@@ -925,10 +924,10 @@ adjust.create({
 })
 ```
 
-In deferred deeplinking, there is one additional setting available to pass to `adjust.create` method call. Once the Adjust SDK gets the deferred deeplink information, you can choose whether our SDK opens this URL or not. You can choose to set this option by passing the `shouldLaunchDeeplink` parameter to `adjust.create` method call:
+In deferred deeplinking, there is one additional setting available to pass to the `adjust.create` method call. Once the Adjust SDK gets the deferred deeplink information, you can choose whether our SDK opens this URL or not. You can choose to set this option by passing the `shouldLaunchDeeplink` parameter to the `adjust.create` method call:
 
 
-```js
+```lua
 local adjust = require "plugin.adjust"
 local json = require "json"
 
@@ -973,7 +972,7 @@ local function onSystemEvent(event)
 end
 ```
 
-Having added these calls, if the deeplink that opened your app contains any reattribution parameters, our SDK will pass that information to the backend, which will decide whether the user is going to be reattributed or not. As already mentioned, if a user gets reattributed, an attribution callback (if implemented) will be triggered with the new attribution value, and you will have this information in your app as well.
+Having added these calls, if the deeplink that opened your app contains any reattribution parameters, our SDK will pass that information to the backend, which will decide whether the user is going to be reattributed or not. As already mentioned, if a user gets reattributed, an attribution callback (if implemented) will be triggered with the new attribution value, and you will have this information in your app, as well.
 
 ## <a id="license"></a>License
 
