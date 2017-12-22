@@ -763,7 +763,6 @@ AdjustPlugin::getAttribution( lua_State *L )
     {
         CoronaLuaRef listener = CoronaLuaNewRef( L, listenerIndex );
 
-        //TODO: send JSON
         ADJAttribution *attribution = [Adjust attribution];
         NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
         if (nil != attribution) {
@@ -777,8 +776,17 @@ AdjustPlugin::getAttribution( lua_State *L )
             [AdjustSdkDelegate addKey:@"adid" andValue:attribution.adid toDictionary:dictionary];
         }
 
-        NSString *strDict = [NSString stringWithFormat:@"%@", dictionary];
-        [AdjustSdkDelegate dispatchEvent:L withListener:listener eventName:EVENT_GET_ATTRIBUTION andMessage:strDict];
+        NSError *error;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
+                                                           options:NSJSONWritingPrettyPrinted
+                                                             error:&error];
+
+        if (!jsonData) {
+            NSLog(@"Error while trying to convert attribution dictionary to JSON string: %@", error);
+        } else {
+            NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            [AdjustSdkDelegate dispatchEvent:L withListener:listener eventName:EVENT_ATTRIBUTION_CHANGED andMessage:jsonString];
+        }
     }
 
     return 0;
