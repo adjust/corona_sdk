@@ -339,7 +339,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		L.pop(1);
 
 		// SDK prefix
-		adjustConfig.setSdkPrefix("corona4.12.1");
+		adjustConfig.setSdkPrefix("corona4.12.2");
 
 		// Main process name
 		L.getField(1, "processName");
