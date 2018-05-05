@@ -137,7 +137,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 				new SetDeferredDeeplinkListenerWrapper(),
 				new GetAdidWrapper(),
 				new GetGoogleAdIdWrapper(),
-				new GetAmazonAdIdWrapper()
+				new GetAmazonAdIdWrapper(),
+				new GdprForgetMe()
 		};
 		String libName = L.toString(1);
 		L.register(libName, luaFunctions);
@@ -785,6 +786,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		return 0;
 	}
 
+	private int adjust_gdprForgetMe(LuaState L) {
+		Adjust.gdprForgetMe(CoronaEnvironment.getApplicationContext());
+		return 0;
+	}
+
 	private int adjust_setAttributionListener(LuaState L) {
 		// Hardcoded listener index for ADJUST
 		int listenerIndex = 1;
@@ -1080,6 +1086,18 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 	}
 
 	private class GetAttributionWrapper implements NamedJavaFunction {
+		@Override
+		public String getName() {
+			return "gdprForgetMe";
+		}
+
+		@Override
+		public int invoke(LuaState L) {
+			return adjust_gdprForgetMe(L);
+		}
+	}
+
+	private class GdprForgetMe implements NamedJavaFunction {
 		@Override
 		public String getName() {
 			return "getAttribution";
