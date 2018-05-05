@@ -79,6 +79,7 @@ public:
     static int getAdid( lua_State *L );
     static int getGoogleAdId( lua_State *L );
     static int getAmazonAdId( lua_State *L );
+    static int gdprForgetMe( lua_State *L );
 
     static int setAttributionListener( lua_State *L );
     static int setEventTrackingSuccessListener( lua_State *L );
@@ -231,6 +232,7 @@ AdjustPlugin::Open( lua_State *L )
         { "getAdid", getAdid },
         { "getGoogleAdId", getGoogleAdId },
         { "getAmazonAdId", getAmazonAdId },
+        { "gdprForgetMe", gdprForgetMe },
 
         { NULL, NULL }
     };
@@ -839,6 +841,13 @@ AdjustPlugin::getAmazonAdId( lua_State *L )
         [AdjustSdkDelegate dispatchEvent:L withListener:listener eventName:EVENT_GET_AMAZON_AD_ID andMessage:amazonAdId];
     }
 
+    return 0;
+}
+
+int
+AdjustPlugin::gdprForgetMe( lua_State *L )
+{
+    [Adjust gdprForgetMe];
     return 0;
 }
 
