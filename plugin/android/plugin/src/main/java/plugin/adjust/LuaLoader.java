@@ -636,7 +636,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 	private int adjust_setPushToken(LuaState L) {
 		String pushToken = L.checkString(1);
-		Adjust.setPushToken(pushToken);
+		Adjust.setPushToken(pushToken, CoronaEnvironment.getApplicationContext());
 		return 0;
 	}
 
