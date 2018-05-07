@@ -1,10 +1,9 @@
 //
 //  LuaUtil.java
-//  Adjust
+//  Adjust SDK
 //
-//  Created by Abdullah Obaied on 2017-9-14.
-//  Copyright (c) 2017 adjust GmbH. All rights reserved.
-//  See the file MIT-LICENSE for copying permission.
+//  Created by Abdullah Obaied (@obaied) on 14th September 2017.
+//  Copyright (c) 2017-2018 Adjust GmbH. All rights reserved.
 //
 
 package plugin.adjust;
@@ -19,10 +18,6 @@ import com.adjust.sdk.AdjustSessionSuccess;
 
 import java.util.HashMap;
 import java.util.Map;
-
-/**
- * Created by ab on 14.09.17.
- */
 
 final public class LuaUtil {
     private static final String ATTRIBUTION_TRACKER_TOKEN = "trackerToken";
@@ -60,7 +55,6 @@ final public class LuaUtil {
 
     public static Map attributionToMap(AdjustAttribution attribution) {
         Map map = new HashMap();
-
         if (null == attribution) {
             return map;
         }
@@ -73,13 +67,11 @@ final public class LuaUtil {
         map.put(ATTRIBUTION_CREATIVE, null != attribution.creative ? attribution.creative : "");
         map.put(ATTRIBUTION_CLICK_LABEL, null != attribution.clickLabel ? attribution.clickLabel : "");
         map.put(ATTRIBUTION_ADID, null != attribution.adid ? attribution.adid : "");
-
         return map;
     }
 
     public static Map eventSuccessToMap(AdjustEventSuccess eventSuccess) {
         Map map = new HashMap<String, String>();
-
         if (null == eventSuccess) {
             return map;
         }
@@ -89,13 +81,11 @@ final public class LuaUtil {
         map.put(EVENT_SUCCESS_ADID, null != eventSuccess.adid ? eventSuccess.adid : "");
         map.put(EVENT_SUCCESS_EVENT_TOKEN, null != eventSuccess.eventToken ? eventSuccess.eventToken : "");
         map.put(EVENT_SUCCESS_JSON_RESPONSE, null != eventSuccess.jsonResponse ? eventSuccess.jsonResponse.toString() : "");
-
         return map;
     }
 
     public static Map eventFailureToMap(AdjustEventFailure eventFailure) {
         Map map = new HashMap();
-
         if (null == eventFailure) {
             return map;
         }
@@ -106,13 +96,11 @@ final public class LuaUtil {
         map.put(EVENT_FAILED_EVENT_TOKEN, null != eventFailure.eventToken ? eventFailure.eventToken : "");
         map.put(EVENT_FAILED_WILL_RETRY, eventFailure.willRetry ? "true" : "false");
         map.put(EVENT_FAILED_JSON_RESPONSE, null != eventFailure.jsonResponse ? eventFailure.jsonResponse.toString() : "");
-
         return map;
     }
 
     public static Map sessionSuccessToMap(AdjustSessionSuccess sessionSuccess) {
         Map map = new HashMap();
-
         if (null == sessionSuccess) {
             return map;
         }
@@ -121,13 +109,11 @@ final public class LuaUtil {
         map.put(SESSION_SUCCESS_TIMESTAMP, null != sessionSuccess.timestamp ? sessionSuccess.timestamp : "");
         map.put(SESSION_SUCCESS_ADID, null != sessionSuccess.adid ? sessionSuccess.adid : "");
         map.put(SESSION_SUCCESS_JSON_RESPONSE, null != sessionSuccess.jsonResponse ? sessionSuccess.jsonResponse.toString() : "");
-
         return map;
     }
 
     public static Map sessionFailureToMap(AdjustSessionFailure sessionFailure) {
         Map map = new HashMap();
-
         if (null == sessionFailure) {
             return map;
         }
@@ -137,20 +123,16 @@ final public class LuaUtil {
         map.put(SESSION_FAILED_ADID, null != sessionFailure.adid ? sessionFailure.adid : "");
         map.put(SESSION_FAILED_WILL_RETRY, sessionFailure.willRetry ? "true" : "false");
         map.put(SESSION_FAILED_JSON_RESPONSE, null != sessionFailure.jsonResponse ? sessionFailure.jsonResponse.toString() : "");
-
         return map;
     }
 
     public static Map deferredDeeplinkToMap(Uri uri) {
         Map map = new HashMap();
-
         if (null == uri) {
             return map;
         }
 
         map.put("uri", uri.toString());
-
         return map;
     }
 }
-
