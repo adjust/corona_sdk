@@ -94,7 +94,7 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
 
 + (void)dispatchEvent:(NSString *)eventName
             withState:(lua_State *)luaState
-             callback:(CoronaLuaRef *)callback
+             callback:(CoronaLuaRef)callback
            andMessage:(NSString *)message {
     // Create event and add message to it.
     CoronaLuaNewEvent(luaState, [eventName UTF8String]);

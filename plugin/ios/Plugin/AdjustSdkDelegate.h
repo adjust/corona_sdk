@@ -94,7 +94,7 @@
  */
 + (void)dispatchEvent:(NSString *)eventName
             withState:(lua_State *)luaState
-             callback:(CoronaLuaRef *)callback
+             callback:(CoronaLuaRef)callback
            andMessage:(NSString *)message;
 
 /**

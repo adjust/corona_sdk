@@ -10,7 +10,6 @@
 #include <CoronaRuntime.h>
 
 #include "CoronaLuaIOS.h"
-
 #import "Adjust.h"
 #import "AdjustPlugin.h"
 #import "AdjustSdkDelegate.h"
@@ -24,8 +23,7 @@
 
 // ----------------------------------------------------------------------------
 
-class AdjustPlugin
-{
+class AdjustPlugin {
 public:
     typedef AdjustPlugin Self;
 
@@ -37,12 +35,12 @@ protected:
     AdjustPlugin();
 
 public:
-    bool InitializeAttributionListener( CoronaLuaRef listener );
-    bool InitializeEventTrackingSuccessListener( CoronaLuaRef listener );
-    bool InitializeEventTrackingFailureListener( CoronaLuaRef listener );
-    bool InitializeSessionTrackingSuccessListener( CoronaLuaRef listener );
-    bool InitializeSessionTrackingFailureListener( CoronaLuaRef listener );
-    bool InitializeDeferredDeeplinkListener( CoronaLuaRef listener );
+    bool InitializeAttributionListener(CoronaLuaRef listener);
+    bool InitializeEventTrackingSuccessListener(CoronaLuaRef listener);
+    bool InitializeEventTrackingFailureListener(CoronaLuaRef listener);
+    bool InitializeSessionTrackingSuccessListener(CoronaLuaRef listener);
+    bool InitializeSessionTrackingFailureListener(CoronaLuaRef listener);
+    bool InitializeDeferredDeeplinkListener(CoronaLuaRef listener);
 
 public:
     CoronaLuaRef GetAttributionChangedListener() const { return attributionChangedListener; }
@@ -53,42 +51,42 @@ public:
     CoronaLuaRef GetDeferredDeeplinkListener() const { return deferredDeeplinkListener; }
 
 public:
-    static int Open( lua_State *L );
+    static int Open(lua_State *L);
 
 protected:
-    static int Finalizer( lua_State *L );
+    static int Finalizer(lua_State *L);
 
 public:
-    static Self *ToLibrary( lua_State *L );
+    static Self *ToLibrary(lua_State *L);
 
 public:
-    static int create( lua_State *L );
-    static int trackEvent( lua_State *L );
-    static int setEnabled( lua_State *L );
-    static int setPushToken( lua_State *L );
-    static int appWillOpenUrl( lua_State *L );
-    static int sendFirstPackages( lua_State *L );
-    static int addSessionCallbackParameter( lua_State *L );
-    static int addSessionPartnerParameter( lua_State *L );
-    static int removeSessionCallbackParameter( lua_State *L );
-    static int removeSessionPartnerParameter( lua_State *L );
-    static int resetSessionCallbackParameters( lua_State *L );
-    static int resetSessionPartnerParameters( lua_State *L );
-    static int setOfflineMode( lua_State *L );
-    static int isEnabled( lua_State *L );
-    static int getIdfa( lua_State *L );
-    static int getAttribution( lua_State *L );
-    static int getAdid( lua_State *L );
-    static int getGoogleAdId( lua_State *L );
-    static int getAmazonAdId( lua_State *L );
-    static int gdprForgetMe( lua_State *L );
+    static int create(lua_State *L);
+    static int trackEvent(lua_State *L);
+    static int setEnabled(lua_State *L);
+    static int setPushToken(lua_State *L);
+    static int appWillOpenUrl(lua_State *L);
+    static int sendFirstPackages(lua_State *L);
+    static int addSessionCallbackParameter(lua_State *L);
+    static int addSessionPartnerParameter(lua_State *L);
+    static int removeSessionCallbackParameter(lua_State *L);
+    static int removeSessionPartnerParameter(lua_State *L);
+    static int resetSessionCallbackParameters(lua_State *L);
+    static int resetSessionPartnerParameters(lua_State *L);
+    static int setOfflineMode(lua_State *L);
+    static int isEnabled(lua_State *L);
+    static int getIdfa(lua_State *L);
+    static int getAttribution(lua_State *L);
+    static int getAdid(lua_State *L);
+    static int getGoogleAdId(lua_State *L);
+    static int getAmazonAdId(lua_State *L);
+    static int gdprForgetMe(lua_State *L);
 
-    static int setAttributionListener( lua_State *L );
-    static int setEventTrackingSuccessListener( lua_State *L );
-    static int setEventTrackingFailureListener( lua_State *L );
-    static int setSessionTrackingSuccessListener( lua_State *L );
-    static int setSessionTrackingFailureListener( lua_State *L );
-    static int setDeferredDeeplinkListener( lua_State *L );
+    static int setAttributionListener(lua_State *L);
+    static int setEventTrackingSuccessListener(lua_State *L);
+    static int setEventTrackingFailureListener(lua_State *L);
+    static int setSessionTrackingSuccessListener(lua_State *L);
+    static int setSessionTrackingFailureListener(lua_State *L);
+    static int setDeferredDeeplinkListener(lua_State *L);
 
 private:
     CoronaLuaRef attributionChangedListener;
@@ -101,114 +99,81 @@ private:
 
 // ----------------------------------------------------------------------------
 
-// This corresponds to the name of the library, e.g. [Lua] require "plugin.library"
-// Adjust SDK is named "plugin.adjust"
+// This corresponds to the name of the library, e.g. [Lua] require "plugin.library".
+// Adjust SDK is named "plugin.adjust".
 const char AdjustPlugin::kName[] = "plugin.adjust";
 
 AdjustPlugin::AdjustPlugin()
-: attributionChangedListener( NULL ),
-eventTrackingSuccessListener( NULL ),
-eventTrackingFailureListener( NULL ),
-sessionTrackingSuccessListener( NULL ),
-sessionTrackingFailureListener( NULL ),
-deferredDeeplinkListener( NULL )
-{
-}
+: attributionChangedListener(NULL),
+eventTrackingSuccessListener(NULL),
+eventTrackingFailureListener(NULL),
+sessionTrackingSuccessListener(NULL),
+sessionTrackingFailureListener(NULL),
+deferredDeeplinkListener(NULL) {}
 
-bool
-AdjustPlugin::InitializeAttributionListener( CoronaLuaRef listener )
-{
-    // Can only initialize listener once
-    bool result = ( NULL == attributionChangedListener );
-
-    if ( result )
-    {
+bool AdjustPlugin::InitializeAttributionListener(CoronaLuaRef listener) {
+    // Can only initialize listener once.
+    bool result = (NULL == attributionChangedListener);
+    if (result) {
         attributionChangedListener = listener;
     }
-
     return result;
 }
 
-bool
-AdjustPlugin::InitializeEventTrackingSuccessListener( CoronaLuaRef listener )
-{
-    // Can only initialize listener once
-    bool result = ( NULL == eventTrackingSuccessListener );
-
-    if ( result )
-    {
+bool AdjustPlugin::InitializeEventTrackingSuccessListener(CoronaLuaRef listener) {
+    // Can only initialize listener once.
+    bool result = (NULL == eventTrackingSuccessListener);
+    if (result) {
         eventTrackingSuccessListener = listener;
     }
-
     return result;
 }
 
-bool
-AdjustPlugin::InitializeEventTrackingFailureListener( CoronaLuaRef listener )
-{
-    // Can only initialize listener once
-    bool result = ( NULL == eventTrackingFailureListener );
-
-    if ( result )
-    {
+bool AdjustPlugin::InitializeEventTrackingFailureListener(CoronaLuaRef listener) {
+    // Can only initialize listener once.
+    bool result = (NULL == eventTrackingFailureListener);
+    if (result) {
         eventTrackingFailureListener = listener;
     }
-
     return result;
 }
 
-bool
-AdjustPlugin::InitializeSessionTrackingSuccessListener( CoronaLuaRef listener )
-{
-    // Can only initialize listener once
-    bool result = ( NULL == sessionTrackingSuccessListener );
-
-    if ( result )
-    {
+bool AdjustPlugin::InitializeSessionTrackingSuccessListener(CoronaLuaRef listener) {
+    // Can only initialize listener once.
+    bool result = (NULL == sessionTrackingSuccessListener);
+    if (result) {
         sessionTrackingSuccessListener = listener;
     }
-
     return result;
 }
 
-bool
-AdjustPlugin::InitializeSessionTrackingFailureListener( CoronaLuaRef listener )
-{
-    // Can only initialize listener once
-    bool result = ( NULL == sessionTrackingFailureListener );
-
-    if ( result )
-    {
+bool AdjustPlugin::InitializeSessionTrackingFailureListener(CoronaLuaRef listener) {
+    // Can only initialize listener once.
+    bool result = (NULL == sessionTrackingFailureListener);
+    if (result) {
         sessionTrackingFailureListener = listener;
     }
-
     return result;
 }
 
-bool
-AdjustPlugin::InitializeDeferredDeeplinkListener( CoronaLuaRef listener )
-{
-    // Can only initialize listener once
-    bool result = ( NULL == deferredDeeplinkListener );
-
-    if ( result )
-    {
+bool AdjustPlugin::InitializeDeferredDeeplinkListener(CoronaLuaRef listener) {
+    // Can only initialize listener once.
+    bool result = (NULL == deferredDeeplinkListener);
+    if (result) {
         deferredDeeplinkListener = listener;
     }
-
     return result;
 }
 
 int
-AdjustPlugin::Open( lua_State *L )
-{
-    // Register __gc callback
-    const char kMetatableName[] = __FILE__; // Globally unique string to prevent collision
-    CoronaLuaInitializeGCMetatable( L, kMetatableName, Finalizer );
+AdjustPlugin::Open(lua_State *L) {
+    // Register __gc callback.
+    // Globally unique string to prevent collision.
+    const char kMetatableName[] = __FILE__;
+    CoronaLuaInitializeGCMetatable(L, kMetatableName, Finalizer);
 
     // Functions in library
-    const luaL_Reg kVTable[] =
-    {
+    const luaL_Reg kVTable[] = {
         { "create", create },
         { "trackEvent", trackEvent },
         { "setEnabled", setEnabled },
@@ -239,43 +204,36 @@ AdjustPlugin::Open( lua_State *L )
         { NULL, NULL }
     };
 
-    // Set library as upvalue for each library function
+    // Set library as upvalue for each library function.
     Self *library = new Self;
-    CoronaLuaPushUserdata( L, library, kMetatableName );
+    CoronaLuaPushUserdata(L, library, kMetatableName);
 
-    luaL_openlib( L, kName, kVTable, 1 ); // leave "library" on top of stack
+    // Leave "library" on top of stack.
+    luaL_openlib(L, kName, kVTable, 1);
 
     return 1;
 }
 
-int
-AdjustPlugin::Finalizer( lua_State *L )
-{
-    Self *library = (Self *)CoronaLuaToUserdata( L, 1 );
-
-    CoronaLuaDeleteRef( L, library->GetAttributionChangedListener() );
-    CoronaLuaDeleteRef( L, library->GetSessionTrackingSuccessListener() );
-    CoronaLuaDeleteRef( L, library->GetSessionTrackingFailureListener() );
-    CoronaLuaDeleteRef( L, library->GetEventTrackingSuccessListener() );
-    CoronaLuaDeleteRef( L, library->GetEventTrackingFailureListener() );
-    CoronaLuaDeleteRef( L, library->GetDeferredDeeplinkListener() );
+int AdjustPlugin::Finalizer(lua_State *L) {
+    Self *library = (Self *)CoronaLuaToUserdata(L, 1);
+    CoronaLuaDeleteRef(L, library->GetAttributionChangedListener());
+    CoronaLuaDeleteRef(L, library->GetSessionTrackingSuccessListener());
+    CoronaLuaDeleteRef(L, library->GetSessionTrackingFailureListener());
+    CoronaLuaDeleteRef(L, library->GetEventTrackingSuccessListener());
+    CoronaLuaDeleteRef(L, library->GetEventTrackingFailureListener());
+    CoronaLuaDeleteRef(L, library->GetDeferredDeeplinkListener());
 
     delete library;
-
     return 0;
 }
 
-AdjustPlugin *
-AdjustPlugin::ToLibrary( lua_State *L )
-{
-    // library is pushed as part of the closure
-    Self *library = (Self *)CoronaLuaToUserdata( L, lua_upvalueindex( 1 ) );
+AdjustPlugin * AdjustPlugin::ToLibrary(lua_State *L) {
+    // Library is pushed as part of the closure.
+    Self *library = (Self *)CoronaLuaToUserdata(L, lua_upvalueindex(1));
     return library;
 }
 
-int
-AdjustPlugin::create( lua_State *L )
-{
+int AdjustPlugin::create(lua_State *L) {
     double delayStart = 0.0;
 
     NSUInteger secretId = -1;
@@ -299,6 +257,7 @@ AdjustPlugin::create( lua_State *L )
     if (!lua_istable(L, 1)) {
         return 0;
     }
+
     // Log level
     lua_getfield(L, 1, "logLevel");
     if (!lua_isnil(L, 2)) {
@@ -427,7 +386,7 @@ AdjustPlugin::create( lua_State *L )
         [adjustConfig setAppSecret:secretId info1:info1 info2:info2 info3:info3 info4:info4];
     }
 
-    Self *library = ToLibrary( L );
+    Self *library = ToLibrary(L);
     BOOL isAttributionChangedListenerImplmented = library->GetAttributionChangedListener() != NULL;
     BOOL isEventTrackingSuccessListenerImplmented = library->GetEventTrackingSuccessListener() != NULL;
     BOOL isEventTrackingFailureListenerImplmented = library->GetEventTrackingFailureListener() != NULL;
@@ -438,9 +397,9 @@ AdjustPlugin::create( lua_State *L )
     if (isAttributionChangedListenerImplmented
         || isEventTrackingSuccessListenerImplmented
         || isEventTrackingFailureListenerImplmented
-        || isSessionTrackingSuccessListenerImplmented ||
-       isSessionTrackingFailureListenerImplmented ||
-       isDeferredDeeplinkListenerImplemented) {
+        || isSessionTrackingSuccessListenerImplmented
+        || isSessionTrackingFailureListenerImplmented
+        || isDeferredDeeplinkListenerImplemented) {
         [adjustConfig setDelegate:
          [AdjustSdkDelegate getInstanceWithSwizzleOfAttributionChangedCallback:library->GetAttributionChangedListener()
                                                   eventTrackingSuccessCallback:library->GetEventTrackingSuccessListener()
@@ -453,19 +412,15 @@ AdjustPlugin::create( lua_State *L )
 
     [Adjust appDidLaunch:adjustConfig];
     [Adjust trackSubsessionStart];
-
     return 0;
 }
 
-int
-AdjustPlugin::trackEvent( lua_State *L )
-{
+int AdjustPlugin::trackEvent(lua_State *L) {
     if (!lua_istable(L, 1)) {
         return 0;
     }
 
     double revenue = -1.0;
-
     NSString *currency = nil;
     NSString *eventToken = nil;
     NSString *transactionId = nil;
@@ -501,7 +456,7 @@ AdjustPlugin::trackEvent( lua_State *L )
 
     // Transaction ID
     lua_getfield(L, 1, "transactionId");
-    if(!lua_isnil(L, 2)) {
+    if (!lua_isnil(L, 2)) {
         const char *transactionId_char = lua_tostring(L, 2);
         transactionId = [NSString stringWithUTF8String:transactionId_char];
         [event setTransactionId:transactionId];
@@ -521,7 +476,7 @@ AdjustPlugin::trackEvent( lua_State *L )
 
     // Partner Parameters
     lua_getfield(L, 1, "partnerParameters");
-    if(!lua_isnil(L, 2) && lua_istable(L, 2)) {
+    if (!lua_isnil(L, 2) && lua_istable(L, 2)) {
         NSDictionary *dict = CoronaLuaCreateDictionary(L, 2);
         for(id key in dict) {
             NSDictionary *partnerParams = [dict objectForKey:key];
@@ -531,242 +486,164 @@ AdjustPlugin::trackEvent( lua_State *L )
     lua_pop(L, 1);
 
     [Adjust trackEvent:event];
-
     return 0;
 }
 
-int
-AdjustPlugin::setAttributionListener( lua_State *L )
-{
+int AdjustPlugin::setAttributionListener(lua_State *L) {
     int listenerIndex = 1;
-
-    if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
-    {
-        Self *library = ToLibrary( L );
-
-        CoronaLuaRef listener = CoronaLuaNewRef( L, listenerIndex );
-        library->InitializeAttributionListener( listener );
+    if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
+        Self *library = ToLibrary(L);
+        CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
+        library->InitializeAttributionListener(listener);
     }
-
     return 0;
 }
 
-int
-AdjustPlugin::setEventTrackingSuccessListener( lua_State *L )
-{
+int AdjustPlugin::setEventTrackingSuccessListener(lua_State *L) {
     int listenerIndex = 1;
-
-    if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
-    {
-        Self *library = ToLibrary( L );
-
-        CoronaLuaRef listener = CoronaLuaNewRef( L, listenerIndex );
-        library->InitializeEventTrackingSuccessListener( listener );
+    if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
+        Self *library = ToLibrary(L);
+        CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
+        library->InitializeEventTrackingSuccessListener(listener);
     }
-
     return 0;
 }
 
-int
-AdjustPlugin::setEventTrackingFailureListener( lua_State *L )
-{
+int AdjustPlugin::setEventTrackingFailureListener(lua_State *L) {
     int listenerIndex = 1;
-
-    if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
-    {
-        Self *library = ToLibrary( L );
-
-        CoronaLuaRef listener = CoronaLuaNewRef( L, listenerIndex );
-        library->InitializeEventTrackingFailureListener( listener );
+    if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
+        Self *library = ToLibrary(L);
+        CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
+        library->InitializeEventTrackingFailureListener(listener);
     }
-
     return 0;
 }
 
-int
-AdjustPlugin::setSessionTrackingSuccessListener( lua_State *L )
-{
+int AdjustPlugin::setSessionTrackingSuccessListener(lua_State *L) {
     int listenerIndex = 1;
-
-    if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
-    {
-        Self *library = ToLibrary( L );
-
-        CoronaLuaRef listener = CoronaLuaNewRef( L, listenerIndex );
-        library->InitializeSessionTrackingSuccessListener( listener );
+    if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
+        Self *library = ToLibrary(L);
+        CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
+        library->InitializeSessionTrackingSuccessListener(listener);
     }
-
     return 0;
 }
 
-int
-AdjustPlugin::setSessionTrackingFailureListener( lua_State *L )
-{
+int AdjustPlugin::setSessionTrackingFailureListener(lua_State *L) {
     int listenerIndex = 1;
-
-    if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
-    {
-        Self *library = ToLibrary( L );
-
-        CoronaLuaRef listener = CoronaLuaNewRef( L, listenerIndex );
-        library->InitializeSessionTrackingFailureListener( listener );
+    if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
+        Self *library = ToLibrary(L);
+        CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
+        library->InitializeSessionTrackingFailureListener(listener);
     }
-
     return 0;
 }
 
-int
-AdjustPlugin::setDeferredDeeplinkListener( lua_State *L )
-{
+int AdjustPlugin::setDeferredDeeplinkListener(lua_State *L) {
     int listenerIndex = 1;
-
-    if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
-    {
-        Self *library = ToLibrary( L );
-
-        CoronaLuaRef listener = CoronaLuaNewRef( L, listenerIndex );
-        library->InitializeDeferredDeeplinkListener( listener );
+    if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
+        Self *library = ToLibrary(L);
+        CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
+        library->InitializeDeferredDeeplinkListener(listener);
     }
-
     return 0;
 }
 
-int
-AdjustPlugin::setEnabled( lua_State *L )
-{
+int AdjustPlugin::setEnabled(lua_State *L) {
     BOOL enabled = lua_toboolean(L, 1);
     [Adjust setEnabled:enabled];
     return 0;
 }
 
-int
-AdjustPlugin::setPushToken( lua_State *L )
-{
+int AdjustPlugin::setPushToken(lua_State *L) {
     const char *pushToken_char = lua_tostring(L, 1);
     NSString *pushToken =[NSString stringWithUTF8String:pushToken_char];
     [Adjust setDeviceToken:[pushToken dataUsingEncoding:NSUTF8StringEncoding]];
     return 0;
 }
 
-int
-AdjustPlugin::appWillOpenUrl( lua_State *L )
-{
+int AdjustPlugin::appWillOpenUrl(lua_State *L) {
     const char *urlStr = lua_tostring(L, 1);
     NSURL *url = [NSURL URLWithString:[NSString stringWithUTF8String:urlStr]];
     [Adjust appWillOpenUrl:url];
     return 0;
 }
 
-int
-AdjustPlugin::sendFirstPackages( lua_State *L )
-{
+int AdjustPlugin::sendFirstPackages(lua_State *L) {
     [Adjust sendFirstPackages];
     return 0;
 }
 
-int
-AdjustPlugin::addSessionCallbackParameter( lua_State *L )
-{
+int AdjustPlugin::addSessionCallbackParameter(lua_State *L) {
     const char *key = lua_tostring(L, 1);
     const char *value = lua_tostring(L, 2);
     [Adjust addSessionCallbackParameter:[NSString stringWithUTF8String:key] value:[NSString stringWithUTF8String:value]];
     return 0;
 }
 
-int
-AdjustPlugin::addSessionPartnerParameter( lua_State *L )
-{
+int AdjustPlugin::addSessionPartnerParameter(lua_State *L) {
     const char *key = lua_tostring(L, 1);
     const char *value = lua_tostring(L, 2);
     [Adjust addSessionPartnerParameter:[NSString stringWithUTF8String:key] value:[NSString stringWithUTF8String:value]];
     return 0;
 }
 
-int
-AdjustPlugin::removeSessionCallbackParameter( lua_State *L )
-{
+int AdjustPlugin::removeSessionCallbackParameter(lua_State *L) {
     const char *key = lua_tostring(L, 1);
     [Adjust removeSessionCallbackParameter:[NSString stringWithUTF8String:key]];
     return 0;
 }
 
-int
-AdjustPlugin::removeSessionPartnerParameter( lua_State *L )
-{
+int AdjustPlugin::removeSessionPartnerParameter(lua_State *L) {
     const char *key = lua_tostring(L, 1);
     [Adjust removeSessionPartnerParameter:[NSString stringWithUTF8String:key]];
     return 0;
 }
 
-int
-AdjustPlugin::resetSessionCallbackParameters( lua_State *L )
-{
+int AdjustPlugin::resetSessionCallbackParameters(lua_State *L) {
     [Adjust resetSessionCallbackParameters];
     return 0;
 }
 
-int
-AdjustPlugin::resetSessionPartnerParameters( lua_State *L )
-{
+int AdjustPlugin::resetSessionPartnerParameters(lua_State *L) {
     [Adjust resetSessionPartnerParameters];
     return 0;
 }
 
-int
-AdjustPlugin::setOfflineMode( lua_State *L )
-{
+int AdjustPlugin::setOfflineMode(lua_State *L) {
     BOOL enabled = lua_toboolean(L, 1);
     [Adjust setOfflineMode:enabled];
     return 0;
 }
 
-int
-AdjustPlugin::isEnabled( lua_State *L )
-{
+int AdjustPlugin::isEnabled(lua_State *L) {
     int listenerIndex = 1;
-
-    if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
-    {
-
-        CoronaLuaRef listener = CoronaLuaNewRef( L, listenerIndex );
-
+    if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
+        CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
         BOOL isEnabled = [Adjust isEnabled];
         NSString *result = isEnabled ? @"true" : @"false";
-        [AdjustSdkDelegate dispatchEvent:L withListener:listener eventName:EVENT_IS_ENABLED andMessage:result];
+        [AdjustSdkDelegate dispatchEvent:EVENT_IS_ENABLED withState:L callback:listener andMessage:result];
     }
-
     return 0;
 }
 
-int
-AdjustPlugin::getIdfa( lua_State *L )
-{
+int AdjustPlugin::getIdfa(lua_State *L) {
     int listenerIndex = 1;
-
-    if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
-    {
-        CoronaLuaRef listener = CoronaLuaNewRef( L, listenerIndex );
-
+    if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
+        CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
         NSString *idfa = [Adjust idfa];
         if (nil == idfa) {
             idfa = @"";
         }
-
-        [AdjustSdkDelegate dispatchEvent:L withListener:listener eventName:EVENT_GET_IDFA andMessage:idfa];
+        [AdjustSdkDelegate dispatchEvent:EVENT_GET_IDFA withState:L callback:listener andMessage:idfa];
     }
-
     return 0;
 }
 
-int
-AdjustPlugin::getAttribution( lua_State *L )
-{
+int AdjustPlugin::getAttribution(lua_State *L) {
     int listenerIndex = 1;
-
-    if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
-    {
-        CoronaLuaRef listener = CoronaLuaNewRef( L, listenerIndex );
-
+    if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
+        CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
         ADJAttribution *attribution = [Adjust attribution];
         NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
         if (nil != attribution) {
@@ -784,78 +661,56 @@ AdjustPlugin::getAttribution( lua_State *L )
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
                                                            options:NSJSONWritingPrettyPrinted
                                                              error:&error];
-
         if (!jsonData) {
-            NSLog(@"Error while trying to convert attribution dictionary to JSON string: %@", error);
+            NSLog(@"[Adjust][bridge]: Error while trying to convert attribution dictionary to JSON string: %@", error);
         } else {
             NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-            [AdjustSdkDelegate dispatchEvent:L withListener:listener eventName:EVENT_GET_ATTRIBUTION andMessage:jsonString];
+            [AdjustSdkDelegate dispatchEvent:EVENT_GET_ATTRIBUTION withState:L callback:listener andMessage:jsonString];
         }
     }
-
     return 0;
 }
 
-int
-AdjustPlugin::getAdid( lua_State *L )
-{
+int AdjustPlugin::getAdid(lua_State *L) {
     int listenerIndex = 1;
-
-    if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
-    {
-        CoronaLuaRef listener = CoronaLuaNewRef( L, listenerIndex );
-
+    if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
+        CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
         NSString *adid = [Adjust adid];
         if (nil == adid) {
             adid = @"";
         }
-
-        [AdjustSdkDelegate dispatchEvent:L withListener:listener eventName:EVENT_GET_ADID andMessage:adid];
+        [AdjustSdkDelegate dispatchEvent:EVENT_GET_ADID withState:L callback:listener andMessage:adid];
     }
-
     return 0;
 }
 
-int
-AdjustPlugin::getGoogleAdId( lua_State *L )
-{
+int AdjustPlugin::getGoogleAdId(lua_State *L) {
     int listenerIndex = 1;
-
-    if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
-    {
-        CoronaLuaRef listener = CoronaLuaNewRef( L, listenerIndex );
+    if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
+        CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
         NSString *googleAdId = @"";
-        [AdjustSdkDelegate dispatchEvent:L withListener:listener eventName:EVENT_GET_GOOGLE_AD_ID andMessage:googleAdId];
+        [AdjustSdkDelegate dispatchEvent:EVENT_GET_GOOGLE_AD_ID withState:L callback:listener andMessage:googleAdId];
     }
-
     return 0;
 }
 
-int
-AdjustPlugin::getAmazonAdId( lua_State *L )
-{
+int AdjustPlugin::getAmazonAdId(lua_State *L) {
     int listenerIndex = 1;
-
-    if ( CoronaLuaIsListener( L, listenerIndex, "ADJUST" ) )
-    {
-        CoronaLuaRef listener = CoronaLuaNewRef( L, listenerIndex );
+    if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
+        CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
         NSString *amazonAdId = @"";
-        [AdjustSdkDelegate dispatchEvent:L withListener:listener eventName:EVENT_GET_AMAZON_AD_ID andMessage:amazonAdId];
+        [AdjustSdkDelegate dispatchEvent:EVENT_GET_AMAZON_AD_ID withState:L callback:listener andMessage:amazonAdId];
     }
-
     return 0;
 }
 
-int
-AdjustPlugin::gdprForgetMe( lua_State *L )
-{
+int AdjustPlugin::gdprForgetMe(lua_State *L) {
     [Adjust gdprForgetMe];
     return 0;
 }
 
 // ----------------------------------------------------------------------------
 
-CORONA_EXPORT int luaopen_plugin_adjust( lua_State *L )
-{
-    return AdjustPlugin::Open( L );
+CORONA_EXPORT int luaopen_plugin_adjust(lua_State *L) {
+    return AdjustPlugin::Open(L);
 }
