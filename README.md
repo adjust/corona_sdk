@@ -26,33 +26,34 @@ This is the Corona SDK of Adjust™. You can read more about Adjust™ at [adjus
       * [Revenue deduplication](#revenue-deduplication)
       * [Callback parameters](#callback-parameters)
       * [Partner parameters](#partner-parameters)
-    * [Session parameters](#session-parameters)
+   * [Session parameters](#session-parameters)
       * [Session callback parameters](#session-callback-parameters)
       * [Session partner parameters](#session-partner-parameters)
       * [Delay start](#delay-start)
-    * [Attribution callback](#attribution-callback)
-    * [Session and event callbacks](#session-event-callbacks)
-    * [Disable tracking](#disable-tracking)
-    * [Offline mode](#offline-mode)
-    * [Event buffering](#event-buffering)
-    * [SDK signature](#sdk-signature)
-    * [Background tracking](#background-tracking)
-    * [Device IDs](#device-ids)
+   * [Attribution callback](#attribution-callback)
+   * [Session and event callbacks](#session-event-callbacks)
+   * [Disable tracking](#disable-tracking)
+   * [Offline mode](#offline-mode)
+   * [Event buffering](#event-buffering)
+   * [GDPR right to be forgotten](#gdpr-forget-me)
+   * [SDK signature](#sdk-signature)
+   * [Background tracking](#background-tracking)
+   * [Device IDs](#device-ids)
       * [iOS advertising identifier](#di-idfa)
       * [Google Play Services advertising identifier](#di-gps-adid)
       * [Amazon advertising identifier](#di-fire-adid)
       * [Adjust device identifier](#di-adid)
-    * [User attribution](#user-attribution)
-    * [Push token](#push-token)
-    * [Track additional device identifiers](#track-additional-ids)
-    * [Pre-installed trackers](#pre-installed-trackers)
-    * [Deeplinking](#deeplinking)
-        * [Standard deeplinking scenario](#deeplinking-standard)
-        * [Deeplinking on iOS 8 and earlier](#deeplinking-ios-old)
-        * [Deeplinking on iOS 9 and later](#deeplinking-ios-new)
-        * [Deeplinking on Android](#deeplinking-android)
-        * [Deferred deeplinking scenario](#deeplinking-deferred)
-        * [Reattribution via deeplinks](#deeplinking-reattribution)
+   * [User attribution](#user-attribution)
+   * [Push token](#push-token)
+   * [Track additional device identifiers](#track-additional-ids)
+   * [Pre-installed trackers](#pre-installed-trackers)
+   * [Deeplinking](#deeplinking)
+      * [Standard deeplinking scenario](#deeplinking-standard)
+      * [Deeplinking on iOS 8 and earlier](#deeplinking-ios-old)
+      * [Deeplinking on iOS 9 and later](#deeplinking-ios-new)
+      * [Deeplinking on Android](#deeplinking-android)
+      * [Deferred deeplinking scenario](#deeplinking-deferred)
+      * [Reattribution via deeplinks](#deeplinking-reattribution)
 * [License](#license)
 
 
@@ -77,7 +78,7 @@ You can now add the Adjust SDK to your Corona Enterprise app project. The Adjust
 Inside your Android Studio app project, create a `libs` folder inside of your app folder and add the `plugin.adjust.jar` file to it. After that, please update your app's `build.gradle` file and add the following lines to your `dependencies` section:
 
 ```
-compile 'com.adjust.sdk:adjust-android:4.12.2'
+compile 'com.adjust.sdk:adjust-android:4.13.0'
 compile 'com.android.installreferrer:installreferrer:1.0'
 ```
 
@@ -675,6 +676,19 @@ adjust.create({
     eventBufferingEnabled = true
 })
 ```
+
+
+### <a id="gdpr-forget-me"></a>GDPR right to be forgotten
+
+In accordance with article 17 of the EU's General Data Protection Regulation (GDPR), you can notify Adjust when a user has exercised their right to be forgotten. Calling the following method will instruct the Adjust SDK to communicate the user's choice to be forgotten to the Adjust backend:
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.gdprForgetMe();
+```
+
+Upon receiving this information, Adjust will erase the user's data and the Adjust SDK will stop tracking the user. No requests from this device will be sent to Adjust in the future.
 
 ### <a id="sdk-signature"></a>SDK signature
 

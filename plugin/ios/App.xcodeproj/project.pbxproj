@@ -64,7 +64,7 @@
 		C22C1E4B1E981D9000D74196 /* LaunchScreen.storyboardc in Resources */ = {isa = PBXBuildFile; fileRef = C22C1E4A1E981D9000D74196 /* LaunchScreen.storyboardc */; };
 		E640B2F21BFC00B00031FAE9 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E640B2F11BFC00B00031FAE9 /* AssetsLibrary.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		E640B2F41BFC00BA0031FAE9 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E640B2F31BFC00BA0031FAE9 /* Photos.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		F51C66D61EE0D3B20040E4BE /* libadjust_plugin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E253E2166DE7C800DCDC2C /* libadjust_plugin.a */; };
+		F51C66D61EE0D3B20040E4BE /* libplugin_adjust.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E253E2166DE7C800DCDC2C /* libplugin_adjust.a */; };
 		F5BB41531BC42ACF0033F6FA /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5BB41521BC42ACF0033F6FA /* CoreText.framework */; };
 		F5C9F4811ED39AD100D34A2D /* _CoronaSplashScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = C277D3B51EBB9F8E00966BA1 /* _CoronaSplashScreen.png */; };
 		F5E548091BE7FF0200091810 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5E548081BE7FF0200091810 /* GameController.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -152,7 +152,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F51C66D61EE0D3B20040E4BE /* libadjust_plugin.a in Frameworks */,
+				F51C66D61EE0D3B20040E4BE /* libplugin_adjust.a in Frameworks */,
 				9D259DE41FEAB7E500993BF1 /* iAd.framework in Frameworks */,
 				9D259DE21FEAB7DD00993BF1 /* AdSupport.framework in Frameworks */,
 				9D259DE61FEAB7EE00993BF1 /* CoreTelephony.framework in Frameworks */,
@@ -311,7 +311,7 @@
 		A4E253DB166DE7C800DCDC2C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A4E253E2166DE7C800DCDC2C /* libadjust_plugin.a */,
+				A4E253E2166DE7C800DCDC2C /* libplugin_adjust.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -348,7 +348,7 @@
 		A484111015114F700074BD57 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 0930;
 				TargetAttributes = {
 					A484111815114F700074BD57 = {
 						DevelopmentTeam = QGUGW9AUMK;
@@ -393,10 +393,10 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		A4E253E2166DE7C800DCDC2C /* libadjust_plugin.a */ = {
+		A4E253E2166DE7C800DCDC2C /* libplugin_adjust.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libadjust_plugin.a;
+			path = libplugin_adjust.a;
 			remoteRef = A4E253E1166DE7C800DCDC2C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -555,11 +555,13 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
@@ -605,11 +607,13 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
@@ -642,6 +646,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F55829801ED23E1200E5808C /* CoronaApp.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = App.entitlements;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = QGUGW9AUMK;
@@ -663,6 +668,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F55829801ED23E1200E5808C /* CoronaApp.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_ENTITLEMENTS = App.entitlements;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = QGUGW9AUMK;
@@ -684,6 +690,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F572F8191EE06E45001BC814 /* CoronaNative.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				DEVELOPMENT_TEAM = BG2J43EA88;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -693,6 +700,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F572F8191EE06E45001BC814 /* CoronaNative.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				DEVELOPMENT_TEAM = BG2J43EA88;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

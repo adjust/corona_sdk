@@ -2,14 +2,16 @@
 //  AdjustSdkDelegate.m
 //  Adjust SDK
 //
-//  Created by Abdullah Obaied on 18th November 2016.
-//  Copyright (c) 2017 Adjust GmbH. All rights reserved.
+//  Created by Abdullah Obaied (@obaied) on 11th September 2017.
+//  Copyright (c) 2017-2018 Adjust GmbH. All rights reserved.
 //
 
 #import <objc/runtime.h>
 #import "AdjustSdkDelegate.h"
 
 @implementation AdjustSdkDelegate
+
+#pragma mark - Constants
 
 NSString * const KEY_TRACKER_TOKEN = @"trackerToken";
 NSString * const KEY_TRACKER_NAME = @"trackerName";
@@ -25,6 +27,18 @@ NSString * const KEY_EVENT_TOKEN = @"eventToken";
 NSString * const KEY_JSON_RESPONSE = @"jsonResponse";
 NSString * const KEY_WILL_RETRY = @"willRetry";
 
+#pragma mark - Object lifecycle methods
+
+- (id)init {
+    self = [super init];
+    if (nil == self) {
+        return nil;
+    }
+    return self;
+}
+
+#pragma mark - Public methods
+
 + (id)getInstanceWithSwizzleOfAttributionChangedCallback:(CoronaLuaRef)attributionCallback
                             eventTrackingSuccessCallback:(CoronaLuaRef)eventTrackingSuccessCallback
                             eventTrackingFailureCallback:(CoronaLuaRef)eventTrackingFailureCallback
@@ -35,41 +49,36 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
                                              andLuaState:(lua_State *)luaState {
     static dispatch_once_t onceToken;
     static AdjustSdkDelegate *defaultInstance = nil;
-    
+
     dispatch_once(&onceToken, ^{
         defaultInstance = [[AdjustSdkDelegate alloc] init];
-        
+
         // Do the swizzling where and if needed.
         if (attributionCallback != NULL) {
-            [defaultInstance swizzleCallbackMethod:@selector(adjustAttributionChanged:)
-                                  swizzledSelector:@selector(adjustAttributionChangedWannabe:)];
+            [defaultInstance swizzleOriginalSelector:@selector(adjustAttributionChanged:)
+                                        withSelector:@selector(adjustAttributionChangedWannabe:)];
         }
-        
         if (eventTrackingSuccessCallback != NULL) {
-            [defaultInstance swizzleCallbackMethod:@selector(adjustEventTrackingSucceeded:)
-                                  swizzledSelector:@selector(adjustEventTrackingSucceededWannabe:)];
+            [defaultInstance swizzleOriginalSelector:@selector(adjustEventTrackingSucceeded:)
+                                        withSelector:@selector(adjustEventTrackingSucceededWannabe:)];
         }
-        
         if (eventTrackingFailureCallback != NULL) {
-            [defaultInstance swizzleCallbackMethod:@selector(adjustEventTrackingFailed:)
-                                  swizzledSelector:@selector(adjustEventTrackingFailedWannabe:)];
+            [defaultInstance swizzleOriginalSelector:@selector(adjustEventTrackingFailed:)
+                                        withSelector:@selector(adjustEventTrackingFailedWannabe:)];
         }
-        
         if (sessionTrackingSuccessCallback != NULL) {
-            [defaultInstance swizzleCallbackMethod:@selector(adjustSessionTrackingSucceeded:)
-                                  swizzledSelector:@selector(adjustSessionTrackingSucceededWannabe:)];
+            [defaultInstance swizzleOriginalSelector:@selector(adjustSessionTrackingSucceeded:)
+                                        withSelector:@selector(adjustSessionTrackingSucceededWannabe:)];
         }
-        
         if (sessionTrackingFailureCallback != NULL) {
-            [defaultInstance swizzleCallbackMethod:@selector(adjustSessionTrackingFailed:)
-                                  swizzledSelector:@selector(adjustSessionTrackingFailedWananbe:)];
+            [defaultInstance swizzleOriginalSelector:@selector(adjustSessionTrackingFailed:)
+                                        withSelector:@selector(adjustSessionTrackingFailedWannabe:)];
         }
-        
         if (deferredDeeplinkCallback != NULL) {
-            [defaultInstance swizzleCallbackMethod:@selector(adjustDeeplinkResponse:)
-                                  swizzledSelector:@selector(adjustDeeplinkResponseWannabe:)];
+            [defaultInstance swizzleOriginalSelector:@selector(adjustDeeplinkResponse:)
+                                        withSelector:@selector(adjustDeeplinkResponseWannabe:)];
         }
-        
+
         [defaultInstance setAttributionChangedCallback:attributionCallback];
         [defaultInstance setEventTrackingSuccessCallback:eventTrackingSuccessCallback];
         [defaultInstance setEventTrackingFailureCallback:eventTrackingFailureCallback];
@@ -79,19 +88,34 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
         [defaultInstance setShouldLaunchDeferredDeeplink:shouldLaunchDeferredDeeplink];
         [defaultInstance setLuaState:luaState];
     });
-    
+
     return defaultInstance;
 }
 
-- (id)init {
-    self = [super init];
-    
-    if (nil == self) {
-        return nil;
-    }
-    
-    return self;
++ (void)dispatchEvent:(NSString *)eventName
+            withState:(lua_State *)luaState
+             callback:(CoronaLuaRef)callback
+           andMessage:(NSString *)message {
+    // Create event and add message to it.
+    CoronaLuaNewEvent(luaState, [eventName UTF8String]);
+    lua_pushstring(luaState, [message UTF8String]);
+    lua_setfield(luaState, -2, "message");
+
+    // Dispatch event to library's listener
+    CoronaLuaDispatchEvent(luaState, callback, 0);
 }
+
++ (void)addKey:(NSString *)key
+      andValue:(NSObject *)value
+  toDictionary:(NSMutableDictionary *)dictionary {
+    if (nil != value) {
+        [dictionary setObject:[NSString stringWithFormat:@"%@", value] forKey:key];
+    } else {
+        [dictionary setObject:@"" forKey:key];
+    }
+}
+
+#pragma mark - AdjustDelegate swizzle methods
 
 - (void)adjustAttributionChangedWannabe:(ADJAttribution *)attribution {
     if (attribution == nil) {
@@ -112,12 +136,14 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
                                                        options:NSJSONWritingPrettyPrinted
                                                          error:&error];
-
     if (!jsonData) {
-        NSLog(@"Error while trying to convert attribution dictionary to JSON string: %@", error);
+        NSLog(@"[Adjust][bridge]: Error while trying to convert attribution dictionary to JSON string: %@", error);
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        [AdjustSdkDelegate dispatchEvent:_luaState withListener:_attributionChangedCallback eventName:EVENT_ATTRIBUTION_CHANGED andMessage:jsonString];
+        [AdjustSdkDelegate dispatchEvent:ADJ_ATTRIBUTION_CHANGED
+                               withState:_luaState
+                                callback:_attributionChangedCallback
+                              andMessage:jsonString];
     }
 }
 
@@ -136,16 +162,18 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
                                                        options:NSJSONWritingPrettyPrinted
                                                          error:&error];
-
     if (!jsonData) {
-        NSLog(@"Error while trying to convert session success dictionary to JSON string: %@", error);
+        NSLog(@"[Adjust][bridge]: Error while trying to convert session success dictionary to JSON string: %@", error);
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        [AdjustSdkDelegate dispatchEvent:_luaState withListener:_sessionTrackingSuccessCallback eventName:EVENT_SESSION_TRACKING_SUCCESS andMessage:jsonString];
+        [AdjustSdkDelegate dispatchEvent:ADJ_SESSION_TRACKING_SUCCESS
+                               withState:_luaState
+                                callback:_sessionTrackingSuccessCallback
+                              andMessage:jsonString];
     }
 }
 
-- (void)adjustSessionTrackingFailedWananbe:(ADJSessionFailure *)sessionFailureResponseData {
+- (void)adjustSessionTrackingFailedWannabe:(ADJSessionFailure *)sessionFailureResponseData {
     if (nil == sessionFailureResponseData) {
         return;
     }
@@ -161,12 +189,14 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
                                                        options:NSJSONWritingPrettyPrinted
                                                          error:&error];
-
     if (!jsonData) {
-        NSLog(@"Error while trying to convert session failure dictionary to JSON string: %@", error);
+        NSLog(@"[Adjust][bridge]: Error while trying to convert session failure dictionary to JSON string: %@", error);
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        [AdjustSdkDelegate dispatchEvent:_luaState withListener:_sessionTrackingFailureCallback eventName:EVENT_SESSION_TRACKING_FAILURE andMessage:jsonString];
+        [AdjustSdkDelegate dispatchEvent:ADJ_SESSION_TRACKING_FAILURE
+                               withState:_luaState
+                                callback:_sessionTrackingFailureCallback
+                              andMessage:jsonString];
     }
 }
 
@@ -186,12 +216,14 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
                                                        options:NSJSONWritingPrettyPrinted
                                                          error:&error];
-
     if (!jsonData) {
-        NSLog(@"Error while trying to convert event success dictionary to JSON string: %@", error);
+        NSLog(@"[Adjust][bridge]: Error while trying to convert event success dictionary to JSON string: %@", error);
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        [AdjustSdkDelegate dispatchEvent:_luaState withListener:_eventTrackingSuccessCallback eventName:EVENT_EVENT_TRACKING_SUCCESS andMessage:jsonString];
+        [AdjustSdkDelegate dispatchEvent:ADJ_EVENT_TRACKING_SUCCESS
+                               withState:_luaState
+                                callback:_eventTrackingSuccessCallback
+                              andMessage:jsonString];
     }
 }
 
@@ -212,34 +244,38 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
                                                        options:NSJSONWritingPrettyPrinted
                                                          error:&error];
-
     if (!jsonData) {
-        NSLog(@"Error while trying to convert event failure dictionary to JSON string: %@", error);
+        NSLog(@"[Adjust][bridge]: Error while trying to convert event failure dictionary to JSON string: %@", error);
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        [AdjustSdkDelegate dispatchEvent:_luaState withListener:_eventTrackingFailureCallback eventName:EVENT_EVENT_TRACKING_FAILURE andMessage:jsonString];
+        [AdjustSdkDelegate dispatchEvent:ADJ_EVENT_TRACKING_FAILURE
+                               withState:_luaState
+                                callback:_eventTrackingFailureCallback
+                              andMessage:jsonString];
     }
 }
 
 - (BOOL)adjustDeeplinkResponseWannabe:(NSURL *)deeplink {
-    NSString *deeplinkString = [deeplink absoluteString];
-    [AdjustSdkDelegate dispatchEvent:_luaState withListener:_deferredDeeplinkCallback eventName:EVENT_DEFERRED_DEEPLINK andMessage:deeplinkString];
-    
+    NSString *strDeeplink = [deeplink absoluteString];
+    [AdjustSdkDelegate dispatchEvent:ADJ_DEFERRED_DEEPLINK
+                           withState:_luaState
+                            callback:_deferredDeeplinkCallback
+                          andMessage:strDeeplink];
     return _shouldLaunchDeferredDeeplink;
 }
 
-- (void)swizzleCallbackMethod:(SEL)originalSelector
-             swizzledSelector:(SEL)swizzledSelector {
+#pragma mark - Private & helper methods
+
+- (void)swizzleOriginalSelector:(SEL)originalSelector
+                   withSelector:(SEL)swizzledSelector {
     Class class = [self class];
-    
     Method originalMethod = class_getInstanceMethod(class, originalSelector);
     Method swizzledMethod = class_getInstanceMethod(class, swizzledSelector);
-    
+
     BOOL didAddMethod = class_addMethod(class,
                                         originalSelector,
                                         method_getImplementation(swizzledMethod),
                                         method_getTypeEncoding(swizzledMethod));
-    
     if (didAddMethod) {
         class_replaceMethod(class,
                             swizzledSelector,
@@ -248,30 +284,6 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
     } else {
         method_exchangeImplementations(originalMethod, swizzledMethod);
     }
-}
-
-+ (void)addKey:(NSString *)key
-      andValue:(NSObject *)value
-  toDictionary:(NSMutableDictionary *)dictionary {
-    if (nil != value) {
-        [dictionary setObject:[NSString stringWithFormat:@"%@", value] forKey:key];
-    } else {
-        [dictionary setObject:@"" forKey:key];
-    }
-}
-
-+ (void)dispatchEvent:(lua_State *)luaState
-         withListener:(CoronaLuaRef)listener
-            eventName:(NSString *)eventName
-           andMessage:(NSString *)message {
-    
-    // Create event and add message to it
-    CoronaLuaNewEvent(luaState, [eventName UTF8String]);
-    lua_pushstring(luaState, [message UTF8String]);
-    lua_setfield(luaState, -2, "message");
-    
-    // Dispatch event to library's listener
-    CoronaLuaDispatchEvent(luaState, listener, 0);
 }
 
 @end
