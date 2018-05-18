@@ -1,3 +1,13 @@
+### Version 4.13.1 (18th May 2018)
+#### Fixed
+- Added null check for `CoronaRuntimeTaskDispatcher` (https://github.com/adjust/corona_sdk/issues/6).
+
+#### Native SDKs
+- [iOS@v4.13.0][ios_sdk_v4.13.0]
+- [Android@v4.13.0][android_sdk_v4.13.0]
+
+---
+
 ### Version 4.13.0 (16th May 2018)
 #### Added
 - Added `gdprForgetMe()` method to Adjust interface to enable possibility for user to be forgotten in accordance with GDPR law.
