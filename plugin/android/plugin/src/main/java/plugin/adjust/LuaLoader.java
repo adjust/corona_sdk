@@ -34,6 +34,7 @@ import com.ansca.corona.CoronaLua;
 import com.ansca.corona.CoronaRuntime;
 import com.ansca.corona.CoronaRuntimeListener;
 import com.ansca.corona.CoronaRuntimeTask;
+import com.ansca.corona.CoronaRuntimeTaskDispatcher;
 import com.naef.jnlua.JavaFunction;
 import com.naef.jnlua.LuaState;
 import com.naef.jnlua.NamedJavaFunction;
@@ -233,7 +234,12 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     }
 
     private void dispatchEvent(final LuaState luaState, final int listener, final String name, final String message) {
-        CoronaEnvironment.getCoronaActivity().getRuntimeTaskDispatcher().send(new CoronaRuntimeTask() {
+        CoronaRuntimeTaskDispatcher dispatcher = CoronaEnvironment.getCoronaActivity().getRuntimeTaskDispatcher();
+        if (dispatcher == null) {
+            return;
+        }
+
+        dispatcher.send(new CoronaRuntimeTask() {
             @Override
             public void executeUsing(CoronaRuntime runtime) {
                 CoronaLua.newEvent(luaState, name);
