@@ -304,7 +304,7 @@ int AdjustPlugin::create(lua_State *L) {
     lua_pop(L, 1);
 
     // Sdk prefix - hardcoded
-    [adjustConfig setSdkPrefix:@"corona4.13.1"];
+    [adjustConfig setSdkPrefix:@"corona4.14.0"];
 
     // Default tracker
     lua_getfield(L, 1, "defaultTracker");
