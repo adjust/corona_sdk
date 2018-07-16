@@ -348,7 +348,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         L.pop(1);
 
         // SDK prefix
-        adjustConfig.setSdkPrefix("corona4.13.1");
+        adjustConfig.setSdkPrefix("corona4.14.0");
 
         // Main process name
         L.getField(1, "processName");
@@ -667,7 +667,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private int adjust_appWillOpenUrl(LuaState L) {
         final Uri uri = Uri.parse(L.checkString(1));
         if (didStartAdjustSdk) {
-            Adjust.appWillOpenUrl(uri);
+            Adjust.appWillOpenUrl(uri, CoronaEnvironment.getApplicationContext());
             return 0;
         }
         this.uri = uri;
