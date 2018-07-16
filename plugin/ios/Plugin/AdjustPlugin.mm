@@ -558,7 +558,7 @@ int AdjustPlugin::setEnabled(lua_State *L) {
 int AdjustPlugin::setPushToken(lua_State *L) {
     const char *pushToken_char = lua_tostring(L, 1);
     NSString *pushToken =[NSString stringWithUTF8String:pushToken_char];
-    [Adjust setDeviceToken:[pushToken dataUsingEncoding:NSUTF8StringEncoding]];
+    [Adjust setPushToken:pushToken];
     return 0;
 }
 
