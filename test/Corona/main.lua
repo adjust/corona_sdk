@@ -2,24 +2,25 @@
 local testLib = require "plugin.testlibrary"
 local widget = require "widget"
 local json = require "json"
+local command = require "command"
 
 -- Setting up a system event listener for deeplink support
 -- ---------------------------------------------------------
-local function onSystemEvent(event)
-    if event.type == "applicationOpen" and event.url then
-        print("[TestApp]: applicationOpen event. url = " .. event.url)
-        -- Capture app event opened from deep link
-        --adjust.appWillOpenUrl(event.url)
-    end
-end
-
-Runtime:addEventListener("system", onSystemEvent)
-
-local launchArgs = ...
-if launchArgs and launchArgs.url then
-    print("[Adjust]: launchArgs.url = (" .. launchArgs.url)
-    --adjust.appWillOpenUrl(launchArgs.url)
-end
+--local function onSystemEvent(event)
+--    if event.type == "applicationOpen" and event.url then
+--        print("[TestApp]: applicationOpen event. url = " .. event.url)
+--        -- Capture app event opened from deep link
+--        --adjust.appWillOpenUrl(event.url)
+--    end
+--end
+--
+--Runtime:addEventListener("system", onSystemEvent)
+--
+--local launchArgs = ...
+--if launchArgs and launchArgs.url then
+--    print("[Adjust]: launchArgs.url = (" .. launchArgs.url)
+--    --adjust.appWillOpenUrl(launchArgs.url)
+--end
 
 -- Setting up assets
 -- ------------------------
@@ -28,7 +29,9 @@ display.setDefault("background", 1, 1, 1)
 local baseUrl = "https://192.168.8.103:8443"
 
 local function executeCommand(event)
-    local command = json.decode(event.message)
+    local rawCommand = json.decode(event.message)
+    local command = command.Command:new(nil, rawCommand.className, rawCommand.methodName, rawCommand.parameters)
+    --command:printCommand()
     print("  >>>>> Executing command: " .. command.className .. "." .. command.methodName .. " <<<<<")
     -- TODO: create and use AdjustCommandExecutor
     

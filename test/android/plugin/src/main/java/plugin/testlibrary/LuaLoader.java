@@ -197,7 +197,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 				Map commandMap = new HashMap();
 				commandMap.put("className", className);
-				commandMap.put("methodName", className);
+				commandMap.put("methodName", methodName);
 				commandMap.put("parameters", parameters);
 
 				dispatchEvent(L,
