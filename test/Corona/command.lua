@@ -10,10 +10,7 @@ function Command:new (o, className, methodName, parametersJson)
     self.__index = self
     self.className = className
     self.methodName = methodName
-
-    -- parse json parameters
     self.parameters = json.decode(parametersJson)
-    
     return o
 end
 
@@ -26,23 +23,23 @@ function Command:containsParameter(paramKey)
 end
 
 function Command:getFirstParameterValue(paramKey)
-    if Command:containsParameter(paramKey) == false then
+    if self:containsParameter(paramKey) == false then
         return nil
     end
     
     local parameterValues = self.parameters[paramKey];
-    if parameterValues == nil or tablelength(parameterValues) == 0 then
-       return nil 
+    if parameterValues == nil or getTableLength(parameterValues) == 0 then
+        return nil 
     end
     
-    return parameterValues[0]
+    return parameterValues[1]
 end
 
 function Command:printCommand()
-    print("[Command]: " .. self.className .. "." .. self.methodName .. " -> " .. json.encode(self.parameters) .. ", len: " .. tostring(tablelength(self.parameters)))
+    print("[Command]: " .. self.className .. "." .. self.methodName .. " -> " .. json.encode(self.parameters) .. ", len: " .. tostring(getTableLength(self.parameters)))
 end
     
-function tablelength(T)
+function getTableLength(T)
     local count = 0
     for _ in pairs(T) do count = count + 1 end
     return count
