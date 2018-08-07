@@ -21,6 +21,7 @@ import com.adjust.sdk.AdjustEventFailure;
 import com.adjust.sdk.AdjustEventSuccess;
 import com.adjust.sdk.AdjustSessionFailure;
 import com.adjust.sdk.AdjustSessionSuccess;
+import com.adjust.sdk.AdjustTestOptions;
 import com.adjust.sdk.LogLevel;
 import com.adjust.sdk.OnAttributionChangedListener;
 import com.adjust.sdk.OnDeeplinkResponseListener;
@@ -142,7 +143,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 new GetAdidWrapper(),
                 new GetGoogleAdIdWrapper(),
                 new GetAmazonAdIdWrapper(),
-                new GdprForgetMe()
+                new GdprForgetMe(),
+                new SetTestOptionsWrapper()
         };
         String libName = L.toString(1);
         L.register(libName, luaFunctions);
@@ -862,6 +864,92 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
+    public int adjust_setTestOptions(final LuaState L) {
+        AdjustTestOptions adjustTestOptions = new AdjustTestOptions();
+
+        L.getField(1, "setContext");
+        if (!L.isNil(2)) {
+            adjustTestOptions.context = CoronaEnvironment.getApplicationContext();
+        }
+        L.pop(1);
+
+        L.getField(1, "baseUrl");
+        if (!L.isNil(2)) {
+            adjustTestOptions.baseUrl = L.checkString(2);
+        }
+        L.pop(1);
+
+        L.getField(1, "gdprUrl");
+        if (!L.isNil(2)) {
+            adjustTestOptions.gdprUrl = L.checkString(2);
+        }
+        L.pop(1);
+
+        L.getField(1, "basePath");
+        if (!L.isNil(2)) {
+            adjustTestOptions.basePath = L.checkString(2);
+        }
+        L.pop(1);
+
+        L.getField(1, "gdprPath");
+        if (!L.isNil(2)) {
+            adjustTestOptions.gdprPath = L.checkString(2);
+        }
+        L.pop(1);
+
+        L.getField(1, "useTestConnectionOptions");
+        if (!L.isNil(2)) {
+            adjustTestOptions.useTestConnectionOptions = L.checkBoolean(2);
+        }
+        L.pop(1);
+
+        L.getField(1, "timerIntervalInMilliseconds");
+        if (!L.isNil(2)) {
+            adjustTestOptions.timerIntervalInMilliseconds = (long)L.checkNumber(2);
+        }
+        L.pop(1);
+
+        L.getField(1, "timerStartInMilliseconds");
+        if (!L.isNil(2)) {
+            adjustTestOptions.timerStartInMilliseconds = (long)L.checkNumber(2);
+        }
+        L.pop(1);
+
+        L.getField(1, "sessionIntervalInMilliseconds");
+        if (!L.isNil(2)) {
+            adjustTestOptions.sessionIntervalInMilliseconds = (long)L.checkNumber(2);
+        }
+        L.pop(1);
+
+        L.getField(1, "subsessionIntervalInMilliseconds");
+        if (!L.isNil(2)) {
+            adjustTestOptions.subsessionIntervalInMilliseconds = (long)L.checkNumber(2);
+        }
+        L.pop(1);
+
+        L.getField(1, "teardown");
+        if (!L.isNil(2)) {
+            adjustTestOptions.teardown = L.checkBoolean(2);
+        }
+        L.pop(1);
+
+        L.getField(1, "tryInstallReferrer");
+        if (!L.isNil(2)) {
+            adjustTestOptions.tryInstallReferrer = L.checkBoolean(2);
+        }
+        L.pop(1);
+
+        L.getField(1, "noBackoffWait");
+        if (!L.isNil(2)) {
+            adjustTestOptions.noBackoffWait = L.checkBoolean(2);
+        }
+        L.pop(1);
+
+        Adjust.setTestOptions(adjustTestOptions);
+
+        return 0;
+    }
+
     private class CreateWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -1183,6 +1271,18 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         @Override
         public int invoke(LuaState L) {
             return adjust_setDeferredDeeplinkListener(L);
+        }
+    }
+
+    private class SetTestOptionsWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "setTestOptions";
+        }
+
+        @Override
+        public int invoke(LuaState L) {
+            return adjust_setTestOptions(L);
         }
     }
 }
