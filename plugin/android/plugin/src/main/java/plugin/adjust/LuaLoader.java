@@ -144,7 +144,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 new GetGoogleAdIdWrapper(),
                 new GetAmazonAdIdWrapper(),
                 new GdprForgetMe(),
-                new SetTestOptionsWrapper()
+                new SetTestOptionsWrapper(),
+                new OnResumeWrapper(),
+                new OnPauseWrapper()
         };
         String libName = L.toString(1);
         L.register(libName, luaFunctions);
@@ -678,6 +680,16 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
     private int adjust_sendFirstPackage(LuaState L) {
         Adjust.sendFirstPackages();
+        return 0;
+    }
+
+    private int adjust_onResume(LuaState L) {
+        Adjust.onResume();
+        return 0;
+    }
+
+    private int adjust_onPause(LuaState L) {
+        Adjust.onPause();
         return 0;
     }
 
@@ -1283,6 +1295,30 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         @Override
         public int invoke(LuaState L) {
             return adjust_setTestOptions(L);
+        }
+    }
+
+    private class OnResumeWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "onResume";
+        }
+
+        @Override
+        public int invoke(LuaState L) {
+            return adjust_onResume(L);
+        }
+    }
+
+    private class OnPauseWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "onPause";
+        }
+
+        @Override
+        public int invoke(LuaState L) {
+            return adjust_onPause(L);
         }
     }
 }
