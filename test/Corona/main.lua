@@ -41,6 +41,8 @@ end
 
 print("Create and init test lib....")
 testLib.initTestLibrary(baseUrl, executeCommand)
+commandExecutor:setTestLibrary(testLib)
+
 print("Setting test lib tests....")
 testLib.addTest("current/event-tracking/Test_Event_Count_6events")
 

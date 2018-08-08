@@ -10,7 +10,9 @@ AdjustCommandExecutor = {
     gdprPath = "", 
     savedEvents = {}, 
     savedConfigs = {},
-    command = nil
+    command = nil,
+    testLib = nil,
+    localBasePath = ""
 }
 
 function AdjustCommandExecutor:new (o, baseUrl, gdprUrl)
@@ -20,6 +22,10 @@ function AdjustCommandExecutor:new (o, baseUrl, gdprUrl)
     self.baseUrl = baseUrl
     self.gdprUrl = gdprUrl
     return o
+end
+
+function AdjustCommandExecutor:setTestLibrary(testLib)
+   self.testLib = testLib 
 end
 
 function AdjustCommandExecutor:executeCommand(command)
@@ -59,7 +65,7 @@ function AdjustCommandExecutor:testOptions()
     
     if self.command:containsParameter("basePath") then
         self.basePath = self.command:getFirstParameterValue("basePath")
-        self.gdprPath = self.command:getFirstParameterValue("gdprPath")
+        self.gdprPath = self.command:getFirstParameterValue("basePath")
     end
     
     if self.command:containsParameter("timerInterval") then
@@ -169,11 +175,11 @@ function AdjustCommandExecutor:config()
     
     if self.command:containsParameter("appSecret") then
         local appSecretArray = self.command.parameters["appSecret"]
-        adjustConfig.secretId = tonumber(appSecretArray[0]);
-        adjustConfig.info1 = tonumber(appSecretArray[1]);
-        adjustConfig.info2 = tonumber(appSecretArray[2]);
-        adjustConfig.info3 = tonumber(appSecretArray[3]);
-        adjustConfig.info4 = tonumber(appSecretArray[4]);
+        adjustConfig.secretId = tonumber(appSecretArray[1]);
+        adjustConfig.info1 = tonumber(appSecretArray[2]);
+        adjustConfig.info2 = tonumber(appSecretArray[3]);
+        adjustConfig.info3 = tonumber(appSecretArray[4]);
+        adjustConfig.info4 = tonumber(appSecretArray[5]);
     end
     
     if self.command:containsParameter("delayStart") then
@@ -196,9 +202,48 @@ function AdjustCommandExecutor:config()
         adjustConfig.userAgent = self.command:getFirstParameterValue("userAgent")
     end
     
-    -- TODO: callbacks
+    ------------- callbacks -----------------------------------------------------------------------------------------
+    -----------------------------------------------------------------------------------------------------------------
     
+    if self.command:containsParameter("deferredDeeplinkCallback") then
+        
+    end
     
+    if self.command:containsParameter("attributionCallbackSendAll") then
+        self.localBasePath = self.basePath
+        print(" >>>> [TestApp] setting attribution callback... lbp=" .. self.localBasePath)
+        adjust.setAttributionListener(attributionListener)
+    end
+    
+    if self.command:containsParameter("sessionCallbackSendSuccess") then
+        
+    end
+    
+    if self.command:containsParameter("sessionCallbackSendFailure") then
+        
+    end
+    
+    if self.command:containsParameter("eventCallbackSendSuccess") then
+        
+    end
+    
+    if self.command:containsParameter("eventCallbackSendFailure") then
+        
+    end
+end
+
+local function attributionListener(event)
+    print("[TestApp] attribution received!")
+    local json_attribution = json.decode(event.message)
+    self.testLib.addInfoToSend("trackerToken", json_attribution.trackerToken);
+    self.testLib.addInfoToSend("trackerName", json_attribution.trackerName);
+    self.testLib.addInfoToSend("network", json_attribution.network);
+    self.testLib.addInfoToSend("campaign", json_attribution.campaign);
+    self.testLib.addInfoToSend("adgroup", json_attribution.adgroup);
+    self.testLib.addInfoToSend("creative", json_attribution.creative);
+    self.testLib.addInfoToSend("clickLabel", json_attribution.clickLabel);
+    self.testLib.addInfoToSend("adid", json_attribution.adid);
+    self.testLib.sendInfoToServer(self.localBasePath);
 end
 
 function AdjustCommandExecutor:start()
@@ -219,21 +264,80 @@ function AdjustCommandExecutor:start()
 end
 
 function AdjustCommandExecutor:event()
+    local eventNumber = 0
+    if self.command:containsParameter("eventName") then
+        local eventName = self.command:getFirstParameterValue("eventName")
+        local eventNumberStr = string.sub(eventName, string.len(eventName) - 1)
+        eventNumber = tonumber(eventNumberStr)
+    end
     
+    local adjustEvent = {}
+    if self.savedEvents[eventNumber] ~= nil then
+        adjustEvent = self.savedEvents[eventNumber]
+    else
+        adjustEvent.eventToken = self.command:getFirstParameterValue("eventToken")
+        self.savedEvents[eventNumber] = adjustEvent
+    end
+    
+    if self.command:containsParameter("revenue") then
+        local revenueParams = self.command.parameters["revenue"]
+        adjustEvent.currency = revenueParams[1]
+        adjustEvent.revenue = tonumber(revenueParams[2])
+    end
+    
+    if self.command:containsParameter("callbackParams") then
+        local callbackParams = self.command.parameters["callbackParams"]
+        adjustEvent.callbackParameters = {}
+        local k = 1;
+        for i=1, #callbackParams, 2 do
+            adjustEvent.callbackParameters[k] = { 
+                key = callbackParams[i], 
+                value = callbackParams[i + 1] 
+            }
+            k = k + 1
+        end
+    end
+    
+    if self.command:containsParameter("partnerParams") then
+        local partnerParams = self.command.parameters["partnerParams"]
+        adjustEvent.partnerParameters = {}
+        local k = 1;
+        for i=1, #partnerParams, 2 do
+            adjustEvent.partnerParameters[k] = { 
+                key = partnerParams[i], 
+                value = partnerParams[i + 1] 
+            }
+            k = k + 1
+        end
+    end
+    
+    if self.command:containsParameter("orderId") then
+        adjustEvent.transactionId = self.command:getFirstParameterValue("orderId")
+    end
 end
 
 function AdjustCommandExecutor:trackEvent()
+    self:event()
     
+    local eventNumber = 0
+    if self.command:containsParameter("eventName") then
+        local eventName = self.command:getFirstParameterValue("eventName")
+        local eventNumberStr = string.sub(eventName, string.len(eventName) - 1)
+        eventNumber = tonumber(eventNumberStr)
+    end
+    
+    local adjustEvent = self.savedEvents[eventNumber]
+    adjust.trackEvent(adjustEvent)
+    
+    self.savedEvents[eventNumber] = nil
 end
 
 function AdjustCommandExecutor:resume()
-    -- missing from Adjust API, has to be added
-    
+    adjust.onResume()
 end
 
 function AdjustCommandExecutor:pause()
-    -- missing from Adjust API, has to be added
-    
+    adjust.onPause()
 end
 
 function AdjustCommandExecutor:setEnabled()
@@ -256,19 +360,46 @@ function AdjustCommandExecutor:sendFirstPackages()
 end
 
 function AdjustCommandExecutor:addSessionCallbackParameter()
-    
+    if self.command:containsParameter("KeyValue") then
+        local keyValuePairs = self.command.parameters["KeyValue"]
+        for i=1, #keyValuePairs, 2 do
+            local key = keyValuePairs[i]
+            local value = keyValuePairs[i + 1]
+            adjust.addSessionCallbackParameter(key, value)
+        end
+    end
 end
 
 function AdjustCommandExecutor:addSessionPartnerParameter()
-    
+    if self.command:containsParameter("KeyValue") then
+        local keyValuePairs = self.command.parameters["KeyValue"]
+        for i=1, #keyValuePairs, 2 do
+            local key = keyValuePairs[i]
+            local value = keyValuePairs[i + 1]
+            print("----> adding session pp: " .. key .. ", " .. value)
+            adjust.addSessionPartnerParameter(key, value)
+        end
+    end
 end
 
 function AdjustCommandExecutor:removeSessionCallbackParameter()
-    
+    if self.command:containsParameter("key") then
+        local keys = self.command.parameters["key"]
+        for i=1, #keys, 1 do
+            local key = keys[i]
+            adjust.removeSessionCallbackParameter(key)
+        end
+    end
 end
 
 function AdjustCommandExecutor:removeSessionPartnerParameter()
-    
+    if self.command:containsParameter("key") then
+        local keys = self.command.parameters["key"]
+        for i=1, #keys, 1 do
+            local key = keys[i]
+            adjust.removeSessionPartnerParameter(key)
+        end
+    end
 end
 
 function AdjustCommandExecutor:resetSessionCallbackParameters()
@@ -287,7 +418,6 @@ end
 function AdjustCommandExecutor:openDeeplink()
     local deeplink = self.command:getFirstParameterValue("deeplink")
     adjust.appWillOpenUrl(deeplink)
-    
 end
 
 function AdjustCommandExecutor:sendReferrer()
