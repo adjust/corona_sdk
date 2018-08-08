@@ -27,7 +27,7 @@ function Command:getFirstParameterValue(paramKey)
         return nil
     end
     
-    local parameterValues = self.parameters[paramKey];
+    local parameterValues = self.parameters[paramKey]
     if parameterValues == nil or getTableLength(parameterValues) == 0 then
         return nil 
     end

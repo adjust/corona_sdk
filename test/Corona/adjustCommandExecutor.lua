@@ -29,8 +29,8 @@ function AdjustCommandExecutor:setTestLibrary(testLib)
 end
 
 function AdjustCommandExecutor:executeCommand(command)
-    self.command = command;
-    local method = command.methodName;
+    self.command = command
+    local method = command.methodName
     
     if     method == "testOptions" then self:testOptions()
     elseif method == "config" then self:config()
@@ -70,22 +70,22 @@ function AdjustCommandExecutor:testOptions()
     
     if self.command:containsParameter("timerInterval") then
         local timerInterval = tonumber(self.command:getFirstParameterValue("timerInterval"))
-        testOptions.timerIntervalInMilliseconds = timerInterval;
+        testOptions.timerIntervalInMilliseconds = timerInterval
     end
     
     if self.command:containsParameter("timerStart") then
         local timerStart = tonumber(self.command:getFirstParameterValue("timerStart"))
-        testOptions.timerStartInMilliseconds = timerStart;
+        testOptions.timerStartInMilliseconds = timerStart
     end
     
     if self.command:containsParameter("sessionInterval") then
         local sessionInterval = tonumber(self.command:getFirstParameterValue("sessionInterval"))
-        testOptions.sessionIntervalInMilliseconds = sessionInterval;
+        testOptions.sessionIntervalInMilliseconds = sessionInterval
     end
     
     if self.command:containsParameter("subsessionInterval") then
         local subsessionInterval = tonumber(self.command:getFirstParameterValue("subsessionInterval"))
-        testOptions.subsessionIntervalInMilliseconds = subsessionInterval;
+        testOptions.subsessionIntervalInMilliseconds = subsessionInterval
     end
     
     if self.command:containsParameter("tryInstallReferrer") then
@@ -111,30 +111,30 @@ function AdjustCommandExecutor:testOptions()
         for k in pairs(teardownOptions) do
             local option = teardownOptions[k]
             if     option == "resetSdk" then
-                testOptions.teardown = true;
-                testOptions.basePath = self.basePath;
-                testOptions.gdprPath = self.gdprPath;
-                testOptions.useTestConnectionOptions = true;
-                testOptions.tryInstallReferrer = false;
+                testOptions.teardown = true
+                testOptions.basePath = self.basePath
+                testOptions.gdprPath = self.gdprPath
+                testOptions.useTestConnectionOptions = true
+                testOptions.tryInstallReferrer = false
             elseif option == "deleteState" then 
-                testOptions.setContext = true;
+                testOptions.setContext = true
             elseif option == "resetTest" then 
                 self:clearSavedConfigsAndEvents()
-                testOptions.timerIntervalInMilliseconds = -1;
-                testOptions.timerStartInMilliseconds = -1;
-                testOptions.sessionIntervalInMilliseconds = -1;
-                testOptions.subsessionIntervalInMilliseconds = -1;
+                testOptions.timerIntervalInMilliseconds = -1
+                testOptions.timerStartInMilliseconds = -1
+                testOptions.sessionIntervalInMilliseconds = -1
+                testOptions.subsessionIntervalInMilliseconds = -1
             elseif option == "sdk" then 
-                testOptions.teardown = true;
-                testOptions.basePath = nil;
-                testOptions.gdprPath = nil;
-                testOptions.useTestConnectionOptions = false;
+                testOptions.teardown = true
+                testOptions.basePath = nil
+                testOptions.gdprPath = nil
+                testOptions.useTestConnectionOptions = false
             elseif option == "test" then 
                 self:clearSavedConfigsAndEvents()
-                testOptions.timerIntervalInMilliseconds = -1;
-                testOptions.timerStartInMilliseconds = -1;
-                testOptions.sessionIntervalInMilliseconds = -1;
-                testOptions.subsessionIntervalInMilliseconds = -1;
+                testOptions.timerIntervalInMilliseconds = -1
+                testOptions.timerStartInMilliseconds = -1
+                testOptions.sessionIntervalInMilliseconds = -1
+                testOptions.subsessionIntervalInMilliseconds = -1
             end
         end
     end
@@ -175,11 +175,11 @@ function AdjustCommandExecutor:config()
     
     if self.command:containsParameter("appSecret") then
         local appSecretArray = self.command.parameters["appSecret"]
-        adjustConfig.secretId = tonumber(appSecretArray[1]);
-        adjustConfig.info1 = tonumber(appSecretArray[2]);
-        adjustConfig.info2 = tonumber(appSecretArray[3]);
-        adjustConfig.info3 = tonumber(appSecretArray[4]);
-        adjustConfig.info4 = tonumber(appSecretArray[5]);
+        adjustConfig.secretId = tonumber(appSecretArray[1])
+        adjustConfig.info1 = tonumber(appSecretArray[2])
+        adjustConfig.info2 = tonumber(appSecretArray[3])
+        adjustConfig.info3 = tonumber(appSecretArray[4])
+        adjustConfig.info4 = tonumber(appSecretArray[5])
     end
     
     if self.command:containsParameter("delayStart") then
@@ -216,34 +216,94 @@ function AdjustCommandExecutor:config()
     end
     
     if self.command:containsParameter("sessionCallbackSendSuccess") then
-        
+        self.localBasePath = self.basePath
+        print(" >>>> [TestApp] setting session send success callback... local-base-path=" .. self.localBasePath)
+        adjust.setSessionTrackingSuccessListener(sessionTrackingSuccessListener)
     end
     
     if self.command:containsParameter("sessionCallbackSendFailure") then
-        
+        self.localBasePath = self.basePath
+        print(" >>>> [TestApp] setting session send failure callback... local-base-path=" .. self.localBasePath)
+        adjust.setSessionTrackingFailureListener(sessionTrackingFailureListener)
     end
     
     if self.command:containsParameter("eventCallbackSendSuccess") then
-        
+        self.localBasePath = self.basePath
+        print(" >>>> [TestApp] setting event tracking success callback... local-base-path=" .. self.localBasePath)
+        adjust.setEventTrackingSuccessListener(eventTrackingSuccessListener)
     end
     
     if self.command:containsParameter("eventCallbackSendFailure") then
-        
+        self.localBasePath = self.basePath
+        print(" >>>> [TestApp] setting event tracking failed callback... local-base-path=" .. self.localBasePath)
+        adjust.setEventTrackingFailureListener(eventTrackingFailureListener)
     end
 end
 
 local function attributionListener(event)
-    print("[TestApp] attribution received!")
+    print(" >>>>>> [TestApp] attribution received!")
     local json_attribution = json.decode(event.message)
-    self.testLib.addInfoToSend("trackerToken", json_attribution.trackerToken);
-    self.testLib.addInfoToSend("trackerName", json_attribution.trackerName);
-    self.testLib.addInfoToSend("network", json_attribution.network);
-    self.testLib.addInfoToSend("campaign", json_attribution.campaign);
-    self.testLib.addInfoToSend("adgroup", json_attribution.adgroup);
-    self.testLib.addInfoToSend("creative", json_attribution.creative);
-    self.testLib.addInfoToSend("clickLabel", json_attribution.clickLabel);
-    self.testLib.addInfoToSend("adid", json_attribution.adid);
-    self.testLib.sendInfoToServer(self.localBasePath);
+    self.testLib.addInfoToSend("trackerToken", json_attribution.trackerToken)
+    self.testLib.addInfoToSend("trackerName", json_attribution.trackerName)
+    self.testLib.addInfoToSend("network", json_attribution.network)
+    self.testLib.addInfoToSend("campaign", json_attribution.campaign)
+    self.testLib.addInfoToSend("adgroup", json_attribution.adgroup)
+    self.testLib.addInfoToSend("creative", json_attribution.creative)
+    self.testLib.addInfoToSend("clickLabel", json_attribution.clickLabel)
+    self.testLib.addInfoToSend("adid", json_attribution.adid)
+    self.testLib.sendInfoToServer(self.localBasePath)
+end
+
+local function sessionTrackingSuccessListener(event)
+    print(" >>>>>> [TestApp] session tracking success event received!")
+    local json_session_success = json.decode(event.message)
+    self.testLib.addInfoToSend("message", json_session_success.message)
+    self.testLib.addInfoToSend("timestamp", json_session_success.timestamp)
+    self.testLib.addInfoToSend("adid", json_session_success.adid)
+    if json_session_success.jsonResponse ~= nil then
+        self.testLib.addInfoToSend("jsonResponse", json_session_success.jsonResponse)
+    end
+    self.testLib.sendInfoToServer(localBasePath)
+end
+
+local function sessionTrackingFailureListener(event)
+    print(" >>>>>> [TestApp] session tracking failure event received!")
+    local json_session_failure = json.decode(event.message)
+    self.testLib.addInfoToSend("message", json_session_failure.message)
+    self.testLib.addInfoToSend("timestamp", json_session_failure.timestamp)
+    self.testLib.addInfoToSend("adid", json_session_failure.adid)
+    self.testLib.addInfoToSend("willRetry", tostring(json_session_failure.willRetry))
+    if json_session_failure.jsonResponse ~= nil then
+        self.testLib.addInfoToSend("jsonResponse", json_session_failure.jsonResponse)
+    end
+    self.testLib.sendInfoToServer(localBasePath)
+end
+
+local function eventTrackingSuccessListener(event)
+    print(" >>>>>> [TestApp] event tracking success event received!")
+    local json_event_success = json.decode(event.message)
+    self.testLib.addInfoToSend("message", json_event_success.message)
+    self.testLib.addInfoToSend("timestamp", json_event_success.timestamp)
+    self.testLib.addInfoToSend("adid", json_event_success.adid)
+    self.testLib.addInfoToSend("eventToken", json_event_success.eventToken)
+    if json_event_success.jsonResponse ~= nil then
+        self.testLib.addInfoToSend("jsonResponse", json_event_success.jsonResponse)
+    end
+    self.testLib.sendInfoToServer(localBasePath)
+end
+
+local function eventTrackingFailureListener(event)
+    print(" >>>>>> [TestApp] event tracking failed event received!")
+    local json_event_failure = json.decode(event.message)
+    self.testLib.addInfoToSend("message", json_event_failure.message)
+    self.testLib.addInfoToSend("timestamp", json_event_failure.timestamp)
+    self.testLib.addInfoToSend("adid", json_event_failure.adid)
+    self.testLib.addInfoToSend("eventToken", json_event_failure.eventToken)
+    self.testLib.addInfoToSend("willRetry", tostring(json_event_failure.willRetry))
+    if json_event_failure.jsonResponse ~= nil then
+        self.testLib.addInfoToSend("jsonResponse", json_event_failure.jsonResponse)
+    end
+    self.testLib.sendInfoToServer(localBasePath)
 end
 
 function AdjustCommandExecutor:start()
@@ -288,7 +348,7 @@ function AdjustCommandExecutor:event()
     if self.command:containsParameter("callbackParams") then
         local callbackParams = self.command.parameters["callbackParams"]
         adjustEvent.callbackParameters = {}
-        local k = 1;
+        local k = 1
         for i=1, #callbackParams, 2 do
             adjustEvent.callbackParameters[k] = { 
                 key = callbackParams[i], 
@@ -301,7 +361,7 @@ function AdjustCommandExecutor:event()
     if self.command:containsParameter("partnerParams") then
         local partnerParams = self.command.parameters["partnerParams"]
         adjustEvent.partnerParameters = {}
-        local k = 1;
+        local k = 1
         for i=1, #partnerParams, 2 do
             adjustEvent.partnerParameters[k] = { 
                 key = partnerParams[i], 
@@ -342,7 +402,7 @@ end
 
 function AdjustCommandExecutor:setEnabled()
     local enabled = (self.command:getFirstParameterValue("enabled") == "true")
-    adjust.setEnabled(enabled);
+    adjust.setEnabled(enabled)
 end
 
 function AdjustCommandExecutor:setReferrer()
@@ -352,7 +412,7 @@ end
 
 function AdjustCommandExecutor:setOfflineMode()
     local enabled = (self.command:getFirstParameterValue("enabled") == "true")
-    adjust.setOfflineMode(enabled);
+    adjust.setOfflineMode(enabled)
 end
 
 function AdjustCommandExecutor:sendFirstPackages()
@@ -438,5 +498,5 @@ function AdjustCommandExecutor:clearSavedConfigsAndEvents()
     end
 end
 
-module.AdjustCommandExecutor = AdjustCommandExecutor;
-return module;
+module.AdjustCommandExecutor = AdjustCommandExecutor
+return module
