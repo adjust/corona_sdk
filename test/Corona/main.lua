@@ -1,8 +1,27 @@
 local testLib = require "plugin.testlibrary"
+local adjust = require "plugin.adjust"
 local widget = require "widget"
 local json = require "json"
 local command = require "command"
 local adjustCommandExecutor = require "adjustCommandExecutor"
+
+-- Setting up a system event listener for deeplink support
+-- ---------------------------------------------------------
+local function onSystemEvent(event)
+    if event.type == "applicationOpen" and event.url then
+        print("[TestApp]: applicationOpen event. url = " .. event.url)
+        -- Capture app event opened from deep link
+        adjust.appWillOpenUrl(event.url)
+    end
+end
+
+Runtime:addEventListener("system", onSystemEvent)
+
+local launchArgs = ...
+if launchArgs and launchArgs.url then
+    print("[TestApp]: launchArgs.url = (" .. launchArgs.url .. ")")
+    adjust.appWillOpenUrl(launchArgs.url)
+end
 
 -- Setting up assets
 -- ------------------------
