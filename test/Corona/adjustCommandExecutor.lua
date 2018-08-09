@@ -5,7 +5,6 @@ local module = {}
 
 testLib = nil
 localBasePath = ""
-launchDeferredDeeplink = false
 
 AdjustCommandExecutor = {
     baseUrl = "",
@@ -209,8 +208,8 @@ function AdjustCommandExecutor:config()
     
     if self.command:containsParameter("deferredDeeplinkCallback") then
         localBasePath = self.basePath
-        launchDeferredDeeplink = (self.command:getFirstParameterValue("deferredDeeplinkCallback") == "true")
-        print(" >>>> [TestApp] setting deferred deeplink callback... launchDeferredDeeplink=" .. tostring(launchDeferredDeeplink))
+        adjustConfig.shouldLaunchDeeplink = (self.command:getFirstParameterValue("deferredDeeplinkCallback") == "true")
+        print(" >>>> [TestApp] setting deferred deeplink callback... adjustConfig.shouldLaunchDeeplink=" .. tostring(adjustConfig.shouldLaunchDeeplink))
         adjust.setDeferredDeeplinkListener(deferredDeeplinkListener)
     end
     
@@ -253,17 +252,9 @@ function deferredDeeplinkListener(event)
         return false
     end
     
-    local deeplink = json_deeplink.uri
-    print(" >>>>>> [TestApp] deferred deeplink: " .. deeplink)
-
-    testLib.addInfoToSend("deeplink", deeplink)
+    print(" >>>>>> [TestApp] deferred deeplink: " .. json_deeplink.uri)
+    testLib.addInfoToSend("deeplink", json_deeplink.uri)
     testLib.sendInfoToServer(localBasePath)
-    
-    -- TODO:
-    -- return launchDeferredDeeplink
-    -- is there support for callbacks with return values in Corona? 
-    -- if not, we cannot test deferred deeplink in test app
-    
 end
 
 function attributionListener(event)
