@@ -1,34 +1,16 @@
---local adjust = require "plugin.adjust"
 local testLib = require "plugin.testlibrary"
 local widget = require "widget"
 local json = require "json"
 local command = require "command"
 local adjustCommandExecutor = require "adjustCommandExecutor"
 
--- Setting up a system event listener for deeplink support
--- ---------------------------------------------------------
---local function onSystemEvent(event)
---    if event.type == "applicationOpen" and event.url then
---        print("[TestApp]: applicationOpen event. url = " .. event.url)
---        -- Capture app event opened from deep link
---        --adjust.appWillOpenUrl(event.url)
---    end
---end
---
---Runtime:addEventListener("system", onSystemEvent)
---
---local launchArgs = ...
---if launchArgs and launchArgs.url then
---    print("[Adjust]: launchArgs.url = (" .. launchArgs.url)
---    --adjust.appWillOpenUrl(launchArgs.url)
---end
-
 -- Setting up assets
 -- ------------------------
 display.setDefault("background", 1, 1, 1)
 
-local baseUrl = "https://192.168.8.106:8443"
-local gdprUrl = "https://192.168.8.106:8443"
+local baseIp = "192.168.8.159"
+local baseUrl = "https://" .. baseIp .. ":8443"
+local gdprUrl = "https://" .. baseIp .. ":8443"
 local commandExecutor = adjustCommandExecutor.AdjustCommandExecutor:new(nil, baseUrl, gdprUrl)
 
 local function executeCommand(event)
@@ -41,10 +23,16 @@ end
 
 print("Create and init test lib....")
 testLib.initTestLibrary(baseUrl, executeCommand)
-commandExecutor:setTestLibrary(testLib)
+adjustCommandExecutor.setTestLib(testLib)
 
 print("Setting test lib tests....")
-testLib.addTest("current/event-tracking/Test_Event_Count_6events")
+--testLib.addTest("current/session-event-callbacks/Test_EventCallback_success")
+--testLib.addTest("current/session-event-callbacks/Test_EventCallback_failure")
+--testLib.addTest("current/session-event-callbacks/Test_SessionCallback_success")
+--testLib.addTest("current/session-event-callbacks/Test_SessionCallback_failure")
+--testLib.addTest("current/attribution-callback/Test_AttributionCallback_ask_in_once")
+--testLib.addTestDirectory("current/session-event-callbacks")
+--testLib.addTestDirectory("current/attribution-callback")
 
 -- Start Test Session
 -- ------------------------

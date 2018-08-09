@@ -3,6 +3,9 @@ local json = require "json"
 
 local module = {}
 
+testLib = nil
+localBasePath = ""
+
 AdjustCommandExecutor = {
     baseUrl = "",
     gdprUrl = "",
@@ -10,9 +13,7 @@ AdjustCommandExecutor = {
     gdprPath = "", 
     savedEvents = {}, 
     savedConfigs = {},
-    command = nil,
-    testLib = nil,
-    localBasePath = ""
+    command = nil
 }
 
 function AdjustCommandExecutor:new (o, baseUrl, gdprUrl)
@@ -24,8 +25,8 @@ function AdjustCommandExecutor:new (o, baseUrl, gdprUrl)
     return o
 end
 
-function AdjustCommandExecutor:setTestLibrary(testLib)
-   self.testLib = testLib 
+function module.setTestLib(tl)
+    testLib = tl
 end
 
 function AdjustCommandExecutor:executeCommand(command)
@@ -206,104 +207,123 @@ function AdjustCommandExecutor:config()
     -----------------------------------------------------------------------------------------------------------------
     
     if self.command:containsParameter("deferredDeeplinkCallback") then
-        
+        print(" >>>> [TestApp] setting deferred deeplink callback...")
+        adjust.setDeferredDeeplinkListener(deferredDeeplinkListener)
     end
     
     if self.command:containsParameter("attributionCallbackSendAll") then
-        self.localBasePath = self.basePath
-        print(" >>>> [TestApp] setting attribution callback... lbp=" .. self.localBasePath)
+        localBasePath = self.basePath
+        print(" >>>> [TestApp] setting attribution callback... lbp=" .. localBasePath)
         adjust.setAttributionListener(attributionListener)
     end
     
     if self.command:containsParameter("sessionCallbackSendSuccess") then
-        self.localBasePath = self.basePath
-        print(" >>>> [TestApp] setting session send success callback... local-base-path=" .. self.localBasePath)
+        localBasePath = self.basePath
+        print(" >>>> [TestApp] setting session send success callback... local-base-path=" .. localBasePath)
         adjust.setSessionTrackingSuccessListener(sessionTrackingSuccessListener)
     end
     
     if self.command:containsParameter("sessionCallbackSendFailure") then
-        self.localBasePath = self.basePath
-        print(" >>>> [TestApp] setting session send failure callback... local-base-path=" .. self.localBasePath)
+        localBasePath = self.basePath
+        print(" >>>> [TestApp] setting session send failure callback... local-base-path=" .. localBasePath)
         adjust.setSessionTrackingFailureListener(sessionTrackingFailureListener)
     end
     
     if self.command:containsParameter("eventCallbackSendSuccess") then
-        self.localBasePath = self.basePath
-        print(" >>>> [TestApp] setting event tracking success callback... local-base-path=" .. self.localBasePath)
+        localBasePath = self.basePath
+        print(" >>>> [TestApp] setting event tracking success callback... local-base-path=" .. localBasePath)
         adjust.setEventTrackingSuccessListener(eventTrackingSuccessListener)
     end
     
     if self.command:containsParameter("eventCallbackSendFailure") then
-        self.localBasePath = self.basePath
-        print(" >>>> [TestApp] setting event tracking failed callback... local-base-path=" .. self.localBasePath)
+        localBasePath = self.basePath
+        print(" >>>> [TestApp] setting event tracking failed callback... local-base-path=" .. localBasePath)
         adjust.setEventTrackingFailureListener(eventTrackingFailureListener)
     end
 end
 
-local function attributionListener(event)
+function deferredDeeplinkListener(event)
+    print(" >>>>>> [TestApp] deferred deeplink received!")
+    local json_deeplink = json.decode(event.message)
+    if json_deeplink == nil or json_deeplink.uri == nil then
+        print(" >>>>>> [TestApp] deeplink response, uri = null")
+        return
+    end
+    
+    local deeplink = json_deeplink.uri
+    print(" >>>>>> [TestApp] deferred deeplink: " .. deeplink)
+    
+    -- TODO:
+    -- return deeplink.startsWith("adjusttest")
+    -- is there support for callbacks with return values in Corona? 
+    -- if not, we cannot test deferred deeplink in test app
+    
+end
+
+function attributionListener(event)
     print(" >>>>>> [TestApp] attribution received!")
     local json_attribution = json.decode(event.message)
-    self.testLib.addInfoToSend("trackerToken", json_attribution.trackerToken)
-    self.testLib.addInfoToSend("trackerName", json_attribution.trackerName)
-    self.testLib.addInfoToSend("network", json_attribution.network)
-    self.testLib.addInfoToSend("campaign", json_attribution.campaign)
-    self.testLib.addInfoToSend("adgroup", json_attribution.adgroup)
-    self.testLib.addInfoToSend("creative", json_attribution.creative)
-    self.testLib.addInfoToSend("clickLabel", json_attribution.clickLabel)
-    self.testLib.addInfoToSend("adid", json_attribution.adid)
-    self.testLib.sendInfoToServer(self.localBasePath)
+    testLib.addInfoToSend("trackerToken", json_attribution.trackerToken)
+    testLib.addInfoToSend("trackerName", json_attribution.trackerName)
+    testLib.addInfoToSend("network", json_attribution.network)
+    testLib.addInfoToSend("campaign", json_attribution.campaign)
+    testLib.addInfoToSend("adgroup", json_attribution.adgroup)
+    testLib.addInfoToSend("creative", json_attribution.creative)
+    testLib.addInfoToSend("clickLabel", json_attribution.clickLabel)
+    testLib.addInfoToSend("adid", json_attribution.adid)
+    testLib.sendInfoToServer(localBasePath)
 end
 
-local function sessionTrackingSuccessListener(event)
+function sessionTrackingSuccessListener(event)
     print(" >>>>>> [TestApp] session tracking success event received!")
     local json_session_success = json.decode(event.message)
-    self.testLib.addInfoToSend("message", json_session_success.message)
-    self.testLib.addInfoToSend("timestamp", json_session_success.timestamp)
-    self.testLib.addInfoToSend("adid", json_session_success.adid)
+    testLib.addInfoToSend("message", json_session_success.message)
+    testLib.addInfoToSend("timestamp", json_session_success.timestamp)
+    testLib.addInfoToSend("adid", json_session_success.adid)
     if json_session_success.jsonResponse ~= nil then
-        self.testLib.addInfoToSend("jsonResponse", json_session_success.jsonResponse)
+        testLib.addInfoToSend("jsonResponse", json_session_success.jsonResponse)
     end
-    self.testLib.sendInfoToServer(localBasePath)
+    testLib.sendInfoToServer(localBasePath)
 end
 
-local function sessionTrackingFailureListener(event)
+function sessionTrackingFailureListener(event)
     print(" >>>>>> [TestApp] session tracking failure event received!")
     local json_session_failure = json.decode(event.message)
-    self.testLib.addInfoToSend("message", json_session_failure.message)
-    self.testLib.addInfoToSend("timestamp", json_session_failure.timestamp)
-    self.testLib.addInfoToSend("adid", json_session_failure.adid)
-    self.testLib.addInfoToSend("willRetry", tostring(json_session_failure.willRetry))
+    testLib.addInfoToSend("message", json_session_failure.message)
+    testLib.addInfoToSend("timestamp", json_session_failure.timestamp)
+    testLib.addInfoToSend("adid", json_session_failure.adid)
+    testLib.addInfoToSend("willRetry", tostring(json_session_failure.willRetry))
     if json_session_failure.jsonResponse ~= nil then
-        self.testLib.addInfoToSend("jsonResponse", json_session_failure.jsonResponse)
+        testLib.addInfoToSend("jsonResponse", json_session_failure.jsonResponse)
     end
-    self.testLib.sendInfoToServer(localBasePath)
+    testLib.sendInfoToServer(localBasePath)
 end
 
-local function eventTrackingSuccessListener(event)
+function eventTrackingSuccessListener(event)
     print(" >>>>>> [TestApp] event tracking success event received!")
     local json_event_success = json.decode(event.message)
-    self.testLib.addInfoToSend("message", json_event_success.message)
-    self.testLib.addInfoToSend("timestamp", json_event_success.timestamp)
-    self.testLib.addInfoToSend("adid", json_event_success.adid)
-    self.testLib.addInfoToSend("eventToken", json_event_success.eventToken)
+    testLib.addInfoToSend("message", json_event_success.message)
+    testLib.addInfoToSend("timestamp", json_event_success.timestamp)
+    testLib.addInfoToSend("adid", json_event_success.adid)
+    testLib.addInfoToSend("eventToken", json_event_success.eventToken)
     if json_event_success.jsonResponse ~= nil then
-        self.testLib.addInfoToSend("jsonResponse", json_event_success.jsonResponse)
+        testLib.addInfoToSend("jsonResponse", json_event_success.jsonResponse)
     end
-    self.testLib.sendInfoToServer(localBasePath)
+    testLib.sendInfoToServer(localBasePath)
 end
 
-local function eventTrackingFailureListener(event)
+function eventTrackingFailureListener(event)
     print(" >>>>>> [TestApp] event tracking failed event received!")
     local json_event_failure = json.decode(event.message)
-    self.testLib.addInfoToSend("message", json_event_failure.message)
-    self.testLib.addInfoToSend("timestamp", json_event_failure.timestamp)
-    self.testLib.addInfoToSend("adid", json_event_failure.adid)
-    self.testLib.addInfoToSend("eventToken", json_event_failure.eventToken)
-    self.testLib.addInfoToSend("willRetry", tostring(json_event_failure.willRetry))
+    testLib.addInfoToSend("message", json_event_failure.message)
+    testLib.addInfoToSend("timestamp", json_event_failure.timestamp)
+    testLib.addInfoToSend("adid", json_event_failure.adid)
+    testLib.addInfoToSend("eventToken", json_event_failure.eventToken)
+    testLib.addInfoToSend("willRetry", tostring(json_event_failure.willRetry))
     if json_event_failure.jsonResponse ~= nil then
-        self.testLib.addInfoToSend("jsonResponse", json_event_failure.jsonResponse)
+        testLib.addInfoToSend("jsonResponse", json_event_failure.jsonResponse)
     end
-    self.testLib.sendInfoToServer(localBasePath)
+    testLib.sendInfoToServer(localBasePath)
 end
 
 function AdjustCommandExecutor:start()
