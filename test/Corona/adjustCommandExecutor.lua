@@ -90,7 +90,7 @@ function AdjustCommandExecutor:testOptions()
     end
     
     if self.command:containsParameter("tryInstallReferrer") then
-        local tryInstallReferrer = self.command:getFirstParameterValue("basePath")
+        local tryInstallReferrer = self.command:getFirstParameterValue("tryInstallReferrer")
         if tryInstallReferrer == "true" then
             testOptions.tryInstallReferrer = true
         else
@@ -107,6 +107,16 @@ function AdjustCommandExecutor:testOptions()
         end
     end
     
+    -- will be available in iOS 4.14.2
+    if self.command:containsParameter("iAdFrameworkEnabled") then
+        local iAdFrameworkEnabled = self.command:getFirstParameterValue("iAdFrameworkEnabled")
+        if iAdFrameworkEnabled == "true" then
+            testOptions.iAdFrameworkEnabled = true
+        else
+            testOptions.iAdFrameworkEnabled = false
+        end
+    end
+    
     if self.command:containsParameter("teardown") then
         local teardownOptions = self.command.parameters["teardown"]
         for k in pairs(teardownOptions) do
@@ -119,6 +129,7 @@ function AdjustCommandExecutor:testOptions()
                 testOptions.tryInstallReferrer = false
             elseif option == "deleteState" then 
                 testOptions.setContext = true
+                testOptions.deleteState = true
             elseif option == "resetTest" then 
                 self:clearSavedConfigsAndEvents()
                 testOptions.timerIntervalInMilliseconds = -1

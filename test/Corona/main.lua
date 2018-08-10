@@ -32,14 +32,17 @@ end
 -- ------------------------
 display.setDefault("background", 1, 1, 1)
 
-local protocol;
-local port;
+local clientSdkInfo
+local protocol
+local port
 if platformInfo == "ios" then
     protocol = "http"
     port = "8080"
+    clientSdkInfo = "corona4.14.0@ios4.14.1"
 else
     protocol = "https"
     port = "8443"
+    clientSdkInfo = "corona4.14.0@android4.14.0"
 end
 local baseIp = "192.168.8.200"    
 local baseUrl = protocol .. "://" .. baseIp .. ":" .. port
@@ -49,10 +52,15 @@ local commandExecutor = adjustCommandExecutor.AdjustCommandExecutor:new(nil, bas
 
 local function executeCommand(event)
     local rawCommand = json.decode(event.message)
-    local command = command.Command:new(nil, rawCommand.className, rawCommand.methodName, rawCommand.parameters)
-    --command:printCommand()
-    print("  >>>>> Executing command: " .. command.className .. "." .. command.methodName .. " <<<<<")
-    commandExecutor:executeCommand(command)
+    local commandObj
+    if platformInfo == "ios" then
+        commandObj = command.Command:new(nil, rawCommand.className, rawCommand.functionName, json.encode(rawCommand.params))
+    else
+        commandObj = command.Command:new(nil, rawCommand.className, rawCommand.methodName, rawCommand.parameters)
+    end
+    --commandObj:printCommand()
+    print("  >>>>> Executing command: " .. commandObj.className .. "." .. commandObj.methodName .. " <<<<<")
+    commandExecutor:executeCommand(commandObj)
 end
 
 print("Create and init test lib....")
@@ -65,14 +73,17 @@ print("Setting test lib tests....")
 --testLib.addTest("current/session-event-callbacks/Test_SessionCallback_success")
 --testLib.addTest("current/session-event-callbacks/Test_SessionCallback_failure")
 --testLib.addTest("current/attribution-callback/Test_AttributionCallback_ask_in_once")
---testLib.addTestDirectory("current/session-event-callbacks")
 --testLib.addTestDirectory("current/attribution-callback")
+--testLib.addTestDirectory("current/session-event-callbacks")
+--testLib.addTestDirectory("current/deeplink-deferred")
+--testLib.addTest("current/deeplink-deferred/Test_DeferredDeeplink")
+testLib.addTestDirectory("current/user-agent")
 
 -- Start Test Session
 -- ------------------------
 local function handleStartTestSession(event)
     if ("ended" == event.phase) then
-        testLib.startTestSession("corona4.14.0@android4.14.0")
+        testLib.startTestSession(clientSdkInfo)
     end
 end
 
@@ -85,4 +96,4 @@ widget.newButton({
 })
 
 -- START TEST SESSION AUTIMATICALLY
-testLib.startTestSession("corona4.14.0@android4.14.0")
+testLib.startTestSession(clientSdkInfo)

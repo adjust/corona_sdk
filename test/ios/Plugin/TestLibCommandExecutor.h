@@ -8,7 +8,10 @@
 
 #import <Foundation/Foundation.h>
 #import "ATLTestLibrary.h"
+#import "PluginLibrary.h"
 
 @interface TestLibCommandExecutor : NSObject<AdjustCommandDelegate>
+
+- (id)initWithPluginLibrary:(PluginLibrary *)pluginLibrary;
 
 @end

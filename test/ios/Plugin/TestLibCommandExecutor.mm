@@ -10,32 +10,23 @@
 
 @interface TestLibCommandExecutor ()
 
-@property (nonatomic, copy) NSString *basePath;
-@property (nonatomic, copy) NSString *gdprPath;
+@property (nonatomic) PluginLibrary *pluginLibrary;
 
 @end
 
 @implementation TestLibCommandExecutor
 
-- (id)init {
+- (id)initWithPluginLibrary:(PluginLibrary *)pluginLibrary {
     self = [super init];
+    if (self == nil) return nil;
     
-    if (self == nil) {
-        return nil;
-    }
-    
-    self.basePath = nil;
-    self.gdprPath = nil;
+    self.pluginLibrary = pluginLibrary;
     
     return self;
 }
 
-- (void)executeCommand:(NSString *)className
-            methodName:(NSString *)methodName
-            parameters:(NSDictionary *)parameters {
-    NSLog(@"executeCommand className: %@, methodName: %@, parameters: %@", className, methodName, parameters);
-    
-    
+- (void)executeCommandRawJson:(NSString *)json {
+    self.pluginLibrary->dispachExecuteCommand(json);
 }
 
 @end
