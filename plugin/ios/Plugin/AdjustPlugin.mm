@@ -80,6 +80,9 @@ public:
     static int getGoogleAdId(lua_State *L);
     static int getAmazonAdId(lua_State *L);
     static int gdprForgetMe(lua_State *L);
+    
+    // used in integration testing only
+    static int setTestOptions(lua_State *L);
 
     static int setAttributionListener(lua_State *L);
     static int setEventTrackingSuccessListener(lua_State *L);
@@ -200,6 +203,7 @@ AdjustPlugin::Open(lua_State *L) {
         { "getGoogleAdId", getGoogleAdId },
         { "getAmazonAdId", getAmazonAdId },
         { "gdprForgetMe", gdprForgetMe },
+        { "setTestOptions", setTestOptions },
 
         { NULL, NULL }
     };
@@ -706,6 +710,96 @@ int AdjustPlugin::getAmazonAdId(lua_State *L) {
 
 int AdjustPlugin::gdprForgetMe(lua_State *L) {
     [Adjust gdprForgetMe];
+    return 0;
+}
+
+// used in integration testing only
+int AdjustPlugin::setTestOptions(lua_State *L) {
+    AdjustTestOptions *testOptions = [[AdjustTestOptions alloc] init];
+    
+    lua_getfield(L, 1, "baseUrl");
+    if (!lua_isnil(L, 2)) {
+        const char *baseUrl = lua_tostring(L, 2);
+        testOptions.baseUrl = [NSString stringWithUTF8String:baseUrl];
+    }
+    lua_pop(L, 1);
+    
+    lua_getfield(L, 1, "gdprUrl");
+    if (!lua_isnil(L, 2)) {
+        const char *gdprUrl = lua_tostring(L, 2);
+        testOptions.gdprUrl = [NSString stringWithUTF8String:gdprUrl];
+    }
+    lua_pop(L, 1);
+    
+    lua_getfield(L, 1, "basePath");
+    if (!lua_isnil(L, 2)) {
+        const char *basePath = lua_tostring(L, 2);
+        testOptions.basePath = [NSString stringWithUTF8String:basePath];
+    }
+    lua_pop(L, 1);
+    
+    lua_getfield(L, 1, "gdprPath");
+    if (!lua_isnil(L, 2)) {
+        const char *gdprPath = lua_tostring(L, 2);
+        testOptions.gdprPath = [NSString stringWithUTF8String:gdprPath];
+    }
+    lua_pop(L, 1);
+    
+    lua_getfield(L, 1, "timerIntervalInMilliseconds");
+    if (!lua_isnil(L, 2)) {
+        NSUInteger timerIntervalInMilliseconds = lua_tointeger(L, 2);
+        testOptions.timerIntervalInMilliseconds = [NSNumber numberWithInteger:timerIntervalInMilliseconds];
+    }
+    lua_pop(L, 1);
+    
+    lua_getfield(L, 1, "timerStartInMilliseconds");
+    if (!lua_isnil(L, 2)) {
+        NSUInteger timerStartInMilliseconds = lua_tointeger(L, 2);
+        testOptions.timerStartInMilliseconds = [NSNumber numberWithInteger:timerStartInMilliseconds];
+    }
+    lua_pop(L, 1);
+    
+    lua_getfield(L, 1, "sessionIntervalInMilliseconds");
+    if (!lua_isnil(L, 2)) {
+        NSUInteger sessionIntervalInMilliseconds = lua_tointeger(L, 2);
+        testOptions.sessionIntervalInMilliseconds = [NSNumber numberWithInteger:sessionIntervalInMilliseconds];
+    }
+    lua_pop(L, 1);
+    
+    lua_getfield(L, 1, "subsessionIntervalInMilliseconds");
+    if (!lua_isnil(L, 2)) {
+        NSUInteger subsessionIntervalInMilliseconds = lua_tointeger(L, 2);
+        testOptions.subsessionIntervalInMilliseconds = [NSNumber numberWithInteger:subsessionIntervalInMilliseconds];
+    }
+    lua_pop(L, 1);
+    
+    lua_getfield(L, 1, "teardown");
+    if (!lua_isnil(L, 2)) {
+        testOptions.teardown = lua_toboolean(L, 2);
+    }
+    lua_pop(L, 1);
+    
+    lua_getfield(L, 1, "deleteState");
+    if (!lua_isnil(L, 2)) {
+        testOptions.deleteState = lua_toboolean(L, 2);
+    }
+    lua_pop(L, 1);
+    
+    lua_getfield(L, 1, "noBackoffWait");
+    if (!lua_isnil(L, 2)) {
+        testOptions.noBackoffWait = lua_toboolean(L, 2);
+    }
+    lua_pop(L, 1);
+    
+    // TODO: available in version 4.14.2
+    //lua_getfield(L, 1, "iAdFrameworkEnabled");
+    //if (!lua_isnil(L, 2)) {
+    //    testOptions.iAdFrameworkEnabled = lua_toboolean(L, 2);
+    //}
+    //lua_pop(L, 1);
+    
+    [Adjust setTestOptions:testOptions];
+    
     return 0;
 }
 
