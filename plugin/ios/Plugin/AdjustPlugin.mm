@@ -83,6 +83,8 @@ public:
     
     // used in integration testing only
     static int setTestOptions(lua_State *L);
+    static int onResume(lua_State *L);
+    static int onPause(lua_State *L);
 
     static int setAttributionListener(lua_State *L);
     static int setEventTrackingSuccessListener(lua_State *L);
@@ -203,6 +205,8 @@ AdjustPlugin::Open(lua_State *L) {
         { "getGoogleAdId", getGoogleAdId },
         { "getAmazonAdId", getAmazonAdId },
         { "gdprForgetMe", gdprForgetMe },
+        { "onResume", onResume },
+        { "onPause", onPause },
         { "setTestOptions", setTestOptions },
 
         { NULL, NULL }
@@ -710,6 +714,18 @@ int AdjustPlugin::getAmazonAdId(lua_State *L) {
 
 int AdjustPlugin::gdprForgetMe(lua_State *L) {
     [Adjust gdprForgetMe];
+    return 0;
+}
+
+// used in integration testing only
+int AdjustPlugin::onResume(lua_State *L) {
+    [Adjust trackSubsessionStart];
+    return 0;
+}
+
+// used in integration testing only
+int AdjustPlugin::onPause(lua_State *L) {
+    [Adjust trackSubsessionEnd];
     return 0;
 }
 
