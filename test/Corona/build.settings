@@ -30,6 +30,15 @@ settings =
 				"Icon-167.png",
 				"Icon-180.png",
 			},
+            CFBundleURLTypes =
+            {
+                {
+                    CFBundleURLSchemes =
+                    {
+                        "adjust-test",
+                    }
+                }
+            }
 		},
 	},
 }

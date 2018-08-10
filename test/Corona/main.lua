@@ -5,6 +5,11 @@ local json = require "json"
 local command = require "command"
 local adjustCommandExecutor = require "adjustCommandExecutor"
 
+print("------------------------------------------------------------")
+local platformInfo = system.getInfo("platform")
+print("--Running on [" .. platformInfo .. "]--")
+print("------------------------------------------------------------")
+
 -- Setting up a system event listener for deeplink support
 -- ---------------------------------------------------------
 local function onSystemEvent(event)
@@ -27,9 +32,19 @@ end
 -- ------------------------
 display.setDefault("background", 1, 1, 1)
 
-local baseIp = "192.168.8.159"
-local baseUrl = "https://" .. baseIp .. ":8443"
-local gdprUrl = "https://" .. baseIp .. ":8443"
+local protocol;
+local port;
+if platformInfo == "ios" then
+    protocol = "http"
+    port = "8080"
+else
+    protocol = "https"
+    port = "8443"
+end
+local baseIp = "192.168.8.200"    
+local baseUrl = protocol .. "://" .. baseIp .. ":" .. port
+local gdprUrl = protocol .. "://" .. baseIp .. ":" .. port
+print("--Using BaseUrl: [" .. baseUrl .. "]--")
 local commandExecutor = adjustCommandExecutor.AdjustCommandExecutor:new(nil, baseUrl, gdprUrl)
 
 local function executeCommand(event)

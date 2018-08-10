@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		A4E253C9166D716900DCDC2C /* PluginLibrary.mm in Sources */ = {isa = PBXBuildFile; fileRef = A447B617165D734C009EA762 /* PluginLibrary.mm */; };
+		DAB3D0A0211CA4DE00AE736F /* AdjustTestLibrary.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DAB3D09E211CA4DE00AE736F /* AdjustTestLibrary.a */; };
+		DAB3D0B7211D953400AE736F /* TestLibCommandExecutor.mm in Sources */ = {isa = PBXBuildFile; fileRef = DAB3D0B5211D953400AE736F /* TestLibCommandExecutor.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,6 +28,25 @@
 		A447B616165D734C009EA762 /* PluginLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PluginLibrary.h; path = Plugin/PluginLibrary.h; sourceTree = "<group>"; };
 		A447B617165D734C009EA762 /* PluginLibrary.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PluginLibrary.mm; path = Plugin/PluginLibrary.mm; sourceTree = "<group>"; };
 		A4E253B6166D6FB300DCDC2C /* libplugin_library.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libplugin_library.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		DAB3D09E211CA4DE00AE736F /* AdjustTestLibrary.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = AdjustTestLibrary.a; path = Plugin/AdjustTestLibrary.a; sourceTree = "<group>"; };
+		DAB3D0A3211CA59100AE736F /* ADJEventFailure.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ADJEventFailure.h; path = Plugin/ADJEventFailure.h; sourceTree = "<group>"; };
+		DAB3D0A4211CA59100AE736F /* ADJLogger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ADJLogger.h; path = Plugin/ADJLogger.h; sourceTree = "<group>"; };
+		DAB3D0A5211CA59100AE736F /* ADJEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ADJEvent.h; path = Plugin/ADJEvent.h; sourceTree = "<group>"; };
+		DAB3D0A6211CA59100AE736F /* ADJEventSuccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ADJEventSuccess.h; path = Plugin/ADJEventSuccess.h; sourceTree = "<group>"; };
+		DAB3D0A7211CA59200AE736F /* ADJConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ADJConfig.h; path = Plugin/ADJConfig.h; sourceTree = "<group>"; };
+		DAB3D0A8211CA59200AE736F /* ADJSessionFailure.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ADJSessionFailure.h; path = Plugin/ADJSessionFailure.h; sourceTree = "<group>"; };
+		DAB3D0A9211CA59200AE736F /* Adjust.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Adjust.h; path = Plugin/Adjust.h; sourceTree = "<group>"; };
+		DAB3D0AA211CA59200AE736F /* ADJSessionSuccess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ADJSessionSuccess.h; path = Plugin/ADJSessionSuccess.h; sourceTree = "<group>"; };
+		DAB3D0AB211CA59200AE736F /* ADJAttribution.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ADJAttribution.h; path = Plugin/ADJAttribution.h; sourceTree = "<group>"; };
+		DAB3D0AD211CA5BC00AE736F /* ATLTestLibrary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATLTestLibrary.h; path = Plugin/ATLTestLibrary.h; sourceTree = "<group>"; };
+		DAB3D0AE211CA5BC00AE736F /* ATLBlockingQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATLBlockingQueue.h; path = Plugin/ATLBlockingQueue.h; sourceTree = "<group>"; };
+		DAB3D0AF211CA5BC00AE736F /* ATLConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATLConstants.h; path = Plugin/ATLConstants.h; sourceTree = "<group>"; };
+		DAB3D0B0211CA5BC00AE736F /* ATLTestInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATLTestInfo.h; path = Plugin/ATLTestInfo.h; sourceTree = "<group>"; };
+		DAB3D0B1211CA5BC00AE736F /* ATLUtilNetworking.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATLUtilNetworking.h; path = Plugin/ATLUtilNetworking.h; sourceTree = "<group>"; };
+		DAB3D0B2211CA5BC00AE736F /* ATLUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATLUtil.h; path = Plugin/ATLUtil.h; sourceTree = "<group>"; };
+		DAB3D0B3211CA5BC00AE736F /* ATLControlChannel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATLControlChannel.h; path = Plugin/ATLControlChannel.h; sourceTree = "<group>"; };
+		DAB3D0B5211D953400AE736F /* TestLibCommandExecutor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestLibCommandExecutor.mm; path = Plugin/TestLibCommandExecutor.mm; sourceTree = "<group>"; };
+		DAB3D0B6211D953400AE736F /* TestLibCommandExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestLibCommandExecutor.h; path = Plugin/TestLibCommandExecutor.h; sourceTree = "<group>"; };
 		F572F81A1EE0705B001BC814 /* CoronaNative.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CoronaNative.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -34,6 +55,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DAB3D0A0211CA4DE00AE736F /* AdjustTestLibrary.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -43,8 +65,12 @@
 		A447B609165D72A6009EA762 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				DAB3D0A2211CA56100AE736F /* Adjust */,
+				DAB3D0AC211CA59F00AE736F /* AdjustTestLibrary */,
 				A447B616165D734C009EA762 /* PluginLibrary.h */,
 				A447B617165D734C009EA762 /* PluginLibrary.mm */,
+				DAB3D0B6211D953400AE736F /* TestLibCommandExecutor.h */,
+				DAB3D0B5211D953400AE736F /* TestLibCommandExecutor.mm */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -55,6 +81,7 @@
 				A447B609165D72A6009EA762 /* Source */,
 				F54A40C01EE083A300AF417D /* CoronaNative */,
 				A484111A15114F700074BD57 /* Products */,
+				DAB3D09D211CA4B800AE736F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -64,6 +91,44 @@
 				A4E253B6166D6FB300DCDC2C /* libplugin_library.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		DAB3D09D211CA4B800AE736F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DAB3D09E211CA4DE00AE736F /* AdjustTestLibrary.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		DAB3D0A2211CA56100AE736F /* Adjust */ = {
+			isa = PBXGroup;
+			children = (
+				DAB3D0AB211CA59200AE736F /* ADJAttribution.h */,
+				DAB3D0A7211CA59200AE736F /* ADJConfig.h */,
+				DAB3D0A5211CA59100AE736F /* ADJEvent.h */,
+				DAB3D0A3211CA59100AE736F /* ADJEventFailure.h */,
+				DAB3D0A6211CA59100AE736F /* ADJEventSuccess.h */,
+				DAB3D0A4211CA59100AE736F /* ADJLogger.h */,
+				DAB3D0A8211CA59200AE736F /* ADJSessionFailure.h */,
+				DAB3D0AA211CA59200AE736F /* ADJSessionSuccess.h */,
+				DAB3D0A9211CA59200AE736F /* Adjust.h */,
+			);
+			name = Adjust;
+			sourceTree = "<group>";
+		};
+		DAB3D0AC211CA59F00AE736F /* AdjustTestLibrary */ = {
+			isa = PBXGroup;
+			children = (
+				DAB3D0AE211CA5BC00AE736F /* ATLBlockingQueue.h */,
+				DAB3D0AF211CA5BC00AE736F /* ATLConstants.h */,
+				DAB3D0B3211CA5BC00AE736F /* ATLControlChannel.h */,
+				DAB3D0B0211CA5BC00AE736F /* ATLTestInfo.h */,
+				DAB3D0AD211CA5BC00AE736F /* ATLTestLibrary.h */,
+				DAB3D0B2211CA5BC00AE736F /* ATLUtil.h */,
+				DAB3D0B1211CA5BC00AE736F /* ATLUtilNetworking.h */,
+			);
+			name = AdjustTestLibrary;
 			sourceTree = "<group>";
 		};
 		F54A40C01EE083A300AF417D /* CoronaNative */ = {
@@ -143,6 +208,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DAB3D0B7211D953400AE736F /* TestLibCommandExecutor.mm in Sources */,
 				A4E253C9166D716900DCDC2C /* PluginLibrary.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -240,6 +306,10 @@
 				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Plugin",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -255,6 +325,10 @@
 				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Plugin",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
