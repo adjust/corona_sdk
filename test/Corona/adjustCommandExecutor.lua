@@ -3,6 +3,7 @@ local json = require "json"
 
 local module = {}
 
+platform = ""
 testLib = nil
 localBasePath = ""
 
@@ -27,6 +28,10 @@ end
 
 function module.setTestLib(tl)
     testLib = tl
+end
+
+function module.setPlatform(p)
+    platform = p
 end
 
 function AdjustCommandExecutor:executeCommand(command)
@@ -257,14 +262,21 @@ end
 
 function deferredDeeplinkListener(event)
     print(" >>>>>> [TestApp] deferred deeplink received!")
-    local json_deeplink = json.decode(event.message)
-    if json_deeplink == nil or json_deeplink.uri == nil then
-        print(" >>>>>> [TestApp] deeplink response, uri = null")
+    
+    if event == nil then
+        print(" >>>>>> [TestApp] deeplink response, uri = nil")
         return false
     end
     
-    print(" >>>>>> [TestApp] deferred deeplink: " .. json_deeplink.uri)
-    testLib.addInfoToSend("deeplink", json_deeplink.uri)
+    local deeplink
+    if platform == "ios" then
+        deeplink = event.message
+    else
+        deeplink = json.decode(event.message).uri
+    end
+    
+    print(" >>>>>> [TestApp] deferred deeplink: " .. deeplink)
+    testLib.addInfoToSend("deeplink", deeplink)
     testLib.sendInfoToServer(localBasePath)
 end
 

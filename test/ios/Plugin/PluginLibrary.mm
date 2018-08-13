@@ -115,22 +115,23 @@ int PluginLibrary::startTestSession(lua_State *L) {
 
 int PluginLibrary::addInfoToSend(lua_State *L) {
     Self *library = ToLibrary(L);
-    const char *key = lua_tostring(L, 1);
-    const char *value = lua_tostring(L, 2);
-    [library->testLibrary addInfoToSend:[NSString stringWithUTF8String:key] value:[NSString stringWithUTF8String:value]];
+    NSString *key = [NSString stringWithUTF8String:lua_tostring(L, 1)];
+    NSString *value = [NSString stringWithUTF8String:lua_tostring(L, 2)];
+    NSLog(@"[TestLibrary][bridge]: Adding info to send to server: [%@, %@]", key, value);
+    [library->testLibrary addInfoToSend:key value:value];
     return 0;
 }
 
 int PluginLibrary::sendInfoToServer(lua_State *L) {
     Self *library = ToLibrary(L);
-    const char *basePath = lua_tostring(L, 1);
-    [library->testLibrary sendInfoToServer:[NSString stringWithUTF8String:basePath]];
+    NSString *basePath = [NSString stringWithUTF8String:lua_tostring(L, 1)];
+    NSLog(@"[TestLibrary][bridge]: Sending info to server, basePath: %@", basePath);
+    [library->testLibrary sendInfoToServer:basePath];
     return 0;
 }
 
 void PluginLibrary::dispachExecuteCommand(NSString *commandJson) {
     lua_State *L = initialLuaState;
-    //Self *library = ToLibrary(L);
     
     // Create event and add message to it
     CoronaLuaNewEvent(L, kEvent);
@@ -138,7 +139,6 @@ void PluginLibrary::dispachExecuteCommand(NSString *commandJson) {
     lua_setfield(L, -2, "message");
     
     // Dispatch event to library's listener
-    //CoronaLuaDispatchEvent(L, library->GetExecuteCommandListener(), 0);
     CoronaLuaDispatchEvent(L, this->GetExecuteCommandListener(), 0);
 }
 

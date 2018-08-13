@@ -66,6 +66,7 @@ end
 print("Create and init test lib....")
 testLib.initTestLibrary(baseUrl, executeCommand)
 adjustCommandExecutor.setTestLib(testLib)
+adjustCommandExecutor.setPlatform(platformInfo)
 
 print("Setting test lib tests....")
 --testLib.addTest("current/session-event-callbacks/Test_EventCallback_success")
