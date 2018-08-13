@@ -27,22 +27,16 @@ class AdjustPlugin {
 public:
     typedef AdjustPlugin Self;
 
-public:
     static const char kName[];
     static const char kEvent[];
 
-protected:
-    AdjustPlugin();
+    void InitializeAttributionListener(CoronaLuaRef listener);
+    void InitializeEventTrackingSuccessListener(CoronaLuaRef listener);
+    void InitializeEventTrackingFailureListener(CoronaLuaRef listener);
+    void InitializeSessionTrackingSuccessListener(CoronaLuaRef listener);
+    void InitializeSessionTrackingFailureListener(CoronaLuaRef listener);
+    void InitializeDeferredDeeplinkListener(CoronaLuaRef listener);
 
-public:
-    bool InitializeAttributionListener(CoronaLuaRef listener);
-    bool InitializeEventTrackingSuccessListener(CoronaLuaRef listener);
-    bool InitializeEventTrackingFailureListener(CoronaLuaRef listener);
-    bool InitializeSessionTrackingSuccessListener(CoronaLuaRef listener);
-    bool InitializeSessionTrackingFailureListener(CoronaLuaRef listener);
-    bool InitializeDeferredDeeplinkListener(CoronaLuaRef listener);
-
-public:
     CoronaLuaRef GetAttributionChangedListener() const { return attributionChangedListener; }
     CoronaLuaRef GetEventTrackingSuccessListener() const { return eventTrackingSuccessListener; }
     CoronaLuaRef GetEventTrackingFailureListener() const { return eventTrackingFailureListener; }
@@ -50,16 +44,10 @@ public:
     CoronaLuaRef GetSessionTrackingFailureListener() const { return sessionTrackingFailureListener; }
     CoronaLuaRef GetDeferredDeeplinkListener() const { return deferredDeeplinkListener; }
 
-public:
     static int Open(lua_State *L);
 
-protected:
-    static int Finalizer(lua_State *L);
-
-public:
     static Self *ToLibrary(lua_State *L);
 
-public:
     static int create(lua_State *L);
     static int trackEvent(lua_State *L);
     static int setEnabled(lua_State *L);
@@ -93,6 +81,10 @@ public:
     static int setSessionTrackingFailureListener(lua_State *L);
     static int setDeferredDeeplinkListener(lua_State *L);
 
+protected:
+    static int Finalizer(lua_State *L);
+    AdjustPlugin();
+
 private:
     CoronaLuaRef attributionChangedListener;
     CoronaLuaRef eventTrackingSuccessListener;
@@ -116,58 +108,28 @@ sessionTrackingSuccessListener(NULL),
 sessionTrackingFailureListener(NULL),
 deferredDeeplinkListener(NULL) {}
 
-bool AdjustPlugin::InitializeAttributionListener(CoronaLuaRef listener) {
-    // Can only initialize listener once.
-    bool result = (NULL == attributionChangedListener);
-    if (result) {
-        attributionChangedListener = listener;
-    }
-    return result;
+void AdjustPlugin::InitializeAttributionListener(CoronaLuaRef listener) {
+    attributionChangedListener = listener;
 }
 
-bool AdjustPlugin::InitializeEventTrackingSuccessListener(CoronaLuaRef listener) {
-    // Can only initialize listener once.
-    bool result = (NULL == eventTrackingSuccessListener);
-    if (result) {
-        eventTrackingSuccessListener = listener;
-    }
-    return result;
+void AdjustPlugin::InitializeEventTrackingSuccessListener(CoronaLuaRef listener) {
+    eventTrackingSuccessListener = listener;
 }
 
-bool AdjustPlugin::InitializeEventTrackingFailureListener(CoronaLuaRef listener) {
-    // Can only initialize listener once.
-    bool result = (NULL == eventTrackingFailureListener);
-    if (result) {
-        eventTrackingFailureListener = listener;
-    }
-    return result;
+void AdjustPlugin::InitializeEventTrackingFailureListener(CoronaLuaRef listener) {
+    eventTrackingFailureListener = listener;
 }
 
-bool AdjustPlugin::InitializeSessionTrackingSuccessListener(CoronaLuaRef listener) {
-    // Can only initialize listener once.
-    bool result = (NULL == sessionTrackingSuccessListener);
-    if (result) {
-        sessionTrackingSuccessListener = listener;
-    }
-    return result;
+void AdjustPlugin::InitializeSessionTrackingSuccessListener(CoronaLuaRef listener) {
+    sessionTrackingSuccessListener = listener;
 }
 
-bool AdjustPlugin::InitializeSessionTrackingFailureListener(CoronaLuaRef listener) {
-    // Can only initialize listener once.
-    bool result = (NULL == sessionTrackingFailureListener);
-    if (result) {
-        sessionTrackingFailureListener = listener;
-    }
-    return result;
+void AdjustPlugin::InitializeSessionTrackingFailureListener(CoronaLuaRef listener) {
+    sessionTrackingFailureListener = listener;
 }
 
-bool AdjustPlugin::InitializeDeferredDeeplinkListener(CoronaLuaRef listener) {
-    // Can only initialize listener once.
-    bool result = (NULL == deferredDeeplinkListener);
-    if (result) {
-        deferredDeeplinkListener = listener;
-    }
-    return result;
+void AdjustPlugin::InitializeDeferredDeeplinkListener(CoronaLuaRef listener) {
+    deferredDeeplinkListener = listener;
 }
 
 int
