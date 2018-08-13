@@ -222,6 +222,14 @@ function AdjustCommandExecutor:config()
     ------------- callbacks -----------------------------------------------------------------------------------------
     -----------------------------------------------------------------------------------------------------------------
     
+    -- first, clear all callback
+    adjust.setDeferredDeeplinkListener(deferredDeeplinkListenerEmpty)
+    adjust.setAttributionListener(attributionListenerEmpty)
+    adjust.setSessionTrackingSuccessListener(sessionTrackingSuccessListenerEmpty)
+    adjust.setSessionTrackingFailureListener(sessionTrackingFailureListenerEmpty)
+    adjust.setEventTrackingSuccessListener(eventTrackingSuccessListenerEmpty)
+    adjust.setEventTrackingFailureListener(eventTrackingFailureListenerEmpty)
+    
     if self.command:containsParameter("deferredDeeplinkCallback") then
         localBasePath = self.basePath
         adjustConfig.shouldLaunchDeeplink = (self.command:getFirstParameterValue("deferredDeeplinkCallback") == "true")
@@ -258,6 +266,19 @@ function AdjustCommandExecutor:config()
         print(" >>>> [TestApp] setting event tracking failed callback... local-base-path=" .. localBasePath)
         adjust.setEventTrackingFailureListener(eventTrackingFailureListener)
     end
+end
+
+function deferredDeeplinkListenerEmpty(event)
+end
+function attributionListenerEmpty(event)
+end
+function sessionTrackingSuccessListenerEmpty(event)
+end
+function sessionTrackingFailureListenerEmpty(event)
+end
+function eventTrackingSuccessListenerEmpty(event)
+end
+function eventTrackingFailureListenerEmpty(event)
 end
 
 function deferredDeeplinkListener(event)
