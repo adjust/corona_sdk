@@ -3,7 +3,9 @@
 ##
 import os, shutil, glob
 
-TAG = 'TEST-APP'
+def setLogTag(t):
+	global TAG
+	TAG = t
 
 ############################################################
 ### colors for terminal

@@ -1,6 +1,8 @@
 import os, subprocess, sys
 from scriptingUtils import *
 
+setLogTag('TEST-APP')
+
 ## ------------------------------------------------------------------
 ## get arguments
 if len(sys.argv) != 2:
