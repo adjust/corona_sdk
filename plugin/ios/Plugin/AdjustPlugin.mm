@@ -754,6 +754,10 @@ int AdjustPlugin::setTestOptions(lua_State *L) {
     lua_getfield(L, 1, "teardown");
     if (!lua_isnil(L, 2)) {
         testOptions.teardown = lua_toboolean(L, 2);
+        if(testOptions.teardown) {
+            NSLog(@"[Adjust][bridge]: AdjustSdkDelegate callbacks teardown.");
+            [AdjustSdkDelegate teardown];
+        }
     }
     lua_pop(L, 1);
     

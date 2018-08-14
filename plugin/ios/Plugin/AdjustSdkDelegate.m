@@ -9,6 +9,9 @@
 #import <objc/runtime.h>
 #import "AdjustSdkDelegate.h"
 
+static dispatch_once_t onceToken;
+static AdjustSdkDelegate *defaultInstance = nil;
+
 @implementation AdjustSdkDelegate
 
 #pragma mark - Constants
@@ -47,9 +50,6 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
                                 deferredDeeplinkCallback:(CoronaLuaRef)deferredDeeplinkCallback
                             shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink
                                              andLuaState:(lua_State *)luaState {
-    static dispatch_once_t onceToken;
-    static AdjustSdkDelegate *defaultInstance = nil;
-
     dispatch_once(&onceToken, ^{
         defaultInstance = [[AdjustSdkDelegate alloc] init];
 
@@ -90,6 +90,11 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
     });
 
     return defaultInstance;
+}
+
++ (void)teardown {
+    defaultInstance = nil;
+    onceToken = 0;
 }
 
 + (void)dispatchEvent:(NSString *)eventName

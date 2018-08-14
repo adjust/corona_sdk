@@ -108,4 +108,6 @@
       andValue:(NSObject *)value
   toDictionary:(NSMutableDictionary *)dictionary;
 
++ (void)teardown;
+
 @end
