@@ -45,7 +45,6 @@ public:
     CoronaLuaRef GetDeferredDeeplinkListener() const { return deferredDeeplinkListener; }
 
     static int Open(lua_State *L);
-
     static Self *ToLibrary(lua_State *L);
 
     static int create(lua_State *L);
@@ -68,18 +67,17 @@ public:
     static int getGoogleAdId(lua_State *L);
     static int getAmazonAdId(lua_State *L);
     static int gdprForgetMe(lua_State *L);
-    
-    // used in integration testing only
-    static int setTestOptions(lua_State *L);
-    static int onResume(lua_State *L);
-    static int onPause(lua_State *L);
-
     static int setAttributionListener(lua_State *L);
     static int setEventTrackingSuccessListener(lua_State *L);
     static int setEventTrackingFailureListener(lua_State *L);
     static int setSessionTrackingSuccessListener(lua_State *L);
     static int setSessionTrackingFailureListener(lua_State *L);
     static int setDeferredDeeplinkListener(lua_State *L);
+
+    // For testing purposes only.
+    static int setTestOptions(lua_State *L);
+    static int onResume(lua_State *L);
+    static int onPause(lua_State *L);
 
 protected:
     static int Finalizer(lua_State *L);
@@ -203,30 +201,27 @@ AdjustPlugin * AdjustPlugin::ToLibrary(lua_State *L) {
     return library;
 }
 
+// Public API.
 int AdjustPlugin::create(lua_State *L) {
-    double delayStart = 0.0;
+    if (!lua_istable(L, 1)) {
+        return 0;
+    }
 
+    double delayStart = 0.0;
     NSUInteger secretId = -1;
     NSUInteger info1 = -1;
     NSUInteger info2 = -1;
     NSUInteger info3 = -1;
     NSUInteger info4 = -1;
-
     BOOL isDeviceKnown = NO;
     BOOL sendInBackground = NO;
     BOOL eventBufferingEnabled = NO;
     BOOL shouldLaunchDeferredDeeplink = YES;
-
     NSString *appToken = nil;
     NSString *userAgent = nil;
     NSString *environment = nil;
     NSString *defaultTracker = nil;
-
     ADJLogLevel logLevel = ADJLogLevelInfo;
-
-    if (!lua_istable(L, 1)) {
-        return 0;
-    }
 
     // Log level
     lua_getfield(L, 1, "logLevel");
@@ -249,7 +244,6 @@ int AdjustPlugin::create(lua_State *L) {
     if (!lua_isnil(L, 2)) {
         const char *environment_char = lua_tostring(L, 2);
         environment = [NSString stringWithUTF8String:environment_char];
-
         if ([[environment lowercaseString] isEqualToString:@"sandbox"]) {
             environment = ADJEnvironmentSandbox;
         } else if ([[environment lowercaseString] isEqualToString:@"production"]) {
@@ -385,6 +379,7 @@ int AdjustPlugin::create(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::trackEvent(lua_State *L) {
     if (!lua_istable(L, 1)) {
         return 0;
@@ -459,6 +454,7 @@ int AdjustPlugin::trackEvent(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::setAttributionListener(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -469,6 +465,7 @@ int AdjustPlugin::setAttributionListener(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::setEventTrackingSuccessListener(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -479,6 +476,7 @@ int AdjustPlugin::setEventTrackingSuccessListener(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::setEventTrackingFailureListener(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -489,6 +487,7 @@ int AdjustPlugin::setEventTrackingFailureListener(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::setSessionTrackingSuccessListener(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -499,6 +498,7 @@ int AdjustPlugin::setSessionTrackingSuccessListener(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::setSessionTrackingFailureListener(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -509,6 +509,7 @@ int AdjustPlugin::setSessionTrackingFailureListener(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::setDeferredDeeplinkListener(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -519,12 +520,14 @@ int AdjustPlugin::setDeferredDeeplinkListener(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::setEnabled(lua_State *L) {
     BOOL enabled = lua_toboolean(L, 1);
     [Adjust setEnabled:enabled];
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::setPushToken(lua_State *L) {
     const char *pushToken_char = lua_tostring(L, 1);
     NSString *pushToken =[NSString stringWithUTF8String:pushToken_char];
@@ -532,6 +535,7 @@ int AdjustPlugin::setPushToken(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::appWillOpenUrl(lua_State *L) {
     const char *urlStr = lua_tostring(L, 1);
     NSURL *url = [NSURL URLWithString:[NSString stringWithUTF8String:urlStr]];
@@ -539,11 +543,13 @@ int AdjustPlugin::appWillOpenUrl(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::sendFirstPackages(lua_State *L) {
     [Adjust sendFirstPackages];
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::addSessionCallbackParameter(lua_State *L) {
     const char *key = lua_tostring(L, 1);
     const char *value = lua_tostring(L, 2);
@@ -551,6 +557,7 @@ int AdjustPlugin::addSessionCallbackParameter(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::addSessionPartnerParameter(lua_State *L) {
     const char *key = lua_tostring(L, 1);
     const char *value = lua_tostring(L, 2);
@@ -558,34 +565,40 @@ int AdjustPlugin::addSessionPartnerParameter(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::removeSessionCallbackParameter(lua_State *L) {
     const char *key = lua_tostring(L, 1);
     [Adjust removeSessionCallbackParameter:[NSString stringWithUTF8String:key]];
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::removeSessionPartnerParameter(lua_State *L) {
     const char *key = lua_tostring(L, 1);
     [Adjust removeSessionPartnerParameter:[NSString stringWithUTF8String:key]];
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::resetSessionCallbackParameters(lua_State *L) {
     [Adjust resetSessionCallbackParameters];
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::resetSessionPartnerParameters(lua_State *L) {
     [Adjust resetSessionPartnerParameters];
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::setOfflineMode(lua_State *L) {
     BOOL enabled = lua_toboolean(L, 1);
     [Adjust setOfflineMode:enabled];
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::isEnabled(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -597,6 +610,7 @@ int AdjustPlugin::isEnabled(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::getIdfa(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -610,6 +624,7 @@ int AdjustPlugin::getIdfa(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::getAttribution(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -641,6 +656,7 @@ int AdjustPlugin::getAttribution(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::getAdid(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -654,6 +670,7 @@ int AdjustPlugin::getAdid(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::getGoogleAdId(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -664,6 +681,7 @@ int AdjustPlugin::getGoogleAdId(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::getAmazonAdId(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -674,24 +692,25 @@ int AdjustPlugin::getAmazonAdId(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::gdprForgetMe(lua_State *L) {
     [Adjust gdprForgetMe];
     return 0;
 }
 
-// used in integration testing only
+// For testing purposes only.
 int AdjustPlugin::onResume(lua_State *L) {
     [Adjust trackSubsessionStart];
     return 0;
 }
 
-// used in integration testing only
+// For testing purposes only.
 int AdjustPlugin::onPause(lua_State *L) {
     [Adjust trackSubsessionEnd];
     return 0;
 }
 
-// used in integration testing only
+// For testing purposes only.
 int AdjustPlugin::setTestOptions(lua_State *L) {
     AdjustTestOptions *testOptions = [[AdjustTestOptions alloc] init];
     
@@ -772,16 +791,14 @@ int AdjustPlugin::setTestOptions(lua_State *L) {
         testOptions.noBackoffWait = lua_toboolean(L, 2);
     }
     lua_pop(L, 1);
-    
-    // TODO: available in version 4.14.2
-    //lua_getfield(L, 1, "iAdFrameworkEnabled");
-    //if (!lua_isnil(L, 2)) {
-    //    testOptions.iAdFrameworkEnabled = lua_toboolean(L, 2);
-    //}
-    //lua_pop(L, 1);
-    
+
+    lua_getfield(L, 1, "iAdFrameworkEnabled");
+    if (!lua_isnil(L, 2)) {
+        testOptions.iAdFrameworkEnabled = lua_toboolean(L, 2);
+    }
+    lua_pop(L, 1);
+
     [Adjust setTestOptions:testOptions];
-    
     return 0;
 }
 
