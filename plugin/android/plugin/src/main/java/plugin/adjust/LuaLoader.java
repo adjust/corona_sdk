@@ -74,8 +74,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private int sessionTrackingFailureListener;
     private int deferredDeeplinkListener;
 
-    private Uri uri = null;
-    private boolean didStartAdjustSdk = false;
     private boolean shouldLaunchDeeplink = true;
 
     /**
@@ -116,7 +114,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     @Override
     public int invoke(LuaState L) {
         // Register this plugin into Lua with the following functions.
-        NamedJavaFunction[] luaFunctions = new NamedJavaFunction[]{
+        NamedJavaFunction[] luaFunctions = new NamedJavaFunction[] {
                 new CreateWrapper(),
                 new TrackEventWrapper(),
                 new SetEnabledWrapper(),
@@ -260,12 +258,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         });
     }
 
-    /**
-     * Invokes Adjust.onCreate()
-     * Takes a hash table as input. The hash table is loaded on a stack which needs to be popped for the
-     * next element to be used
-     */
-    public int adjust_create(final LuaState L) {
+    // Public API.
+    private int adjust_create(final LuaState L) {
         if (!L.isTable(1)) {
             Log.e(TAG, "adjust_create: adjust_create() must be supplied with a table");
             return 0;
@@ -277,15 +271,12 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         String environment = null;
         String processName = null;
         String defaultTracker = null;
-
         boolean readImei = false;
         boolean isDeviceKnown = false;
         boolean sendInBackground = false;
         boolean isLogLevelSuppress = false;
         boolean eventBufferingEnabled = false;
-
         double delayStart = 0.0;
-
         long secretId = -1L;
         long info1 = -1L;
         long info2 = -1L;
@@ -319,8 +310,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
-        final AdjustConfig adjustConfig =
-                new AdjustConfig(CoronaEnvironment.getApplicationContext(), appToken, environment, isLogLevelSuppress);
+        final AdjustConfig adjustConfig = new AdjustConfig(CoronaEnvironment.getApplicationContext(), appToken, environment, isLogLevelSuppress);
 
         // Log level
         if (logLevel != null) {
@@ -529,22 +519,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         Adjust.onCreate(adjustConfig);
         Adjust.onResume();
-        didStartAdjustSdk = true;
-
-        if (this.uri != null) {
-            Adjust.appWillOpenUrl(uri);
-            this.uri = null;
-        }
-
         return 0;
     }
 
-    /**
-     * Invokes Adjust.trackEvent()
-     * Takes a hash table as input. The hash table is loaded on a stack which needs to be popped for the
-     * next element to be used
-     */
-    public int adjust_trackEvent(final LuaState L) {
+    // Public API.
+    private int adjust_trackEvent(final LuaState L) {
         if (!L.isTable(1)) {
             Log.e(TAG, "adjust_trackEvent: adjust_trackEvent() must be supplied with a table");
             return 0;
@@ -643,12 +622,14 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
+    // Public API.
     private int adjust_setEnabled(LuaState L) {
         boolean enabled = L.checkBoolean(1);
         Adjust.setEnabled(enabled);
         return 0;
     }
 
+    // Public API.
     private int adjust_isEnabled(LuaState L) {
         // Hardcoded listener index for ADJUST.
         int listenerIndex = 1;
@@ -662,37 +643,27 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
+    // Public API.
     private int adjust_setPushToken(LuaState L) {
         String pushToken = L.checkString(1);
         Adjust.setPushToken(pushToken, CoronaEnvironment.getApplicationContext());
         return 0;
     }
 
+    // Public API.
     private int adjust_appWillOpenUrl(LuaState L) {
         final Uri uri = Uri.parse(L.checkString(1));
-        if (didStartAdjustSdk) {
-            Adjust.appWillOpenUrl(uri, CoronaEnvironment.getApplicationContext());
-            return 0;
-        }
-        this.uri = uri;
+        Adjust.appWillOpenUrl(uri, CoronaEnvironment.getApplicationContext());
         return 0;
     }
 
+    // Public API.
     private int adjust_sendFirstPackage(LuaState L) {
         Adjust.sendFirstPackages();
         return 0;
     }
 
-    private int adjust_onResume(LuaState L) {
-        Adjust.onResume();
-        return 0;
-    }
-
-    private int adjust_onPause(LuaState L) {
-        Adjust.onPause();
-        return 0;
-    }
-
+    // Public API.
     private int adjust_addSessionCallbackParameter(LuaState L) {
         String key = L.checkString(1);
         String value = L.checkString(2);
@@ -700,6 +671,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
+    // Public API.
     private int adjust_addSessionPartnerParameter(LuaState L) {
         String key = L.checkString(1);
         String value = L.checkString(2);
@@ -707,28 +679,33 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
+    // Public API.
     private int adjust_removeSessionCallbackParameter(LuaState L) {
         String key = L.checkString(1);
         Adjust.removeSessionCallbackParameter(key);
         return 0;
     }
 
+    // Public API.
     private int adjust_removeSessionPartnerParameter(LuaState L) {
         String key = L.checkString(1);
         Adjust.removeSessionPartnerParameter(key);
         return 0;
     }
 
+    // Public API.
     private int adjust_resetSessionCallbackParameters(LuaState L) {
         Adjust.resetSessionCallbackParameters();
         return 0;
     }
 
+    // Public API.
     private int adjust_resetSessionPartnerParameters(LuaState L) {
         Adjust.resetSessionPartnerParameters();
         return 0;
     }
 
+    // Public API.
     private int adjust_getIdfa(LuaState L) {
         // Hardcoded listener index for ADJUST.
         int listenerIndex = 1;
@@ -742,6 +719,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
+    // Public API.
     private int adjust_getGoogleAdId(final LuaState L) {
         // Hardcoded listener index for ADJUST.
         int listenerIndex = 1;
@@ -761,6 +739,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
+    // Public API.
     private int adjust_getAdid(final LuaState L) {
         // Hardcoded listener index for ADJUST.
         int listenerIndex = 1;
@@ -791,6 +770,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
+    // Public API.
     private int adjust_getAttribution(LuaState L) {
         // Hardcoded listener index for ADJUST.
         int listenerIndex = 1;
@@ -805,23 +785,27 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
+    // Public API.
     private int adjust_setOfflineMode(LuaState L) {
         boolean offlineMode = L.checkBoolean(1);
         Adjust.setOfflineMode(offlineMode);
         return 0;
     }
 
+    // Public API.
     private int adjust_setReferrer(LuaState L) {
         String referrer = L.checkString(1);
         Adjust.setReferrer(referrer, CoronaEnvironment.getApplicationContext());
         return 0;
     }
 
+    // Public API.
     private int adjust_gdprForgetMe(LuaState L) {
         Adjust.gdprForgetMe(CoronaEnvironment.getApplicationContext());
         return 0;
     }
 
+    // Public API.
     private int adjust_setAttributionListener(LuaState L) {
         // Hardcoded listener index for ADJUST.
         int listenerIndex = 1;
@@ -831,6 +815,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
+    // Public API.
     private int adjust_setEventTrackingSuccessListener(LuaState L) {
         // Hardcoded listener index for ADJUST.
         int listenerIndex = 1;
@@ -840,6 +825,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
+    // Public API.
     private int adjust_setEventTrackingFailureListener(LuaState L) {
         // Hardcoded listener index for ADJUST.
         int listenerIndex = 1;
@@ -849,6 +835,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
+    // Public API.
     private int adjust_setSessionTrackingSuccessListener(LuaState L) {
         // Hardcoded listener index for ADJUST.
         int listenerIndex = 1;
@@ -858,6 +845,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
+    // Public API.
     private int adjust_setSessionTrackingFailureListener(LuaState L) {
         // Hardcoded listener index for ADJUST.
         int listenerIndex = 1;
@@ -867,6 +855,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
+    // Public API.
     private int adjust_setDeferredDeeplinkListener(LuaState L) {
         // Hardcoded listener index for ADJUST.
         int listenerIndex = 1;
@@ -876,7 +865,36 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
-    public int adjust_setTestOptions(final LuaState L) {
+    // For testing purposes only.
+    private int adjust_onResume(LuaState L) {
+        String param = L.checkString(1);
+        if (param == null) {
+            return 0;
+        }
+
+        if (param.equals("test")) {
+            Adjust.onResume();
+        }
+
+        return 0;
+    }
+
+    // For testing purposes only.
+    private int adjust_onPause(LuaState L) {
+        String param = L.checkString(1);
+        if (param == null) {
+            return 0;
+        }
+
+        if (param.equals("test")) {
+            Adjust.onPause();
+        }
+
+        return 0;
+    }
+
+    // For testing purposes only.
+    private int adjust_setTestOptions(final LuaState L) {
         AdjustTestOptions adjustTestOptions = new AdjustTestOptions();
 
         L.getField(1, "setContext");
@@ -958,7 +976,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         L.pop(1);
 
         Adjust.setTestOptions(adjustTestOptions);
-
         return 0;
     }
 
@@ -1286,18 +1303,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    private class SetTestOptionsWrapper implements NamedJavaFunction {
-        @Override
-        public String getName() {
-            return "setTestOptions";
-        }
-
-        @Override
-        public int invoke(LuaState L) {
-            return adjust_setTestOptions(L);
-        }
-    }
-
     private class OnResumeWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -1319,6 +1324,18 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         @Override
         public int invoke(LuaState L) {
             return adjust_onPause(L);
+        }
+    }
+
+    private class SetTestOptionsWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "setTestOptions";
+        }
+
+        @Override
+        public int invoke(LuaState L) {
+            return adjust_setTestOptions(L);
         }
     }
 }
