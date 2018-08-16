@@ -1,5 +1,5 @@
 import os, subprocess, sys
-from scriptingUtils import *
+from scripting_utils import *
 
 setLogTag('TEST-APP')
 
