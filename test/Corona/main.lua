@@ -38,13 +38,13 @@ local port
 if platformInfo == "ios" then
     protocol = "http"
     port = "8080"
-    clientSdkInfo = "corona4.14.0@ios4.14.1"
+    clientSdkInfo = "corona4.14.0@ios4.14.2"
 else
     protocol = "https"
     port = "8443"
     clientSdkInfo = "corona4.14.0@android4.14.0"
 end
-local baseIp = "192.168.8.200"    
+local baseIp = "192.168.8.204"
 local baseUrl = protocol .. "://" .. baseIp .. ":" .. port
 local gdprUrl = protocol .. "://" .. baseIp .. ":" .. port
 print("--Using BaseUrl: [" .. baseUrl .. "]--")
@@ -78,7 +78,7 @@ print("Setting test lib tests....")
 --testLib.addTestDirectory("current/session-event-callbacks")
 --testLib.addTestDirectory("current/deeplink-deferred")
 --testLib.addTest("current/deeplink-deferred/Test_DeferredDeeplink")
-testLib.addTestDirectory("current/user-agent")
+-- testLib.addTestDirectory("current/user-agent")
 
 -- Start Test Session
 -- ------------------------
