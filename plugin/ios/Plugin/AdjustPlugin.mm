@@ -694,19 +694,26 @@ int AdjustPlugin::getAmazonAdId(lua_State *L) {
 
 // Public API.
 int AdjustPlugin::gdprForgetMe(lua_State *L) {
+
     [Adjust gdprForgetMe];
     return 0;
 }
 
 // For testing purposes only.
 int AdjustPlugin::onResume(lua_State *L) {
-    [Adjust trackSubsessionStart];
+    const char *key = lua_tostring(L, 1);
+    if ([[NSString stringWithUTF8String:key] isEqualToString:@"test"]) {
+        [Adjust trackSubsessionStart];
+    }
     return 0;
 }
 
 // For testing purposes only.
 int AdjustPlugin::onPause(lua_State *L) {
-    [Adjust trackSubsessionEnd];
+    const char *key = lua_tostring(L, 1);
+    if ([[NSString stringWithUTF8String:key] isEqualToString:@"test"]) {
+        [Adjust trackSubsessionEnd];
+    }
     return 0;
 }
 
