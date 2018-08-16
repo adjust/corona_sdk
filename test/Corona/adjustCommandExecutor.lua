@@ -454,11 +454,11 @@ function AdjustCommandExecutor:trackEvent()
 end
 
 function AdjustCommandExecutor:resume()
-    adjust.onResume()
+    adjust.onResume("test")
 end
 
 function AdjustCommandExecutor:pause()
-    adjust.onPause()
+    adjust.onPause("test")
 end
 
 function AdjustCommandExecutor:setEnabled()
@@ -477,7 +477,7 @@ function AdjustCommandExecutor:setOfflineMode()
 end
 
 function AdjustCommandExecutor:sendFirstPackages()
-    adjust.sendFirstPackage()
+    adjust.sendFirstPackages()
 end
 
 function AdjustCommandExecutor:addSessionCallbackParameter()
