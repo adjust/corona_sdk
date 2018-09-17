@@ -112,7 +112,6 @@ function AdjustCommandExecutor:testOptions()
         end
     end
     
-    -- will be available in iOS 4.14.2
     if self.command:containsParameter("iAdFrameworkEnabled") then
         local iAdFrameworkEnabled = self.command:getFirstParameterValue("iAdFrameworkEnabled")
         if iAdFrameworkEnabled == "true" then

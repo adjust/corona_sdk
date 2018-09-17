@@ -70,15 +70,7 @@ adjustCommandExecutor.setPlatform(platformInfo)
 
 print("Setting test lib tests....")
 --testLib.addTest("current/session-event-callbacks/Test_EventCallback_success")
---testLib.addTest("current/session-event-callbacks/Test_EventCallback_failure")
---testLib.addTest("current/session-event-callbacks/Test_SessionCallback_success")
---testLib.addTest("current/session-event-callbacks/Test_SessionCallback_failure")
---testLib.addTest("current/attribution-callback/Test_AttributionCallback_ask_in_once")
---testLib.addTestDirectory("current/attribution-callback")
 --testLib.addTestDirectory("current/session-event-callbacks")
---testLib.addTestDirectory("current/deeplink-deferred")
---testLib.addTest("current/deeplink-deferred/Test_DeferredDeeplink")
--- testLib.addTestDirectory("current/user-agent")
 
 -- Start Test Session
 -- ------------------------
