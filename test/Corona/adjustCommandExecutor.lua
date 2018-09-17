@@ -321,7 +321,7 @@ function sessionTrackingSuccessListener(event)
     testLib.addInfoToSend("timestamp", json_session_success.timestamp)
     testLib.addInfoToSend("adid", json_session_success.adid)
     if json_session_success.jsonResponse ~= nil then
-        testLib.addInfoToSend("jsonResponse", json_session_success.jsonResponse)
+        testLib.addInfoToSend("jsonResponse", json.encode(json_session_success.jsonResponse))
     end
     testLib.sendInfoToServer(localBasePath)
 end
@@ -334,7 +334,7 @@ function sessionTrackingFailureListener(event)
     testLib.addInfoToSend("adid", json_session_failure.adid)
     testLib.addInfoToSend("willRetry", tostring(json_session_failure.willRetry))
     if json_session_failure.jsonResponse ~= nil then
-        testLib.addInfoToSend("jsonResponse", json_session_failure.jsonResponse)
+        testLib.addInfoToSend("jsonResponse", json.encode(json_session_failure.jsonResponse))
     end
     testLib.sendInfoToServer(localBasePath)
 end
@@ -347,7 +347,7 @@ function eventTrackingSuccessListener(event)
     testLib.addInfoToSend("adid", json_event_success.adid)
     testLib.addInfoToSend("eventToken", json_event_success.eventToken)
     if json_event_success.jsonResponse ~= nil then
-        testLib.addInfoToSend("jsonResponse", json_event_success.jsonResponse)
+        testLib.addInfoToSend("jsonResponse", json.encode(json_event_success.jsonResponse))
     end
     testLib.sendInfoToServer(localBasePath)
 end
@@ -361,7 +361,7 @@ function eventTrackingFailureListener(event)
     testLib.addInfoToSend("eventToken", json_event_failure.eventToken)
     testLib.addInfoToSend("willRetry", tostring(json_event_failure.willRetry))
     if json_event_failure.jsonResponse ~= nil then
-        testLib.addInfoToSend("jsonResponse", json_event_failure.jsonResponse)
+        testLib.addInfoToSend("jsonResponse", json.encode(json_event_failure.jsonResponse))
     end
     testLib.sendInfoToServer(localBasePath)
 end

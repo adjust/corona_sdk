@@ -161,7 +161,9 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
     [AdjustSdkDelegate addKey:KEY_MESSAGE andValue:sessionSuccessResponseData.message toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:sessionSuccessResponseData.timeStamp toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_ADID andValue:sessionSuccessResponseData.adid toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_JSON_RESPONSE andValue:sessionSuccessResponseData.jsonResponse toDictionary:dictionary];
+    if (sessionSuccessResponseData.jsonResponse != nil) {
+        [dictionary setObject:sessionSuccessResponseData.jsonResponse forKey:KEY_JSON_RESPONSE];
+    }
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
@@ -188,7 +190,9 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
     [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:sessionFailureResponseData.timeStamp toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_ADID andValue:sessionFailureResponseData.adid toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_WILL_RETRY andValue:(sessionFailureResponseData.willRetry ? @"true" : @"false") toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_JSON_RESPONSE andValue:sessionFailureResponseData.jsonResponse toDictionary:dictionary];
+    if (sessionFailureResponseData.jsonResponse != nil) {
+        [dictionary setObject:sessionFailureResponseData.jsonResponse forKey:KEY_JSON_RESPONSE];
+    }
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
@@ -215,7 +219,9 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
     [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:eventSuccessResponseData.timeStamp toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_ADID andValue:eventSuccessResponseData.adid toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_EVENT_TOKEN andValue:eventSuccessResponseData.eventToken toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_JSON_RESPONSE andValue:eventSuccessResponseData.jsonResponse toDictionary:dictionary];
+    if (eventSuccessResponseData.jsonResponse != nil) {
+        [dictionary setObject:eventSuccessResponseData.jsonResponse forKey:KEY_JSON_RESPONSE];
+    }
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
@@ -243,7 +249,9 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
     [AdjustSdkDelegate addKey:KEY_ADID andValue:eventFailureResponseData.adid toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_EVENT_TOKEN andValue:eventFailureResponseData.eventToken toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_WILL_RETRY andValue:(eventFailureResponseData.willRetry ? @"true" : @"false") toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_JSON_RESPONSE andValue:eventFailureResponseData.jsonResponse toDictionary:dictionary];
+    if (eventFailureResponseData.jsonResponse != nil) {
+        [dictionary setObject:eventFailureResponseData.jsonResponse forKey:KEY_JSON_RESPONSE];
+    }
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
