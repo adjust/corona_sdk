@@ -694,7 +694,6 @@ int AdjustPlugin::getAmazonAdId(lua_State *L) {
 
 // Public API.
 int AdjustPlugin::gdprForgetMe(lua_State *L) {
-
     [Adjust gdprForgetMe];
     return 0;
 }

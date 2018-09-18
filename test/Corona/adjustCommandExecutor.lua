@@ -125,7 +125,7 @@ function AdjustCommandExecutor:testOptions()
         local teardownOptions = self.command.parameters["teardown"]
         for k in pairs(teardownOptions) do
             local option = teardownOptions[k]
-            if     option == "resetSdk" then
+            if option == "resetSdk" then
                 testOptions.teardown = true
                 testOptions.basePath = self.basePath
                 testOptions.gdprPath = self.gdprPath
