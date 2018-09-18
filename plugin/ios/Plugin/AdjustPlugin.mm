@@ -226,24 +226,30 @@ int AdjustPlugin::create(lua_State *L) {
     // Log level
     lua_getfield(L, 1, "logLevel");
     if (!lua_isnil(L, 2)) {
-        const char *logLevel_char = lua_tostring(L, 2);
-        logLevel = [ADJLogger logLevelFromString:[[NSString stringWithUTF8String:logLevel_char] lowercaseString]];
+        const char *cstrLogLevel = lua_tostring(L, 2);
+        if (cstrLogLevel != NULL) {
+            logLevel = [ADJLogger logLevelFromString:[[NSString stringWithUTF8String:cstrLogLevel] lowercaseString]];
+        }
     }
     lua_pop(L, 1);
 
     // App token
     lua_getfield(L, 1, "appToken");
     if (!lua_isnil(L, 2)) {
-        const char *appToken_char = lua_tostring(L, 2);
-        appToken = [NSString stringWithUTF8String:appToken_char];
+        const char *cstrAppToken = lua_tostring(L, 2);
+        if (cstrAppToken != NULL) {
+            appToken = [NSString stringWithUTF8String:cstrAppToken];
+        }
     }
     lua_pop(L, 1);
 
     // Environment
     lua_getfield(L, 1, "environment");
     if (!lua_isnil(L, 2)) {
-        const char *environment_char = lua_tostring(L, 2);
-        environment = [NSString stringWithUTF8String:environment_char];
+        const char *cstrEnvironment = lua_tostring(L, 2);
+        if (cstrEnvironment != NULL) {
+            environment = [NSString stringWithUTF8String:cstrEnvironment];
+        }
         if ([[environment lowercaseString] isEqualToString:@"sandbox"]) {
             environment = ADJEnvironmentSandbox;
         } else if ([[environment lowercaseString] isEqualToString:@"production"]) {
@@ -273,8 +279,10 @@ int AdjustPlugin::create(lua_State *L) {
     // Default tracker
     lua_getfield(L, 1, "defaultTracker");
     if (!lua_isnil(L, 2)) {
-        const char *defaultTracker_char = lua_tostring(L, 2);
-        defaultTracker = [NSString stringWithUTF8String:defaultTracker_char];
+        const char *cstrDefaultTracker = lua_tostring(L, 2);
+        if (cstrDefaultTracker != NULL) {
+            defaultTracker = [NSString stringWithUTF8String:cstrDefaultTracker];
+        }
         [adjustConfig setDefaultTracker:defaultTracker];
     }
     lua_pop(L, 1);
@@ -282,8 +290,10 @@ int AdjustPlugin::create(lua_State *L) {
     // User agent
     lua_getfield(L, 1, "userAgent");
     if (!lua_isnil(L, 2)) {
-        const char *userAgent_char = lua_tostring(L, 2);
-        userAgent = [NSString stringWithUTF8String:userAgent_char];
+        const char *cstrUserAgent = lua_tostring(L, 2);
+        if (cstrUserAgent != NULL) {
+            userAgent = [NSString stringWithUTF8String:cstrUserAgent];
+        }
         [adjustConfig setUserAgent:userAgent];
     }
     lua_pop(L, 1);
@@ -393,8 +403,10 @@ int AdjustPlugin::trackEvent(lua_State *L) {
     // Event token
     lua_getfield(L, 1, "eventToken");
     if (!lua_isnil(L, 2)) {
-        const char *eventToken_char = lua_tostring(L, 2);
-        eventToken = [NSString stringWithUTF8String:eventToken_char];
+        const char *cstrEventToken = lua_tostring(L, 2);
+        if (cstrEventToken != NULL) {
+            eventToken = [NSString stringWithUTF8String:cstrEventToken];
+        }
     }
     lua_pop(L, 1);
 
@@ -410,8 +422,10 @@ int AdjustPlugin::trackEvent(lua_State *L) {
     // Currency
     lua_getfield(L, 1, "currency");
     if (!lua_isnil(L, 2)) {
-        const char *currency_char = lua_tostring(L, 2);
-        currency = [NSString stringWithUTF8String:currency_char];
+        const char *cstrCurrency = lua_tostring(L, 2);
+        if (cstrCurrency != NULL) {
+            currency = [NSString stringWithUTF8String:cstrCurrency];
+        }
     }
     lua_pop(L, 1);
 
@@ -422,8 +436,10 @@ int AdjustPlugin::trackEvent(lua_State *L) {
     // Transaction ID
     lua_getfield(L, 1, "transactionId");
     if (!lua_isnil(L, 2)) {
-        const char *transactionId_char = lua_tostring(L, 2);
-        transactionId = [NSString stringWithUTF8String:transactionId_char];
+        const char *cstrTransactionId = lua_tostring(L, 2);
+        if (cstrTransactionId != NULL) {
+            transactionId = [NSString stringWithUTF8String:cstrTransactionId];
+        }
         [event setTransactionId:transactionId];
     }
     lua_pop(L, 1);
@@ -529,17 +545,21 @@ int AdjustPlugin::setEnabled(lua_State *L) {
 
 // Public API.
 int AdjustPlugin::setPushToken(lua_State *L) {
-    const char *pushToken_char = lua_tostring(L, 1);
-    NSString *pushToken =[NSString stringWithUTF8String:pushToken_char];
-    [Adjust setPushToken:pushToken];
+    const char *cstrPushToken = lua_tostring(L, 1);
+    if (cstrPushToken != NULL) {
+        NSString *pushToken =[NSString stringWithUTF8String:cstrPushToken];
+        [Adjust setPushToken:pushToken];
+    }
     return 0;
 }
 
 // Public API.
 int AdjustPlugin::appWillOpenUrl(lua_State *L) {
-    const char *urlStr = lua_tostring(L, 1);
-    NSURL *url = [NSURL URLWithString:[NSString stringWithUTF8String:urlStr]];
-    [Adjust appWillOpenUrl:url];
+    const char *cstrUrl = lua_tostring(L, 1);
+    if (cstrUrl != NULL) {
+        NSURL *url = [NSURL URLWithString:[NSString stringWithUTF8String:cstrUrl]];
+        [Adjust appWillOpenUrl:url];
+    }
     return 0;
 }
 
@@ -553,7 +573,9 @@ int AdjustPlugin::sendFirstPackages(lua_State *L) {
 int AdjustPlugin::addSessionCallbackParameter(lua_State *L) {
     const char *key = lua_tostring(L, 1);
     const char *value = lua_tostring(L, 2);
-    [Adjust addSessionCallbackParameter:[NSString stringWithUTF8String:key] value:[NSString stringWithUTF8String:value]];
+    if (key != NULL && value != NULL) {
+        [Adjust addSessionCallbackParameter:[NSString stringWithUTF8String:key] value:[NSString stringWithUTF8String:value]];
+    }
     return 0;
 }
 
@@ -561,21 +583,27 @@ int AdjustPlugin::addSessionCallbackParameter(lua_State *L) {
 int AdjustPlugin::addSessionPartnerParameter(lua_State *L) {
     const char *key = lua_tostring(L, 1);
     const char *value = lua_tostring(L, 2);
-    [Adjust addSessionPartnerParameter:[NSString stringWithUTF8String:key] value:[NSString stringWithUTF8String:value]];
+    if (key != NULL && value != NULL) {
+        [Adjust addSessionPartnerParameter:[NSString stringWithUTF8String:key] value:[NSString stringWithUTF8String:value]];
+    }
     return 0;
 }
 
 // Public API.
 int AdjustPlugin::removeSessionCallbackParameter(lua_State *L) {
     const char *key = lua_tostring(L, 1);
-    [Adjust removeSessionCallbackParameter:[NSString stringWithUTF8String:key]];
+    if (key != NULL) {
+        [Adjust removeSessionCallbackParameter:[NSString stringWithUTF8String:key]];
+    }
     return 0;
 }
 
 // Public API.
 int AdjustPlugin::removeSessionPartnerParameter(lua_State *L) {
     const char *key = lua_tostring(L, 1);
-    [Adjust removeSessionPartnerParameter:[NSString stringWithUTF8String:key]];
+    if (key != NULL) {
+        [Adjust removeSessionPartnerParameter:[NSString stringWithUTF8String:key]];
+    }
     return 0;
 }
 
@@ -701,7 +729,7 @@ int AdjustPlugin::gdprForgetMe(lua_State *L) {
 // For testing purposes only.
 int AdjustPlugin::onResume(lua_State *L) {
     const char *key = lua_tostring(L, 1);
-    if ([[NSString stringWithUTF8String:key] isEqualToString:@"test"]) {
+    if (key != NULL && [[NSString stringWithUTF8String:key] isEqualToString:@"test"]) {
         [Adjust trackSubsessionStart];
     }
     return 0;
@@ -710,7 +738,7 @@ int AdjustPlugin::onResume(lua_State *L) {
 // For testing purposes only.
 int AdjustPlugin::onPause(lua_State *L) {
     const char *key = lua_tostring(L, 1);
-    if ([[NSString stringWithUTF8String:key] isEqualToString:@"test"]) {
+    if (key != NULL && [[NSString stringWithUTF8String:key] isEqualToString:@"test"]) {
         [Adjust trackSubsessionEnd];
     }
     return 0;
@@ -723,28 +751,36 @@ int AdjustPlugin::setTestOptions(lua_State *L) {
     lua_getfield(L, 1, "baseUrl");
     if (!lua_isnil(L, 2)) {
         const char *baseUrl = lua_tostring(L, 2);
-        testOptions.baseUrl = [NSString stringWithUTF8String:baseUrl];
+        if (baseUrl != NULL) {
+            testOptions.baseUrl = [NSString stringWithUTF8String:baseUrl];
+        }
     }
     lua_pop(L, 1);
     
     lua_getfield(L, 1, "gdprUrl");
     if (!lua_isnil(L, 2)) {
         const char *gdprUrl = lua_tostring(L, 2);
-        testOptions.gdprUrl = [NSString stringWithUTF8String:gdprUrl];
+        if (gdprUrl != NULL) {
+            testOptions.gdprUrl = [NSString stringWithUTF8String:gdprUrl];
+        }
     }
     lua_pop(L, 1);
     
     lua_getfield(L, 1, "basePath");
     if (!lua_isnil(L, 2)) {
         const char *basePath = lua_tostring(L, 2);
-        testOptions.basePath = [NSString stringWithUTF8String:basePath];
+        if (basePath != NULL) {
+            testOptions.basePath = [NSString stringWithUTF8String:basePath];
+        }
     }
     lua_pop(L, 1);
     
     lua_getfield(L, 1, "gdprPath");
     if (!lua_isnil(L, 2)) {
         const char *gdprPath = lua_tostring(L, 2);
-        testOptions.gdprPath = [NSString stringWithUTF8String:gdprPath];
+        if (gdprPath != NULL) {
+            testOptions.gdprPath = [NSString stringWithUTF8String:gdprPath];
+        }
     }
     lua_pop(L, 1);
     
