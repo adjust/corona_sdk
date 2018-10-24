@@ -7,7 +7,7 @@ import build_sdk_ios     as ios
 set_log_tag('BUILD-PLUGIN')
 
 ## ------------------------------------------------------------------
-## get arguments
+## Arguments.
 parser = argparse.ArgumentParser(description='Script used to build SDK for Corona')
 parser.add_argument('platform', help='platform on which the scripts will be ran', choices=['android', 'ios'])
 parser.add_argument('-t', '--type', help='type of SDK to be built', choices=['plugin', 'testapp'], default='plugin')
@@ -16,7 +16,7 @@ args = parser.parse_args()
 debug_green('Script start. Platform=[{0}]. Build Adjust SDK Corona [{1}] ...'.format(args.platform, args.type))
 
 # ------------------------------------------------------------------
-# common paths
+# Paths.
 script_dir              = os.path.dirname(os.path.realpath(__file__))
 root_dir                = os.path.dirname(os.path.normpath(script_dir))
 android_submodule_dir   = '{0}/ext/android'.format(root_dir)
@@ -41,9 +41,9 @@ try:
             set_log_tag('ANDROID-TESTAPP-RUN')
             android.build_testapp(root_dir)
 finally:
-    # remove autocreated python compiled files
+    # Remove autocreated python compiled files.
     remove_files('*.pyc', script_dir, log=False)
 
 ## ------------------------------------------------------------------
-## Script completed
+## Script completed.
 debug_green('Script completed!')

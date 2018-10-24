@@ -8,7 +8,7 @@ def set_log_tag(t):
     TAG = t
 
 ############################################################
-### colors for terminal
+### Colors for terminal.
 
 CEND = '\033[0m'
 
@@ -56,7 +56,7 @@ CBEIGEBG2  = '\33[106m'
 CWHITEBG2  = '\33[107m'
 
 ############################################################
-### file system util methods
+### File system util methods.
 
 def copy_file(sourceFile, destFile):
     debug('copying: {0} -> {1}'.format(sourceFile, destFile))
@@ -109,7 +109,7 @@ def create_dir_if_not_exist(dir):
         os.makedirs(dir)
 
 ############################################################
-### debug messages util methods
+### Debug messages util methods.
 
 def debug(msg):
     if not is_windows():
@@ -139,7 +139,7 @@ def error(msg, do_exit=False):
         exit()
 
 ############################################################
-### util
+### Util.
 
 def check_submodule_dir(platform, submodule_dir):
     if not os.path.isdir(submodule_dir) or not os.listdir(submodule_dir):
@@ -151,14 +151,14 @@ def is_windows():
 
 # https://stackoverflow.com/questions/17140886/how-to-search-and-replace-text-in-a-file-using-python
 def replace_text_in_file(file_path, substring, replace_with):
-    # Read in the file
+    # Read in the file.
     with open(file_path, 'r') as file:
         filedata = file.read()
 
-    # Replace the target string
+    # Replace the target string.
     filedata = filedata.replace(substring, replace_with)
 
-    # Write the file out again
+    # Write the file out again.
     with open(file_path, 'w') as file:
         file.write(filedata)
 
