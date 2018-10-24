@@ -262,7 +262,7 @@ int AdjustPlugin::create(lua_State *L) {
                                       allowSuppressLogLevel:(logLevel == ADJLogLevelSuppress)];
 
     // Sdk prefix.
-    [adjustConfig setSdkPrefix:@"corona4.14.0"];
+    [adjustConfig setSdkPrefix:@"corona4.15.0"];
 
     // Log level.
     [adjustConfig setLogLevel:logLevel];

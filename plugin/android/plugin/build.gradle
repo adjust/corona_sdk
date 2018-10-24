@@ -33,5 +33,5 @@ tasks.withType(JavaCompile) {
 dependencies {
     compile fileTree(dir: "$coronaNativeDir/Corona/android/lib/Corona/libs", include: '*.jar')
     compile fileTree(dir: 'libs', include: '*.jar')
-    compile 'com.adjust.sdk:adjust-android:4.14.0'
+    compile 'com.adjust.sdk:adjust-android:4.15.0'
 }
