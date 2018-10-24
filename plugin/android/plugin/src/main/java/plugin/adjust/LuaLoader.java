@@ -12,7 +12,16 @@ package plugin.adjust;
 
 import android.net.Uri;
 import android.util.Log;
-
+import org.json.JSONObject;
+import com.ansca.corona.CoronaEnvironment;
+import com.ansca.corona.CoronaLua;
+import com.ansca.corona.CoronaRuntime;
+import com.ansca.corona.CoronaRuntimeListener;
+import com.ansca.corona.CoronaRuntimeTask;
+import com.ansca.corona.CoronaRuntimeTaskDispatcher;
+import com.naef.jnlua.JavaFunction;
+import com.naef.jnlua.LuaState;
+import com.naef.jnlua.NamedJavaFunction;
 import com.adjust.sdk.Adjust;
 import com.adjust.sdk.AdjustAttribution;
 import com.adjust.sdk.AdjustConfig;
@@ -30,17 +39,6 @@ import com.adjust.sdk.OnEventTrackingFailedListener;
 import com.adjust.sdk.OnEventTrackingSucceededListener;
 import com.adjust.sdk.OnSessionTrackingFailedListener;
 import com.adjust.sdk.OnSessionTrackingSucceededListener;
-import com.ansca.corona.CoronaEnvironment;
-import com.ansca.corona.CoronaLua;
-import com.ansca.corona.CoronaRuntime;
-import com.ansca.corona.CoronaRuntimeListener;
-import com.ansca.corona.CoronaRuntimeTask;
-import com.ansca.corona.CoronaRuntimeTaskDispatcher;
-import com.naef.jnlua.JavaFunction;
-import com.naef.jnlua.LuaState;
-import com.naef.jnlua.NamedJavaFunction;
-
-import org.json.JSONObject;
 
 /**
  * Implements the Lua interface for a Corona plugin.
@@ -52,7 +50,6 @@ import org.json.JSONObject;
 public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private static final String TAG = "LuaLoader";
 
-    // Event names - names are not necessary from Lua side.
     public static final String EVENT_ATTRIBUTION_CHANGED = "adjust_attribution";
     public static final String EVENT_SESSION_TRACKING_SUCCESS = "adjust_sessionTrackingSuccess";
     public static final String EVENT_SESSION_TRACKING_FAILURE = "adjust_sessionTrackingFailure";
@@ -66,14 +63,12 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     public static final String EVENT_GET_GOOGLE_AD_ID = "adjust_getGoogleAdId";
     public static final String EVENT_GET_AMAZON_AD_ID = "adjust_getAmazonAdId";
 
-    // Listeners
     private int attributionChangedListener;
     private int eventTrackingSuccessListener;
     private int eventTrackingFailureListener;
     private int sessionTrackingSuccessListener;
     private int sessionTrackingFailureListener;
     private int deferredDeeplinkListener;
-
     private boolean shouldLaunchDeeplink = true;
 
     /**
@@ -283,7 +278,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         long info3 = -1L;
         long info4 = -1L;
 
-        // Log level
+        // Log level.
         L.getField(1, "logLevel");
         if (!L.isNil(2)) {
             logLevel = L.checkString(2);
@@ -293,12 +288,12 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
-        // App token
+        // App token.
         L.getField(1, "appToken");
         appToken = L.checkString(2);
         L.pop(1);
 
-        // Environment
+        // Environment.
         L.getField(1, "environment");
         environment = L.checkString(2);
         if (environment != null) {
@@ -312,7 +307,10 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         final AdjustConfig adjustConfig = new AdjustConfig(CoronaEnvironment.getApplicationContext(), appToken, environment, isLogLevelSuppress);
 
-        // Log level
+        // SDK prefix.
+        adjustConfig.setSdkPrefix("corona4.14.0");
+
+        // Log level.
         if (logLevel != null) {
             if (logLevel.toLowerCase().equals("verbose")) {
                 adjustConfig.setLogLevel(LogLevel.VERBOSE);
@@ -333,7 +331,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             }
         }
 
-        // Event buffering
+        // Event buffering.
         L.getField(1, "eventBufferingEnabled");
         if (!L.isNil(2)) {
             eventBufferingEnabled = L.checkBoolean(2);
@@ -341,10 +339,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
-        // SDK prefix
-        adjustConfig.setSdkPrefix("corona4.14.0");
-
-        // Main process name
+        // Main process name.
         L.getField(1, "processName");
         if (!L.isNil(2)) {
             processName = L.checkString(2);
@@ -352,7 +347,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
-        // Default tracker
+        // Default tracker.
         L.getField(1, "defaultTracker");
         if (!L.isNil(2)) {
             defaultTracker = L.checkString(2);
@@ -360,7 +355,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
-        // User agent
+        // User agent.
         L.getField(1, "userAgent");
         if (!L.isNil(2)) {
             userAgent = L.checkString(2);
@@ -368,7 +363,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
-        // Background tracking
+        // Background tracking.
         L.getField(1, "sendInBackground");
         if (!L.isNil(2)) {
             sendInBackground = L.checkBoolean(2);
@@ -376,14 +371,14 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
-        // Launching deferred deep link
+        // Launching deferred deep link.
         L.getField(1, "shouldLaunchDeeplink");
         if (!L.isNil(2)) {
             this.shouldLaunchDeeplink = L.checkBoolean(2);
         }
         L.pop(1);
 
-        // Delay start
+        // Delay start.
         L.getField(1, "delayStart");
         if (!L.isNil(2)) {
             delayStart = L.checkNumber(2);
@@ -391,7 +386,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
-        // Device known
+        // Device known.
         L.getField(1, "isDeviceKnown");
         if (!L.isNil(2)) {
             isDeviceKnown = L.checkBoolean(2);
@@ -399,7 +394,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
-        // IMEI tracking
+        // IMEI tracking.
         L.getField(1, "readMobileEquipmentIdentity");
         if (!L.isNil(2)) {
             readImei = L.checkBoolean(2);
@@ -407,7 +402,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
-        // App secret
+        // App secret.
         L.getField(1, "secretId");
         if (!L.isNil(2)) {
             secretId = (long) L.checkNumber(2);
@@ -438,7 +433,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             adjustConfig.setAppSecret(secretId, info1, info2, info3, info4);
         }
 
-        // Attribution callback
+        // Attribution callback.
         if (this.attributionChangedListener != CoronaLua.REFNIL) {
             adjustConfig.setOnAttributionChangedListener(new OnAttributionChangedListener() {
                 @Override
@@ -451,7 +446,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             });
         }
 
-        // Event tracking succeeded callback
+        // Event tracking success callback.
         if (this.eventTrackingSuccessListener != CoronaLua.REFNIL) {
             adjustConfig.setOnEventTrackingSucceededListener(new OnEventTrackingSucceededListener() {
                 @Override
@@ -464,7 +459,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             });
         }
 
-        // Event tracking failed callback
+        // Event tracking failure callback.
         if (this.eventTrackingFailureListener != CoronaLua.REFNIL) {
             adjustConfig.setOnEventTrackingFailedListener(new OnEventTrackingFailedListener() {
                 @Override
@@ -477,7 +472,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             });
         }
 
-        // Session tracking succeeded callback
+        // Session tracking success callback.
         if (this.sessionTrackingSuccessListener != CoronaLua.REFNIL) {
             adjustConfig.setOnSessionTrackingSucceededListener(new OnSessionTrackingSucceededListener() {
                 @Override
@@ -490,7 +485,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             });
         }
 
-        // Session tracking failed callback
+        // Session tracking failure callback.
         if (this.sessionTrackingFailureListener != CoronaLua.REFNIL) {
             adjustConfig.setOnSessionTrackingFailedListener(new OnSessionTrackingFailedListener() {
                 @Override
@@ -503,7 +498,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             });
         }
 
-        // Deferred deeplink callback listener
+        // Deferred deeplink callback listener.
         if (this.deferredDeeplinkListener != CoronaLua.REFNIL) {
             adjustConfig.setOnDeeplinkResponseListener(new OnDeeplinkResponseListener() {
                 @Override
@@ -534,33 +529,33 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         String currency = null;
         String eventToken = null;
 
-        // Event token
+        // Event token.
         L.getField(1, "eventToken");
         eventToken = L.checkString(2);
         L.pop(1);
 
         final AdjustEvent event = new AdjustEvent(eventToken);
 
-        // Revenue
+        // Revenue.
         L.getField(1, "revenue");
         if (!L.isNil(2)) {
             revenue = L.checkNumber(2);
         }
         L.pop(1);
 
-        //currency
+        // Currency.
         L.getField(1, "currency");
         if (!L.isNil(2)) {
             currency = L.checkString(2);
         }
         L.pop(1);
 
-        // Set revenue and currency
+        // Set revenue and currency.
         if (currency != null && revenue != -1.0) {
             event.setRevenue(revenue, currency);
         }
 
-        // Order ID
+        // Order ID.
         L.getField(1, "transactionId");
         if (!L.isNil(2)) {
             orderId = L.checkString(2);
@@ -568,7 +563,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
-        // Callback parameters
+        // Callback parameters.
         L.getField(1, "callbackParameters");
         if (!L.isNil(2) && L.isTable(2)) {
             int length = L.length(2);
@@ -586,14 +581,12 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 L.pop(1);
 
                 event.addCallbackParameter(key, value);
-
-                // Pop the stack
                 L.pop(1);
             }
         }
         L.pop(1);
 
-        // Partner parameters
+        // Partner parameters.
         L.getField(1, "partnerParameters");
         if (!L.isNil(2) && L.isTable(2)) {
             int length = L.length(2);
@@ -611,8 +604,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 L.pop(1);
 
                 event.addPartnerParameter(key, value);
-
-                // Pop the stack
                 L.pop(1);
             }
         }

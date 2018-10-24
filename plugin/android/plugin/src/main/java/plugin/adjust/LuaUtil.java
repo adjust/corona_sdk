@@ -9,15 +9,13 @@
 package plugin.adjust;
 
 import android.net.Uri;
-
+import java.util.Map;
+import java.util.HashMap;
 import com.adjust.sdk.AdjustAttribution;
 import com.adjust.sdk.AdjustEventFailure;
 import com.adjust.sdk.AdjustEventSuccess;
 import com.adjust.sdk.AdjustSessionFailure;
 import com.adjust.sdk.AdjustSessionSuccess;
-
-import java.util.HashMap;
-import java.util.Map;
 
 final public class LuaUtil {
     private static final String ATTRIBUTION_TRACKER_TOKEN = "trackerToken";
@@ -52,6 +50,8 @@ final public class LuaUtil {
     private static final String SESSION_FAILED_ADID = "adid";
     private static final String SESSION_FAILED_WILL_RETRY = "willRetry";
     private static final String SESSION_FAILED_JSON_RESPONSE = "jsonResponse";
+
+    private static final String DEEPLINK_URI = "uri";
 
     public static Map attributionToMap(AdjustAttribution attribution) {
         Map map = new HashMap();
@@ -132,7 +132,7 @@ final public class LuaUtil {
             return map;
         }
 
-        map.put("uri", uri.toString());
+        map.put(DEEPLINK_URI, uri.toString());
         return map;
     }
 }

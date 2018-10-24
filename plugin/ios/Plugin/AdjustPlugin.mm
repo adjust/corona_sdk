@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 #include <CoronaRuntime.h>
-
 #include "CoronaLuaIOS.h"
 #import "Adjust.h"
 #import "AdjustPlugin.h"
@@ -223,7 +222,7 @@ int AdjustPlugin::create(lua_State *L) {
     NSString *defaultTracker = nil;
     ADJLogLevel logLevel = ADJLogLevelInfo;
 
-    // Log level
+    // Log level.
     lua_getfield(L, 1, "logLevel");
     if (!lua_isnil(L, 2)) {
         const char *cstrLogLevel = lua_tostring(L, 2);
@@ -233,7 +232,7 @@ int AdjustPlugin::create(lua_State *L) {
     }
     lua_pop(L, 1);
 
-    // App token
+    // App token.
     lua_getfield(L, 1, "appToken");
     if (!lua_isnil(L, 2)) {
         const char *cstrAppToken = lua_tostring(L, 2);
@@ -243,7 +242,7 @@ int AdjustPlugin::create(lua_State *L) {
     }
     lua_pop(L, 1);
 
-    // Environment
+    // Environment.
     lua_getfield(L, 1, "environment");
     if (!lua_isnil(L, 2)) {
         const char *cstrEnvironment = lua_tostring(L, 2);
@@ -262,10 +261,13 @@ int AdjustPlugin::create(lua_State *L) {
                                                 environment:environment
                                       allowSuppressLogLevel:(logLevel == ADJLogLevelSuppress)];
 
-    // Log level
+    // Sdk prefix.
+    [adjustConfig setSdkPrefix:@"corona4.14.0"];
+
+    // Log level.
     [adjustConfig setLogLevel:logLevel];
 
-    // Event Buffering
+    // Event buffering.
     lua_getfield(L, 1, "eventBufferingEnabled");
     if (!lua_isnil(L, 2)) {
         eventBufferingEnabled = lua_toboolean(L, 2);
@@ -273,10 +275,7 @@ int AdjustPlugin::create(lua_State *L) {
     }
     lua_pop(L, 1);
 
-    // Sdk prefix - hardcoded
-    [adjustConfig setSdkPrefix:@"corona4.14.0"];
-
-    // Default tracker
+    // Default tracker.
     lua_getfield(L, 1, "defaultTracker");
     if (!lua_isnil(L, 2)) {
         const char *cstrDefaultTracker = lua_tostring(L, 2);
@@ -287,7 +286,7 @@ int AdjustPlugin::create(lua_State *L) {
     }
     lua_pop(L, 1);
 
-    // User agent
+    // User agent.
     lua_getfield(L, 1, "userAgent");
     if (!lua_isnil(L, 2)) {
         const char *cstrUserAgent = lua_tostring(L, 2);
@@ -298,7 +297,7 @@ int AdjustPlugin::create(lua_State *L) {
     }
     lua_pop(L, 1);
 
-    // Send in background
+    // Send in background.
     lua_getfield(L, 1, "sendInBackground");
     if (!lua_isnil(L, 2)) {
         sendInBackground = lua_toboolean(L, 2);
@@ -306,14 +305,14 @@ int AdjustPlugin::create(lua_State *L) {
     }
     lua_pop(L, 1);
 
-    // Launching deferred deep link
+    // Launching deferred deep link.
     lua_getfield(L, 1, "shouldLaunchDeeplink");
     if (!lua_isnil(L, 2)) {
         shouldLaunchDeferredDeeplink = lua_toboolean(L, 2);
     }
     lua_pop(L, 1);
 
-    // Delay start
+    // Delay start.
     lua_getfield(L, 1, "delayStart");
     if (!lua_isnil(L, 2)) {
         delayStart = lua_tonumber(L, 2);
@@ -321,7 +320,7 @@ int AdjustPlugin::create(lua_State *L) {
     }
     lua_pop(L, 1);
 
-    // Device known
+    // Device known.
     lua_getfield(L, 1, "isDeviceKnown");
     if (!lua_isnil(L, 2)) {
         isDeviceKnown = lua_toboolean(L, 2);
@@ -329,7 +328,7 @@ int AdjustPlugin::create(lua_State *L) {
     }
     lua_pop(L, 1);
 
-    // App secret
+    // App secret.
     lua_getfield(L, 1, "secretId");
     if (!lua_isnil(L, 2)) {
         secretId = lua_tointeger(L, 2);
@@ -360,6 +359,7 @@ int AdjustPlugin::create(lua_State *L) {
         [adjustConfig setAppSecret:secretId info1:info1 info2:info2 info3:info3 info4:info4];
     }
 
+    // Callbacks.
     Self *library = ToLibrary(L);
     BOOL isAttributionChangedListenerImplmented = library->GetAttributionChangedListener() != NULL;
     BOOL isEventTrackingSuccessListenerImplmented = library->GetEventTrackingSuccessListener() != NULL;
@@ -400,7 +400,7 @@ int AdjustPlugin::trackEvent(lua_State *L) {
     NSString *eventToken = nil;
     NSString *transactionId = nil;
 
-    // Event token
+    // Event token.
     lua_getfield(L, 1, "eventToken");
     if (!lua_isnil(L, 2)) {
         const char *cstrEventToken = lua_tostring(L, 2);
@@ -412,14 +412,14 @@ int AdjustPlugin::trackEvent(lua_State *L) {
 
     ADJEvent *event = [ADJEvent eventWithEventToken:eventToken];
 
-    // Revenue
+    // Revenue.
     lua_getfield(L, 1, "revenue");
     if (!lua_isnil(L, 2)) {
         revenue = lua_tonumber(L, 2);
     }
     lua_pop(L, 1);
 
-    // Currency
+    // Currency.
     lua_getfield(L, 1, "currency");
     if (!lua_isnil(L, 2)) {
         const char *cstrCurrency = lua_tostring(L, 2);
@@ -433,7 +433,7 @@ int AdjustPlugin::trackEvent(lua_State *L) {
         [event setRevenue:revenue currency:currency];
     }
 
-    // Transaction ID
+    // Transaction ID.
     lua_getfield(L, 1, "transactionId");
     if (!lua_isnil(L, 2)) {
         const char *cstrTransactionId = lua_tostring(L, 2);
@@ -444,7 +444,7 @@ int AdjustPlugin::trackEvent(lua_State *L) {
     }
     lua_pop(L, 1);
 
-    // Callback parameters
+    // Callback parameters.
     lua_getfield(L, 1, "callbackParameters");
     if (!lua_isnil(L, 2) && lua_istable(L, 2)) {
         NSDictionary *dict = CoronaLuaCreateDictionary(L, 2);
@@ -455,7 +455,7 @@ int AdjustPlugin::trackEvent(lua_State *L) {
     }
     lua_pop(L, 1);
 
-    // Partner Parameters
+    // Partner parameters.
     lua_getfield(L, 1, "partnerParameters");
     if (!lua_isnil(L, 2) && lua_istable(L, 2)) {
         NSDictionary *dict = CoronaLuaCreateDictionary(L, 2);

@@ -1,18 +1,22 @@
 //
 //  LuaLoader.java
-//  TemplateApp
+//  Adjust SDK Test
 //
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+//  Created by Srdjan Tubin (@2beens) on 14th August 2018.
+//  Copyright (c) 2018 Adjust GmbH. All rights reserved.
 //
 
 // This corresponds to the name of the Lua library,
 // e.g. [Lua] require "plugin.testlibrary"
 package plugin.testlibrary;
 
+import java.util.Map;
+import java.util.List;
+import java.util.HashMap;
+import org.json.JSONObject;
 import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
 import com.ansca.corona.CoronaActivity;
 import com.ansca.corona.CoronaEnvironment;
 import com.ansca.corona.CoronaLua;
@@ -25,12 +29,6 @@ import com.naef.jnlua.LuaState;
 import com.naef.jnlua.NamedJavaFunction;
 import com.adjust.testlibrary.TestLibrary;
 import com.adjust.testlibrary.ICommandJsonListener;
-
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Implements the Lua interface for a Corona plugin.
@@ -168,7 +166,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 				luaState.pushString(message);
 				luaState.setField(-2, "message");
 
-				// Dispatch event to library's listener
+				// Dispatch event to library's listener.
 				try {
 					CoronaLua.dispatchEvent(luaState, listener, 0);
 				} catch (Exception e) {
@@ -178,14 +176,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		});
 	}
 
-	///////////////////////////////////////////////////////////////////////////////////////////////////
-	/////////// TESTAPP CODE //////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////////////////
 	public int testLib_initTestLibrary(final LuaState L) {
-		Log.d(TAG, "Init test library started...");
-
+		Log.d(TAG, "Initialisation of test library started...");
 		String baseUrl = L.checkString(1);
-
 		if (CoronaLua.isListener(L, 2, "ADJUST")) {
 			this.executeCommandListener = CoronaLua.newRef(L, 2);
 		}
@@ -194,12 +187,10 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 			@Override
 			public void onExecuteCommand(String className, String methodName, String parameters) {
 				Log.d(TAG, "onExecuteCommand: " + className + "." + methodName);
-
 				Map commandMap = new HashMap();
 				commandMap.put("className", className);
 				commandMap.put("methodName", methodName);
 				commandMap.put("parameters", parameters);
-
 				dispatchEvent(L,
 					LuaLoader.this.executeCommandListener,
 					"testLibrary_executeCommand",
@@ -208,9 +199,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		});
 
 		this.testLibrary = new TestLibrary(baseUrl, coronaCommandJsonListener);
-
-		Log.d(TAG, "Test library init finished.");
-
+		Log.d(TAG, "Test library initialisation finished.");
 		return 0;
 	}
 
@@ -335,8 +324,4 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 			return testLib_sendInfoToServer(L);
 		}
 	}
-
-	///////////////////////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////////////////
 }
