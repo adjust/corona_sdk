@@ -12,7 +12,7 @@ def build_plugin(root_dir, dist_dir):
     ## ------------------------------------------------------------------
     ## Generate static library and public header files needed for Plugin Xcode project.
     debug_green('Building AdjustSdk.framework as Relese target ...')
-    change_dir(submodule_dir)
+    change_dir('{0}/sdk'.format(submodule_dir))
     xcode_build('AdjustStatic')
     
     ## ------------------------------------------------------------------

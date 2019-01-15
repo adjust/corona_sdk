@@ -164,17 +164,23 @@ def replace_text_in_file(file_path, substring, replace_with):
 
 def execute_command(cmd_params, log=True):
     if log:
-        debug_blue('Executing: ' + str(cmd_params))
+        debug_blue('Executing: [{0}]'.format(' '.join(str(x) for x in cmd_params)))
     subprocess.call(cmd_params)
 
 def change_dir(dir):
     os.chdir(dir)
 
-def xcode_build(target, configuration='Release'):
-    execute_command(['xcodebuild', '-target', target, '-configuration', configuration, 'clean', 'build'])
+def xcode_build(target, configuration='Release', use_modern_build_system=False):
+    if use_modern_build_system:
+        execute_command(['xcodebuild', '-target', target, '-configuration', configuration, 'clean', 'build'])
+    else:
+        execute_command(['xcodebuild', '-target', target, '-configuration', configuration, 'clean', 'build', '-UseModernBuildSystem=NO'])
 
-def xcode_build_project(target, project, configuration='Release'):
-    execute_command(['xcodebuild', '-target', target, '-project', project, '-configuration', configuration, 'clean', 'build'])
+def xcode_build_project(target, project, configuration='Release', use_modern_build_system=False):
+    if use_modern_build_system:
+        execute_command(['xcodebuild', '-target', target, '-project', project, '-configuration', configuration, 'clean', 'build'])
+    else:
+        execute_command(['xcodebuild', '-target', target, '-project', project, '-configuration', configuration, 'clean', 'build', '-UseModernBuildSystem=NO'])
 
 def gradle_assemble_release():
     execute_command(['./gradlew', 'clean', 'assembleRelease'])
@@ -182,8 +188,14 @@ def gradle_assemble_release():
 def gradle_export_plugin_jar():
     execute_command(['./gradlew', 'exportPluginJar'])
 
-def mvn_clean():
-    execute_command(['mvn', 'clean'])
+def gradle_non_native_jar_release():
+    execute_command(['./gradlew', 'adjustSdkNonNativeJarRelease'])
 
-def mvn_package():
-    execute_command(['mvn', 'package'])
+def gradle_make_jar_release():
+    execute_command(['./gradlew', 'adjustMakeJarRelease'])
+
+def gradle_run(options):
+    cmd_params = ['./gradlew']
+    for opt in options:
+        cmd_params.append(opt)
+    execute_command(cmd_params)
