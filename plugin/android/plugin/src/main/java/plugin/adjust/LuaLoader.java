@@ -308,7 +308,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         final AdjustConfig adjustConfig = new AdjustConfig(CoronaEnvironment.getApplicationContext(), appToken, environment, isLogLevelSuppress);
 
         // SDK prefix.
-        adjustConfig.setSdkPrefix("corona4.15.0");
+        adjustConfig.setSdkPrefix("corona4.17.0");
 
         // Log level.
         if (logLevel != null) {

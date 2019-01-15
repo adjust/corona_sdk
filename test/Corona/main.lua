@@ -38,13 +38,13 @@ local port
 if platformInfo == "ios" then
     protocol = "http"
     port = "8080"
-    clientSdkInfo = "corona4.15.0@ios4.15.0"
+    clientSdkInfo = "corona4.17.0@ios4.17.1"
 else
     protocol = "https"
     port = "8443"
-    clientSdkInfo = "corona4.15.0@android4.15.0"
+    clientSdkInfo = "corona4.17.0@android4.17.0"
 end
-local baseIp = "192.168.8.204"
+local baseIp = "192.168.8.161"
 local baseUrl = protocol .. "://" .. baseIp .. ":" .. port
 local gdprUrl = protocol .. "://" .. baseIp .. ":" .. port
 print("--Using BaseUrl: [" .. baseUrl .. "]--")
