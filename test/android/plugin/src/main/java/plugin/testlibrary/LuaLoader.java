@@ -27,8 +27,8 @@ import com.ansca.corona.CoronaRuntimeTaskDispatcher;
 import com.naef.jnlua.JavaFunction;
 import com.naef.jnlua.LuaState;
 import com.naef.jnlua.NamedJavaFunction;
-import com.adjust.testlibrary.TestLibrary;
-import com.adjust.testlibrary.ICommandJsonListener;
+import com.adjust.test.TestLibrary;
+import com.adjust.test.ICommandJsonListener;
 
 /**
  * Implements the Lua interface for a Corona plugin.
