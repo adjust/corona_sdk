@@ -19,6 +19,9 @@
 #define EVENT_GET_ADID @"adjust_getAdid"
 #define EVENT_GET_GOOGLE_AD_ID @"adjust_getGoogleAdId"
 #define EVENT_GET_AMAZON_AD_ID @"adjust_getAmazonAdId"
+#define GET_SDK_VERSION @"adjust_getSdkVersion"
+
+#define SDK_PREFIX @"corona4.17.0"
 
 // ----------------------------------------------------------------------------
 
@@ -61,6 +64,7 @@ public:
     static int setOfflineMode(lua_State *L);
     static int isEnabled(lua_State *L);
     static int getIdfa(lua_State *L);
+    static int getSdkVersion(lua_State *L);
     static int getAttribution(lua_State *L);
     static int getAdid(lua_State *L);
     static int getGoogleAdId(lua_State *L);
@@ -159,6 +163,7 @@ AdjustPlugin::Open(lua_State *L) {
         { "setDeferredDeeplinkListener", setDeferredDeeplinkListener },
         { "isEnabled", isEnabled },
         { "getIdfa", getIdfa },
+        { "getSdkVersion", getSdkVersion },
         { "getAttribution", getAttribution },
         { "getAdid", getAdid },
         { "getGoogleAdId", getGoogleAdId },
@@ -660,6 +665,20 @@ int AdjustPlugin::getIdfa(lua_State *L) {
             idfa = @"";
         }
         [AdjustSdkDelegate dispatchEvent:EVENT_GET_IDFA withState:L callback:listener andMessage:idfa];
+    }
+    return 0;
+}
+
+// Public API.
+int AdjustPlugin::getSdkVersion(lua_State *L) {
+    int listenerIndex = 1;
+    if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
+        CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
+        NSString *sdkVersion = [Adjust sdkVersion];
+        if (sdkVersion == nil) {
+            sdkVersion = @"";
+        }
+        [AdjustSdkDelegate dispatchEvent:GET_SDK_VERSION withState:L callback:listener andMessage:[NSString stringWithFormat:@"%@@%@", SDK_PREFIX, sdkVersion]];
     }
     return 0;
 }

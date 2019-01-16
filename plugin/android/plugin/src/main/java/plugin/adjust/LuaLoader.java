@@ -49,6 +49,7 @@ import com.adjust.sdk.OnSessionTrackingSucceededListener;
 @SuppressWarnings("WeakerAccess")
 public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private static final String TAG = "LuaLoader";
+    private static final String SDK_PREFIX = "corona4.17.0";
 
     public static final String EVENT_ATTRIBUTION_CHANGED = "adjust_attribution";
     public static final String EVENT_SESSION_TRACKING_SUCCESS = "adjust_sessionTrackingSuccess";
@@ -60,6 +61,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     public static final String EVENT_GET_IDFA = "adjust_getIdfa";
     public static final String EVENT_GET_ATTRIBUTION = "adjust_getAttribution";
     public static final String EVENT_GET_ADID = "adjust_getAdid";
+    public static final String EVENT_GET_SDK_VERSION = "adjust_getSdkVersion";
     public static final String EVENT_GET_GOOGLE_AD_ID = "adjust_getGoogleAdId";
     public static final String EVENT_GET_AMAZON_AD_ID = "adjust_getAmazonAdId";
 
@@ -126,6 +128,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 new ResetSessionCallbackParametersWrapper(),
                 new ResetSessionPartnerParametersWrapper(),
                 new GetIdfaWrapper(),
+                new GetSdkVersionWrapper(),
                 new GetAttributionWrapper(),
                 new SetAttributionListenerWrapper(),
                 new SetEventTrackingSuccessListenerWrapper(),
@@ -308,7 +311,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         final AdjustConfig adjustConfig = new AdjustConfig(CoronaEnvironment.getApplicationContext(), appToken, environment, isLogLevelSuppress);
 
         // SDK prefix.
-        adjustConfig.setSdkPrefix("corona4.17.0");
+        adjustConfig.setSdkPrefix(SDK_PREFIX);
 
         // Log level.
         if (logLevel != null) {
@@ -715,6 +718,24 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
             listener = CoronaLua.newRef(L, listenerIndex);
             dispatchEvent(L, listener, EVENT_GET_IDFA, "");
+        }
+        return 0;
+    }
+
+    // Public API.
+    private int adjust_getSdkVersion(LuaState L) {
+        // Hardcoded listener index for ADJUST.
+        int listenerIndex = 1;
+        int listener = CoronaLua.REFNIL;
+
+        // Assign and dispatch event immediately.
+        if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
+            listener = CoronaLua.newRef(L, listenerIndex);
+            String sdkVersion = Adjust.getSdkVersion();
+            if (sdkVersion == null) {
+                sdkVersion = "";
+            }
+            dispatchEvent(L, listener, EVENT_GET_SDK_VERSION, SDK_PREFIX + "@" + sdkVersion);
         }
         return 0;
     }
@@ -1158,6 +1179,18 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             return adjust_resetSessionPartnerParameters(L);
         }
     }
+
+    private class GetSdkVersionWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "getSdkVersion";
+        }
+
+        @Override
+        public int invoke(LuaState L) {
+            return adjust_getSdkVersion(L);
+        }
+    }    
 
     private class GetIdfaWrapper implements NamedJavaFunction {
         @Override
