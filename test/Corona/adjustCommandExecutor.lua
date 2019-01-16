@@ -346,6 +346,7 @@ function eventTrackingSuccessListener(event)
     testLib.addInfoToSend("timestamp", json_event_success.timestamp)
     testLib.addInfoToSend("adid", json_event_success.adid)
     testLib.addInfoToSend("eventToken", json_event_success.eventToken)
+    testLib.addInfoToSend("callbackId", json_event_success.callbackId)
     if json_event_success.jsonResponse ~= nil then
         testLib.addInfoToSend("jsonResponse", json.encode(json_event_success.jsonResponse))
     end
@@ -359,6 +360,7 @@ function eventTrackingFailureListener(event)
     testLib.addInfoToSend("timestamp", json_event_failure.timestamp)
     testLib.addInfoToSend("adid", json_event_failure.adid)
     testLib.addInfoToSend("eventToken", json_event_failure.eventToken)
+    testLib.addInfoToSend("callbackId", json_event_failure.callbackId)
     testLib.addInfoToSend("willRetry", tostring(json_event_failure.willRetry))
     if json_event_failure.jsonResponse ~= nil then
         testLib.addInfoToSend("jsonResponse", json.encode(json_event_failure.jsonResponse))
@@ -403,6 +405,10 @@ function AdjustCommandExecutor:event()
         local revenueParams = self.command.parameters["revenue"]
         adjustEvent.currency = revenueParams[1]
         adjustEvent.revenue = tonumber(revenueParams[2])
+    end
+
+    if self.command:containsParameter("callbackId") then
+        adjustEvent.callbackId = self.command:getFirstParameterValue("callbackId")
     end
     
     if self.command:containsParameter("callbackParams") then
