@@ -32,19 +32,16 @@ end
 -- ------------------------
 display.setDefault("background", 1, 1, 1)
 
-local clientSdkInfo
 local protocol
 local port
 if platformInfo == "ios" then
     protocol = "http"
     port = "8080"
-    clientSdkInfo = "corona4.17.0@ios4.17.1"
 else
     protocol = "https"
     port = "8443"
-    clientSdkInfo = "corona4.17.0@android4.17.0"
 end
-local baseIp = "192.168.8.161"
+local baseIp = "192.168.9.80"
 local baseUrl = protocol .. "://" .. baseIp .. ":" .. port
 local gdprUrl = protocol .. "://" .. baseIp .. ":" .. port
 print("--Using BaseUrl: [" .. baseUrl .. "]--")
@@ -76,7 +73,10 @@ print("Setting test lib tests....")
 -- ------------------------
 local function handleStartTestSession(event)
     if ("ended" == event.phase) then
-        testLib.startTestSession(clientSdkInfo)
+        adjust.getSdkVersion(function(event)
+            print("[TestApp]: starting test session with sdk version = " .. event.message)
+            testLib.startTestSession(event.message)
+        end)
     end
 end
 
@@ -89,4 +89,7 @@ widget.newButton({
 })
 
 -- START TEST SESSION AUTIMATICALLY
-testLib.startTestSession(clientSdkInfo)
+adjust.getSdkVersion(function(event)
+    print("[TestApp]: starting test session with sdk version = " .. event.message)
+    testLib.startTestSession(event.message)
+end)
