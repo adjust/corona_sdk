@@ -399,6 +399,7 @@ int AdjustPlugin::trackEvent(lua_State *L) {
     NSString *currency = nil;
     NSString *eventToken = nil;
     NSString *transactionId = nil;
+    NSString *callbackId = nil;
 
     // Event token.
     lua_getfield(L, 1, "eventToken");
@@ -441,6 +442,17 @@ int AdjustPlugin::trackEvent(lua_State *L) {
             transactionId = [NSString stringWithUTF8String:cstrTransactionId];
         }
         [event setTransactionId:transactionId];
+    }
+    lua_pop(L, 1);
+
+    // Callback ID.
+    lua_getfield(L, 1, "callbackId");
+    if (!lua_isnil(L, 2)) {
+        const char *cstrCallbackId = lua_tostring(L, 2);
+        if (cstrCallbackId != NULL) {
+            callbackId = [NSString stringWithUTF8String:cstrCallbackId];
+        }
+        [event setCallbackId:callbackId];
     }
     lua_pop(L, 1);
 

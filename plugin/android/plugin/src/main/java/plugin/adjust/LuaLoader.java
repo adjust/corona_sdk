@@ -528,6 +528,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         String orderId = null;
         String currency = null;
         String eventToken = null;
+        String callbackId = null;
 
         // Event token.
         L.getField(1, "eventToken");
@@ -560,6 +561,14 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         if (!L.isNil(2)) {
             orderId = L.checkString(2);
             event.setOrderId(orderId);
+        }
+        L.pop(1);
+
+        // Callback ID.
+        L.getField(1, "callbackId");
+        if (!L.isNil(2)) {
+            callbackId = L.checkString(2);
+            event.setCallbackId(callbackId);
         }
         L.pop(1);
 

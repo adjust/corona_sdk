@@ -29,6 +29,7 @@ NSString * const KEY_TIMESTAMP = @"timestamp";
 NSString * const KEY_EVENT_TOKEN = @"eventToken";
 NSString * const KEY_JSON_RESPONSE = @"jsonResponse";
 NSString * const KEY_WILL_RETRY = @"willRetry";
+NSString * const KEY_CALLBACK_ID = @"callbackId";
 
 #pragma mark - Object lifecycle methods
 
@@ -219,6 +220,7 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
     [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:eventSuccessResponseData.timeStamp toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_ADID andValue:eventSuccessResponseData.adid toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_EVENT_TOKEN andValue:eventSuccessResponseData.eventToken toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:KEY_CALLBACK_ID andValue:eventSuccessResponseData.callbackId toDictionary:dictionary];
     if (eventSuccessResponseData.jsonResponse != nil) {
         [dictionary setObject:eventSuccessResponseData.jsonResponse forKey:KEY_JSON_RESPONSE];
     }
@@ -248,6 +250,7 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
     [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:eventFailureResponseData.timeStamp toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_ADID andValue:eventFailureResponseData.adid toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_EVENT_TOKEN andValue:eventFailureResponseData.eventToken toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:KEY_CALLBACK_ID andValue:eventFailureResponseData.callbackId toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_WILL_RETRY andValue:(eventFailureResponseData.willRetry ? @"true" : @"false") toDictionary:dictionary];
     if (eventFailureResponseData.jsonResponse != nil) {
         [dictionary setObject:eventFailureResponseData.jsonResponse forKey:KEY_JSON_RESPONSE];
