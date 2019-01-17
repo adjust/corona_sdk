@@ -2,6 +2,7 @@ local adjust = require "plugin.adjust"
 local json = require "json"
 
 local module = {}
+local platformInfo = system.getInfo("platform")
 
 platform = ""
 testLib = nil
@@ -321,7 +322,11 @@ function sessionTrackingSuccessListener(event)
     testLib.addInfoToSend("timestamp", json_session_success.timestamp)
     testLib.addInfoToSend("adid", json_session_success.adid)
     if json_session_success.jsonResponse ~= nil then
-        testLib.addInfoToSend("jsonResponse", json.encode(json_session_success.jsonResponse))
+        if platformInfo == "ios" then
+            testLib.addInfoToSend("jsonResponse", json.encode(json_session_success.jsonResponse))
+        else
+            testLib.addInfoToSend("jsonResponse", json_session_success.jsonResponse)
+        end
     end
     testLib.sendInfoToServer(localBasePath)
 end
@@ -334,7 +339,11 @@ function sessionTrackingFailureListener(event)
     testLib.addInfoToSend("adid", json_session_failure.adid)
     testLib.addInfoToSend("willRetry", tostring(json_session_failure.willRetry))
     if json_session_failure.jsonResponse ~= nil then
-        testLib.addInfoToSend("jsonResponse", json.encode(json_session_failure.jsonResponse))
+        if platformInfo == "ios" then
+            testLib.addInfoToSend("jsonResponse", json.encode(json_session_failure.jsonResponse))
+        else
+            testLib.addInfoToSend("jsonResponse", json_session_failure.jsonResponse)
+        end
     end
     testLib.sendInfoToServer(localBasePath)
 end
@@ -348,7 +357,11 @@ function eventTrackingSuccessListener(event)
     testLib.addInfoToSend("eventToken", json_event_success.eventToken)
     testLib.addInfoToSend("callbackId", json_event_success.callbackId)
     if json_event_success.jsonResponse ~= nil then
-        testLib.addInfoToSend("jsonResponse", json.encode(json_event_success.jsonResponse))
+        if platformInfo == "ios" then
+            testLib.addInfoToSend("jsonResponse", json.encode(json_event_success.jsonResponse))
+        else
+            testLib.addInfoToSend("jsonResponse", json_event_success.jsonResponse)
+        end
     end
     testLib.sendInfoToServer(localBasePath)
 end
@@ -363,7 +376,11 @@ function eventTrackingFailureListener(event)
     testLib.addInfoToSend("callbackId", json_event_failure.callbackId)
     testLib.addInfoToSend("willRetry", tostring(json_event_failure.willRetry))
     if json_event_failure.jsonResponse ~= nil then
-        testLib.addInfoToSend("jsonResponse", json.encode(json_event_failure.jsonResponse))
+        if platformInfo == "ios" then
+            testLib.addInfoToSend("jsonResponse", json.encode(json_event_failure.jsonResponse))
+        else
+            testLib.addInfoToSend("jsonResponse", json_event_failure.jsonResponse)
+        end
     end
     testLib.sendInfoToServer(localBasePath)
 end
