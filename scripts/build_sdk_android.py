@@ -22,8 +22,7 @@ def build_testapp(root_dir):
     ## ------------------------------------------------------------------
     ## Paths.
     android_test_app_dir    = '{0}/test/android/app'.format(root_dir)
-    android_plugin_dir      = '{0}/plugin/android'.format(root_dir)
-    android_plugin_dir_test = '{0}/test/android'.format(root_dir)
+    android_root_dir        = '{0}/plugin/android'.format(root_dir)
     adjust_sdk_dir          = '{0}/ext/android/sdk/Adjust'.format(root_dir)
     jar_in_dir              = '{0}/sdk-core/build/libs'.format(adjust_sdk_dir)
     jar_out_dir             = '{0}/libs'.format(android_test_app_dir)
@@ -59,14 +58,14 @@ def build_testapp(root_dir):
     ## ------------------------------------------------------------------
     ## Build Adjust Corona Plugin JAR.
     debug_green('Building Adjust Corona Plugin JAR ...')
-    change_dir(android_plugin_dir_test)
+    change_dir(android_root_dir)
     gradle_assemble_release()
     gradle_export_plugin_jar()
 
     ## ------------------------------------------------------------------
     ## Copy Adjust SDK JAR.
     debug_green('Copy Adjust Corona Plugin JAR ...')
-    copy_file('{0}/plugin/build/outputs/jar/plugin.adjust.jar'.format(android_plugin_dir), '{0}/plugin.adjust.jar'.format(jar_out_dir))
+    copy_file('{0}/plugin/build/outputs/jar/plugin.adjust.jar'.format(android_root_dir), '{0}/plugin.adjust.jar'.format(jar_out_dir))
 
     ## ------------------------------------------------------------------
     ## Script completed.
