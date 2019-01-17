@@ -27,6 +27,8 @@ def build_testapp(root_dir):
     adjust_sdk_dir          = '{0}/ext/android/sdk/Adjust'.format(root_dir)
     jar_in_dir              = '{0}/sdk-core/build/libs'.format(adjust_sdk_dir)
     jar_out_dir             = '{0}/libs'.format(android_test_app_dir)
+    test_jar_in_dir         = '{0}/test-library/build/libs'.format(adjust_sdk_dir)
+    test_jar_out_dir        = '{0}/test/android/plugin/libs'.format(root_dir)
 
     ## ------------------------------------------------------------------
     ## Remove current JARs.
@@ -43,6 +45,16 @@ def build_testapp(root_dir):
     ## Copy Adjust SDK JAR.
     debug_green('Copy Adjust SDK JAR ...')
     copy_file('{0}/adjust-sdk-release.jar'.format(jar_in_dir), '{0}/adjust-android.jar'.format(jar_out_dir))
+
+    # ------------------------------------------------------------------
+    # Running Gradle tasks: clean testlibrary:makeJar ...
+    debug_green('Running Gradle tasks: clean test-library:adjustMakeJarRelease ...')
+    gradle_run([':test-library:adjustMakeJarRelease'])
+
+    # ------------------------------------------------------------------
+    # Copy Adjust Test Library JAR.
+    debug_green('Copy Adjust Test Library JAR ...')
+    copy_file('{0}/test-library-release.jar'.format(test_jar_in_dir), '{0}/adjust-testing.jar'.format(test_jar_out_dir))
 
     ## ------------------------------------------------------------------
     ## Build Adjust Corona Plugin JAR.
