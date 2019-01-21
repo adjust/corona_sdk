@@ -4,6 +4,8 @@
 //
 
 #import "PluginLibrary.h"
+#import <UIKit/UIKit.h>
+#include <CoronaCards/CoronaRuntime.h>
 
 // ----------------------------------------------------------------------------
 
@@ -135,33 +137,33 @@ PluginLibrary::init( lua_State *L )
 int
 PluginLibrary::show( lua_State *L )
 {
-	const char *message = "Plugin functions properly. UIReferenceLibraryViewController is not available on tvOS so it just displays this message.";
-
-/*
-	if ( [UIReferenceLibraryViewController class] )
+	const char *word = "<nil>";
+	if(lua_isstring(L, 1))
 	{
-		id<CoronaRuntime> runtime = (id<CoronaRuntime>)CoronaLuaGetContext( L );
-
-		const char kDefaultWord[] = "corona";
-		const char *word = lua_tostring( L, 1 );
-		if ( ! word )
-		{
-			word = kDefaultWord;
-		}
-
-		UIReferenceLibraryViewController *controller = [[[UIReferenceLibraryViewController alloc] initWithTerm:[NSString stringWithUTF8String:word]] autorelease];
-
-		// Present the controller modally.
-		[runtime.appViewController presentModalViewController:controller animated:YES];
-
-		message = @"Success. Displaying UIReferenceLibraryViewController for 'corona'.";
+		word = lua_tostring(L, 1);
 	}
-*/
+
+	NSString *message = [NSString stringWithFormat:@"Hello from Corona Native for tvOS!\nYour word is: %s", word];
+
+	UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Corona"
+																   message:message
+															preferredStyle:UIAlertControllerStyleAlert];
+
+
+	UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+														  handler:^(UIAlertAction * action) {}];
+
+	[alert addAction:defaultAction];
+
+	id<CoronaRuntime> runtime = (id<CoronaRuntime>)CoronaLuaGetContext( L );
+	[runtime.appViewController presentViewController:alert animated:YES completion:nil];
+
+
 	Self *library = ToLibrary( L );
 
 	// Create event and add message to it
 	CoronaLuaNewEvent( L, kEvent );
-	lua_pushstring( L, message );
+	lua_pushstring( L, [message UTF8String] );
 	lua_setfield( L, -2, "message" );
 
 	// Dispatch event to library's listener

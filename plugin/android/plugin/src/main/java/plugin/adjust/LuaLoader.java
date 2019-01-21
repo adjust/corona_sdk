@@ -120,7 +120,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 new SetOfflineModeWrapper(),
                 new SetPushTokenWrapper(),
                 new AppWillOpenUrlWrapper(),
-                new SendFirstPackageWrapper(),
+                new SendFirstPackagesWrapper(),
                 new AddSessionCallbackParameterWrapper(),
                 new AddSessionPartnerParameterWrapper(),
                 new RemoveSessionCallbackParameterWrapper(),
@@ -661,7 +661,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     }
 
     // Public API.
-    private int adjust_sendFirstPackage(LuaState L) {
+    private int adjust_sendFirstPackages(LuaState L) {
         Adjust.sendFirstPackages();
         return 0;
     }
@@ -1096,15 +1096,15 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    private class SendFirstPackageWrapper implements NamedJavaFunction {
+    private class SendFirstPackagesWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
-            return "sendFirstPackage";
+            return "sendFirstPackages";
         }
 
         @Override
         public int invoke(LuaState L) {
-            return adjust_sendFirstPackage(L);
+            return adjust_sendFirstPackages(L);
         }
     }
 

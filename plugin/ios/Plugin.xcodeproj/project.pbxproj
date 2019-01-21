@@ -7,9 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9D0D46A41FE3047300287CAD /* AdjustPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9D0D46A21FE3047300287CAD /* AdjustPlugin.mm */; };
-		9D0D46B11FE305E300287CAD /* AdjustSdkDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D0D46AF1FE305E300287CAD /* AdjustSdkDelegate.m */; };
-		9D0D46BB1FE4254700287CAD /* AdjustSdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D0D46BA1FE4254700287CAD /* AdjustSdk.a */; };
+		9D04A81C21F6000000987252 /* AdjustPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9D04A81821F6000000987252 /* AdjustPlugin.mm */; };
+		9D04A81D21F6000000987252 /* AdjustSdkDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D04A81921F6000000987252 /* AdjustSdkDelegate.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,20 +24,19 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		9D0D46A21FE3047300287CAD /* AdjustPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AdjustPlugin.mm; path = Plugin/AdjustPlugin.mm; sourceTree = "<group>"; };
-		9D0D46A31FE3047300287CAD /* AdjustPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AdjustPlugin.h; path = Plugin/AdjustPlugin.h; sourceTree = "<group>"; };
-		9D0D46A61FE305BF00287CAD /* ADJConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJConfig.h; path = Plugin/ADJConfig.h; sourceTree = "<group>"; };
-		9D0D46A71FE305BF00287CAD /* ADJEventFailure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJEventFailure.h; path = Plugin/ADJEventFailure.h; sourceTree = "<group>"; };
-		9D0D46A81FE305BF00287CAD /* ADJAttribution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJAttribution.h; path = Plugin/ADJAttribution.h; sourceTree = "<group>"; };
-		9D0D46A91FE305BF00287CAD /* ADJEventSuccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJEventSuccess.h; path = Plugin/ADJEventSuccess.h; sourceTree = "<group>"; };
-		9D0D46AA1FE305BF00287CAD /* ADJSessionFailure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJSessionFailure.h; path = Plugin/ADJSessionFailure.h; sourceTree = "<group>"; };
-		9D0D46AB1FE305BF00287CAD /* ADJEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJEvent.h; path = Plugin/ADJEvent.h; sourceTree = "<group>"; };
-		9D0D46AC1FE305BF00287CAD /* ADJLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJLogger.h; path = Plugin/ADJLogger.h; sourceTree = "<group>"; };
-		9D0D46AD1FE305BF00287CAD /* ADJSessionSuccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJSessionSuccess.h; path = Plugin/ADJSessionSuccess.h; sourceTree = "<group>"; };
-		9D0D46AE1FE305CF00287CAD /* Adjust.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Adjust.h; path = Plugin/Adjust.h; sourceTree = "<group>"; };
-		9D0D46AF1FE305E300287CAD /* AdjustSdkDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AdjustSdkDelegate.m; path = Plugin/AdjustSdkDelegate.m; sourceTree = "<group>"; };
-		9D0D46B01FE305E300287CAD /* AdjustSdkDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AdjustSdkDelegate.h; path = Plugin/AdjustSdkDelegate.h; sourceTree = "<group>"; };
-		9D0D46BA1FE4254700287CAD /* AdjustSdk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = AdjustSdk.a; path = Plugin/AdjustSdk.a; sourceTree = "<group>"; };
+		9D04A80F21F6000000987252 /* Adjust.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Adjust.h; path = Plugin/Adjust.h; sourceTree = "<group>"; };
+		9D04A81021F6000000987252 /* ADJLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJLogger.h; path = Plugin/ADJLogger.h; sourceTree = "<group>"; };
+		9D04A81121F6000000987252 /* ADJEventFailure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJEventFailure.h; path = Plugin/ADJEventFailure.h; sourceTree = "<group>"; };
+		9D04A81221F6000000987252 /* ADJSessionFailure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJSessionFailure.h; path = Plugin/ADJSessionFailure.h; sourceTree = "<group>"; };
+		9D04A81321F6000000987252 /* ADJEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJEvent.h; path = Plugin/ADJEvent.h; sourceTree = "<group>"; };
+		9D04A81421F6000000987252 /* ADJConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJConfig.h; path = Plugin/ADJConfig.h; sourceTree = "<group>"; };
+		9D04A81521F6000000987252 /* AdjustPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AdjustPlugin.h; path = Plugin/AdjustPlugin.h; sourceTree = "<group>"; };
+		9D04A81621F6000000987252 /* AdjustSdkDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AdjustSdkDelegate.h; path = Plugin/AdjustSdkDelegate.h; sourceTree = "<group>"; };
+		9D04A81721F6000000987252 /* ADJSessionSuccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJSessionSuccess.h; path = Plugin/ADJSessionSuccess.h; sourceTree = "<group>"; };
+		9D04A81821F6000000987252 /* AdjustPlugin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AdjustPlugin.mm; path = Plugin/AdjustPlugin.mm; sourceTree = "<group>"; };
+		9D04A81921F6000000987252 /* AdjustSdkDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AdjustSdkDelegate.m; path = Plugin/AdjustSdkDelegate.m; sourceTree = "<group>"; };
+		9D04A81A21F6000000987252 /* ADJEventSuccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJEventSuccess.h; path = Plugin/ADJEventSuccess.h; sourceTree = "<group>"; };
+		9D04A81B21F6000000987252 /* ADJAttribution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJAttribution.h; path = Plugin/ADJAttribution.h; sourceTree = "<group>"; };
 		A4E253B6166D6FB300DCDC2C /* libplugin_adjust.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libplugin_adjust.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F572F81A1EE0705B001BC814 /* CoronaNative.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CoronaNative.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -48,45 +46,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9D0D46BB1FE4254700287CAD /* AdjustSdk.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		9D0D46A51FE305AE00287CAD /* Adjust */ = {
-			isa = PBXGroup;
-			children = (
-				9D0D46AE1FE305CF00287CAD /* Adjust.h */,
-				9D0D46AB1FE305BF00287CAD /* ADJEvent.h */,
-				9D0D46A61FE305BF00287CAD /* ADJConfig.h */,
-				9D0D46AC1FE305BF00287CAD /* ADJLogger.h */,
-				9D0D46A81FE305BF00287CAD /* ADJAttribution.h */,
-				9D0D46A71FE305BF00287CAD /* ADJEventFailure.h */,
-				9D0D46A91FE305BF00287CAD /* ADJEventSuccess.h */,
-				9D0D46AA1FE305BF00287CAD /* ADJSessionFailure.h */,
-				9D0D46AD1FE305BF00287CAD /* ADJSessionSuccess.h */,
-			);
-			name = Adjust;
-			sourceTree = "<group>";
-		};
-		9D0D46B91FE4254600287CAD /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				9D0D46BA1FE4254700287CAD /* AdjustSdk.a */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		A447B609165D72A6009EA762 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				9D0D46A31FE3047300287CAD /* AdjustPlugin.h */,
-				9D0D46A21FE3047300287CAD /* AdjustPlugin.mm */,
-				9D0D46B01FE305E300287CAD /* AdjustSdkDelegate.h */,
-				9D0D46AF1FE305E300287CAD /* AdjustSdkDelegate.m */,
-				9D0D46A51FE305AE00287CAD /* Adjust */,
+				9D04A81B21F6000000987252 /* ADJAttribution.h */,
+				9D04A81421F6000000987252 /* ADJConfig.h */,
+				9D04A81321F6000000987252 /* ADJEvent.h */,
+				9D04A81121F6000000987252 /* ADJEventFailure.h */,
+				9D04A81A21F6000000987252 /* ADJEventSuccess.h */,
+				9D04A81021F6000000987252 /* ADJLogger.h */,
+				9D04A81221F6000000987252 /* ADJSessionFailure.h */,
+				9D04A81721F6000000987252 /* ADJSessionSuccess.h */,
+				9D04A80F21F6000000987252 /* Adjust.h */,
+				9D04A81521F6000000987252 /* AdjustPlugin.h */,
+				9D04A81821F6000000987252 /* AdjustPlugin.mm */,
+				9D04A81621F6000000987252 /* AdjustSdkDelegate.h */,
+				9D04A81921F6000000987252 /* AdjustSdkDelegate.m */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -97,7 +78,6 @@
 				A447B609165D72A6009EA762 /* Source */,
 				F54A40C01EE083A300AF417D /* CoronaNative */,
 				A484111A15114F700074BD57 /* Products */,
-				9D0D46B91FE4254600287CAD /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -144,7 +124,7 @@
 		A484111015114F700074BD57 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 1010;
 			};
 			buildConfigurationList = A484111315114F700074BD57 /* Build configuration list for PBXProject "Plugin" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -186,8 +166,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9D0D46B11FE305E300287CAD /* AdjustSdkDelegate.m in Sources */,
-				9D0D46A41FE3047300287CAD /* AdjustPlugin.mm in Sources */,
+				9D04A81D21F6000000987252 /* AdjustSdkDelegate.m in Sources */,
+				9D04A81C21F6000000987252 /* AdjustPlugin.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -297,14 +277,10 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				DSTROOT = /tmp/adjust_plugin.dst;
+				DSTROOT = /tmp/plugin_library.dst;
 				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Plugin",
-				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -317,14 +293,10 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				DSTROOT = /tmp/adjust_plugin.dst;
+				DSTROOT = /tmp/plugin_library.dst;
 				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Plugin",
-				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

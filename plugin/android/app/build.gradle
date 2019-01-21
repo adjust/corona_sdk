@@ -2,10 +2,19 @@ apply plugin: 'com.android.application'
 
 // Application name variables
 def appName = new XmlSlurper().parse(file('src/main/AndroidManifest.xml')).@package.text()
-def apkName = appName.toString().split('\\.').last()
+
+def platform = "mac"
+if (System.properties['os.name'].toLowerCase().contains('windows'))
+{
+    platform = "win"
+}
 
 // Paths used throughout the build process
 def coronaNativeDir = System.getProperty("user.home") + "/Library/Application Support/Corona/Native"
+if (platform == "win")
+{
+    coronaNativeDir = System.getenv("CORONA_ROOT")
+}
 
 // Check to see if Corona Native has been properly setup
 def coronaNativeDirObj = new File(coronaNativeDir)
@@ -15,25 +24,34 @@ if( ! coronaNativeDirObj.exists() ) {
 
 def assetsDir = "$projectDir/src/main/assets"
 def jniLibsDir = "$projectDir/src/main/jniLibs"
-def coronaNativeMacBinDir = "$coronaNativeDir/Corona/mac/bin"
 def coronaNativeSharedDir = "$coronaNativeDir/Corona/shared"
 def coronaNativeAndroidLibDir = "$coronaNativeDir/Corona/android/lib/Corona"
+def coronaNativeMacBinDir = "$coronaNativeDir/Corona/" + platform + "/bin"
+def execPath = System.getenv("PATH")
+if (platform == "win") {
+    assetsDir = "$projectDir\\src\\main\\assets"
+    jniLibsDir = "$projectDir\\src\\main\\jniLibs"
+    coronaNativeSharedDir = "$coronaNativeDir\\Corona\\shared"
+    coronaNativeAndroidLibDir = "$coronaNativeDir\\Corona\\android\\lib\\Corona"
+    coronaNativeMacBinDir = "$coronaNativeDir\\Corona\\" + platform + "\\bin"
+    execPath = System.getenv("PATH") + System.getProperty("path.separator") + System.getenv("CORONA_PATH")
+}
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "$appName"
         minSdkVersion 15
-        targetSdkVersion 25
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
     }
 
     applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            output.outputFile = file(output.outputFile.getPath().replace('/app-', "/${apkName}-"))
+        variant.outputs.all { output ->
+            outputFileName = "${variant.name}-${variant.versionName}.apk"
         }
     }
 }
@@ -53,25 +71,50 @@ task cleanAssets(type: Delete, description: 'remove Corona assets and libcorona.
 
 task compileLua(type: Exec, description: 'compile Lua source code') {
     executable = "$coronaNativeMacBinDir/lua"
+    if (platform == "win")
+    {
+        executable = "$coronaNativeMacBinDir\\lua.exe"
+    }
+
     workingDir = "$coronaNativeMacBinDir"
+    def packagePath = "package.path='$coronaNativeSharedDir/bin/?.lua;$coronaNativeSharedDir/bin/?/init.lua;'..package.path"
+
+    // hmm, Lua does not like '\\'
+    packagePath = packagePath.replace("\\","/")
+
+    def compileLua = "$coronaNativeSharedDir/bin/Compile.lua"
+    if (platform == "win")
+    {
+        compileLua = "$coronaNativeSharedDir\\bin\\Compile.lua"
+    }
+
     args = [
             '-e',
-            "package.path='$coronaNativeSharedDir/bin/?.lua;$coronaNativeSharedDir/bin/?/init.lua;'..package.path",
-            "$coronaNativeSharedDir/bin/Compile.lua",
-            'mac',
+            packagePath,
+            "$compileLua",
+            platform,
             "$coronaNativeDir"
     ]
 
-    environment = [
-            LUA_CPATH                   : "$coronaNativeMacBinDir/?.so",
-            TARGET_PLATFORM             : 'android',
-            PROJECT_DIR                 : "$rootDir",
-            CORONA_COPY_PNG_PRESERVE    : '--preserve',
-            CONFIGURATION               : 'release',
-            CORONA_ASSETS_DIR           : "$rootDir/../Corona",
-            CORONA_TARGET_RESOURCES_DIR : "$assetsDir",
-            CORONA_TARGET_EXECUTABLE_DIR: "$assetsDir"
-    ]
+    def luacpath = "$coronaNativeMacBinDir/?.so"
+    if (platform == "win") {
+        luacpath = "$coronaNativeMacBinDir\\?.dll"
+    }
+
+    def coronaAssetsDir = "$rootDir/../Corona"
+    if (platform == "win") {
+        coronaAssetsDir = "$rootDir\\..\\Corona"
+    }
+
+    environment "PATH", "$execPath"
+    environment "LUA_CPATH", "$luacpath"
+    environment "TARGET_PLATFORM", 'android'
+    environment "PROJECT_DIR", "$rootDir"
+    environment "CORONA_COPY_PNG_PRESERVE", '--preserve'
+    environment "CONFIGURATION",                'release'
+    environment "CORONA_ASSETS_DIR", "$coronaAssetsDir"
+    environment "CORONA_TARGET_RESOURCES_DIR", "$assetsDir"
+    environment "CORONA_TARGET_EXECUTABLE_DIR", "$assetsDir"
 
     dependsOn 'cleanAssets'
 
@@ -104,13 +147,28 @@ task copyCoronaNativeLibs(type: Copy, description: 'include precompiled librarie
 
 task certifyBuild(type: Exec, description: 'certify libcorona.so with resource.car hash and developerkey.cert') {
     executable = "$coronaNativeMacBinDir/CoronaBuilder.app/Contents/MacOS/CoronaBuilder"
+    if (platform == "win")
+    {
+        executable = "$coronaNativeMacBinDir/CoronaBuilder.exe"
+    }
+
     workingDir = "$coronaNativeMacBinDir"
+    environment "PATH", "$execPath"
+
+    def developerKey = "$coronaNativeSharedDir/resource/developerkey.cert"
+    def resourceCar = "$assetsDir/resource.car"
+    def libcoronaSo = "$jniLibsDir/armeabi-v7a/libcorona.so"
+    if (platform == "win") {
+        developerKey = "$coronaNativeSharedDir\\resource\\developerkey.cert"
+        resourceCar = "$assetsDir\\resource.car"
+        libcoronaSo = "$jniLibsDir\\armeabi-v7a\\libcorona.so"
+    }
     args = [
             'app_sign',
             'sign',
-            "$coronaNativeSharedDir/resource/developerkey.cert",
-            "$assetsDir/resource.car",
-            "$jniLibsDir/armeabi-v7a/libcorona.so",
+            developerKey,
+            resourceCar,
+            libcoronaSo,
             'little',
             'android',
             "$appName"
@@ -126,9 +184,7 @@ task certifyBuild(type: Exec, description: 'certify libcorona.so with resource.c
 tasks.preBuild.dependsOn('certifyBuild')
 
 dependencies {
-    compile fileTree(dir: 'libs', include: '*.jar')
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile project(':plugin')
-    compile 'com.android.installreferrer:installreferrer:1.0'
-    compile 'com.google.android.gms:play-services-analytics:11.8.0'
+    api fileTree(dir: 'libs', include: '*.jar')
+    api 'com.android.support:appcompat-v7:27.1.1'
+    api project(':plugin')
 }

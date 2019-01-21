@@ -78,19 +78,26 @@ build_plugin_structure() {
 
 	if ls "$path"/EmbeddedFrameworks/*.framework 1> /dev/null 2>&1; then
 		echo "Copying Embedded frameworks frameworks for $PLATFORM:"
-		mkdir -p "$PLUGIN_DEST"/resources/Frameworks
 
 		for f in "$path"/EmbeddedFrameworks/*.framework; do
 			FRAMEWORK_NAME=$(basename "$f")
 			BIN_NAME=${FRAMEWORK_NAME%.framework}
-			DEST_BIN="$PLUGIN_DEST"/resources/Frameworks/$FRAMEWORK_NAME/$BIN_NAME
 			SRC_BIN="$f"/$BIN_NAME
 
 			if [[ $(file "$SRC_BIN" | grep -c "ar archive") -ne 0 ]]; then
-				echo " - $FRAMEWORK_NAME: is a static Framework, skipping embedding"
+				echo " - $FRAMEWORK_NAME: is a static Framework, extracting."
+
+				DEST_BIN="$PLUGIN_DEST"/$FRAMEWORK_NAME/$BIN_NAME
+				"$(xcrun -f rsync)"  --exclude '*.xcconfig' --exclude _CodeSignature --exclude .DS_Store --exclude CVS --exclude .svn --exclude .git --exclude .hg --exclude Headers --exclude PrivateHeaders --exclude Modules -resolve-src-symlinks "$f"  "$PLUGIN_DEST"
+				rm "$DEST_BIN"
+				lipo "$SRC_BIN" $ARCH -o "$DEST_BIN.tmp"
+				$(xcrun -f bitcode_strip) "$DEST_BIN.tmp" -r -o "$DEST_BIN"
+				rm "$DEST_BIN.tmp"
 			else
 				echo " + $FRAMEWORK_NAME: embedding"
 				
+				mkdir -p "$PLUGIN_DEST"/resources/Frameworks
+				DEST_BIN="$PLUGIN_DEST"/resources/Frameworks/$FRAMEWORK_NAME/$BIN_NAME
 				"$(xcrun -f rsync)"  --exclude '*.xcconfig' --exclude _CodeSignature --exclude .DS_Store --exclude CVS --exclude .svn --exclude .git --exclude .hg --exclude Headers --exclude PrivateHeaders --exclude Modules -resolve-src-symlinks "$f"  "$PLUGIN_DEST"/resources/Frameworks
 				rm "$DEST_BIN"
 				lipo "$SRC_BIN" $ARCH -o "$DEST_BIN.tmp"
