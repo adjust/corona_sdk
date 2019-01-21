@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		9D3FD8BD21F604BF00B8FB7A /* TestLibCommandExecutor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9D3FD8AD21F604BF00B8FB7A /* TestLibCommandExecutor.mm */; };
+		9D9D5E7A21F6410800FE2629 /* AdjustSdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DC2D5E921F605C5001981D5 /* AdjustSdk.a */; };
+		9D9D5E7B21F6410800FE2629 /* AdjustTestLibrary.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DC2D5E821F605C5001981D5 /* AdjustTestLibrary.a */; };
 		9DC2D5EE21F60612001981D5 /* PluginLibrary.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9DC2D5ED21F60612001981D5 /* PluginLibrary.mm */; };
 /* End PBXBuildFile section */
 
@@ -55,6 +57,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9D9D5E7A21F6410800FE2629 /* AdjustSdk.a in Frameworks */,
+				9D9D5E7B21F6410800FE2629 /* AdjustTestLibrary.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

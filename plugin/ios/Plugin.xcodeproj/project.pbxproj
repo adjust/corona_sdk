@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		9D04A81C21F6000000987252 /* AdjustPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9D04A81821F6000000987252 /* AdjustPlugin.mm */; };
 		9D04A81D21F6000000987252 /* AdjustSdkDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D04A81921F6000000987252 /* AdjustSdkDelegate.m */; };
+		9D9D5E7F21F6417A00FE2629 /* AdjustSdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D9D5E7E21F6417A00FE2629 /* AdjustSdk.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -37,6 +38,7 @@
 		9D04A81921F6000000987252 /* AdjustSdkDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AdjustSdkDelegate.m; path = Plugin/AdjustSdkDelegate.m; sourceTree = "<group>"; };
 		9D04A81A21F6000000987252 /* ADJEventSuccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJEventSuccess.h; path = Plugin/ADJEventSuccess.h; sourceTree = "<group>"; };
 		9D04A81B21F6000000987252 /* ADJAttribution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJAttribution.h; path = Plugin/ADJAttribution.h; sourceTree = "<group>"; };
+		9D9D5E7E21F6417A00FE2629 /* AdjustSdk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = AdjustSdk.a; path = Plugin/AdjustSdk.a; sourceTree = "<group>"; };
 		A4E253B6166D6FB300DCDC2C /* libplugin_adjust.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libplugin_adjust.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F572F81A1EE0705B001BC814 /* CoronaNative.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CoronaNative.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -46,12 +48,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9D9D5E7F21F6417A00FE2629 /* AdjustSdk.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9D9D5E7D21F6417A00FE2629 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9D9D5E7E21F6417A00FE2629 /* AdjustSdk.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		A447B609165D72A6009EA762 /* Source */ = {
 			isa = PBXGroup;
 			children = (
@@ -78,6 +89,7 @@
 				A447B609165D72A6009EA762 /* Source */,
 				F54A40C01EE083A300AF417D /* CoronaNative */,
 				A484111A15114F700074BD57 /* Products */,
+				9D9D5E7D21F6417A00FE2629 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -281,6 +293,10 @@
 				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Plugin",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -297,6 +313,10 @@
 				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Plugin",
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

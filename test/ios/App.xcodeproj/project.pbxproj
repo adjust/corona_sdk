@@ -21,10 +21,11 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		9D9D5E7421F618BB00FE2629 /* CoronaResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A498B81916D70EFC0091A148 /* CoronaResources.bundle */; };
+		9D9D5E7521F618BB00FE2629 /* Corona3rdPartyLicenses.txt in Resources */ = {isa = PBXBuildFile; fileRef = A447B6691666FD43009EA762 /* Corona3rdPartyLicenses.txt */; };
+		9D9D5E7721F618E700FE2629 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = A447B6651666FD02009EA762 /* MainWindow.xib */; };
+		9D9D5E7821F618FB00FE2629 /* MainWindow-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = A447B6641666FD02009EA762 /* MainWindow-iPad.xib */; };
 		A447B610165D72FB009EA762 /* AppCoronaDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = A447B60F165D72FB009EA762 /* AppCoronaDelegate.mm */; };
-		A447B6671666FD02009EA762 /* MainWindow-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = A447B6641666FD02009EA762 /* MainWindow-iPad.xib */; };
-		A447B6681666FD02009EA762 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = A447B6651666FD02009EA762 /* MainWindow.xib */; };
-		A447B66A1666FD43009EA762 /* Corona3rdPartyLicenses.txt in Resources */ = {isa = PBXBuildFile; fileRef = A447B6691666FD43009EA762 /* Corona3rdPartyLicenses.txt */; };
 		A46885F218068C2200381941 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A484112315114F700074BD57 /* GLKit.framework */; };
 		A46885F418068C2900381941 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A46885F318068C2900381941 /* CoreVideo.framework */; };
 		A484111E15114F700074BD57 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A484111D15114F700074BD57 /* UIKit.framework */; };
@@ -54,7 +55,6 @@
 		A484118915128D5D0074BD57 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A484117515128D5D0074BD57 /* StoreKit.framework */; };
 		A484118A15128D5D0074BD57 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A484117615128D5D0074BD57 /* SystemConfiguration.framework */; };
 		A48411CA15129F610074BD57 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A48411C915129F610074BD57 /* libsqlite3.dylib */; };
-		A498B81A16D70EFC0091A148 /* CoronaResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A498B81916D70EFC0091A148 /* CoronaResources.bundle */; };
 		A4C2449A1683FA5300C395D1 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4C244971683FA5300C395D1 /* Accounts.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		A4C2449C1683FA5300C395D1 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4C244991683FA5300C395D1 /* Social.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		A4E2537F166AE3DC00DCDC2C /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E2537E166AE3DC00DCDC2C /* Twitter.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -294,7 +294,7 @@
 				A447B6651666FD02009EA762 /* MainWindow.xib */,
 			);
 			name = resource;
-			path = "~/Library/Application Support/Corona/Native";
+			path = "$HOME/Library/Application Support/Corona/Native";
 			sourceTree = "<absolute>";
 		};
 		A4E253DB166DE7C800DCDC2C /* Products */ = {
@@ -388,13 +388,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9D9D5E7821F618FB00FE2629 /* MainWindow-iPad.xib in Resources */,
+				9D9D5E7721F618E700FE2629 /* MainWindow.xib in Resources */,
+				9D9D5E7421F618BB00FE2629 /* CoronaResources.bundle in Resources */,
+				9D9D5E7521F618BB00FE2629 /* Corona3rdPartyLicenses.txt in Resources */,
 				A484112C15114F700074BD57 /* InfoPlist.strings in Resources */,
 				F56457D91FA108F500EC8C29 /* Images.xcassets in Resources */,
-				A447B6671666FD02009EA762 /* MainWindow-iPad.xib in Resources */,
-				A447B6681666FD02009EA762 /* MainWindow.xib in Resources */,
 				F5C9F4811ED39AD100D34A2D /* _CoronaSplashScreen.png in Resources */,
-				A447B66A1666FD43009EA762 /* Corona3rdPartyLicenses.txt in Resources */,
-				A498B81A16D70EFC0091A148 /* CoronaResources.bundle in Resources */,
 				C22C1E4B1E981D9000D74196 /* LaunchScreen.storyboardc in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -459,7 +459,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Ensures that next attempt to build actually rebuilds the executable so it can be (re)app_sign(ed)\necho \"Updating modification time of $PROJECT_DIR/main.mm to trigger relink of $BUILT_PRODUCTS_DIR/$EXECUTABLE_PATH\"\necho \"We need to do this b/c app_sign can only sign an unsigned executable.\"\ntouch \"$PROJECT_DIR/main.mm\"";
+			shellScript = "# Ensures that next attempt to build actually rebuilds the executable so it can be (re)app_sign(ed)\necho \"Updating modification time of $PROJECT_DIR/main.mm to trigger relink of $BUILT_PRODUCTS_DIR/$EXECUTABLE_PATH\"\necho \"We need to do this b/c app_sign can only sign an unsigned executable.\"\ntouch \"$PROJECT_DIR/main.mm\"\n";
 			showEnvVarsInLog = 0;
 		};
 		C28A3B451EE9F8FD00F08609 /* Corona Native */ = {
