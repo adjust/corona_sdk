@@ -1,19 +1,19 @@
 #!/usr/bin/python
-import argparse
+
 from scripting_utils import *
+import argparse
 import build_sdk_android as android
 import build_sdk_ios     as ios
 
-set_log_tag('BUILD-PLUGIN')
+set_log_tag('CORONA-SDK')
 
 ## ------------------------------------------------------------------
 ## Arguments.
-parser = argparse.ArgumentParser(description='Script used to build SDK for Corona')
-parser.add_argument('platform', help='platform on which the scripts will be ran', choices=['android', 'ios'])
-parser.add_argument('-t', '--type', help='type of SDK to be built', choices=['plugin', 'testapp'], default='plugin')
+parser = argparse.ArgumentParser(description='Script used to build Adjust SDK for Corona.')
+parser.add_argument('-p', '--platform', help='Platform for which the scripts will be executed.', choices=['android', 'ios'])
+parser.add_argument('-t', '--type', help='Type of SDK plugin to be built', choices=['plugin', 'testapp'], default='plugin')
 args = parser.parse_args()
-
-debug_green('Script start. Platform=[{0}]. Build Adjust SDK Corona [{1}] ...'.format(args.platform, args.type))
+debug_green('Script start. Platform=[{0}]. Building Adjust SDK for Corona [{1}] ...'.format(args.platform, args.type))
 
 # ------------------------------------------------------------------
 # Paths.
