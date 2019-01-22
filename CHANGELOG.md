@@ -1,4 +1,4 @@
-### Version 4.17.0 (xxth January 2019)
+### Version 4.17.0 (22nd January 2019)
 #### Added
 - Added `getSdkVersion()` method to `Adjust` interface to obtain current SDK version string.
 - Added ability to pass `callbackId` value through `trackEvent()` method of `Adjust` interface, for users to set custom ID on event object which will later be reported in event success/failure callbacks.
