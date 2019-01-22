@@ -8,7 +8,7 @@
 
 // This corresponds to the name of the Lua library,
 // e.g. [Lua] require "plugin.testlibrary"
-package plugin.testlibrary;
+package plugin.adjust.test;
 
 import java.util.Map;
 import java.util.List;
