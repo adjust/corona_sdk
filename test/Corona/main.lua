@@ -1,13 +1,13 @@
-local testLib = require "plugin.testlibrary"
+local testLib = require "plugin.adjust.test"
 local adjust = require "plugin.adjust"
 local widget = require "widget"
 local json = require "json"
 local command = require "command"
-local adjustCommandExecutor = require "adjustCommandExecutor"
+local command_executor = require "command_executor"
 
 print("------------------------------------------------------------")
 local platformInfo = system.getInfo("platform")
-print("--Running on [" .. platformInfo .. "]--")
+print("[TestApp]: Running on [" .. platformInfo .. "]--")
 print("------------------------------------------------------------")
 
 -- Setting up a system event listener for deeplink support
@@ -41,11 +41,11 @@ else
     protocol = "https"
     port = "8443"
 end
-local baseIp = "192.168.8.116"
+local baseIp = "192.168.8.85"
 local baseUrl = protocol .. "://" .. baseIp .. ":" .. port
 local gdprUrl = protocol .. "://" .. baseIp .. ":" .. port
-print("--Using BaseUrl: [" .. baseUrl .. "]--")
-local commandExecutor = adjustCommandExecutor.AdjustCommandExecutor:new(nil, baseUrl, gdprUrl)
+print("[TestApp]: Using BaseUrl: [" .. baseUrl .. "]--")
+local commandExecutor = command_executor.CommandExecutor:new(nil, baseUrl, gdprUrl)
 
 local function executeCommand(event)
     local rawCommand = json.decode(event.message)
@@ -56,16 +56,16 @@ local function executeCommand(event)
         commandObj = command.Command:new(nil, rawCommand.className, rawCommand.methodName, rawCommand.parameters)
     end
     --commandObj:printCommand()
-    print("  >>>>> Executing command: " .. commandObj.className .. "." .. commandObj.methodName .. " <<<<<")
+    print("[TestApp]: Executing command: " .. commandObj.className .. "." .. commandObj.methodName .. " <<<<<")
     commandExecutor:executeCommand(commandObj)
 end
 
-print("Create and init test lib....")
+print("[TestApp]: Create and init test lib....")
 testLib.initTestLibrary(baseUrl, executeCommand)
-adjustCommandExecutor.setTestLib(testLib)
-adjustCommandExecutor.setPlatform(platformInfo)
+command_executor.setTestLib(testLib)
+command_executor.setPlatform(platformInfo)
 
-print("Setting test lib tests....")
+print("[TestApp]: Setting test lib tests....")
 --testLib.addTest("current/session-event-callbacks/Test_EventCallback_success")
 --testLib.addTestDirectory("current/session-event-callbacks")
 

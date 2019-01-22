@@ -21,10 +21,11 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		9DD299B421F725350054DA79 /* _CoronaSplashScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 9DD299B021F725350054DA79 /* _CoronaSplashScreen.png */; };
+		9DD299B521F725350054DA79 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9DD299B121F725350054DA79 /* MainWindow.xib */; };
+		9DD299B621F725350054DA79 /* CoronaResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 9DD299B221F725350054DA79 /* CoronaResources.bundle */; };
+		9DD299B721F725350054DA79 /* MainWindow-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9DD299B321F725350054DA79 /* MainWindow-iPad.xib */; };
 		A447B610165D72FB009EA762 /* AppCoronaDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = A447B60F165D72FB009EA762 /* AppCoronaDelegate.mm */; };
-		A447B6671666FD02009EA762 /* MainWindow-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = A447B6641666FD02009EA762 /* MainWindow-iPad.xib */; };
-		A447B6681666FD02009EA762 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = A447B6651666FD02009EA762 /* MainWindow.xib */; };
-		A447B66A1666FD43009EA762 /* Corona3rdPartyLicenses.txt in Resources */ = {isa = PBXBuildFile; fileRef = A447B6691666FD43009EA762 /* Corona3rdPartyLicenses.txt */; };
 		A46885F218068C2200381941 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A484112315114F700074BD57 /* GLKit.framework */; };
 		A46885F418068C2900381941 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A46885F318068C2900381941 /* CoreVideo.framework */; };
 		A484111E15114F700074BD57 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A484111D15114F700074BD57 /* UIKit.framework */; };
@@ -54,7 +55,6 @@
 		A484118915128D5D0074BD57 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A484117515128D5D0074BD57 /* StoreKit.framework */; };
 		A484118A15128D5D0074BD57 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A484117615128D5D0074BD57 /* SystemConfiguration.framework */; };
 		A48411CA15129F610074BD57 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A48411C915129F610074BD57 /* libsqlite3.dylib */; };
-		A498B81A16D70EFC0091A148 /* CoronaResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A498B81916D70EFC0091A148 /* CoronaResources.bundle */; };
 		A4C2449A1683FA5300C395D1 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4C244971683FA5300C395D1 /* Accounts.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		A4C2449C1683FA5300C395D1 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4C244991683FA5300C395D1 /* Social.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		A4E2537F166AE3DC00DCDC2C /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E2537E166AE3DC00DCDC2C /* Twitter.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -64,7 +64,6 @@
 		F51C66D61EE0D3B20040E4BE /* libplugin_adjust.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E253E2166DE7C800DCDC2C /* libplugin_adjust.a */; };
 		F56457D91FA108F500EC8C29 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F56712391F73451B006B502D /* Images.xcassets */; };
 		F5BB41531BC42ACF0033F6FA /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5BB41521BC42ACF0033F6FA /* CoreText.framework */; };
-		F5C9F4811ED39AD100D34A2D /* _CoronaSplashScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = C277D3B51EBB9F8E00966BA1 /* _CoronaSplashScreen.png */; };
 		F5E548091BE7FF0200091810 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5E548081BE7FF0200091810 /* GameController.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
@@ -86,11 +85,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9DD299B021F725350054DA79 /* _CoronaSplashScreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = _CoronaSplashScreen.png; sourceTree = "<group>"; };
+		9DD299B121F725350054DA79 /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
+		9DD299B221F725350054DA79 /* CoronaResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = CoronaResources.bundle; sourceTree = "<group>"; };
+		9DD299B321F725350054DA79 /* MainWindow-iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "MainWindow-iPad.xib"; sourceTree = "<group>"; };
 		A447B60E165D72FB009EA762 /* AppCoronaDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppCoronaDelegate.h; sourceTree = SOURCE_ROOT; };
 		A447B60F165D72FB009EA762 /* AppCoronaDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppCoronaDelegate.mm; sourceTree = SOURCE_ROOT; };
-		A447B6641666FD02009EA762 /* MainWindow-iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = "MainWindow-iPad.xib"; path = "Corona/ios/resource/MainWindow-iPad.xib"; sourceTree = "<group>"; };
-		A447B6651666FD02009EA762 /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MainWindow.xib; path = Corona/ios/resource/MainWindow.xib; sourceTree = "<group>"; };
-		A447B6691666FD43009EA762 /* Corona3rdPartyLicenses.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Corona3rdPartyLicenses.txt; path = Corona/shared/resource/Corona3rdPartyLicenses.txt; sourceTree = "<group>"; };
 		A447B824166856F3009EA762 /* main.lua */ = {isa = PBXFileReference; lastKnownFileType = text; name = main.lua; path = ../Corona/main.lua; sourceTree = SOURCE_ROOT; };
 		A46885F318068C2900381941 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		A484111915114F700074BD57 /* App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = App.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -124,7 +124,6 @@
 		A484117515128D5D0074BD57 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		A484117615128D5D0074BD57 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		A48411C915129F610074BD57 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
-		A498B81916D70EFC0091A148 /* CoronaResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = CoronaResources.bundle; path = Corona/ios/resource/CoronaResources.bundle; sourceTree = "<group>"; };
 		A4C244971683FA5300C395D1 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		A4C244991683FA5300C395D1 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		A4E2537E166AE3DC00DCDC2C /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
@@ -188,12 +187,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9DD299AF21F725350054DA79 /* resource */ = {
+			isa = PBXGroup;
+			children = (
+				9DD299B021F725350054DA79 /* _CoronaSplashScreen.png */,
+				9DD299B121F725350054DA79 /* MainWindow.xib */,
+				9DD299B221F725350054DA79 /* CoronaResources.bundle */,
+				9DD299B321F725350054DA79 /* MainWindow-iPad.xib */,
+			);
+			name = resource;
+			path = ../../../../../../Applications/Corona/Native/Corona/ios/resource;
+			sourceTree = "<group>";
+		};
 		A447B66F16670015009EA762 /* CoronaNative */ = {
 			isa = PBXGroup;
 			children = (
 				F572F8191EE06E45001BC814 /* CoronaNative.xcconfig */,
 				F55829801ED23E1200E5808C /* CoronaApp.xcconfig */,
-				A4841153151161300074BD57 /* resource */,
+				9DD299AF21F725350054DA79 /* resource */,
 			);
 			name = CoronaNative;
 			sourceTree = "<group>";
@@ -284,18 +295,6 @@
 			);
 			name = App;
 			sourceTree = "<group>";
-		};
-		A4841153151161300074BD57 /* resource */ = {
-			isa = PBXGroup;
-			children = (
-				A498B81916D70EFC0091A148 /* CoronaResources.bundle */,
-				A447B6691666FD43009EA762 /* Corona3rdPartyLicenses.txt */,
-				A447B6641666FD02009EA762 /* MainWindow-iPad.xib */,
-				A447B6651666FD02009EA762 /* MainWindow.xib */,
-			);
-			name = resource;
-			path = "$HOME/Library/Application Support/Corona/Native";
-			sourceTree = "<absolute>";
 		};
 		A4E253DB166DE7C800DCDC2C /* Products */ = {
 			isa = PBXGroup;
@@ -390,12 +389,11 @@
 			files = (
 				A484112C15114F700074BD57 /* InfoPlist.strings in Resources */,
 				F56457D91FA108F500EC8C29 /* Images.xcassets in Resources */,
-				A447B6671666FD02009EA762 /* MainWindow-iPad.xib in Resources */,
-				A447B6681666FD02009EA762 /* MainWindow.xib in Resources */,
-				F5C9F4811ED39AD100D34A2D /* _CoronaSplashScreen.png in Resources */,
-				A447B66A1666FD43009EA762 /* Corona3rdPartyLicenses.txt in Resources */,
-				A498B81A16D70EFC0091A148 /* CoronaResources.bundle in Resources */,
+				9DD299B521F725350054DA79 /* MainWindow.xib in Resources */,
+				9DD299B721F725350054DA79 /* MainWindow-iPad.xib in Resources */,
 				C22C1E4B1E981D9000D74196 /* LaunchScreen.storyboardc in Resources */,
+				9DD299B421F725350054DA79 /* _CoronaSplashScreen.png in Resources */,
+				9DD299B621F725350054DA79 /* CoronaResources.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

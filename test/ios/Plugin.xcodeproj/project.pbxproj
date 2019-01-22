@@ -7,10 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9D3FD8BD21F604BF00B8FB7A /* TestLibCommandExecutor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9D3FD8AD21F604BF00B8FB7A /* TestLibCommandExecutor.mm */; };
-		9D9D5E7A21F6410800FE2629 /* AdjustSdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DC2D5E921F605C5001981D5 /* AdjustSdk.a */; };
-		9D9D5E7B21F6410800FE2629 /* AdjustTestLibrary.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DC2D5E821F605C5001981D5 /* AdjustTestLibrary.a */; };
-		9DC2D5EE21F60612001981D5 /* PluginLibrary.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9DC2D5ED21F60612001981D5 /* PluginLibrary.mm */; };
+		9DD299A421F717430054DA79 /* PluginLibrary.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9DD299A021F717430054DA79 /* PluginLibrary.mm */; };
+		9DD299A521F717430054DA79 /* TestLibCommandExecutor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9DD299A221F717430054DA79 /* TestLibCommandExecutor.mm */; };
+		9DD299A921F7182A0054DA79 /* AdjustTestLibrary.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DD299A721F7182A0054DA79 /* AdjustTestLibrary.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,28 +25,18 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		9D3FD8AB21F604BE00B8FB7A /* ADJEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJEvent.h; path = Plugin/ADJEvent.h; sourceTree = "<group>"; };
-		9D3FD8AC21F604BE00B8FB7A /* ATLControlChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATLControlChannel.h; path = Plugin/ATLControlChannel.h; sourceTree = "<group>"; };
-		9D3FD8AD21F604BF00B8FB7A /* TestLibCommandExecutor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestLibCommandExecutor.mm; path = Plugin/TestLibCommandExecutor.mm; sourceTree = "<group>"; };
-		9D3FD8AE21F604BF00B8FB7A /* ATLTestLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATLTestLibrary.h; path = Plugin/ATLTestLibrary.h; sourceTree = "<group>"; };
-		9D3FD8AF21F604BF00B8FB7A /* ADJEventFailure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJEventFailure.h; path = Plugin/ADJEventFailure.h; sourceTree = "<group>"; };
-		9D3FD8B021F604BF00B8FB7A /* ATLBlockingQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATLBlockingQueue.h; path = Plugin/ATLBlockingQueue.h; sourceTree = "<group>"; };
-		9D3FD8B121F604BF00B8FB7A /* ATLConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATLConstants.h; path = Plugin/ATLConstants.h; sourceTree = "<group>"; };
-		9D3FD8B221F604BF00B8FB7A /* ADJEventSuccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJEventSuccess.h; path = Plugin/ADJEventSuccess.h; sourceTree = "<group>"; };
-		9D3FD8B321F604BF00B8FB7A /* ATLTestInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATLTestInfo.h; path = Plugin/ATLTestInfo.h; sourceTree = "<group>"; };
-		9D3FD8B421F604BF00B8FB7A /* ATLUtilNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATLUtilNetworking.h; path = Plugin/ATLUtilNetworking.h; sourceTree = "<group>"; };
-		9D3FD8B521F604BF00B8FB7A /* ATLUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATLUtil.h; path = Plugin/ATLUtil.h; sourceTree = "<group>"; };
-		9D3FD8B621F604BF00B8FB7A /* Adjust.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Adjust.h; path = Plugin/Adjust.h; sourceTree = "<group>"; };
-		9D3FD8B721F604BF00B8FB7A /* ADJLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJLogger.h; path = Plugin/ADJLogger.h; sourceTree = "<group>"; };
-		9D3FD8B821F604BF00B8FB7A /* ADJAttribution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJAttribution.h; path = Plugin/ADJAttribution.h; sourceTree = "<group>"; };
-		9D3FD8B921F604BF00B8FB7A /* ADJConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJConfig.h; path = Plugin/ADJConfig.h; sourceTree = "<group>"; };
-		9D3FD8BA21F604BF00B8FB7A /* ADJSessionSuccess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJSessionSuccess.h; path = Plugin/ADJSessionSuccess.h; sourceTree = "<group>"; };
-		9D3FD8BB21F604BF00B8FB7A /* TestLibCommandExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestLibCommandExecutor.h; path = Plugin/TestLibCommandExecutor.h; sourceTree = "<group>"; };
-		9D3FD8BC21F604BF00B8FB7A /* ADJSessionFailure.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ADJSessionFailure.h; path = Plugin/ADJSessionFailure.h; sourceTree = "<group>"; };
-		9DC2D5E821F605C5001981D5 /* AdjustTestLibrary.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = AdjustTestLibrary.a; path = Plugin/AdjustTestLibrary.a; sourceTree = "<group>"; };
-		9DC2D5E921F605C5001981D5 /* AdjustSdk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = AdjustSdk.a; path = Plugin/AdjustSdk.a; sourceTree = "<group>"; };
-		9DC2D5EC21F60612001981D5 /* PluginLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PluginLibrary.h; path = Plugin/PluginLibrary.h; sourceTree = "<group>"; };
-		9DC2D5ED21F60612001981D5 /* PluginLibrary.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PluginLibrary.mm; path = Plugin/PluginLibrary.mm; sourceTree = "<group>"; };
+		9DD2999921F717390054DA79 /* ATLBlockingQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATLBlockingQueue.h; path = Plugin/ATLBlockingQueue.h; sourceTree = "<group>"; };
+		9DD2999A21F717390054DA79 /* ATLControlChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATLControlChannel.h; path = Plugin/ATLControlChannel.h; sourceTree = "<group>"; };
+		9DD2999B21F717390054DA79 /* ATLTestLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATLTestLibrary.h; path = Plugin/ATLTestLibrary.h; sourceTree = "<group>"; };
+		9DD2999C21F717390054DA79 /* ATLConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATLConstants.h; path = Plugin/ATLConstants.h; sourceTree = "<group>"; };
+		9DD2999D21F717390054DA79 /* ATLUtilNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATLUtilNetworking.h; path = Plugin/ATLUtilNetworking.h; sourceTree = "<group>"; };
+		9DD2999E21F717390054DA79 /* ATLUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATLUtil.h; path = Plugin/ATLUtil.h; sourceTree = "<group>"; };
+		9DD2999F21F717390054DA79 /* ATLTestInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATLTestInfo.h; path = Plugin/ATLTestInfo.h; sourceTree = "<group>"; };
+		9DD299A021F717430054DA79 /* PluginLibrary.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PluginLibrary.mm; path = Plugin/PluginLibrary.mm; sourceTree = "<group>"; };
+		9DD299A121F717430054DA79 /* TestLibCommandExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestLibCommandExecutor.h; path = Plugin/TestLibCommandExecutor.h; sourceTree = "<group>"; };
+		9DD299A221F717430054DA79 /* TestLibCommandExecutor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestLibCommandExecutor.mm; path = Plugin/TestLibCommandExecutor.mm; sourceTree = "<group>"; };
+		9DD299A321F717430054DA79 /* PluginLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PluginLibrary.h; path = Plugin/PluginLibrary.h; sourceTree = "<group>"; };
+		9DD299A721F7182A0054DA79 /* AdjustTestLibrary.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = AdjustTestLibrary.a; path = Plugin/AdjustTestLibrary.a; sourceTree = "<group>"; };
 		A4E253B6166D6FB300DCDC2C /* libplugin_library.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libplugin_library.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F572F81A1EE0705B001BC814 /* CoronaNative.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CoronaNative.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -57,19 +46,31 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9D9D5E7A21F6410800FE2629 /* AdjustSdk.a in Frameworks */,
-				9D9D5E7B21F6410800FE2629 /* AdjustTestLibrary.a in Frameworks */,
+				9DD299A921F7182A0054DA79 /* AdjustTestLibrary.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		9DC2D5E721F605C4001981D5 /* Frameworks */ = {
+		9DD2998F21F7171A0054DA79 /* TestLibrary */ = {
 			isa = PBXGroup;
 			children = (
-				9DC2D5E921F605C5001981D5 /* AdjustSdk.a */,
-				9DC2D5E821F605C5001981D5 /* AdjustTestLibrary.a */,
+				9DD2999921F717390054DA79 /* ATLBlockingQueue.h */,
+				9DD2999C21F717390054DA79 /* ATLConstants.h */,
+				9DD2999A21F717390054DA79 /* ATLControlChannel.h */,
+				9DD2999F21F717390054DA79 /* ATLTestInfo.h */,
+				9DD2999B21F717390054DA79 /* ATLTestLibrary.h */,
+				9DD2999E21F717390054DA79 /* ATLUtil.h */,
+				9DD2999D21F717390054DA79 /* ATLUtilNetworking.h */,
+			);
+			name = TestLibrary;
+			sourceTree = "<group>";
+		};
+		9DD299A621F7182A0054DA79 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9DD299A721F7182A0054DA79 /* AdjustTestLibrary.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -77,26 +78,11 @@
 		A447B609165D72A6009EA762 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				9DC2D5EC21F60612001981D5 /* PluginLibrary.h */,
-				9DC2D5ED21F60612001981D5 /* PluginLibrary.mm */,
-				9D3FD8B821F604BF00B8FB7A /* ADJAttribution.h */,
-				9D3FD8B921F604BF00B8FB7A /* ADJConfig.h */,
-				9D3FD8AB21F604BE00B8FB7A /* ADJEvent.h */,
-				9D3FD8AF21F604BF00B8FB7A /* ADJEventFailure.h */,
-				9D3FD8B221F604BF00B8FB7A /* ADJEventSuccess.h */,
-				9D3FD8B721F604BF00B8FB7A /* ADJLogger.h */,
-				9D3FD8BC21F604BF00B8FB7A /* ADJSessionFailure.h */,
-				9D3FD8BA21F604BF00B8FB7A /* ADJSessionSuccess.h */,
-				9D3FD8B621F604BF00B8FB7A /* Adjust.h */,
-				9D3FD8B021F604BF00B8FB7A /* ATLBlockingQueue.h */,
-				9D3FD8B121F604BF00B8FB7A /* ATLConstants.h */,
-				9D3FD8AC21F604BE00B8FB7A /* ATLControlChannel.h */,
-				9D3FD8B321F604BF00B8FB7A /* ATLTestInfo.h */,
-				9D3FD8AE21F604BF00B8FB7A /* ATLTestLibrary.h */,
-				9D3FD8B521F604BF00B8FB7A /* ATLUtil.h */,
-				9D3FD8B421F604BF00B8FB7A /* ATLUtilNetworking.h */,
-				9D3FD8BB21F604BF00B8FB7A /* TestLibCommandExecutor.h */,
-				9D3FD8AD21F604BF00B8FB7A /* TestLibCommandExecutor.mm */,
+				9DD2998F21F7171A0054DA79 /* TestLibrary */,
+				9DD299A321F717430054DA79 /* PluginLibrary.h */,
+				9DD299A021F717430054DA79 /* PluginLibrary.mm */,
+				9DD299A121F717430054DA79 /* TestLibCommandExecutor.h */,
+				9DD299A221F717430054DA79 /* TestLibCommandExecutor.mm */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -107,7 +93,7 @@
 				A447B609165D72A6009EA762 /* Source */,
 				F54A40C01EE083A300AF417D /* CoronaNative */,
 				A484111A15114F700074BD57 /* Products */,
-				9DC2D5E721F605C4001981D5 /* Frameworks */,
+				9DD299A621F7182A0054DA79 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -196,8 +182,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9DC2D5EE21F60612001981D5 /* PluginLibrary.mm in Sources */,
-				9D3FD8BD21F604BF00B8FB7A /* TestLibCommandExecutor.mm in Sources */,
+				9DD299A521F717430054DA79 /* TestLibCommandExecutor.mm in Sources */,
+				9DD299A421F717430054DA79 /* PluginLibrary.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

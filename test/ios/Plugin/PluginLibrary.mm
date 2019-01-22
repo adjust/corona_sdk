@@ -1,39 +1,40 @@
 //
 //  PluginLibrary.mm
-//  Adjust SDK Test
+//  Adjust Test Library Plugin
 //
-//  Created by Srdjan Tubin on 14th August 2018.
-//  Copyright (c) 2018 Adjust GmbH. All rights reserved.
+//  Created by Srdjan Tubin (@2beens) on August 2018.
+//  Copyright (c) 2018-2019 Adjust GmbH. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-#include <CoronaRuntime.h>
 #import "PluginLibrary.h"
 #import "TestLibCommandExecutor.h"
 
+#include <CoronaRuntime.h>
+#import <UIKit/UIKit.h>
+
 static lua_State *initialLuaState;
 
-// This corresponds to the name of the library, e.g. [Lua] require "plugin.testlibrary".
-const char PluginLibrary::kName[] = "plugin.testlibrary";
+// This corresponds to the name of the library, e.g. [Lua] require "plugin.testlibrary"
+const char PluginLibrary::kName[] = "plugin.adjust.test";
 
-// This corresponds to the event name, e.g. [Lua] event.name.
+// This corresponds to the event name, e.g. [Lua] event.name
 const char PluginLibrary::kEvent[] = "pluginlibraryevent";
 
 PluginLibrary::PluginLibrary() : executeCommandListener(NULL) { }
 
 void PluginLibrary::InitExecuteCommandListener(CoronaLuaRef listener) {
-    // Can only initialize listener once.
+    // Can only initialize listener once
     if (executeCommandListener == NULL) {
         executeCommandListener = listener;
     }
 }
 
 int PluginLibrary::Open(lua_State *L) {
-    // Register __gc callback.
+    // Register __gc callback
     const char kMetatableName[] = __FILE__; // Globally unique string to prevent collision
     CoronaLuaInitializeGCMetatable( L, kMetatableName, Finalizer );
-
-    // Functions in library.
+    
+    // Functions in library
     const luaL_Reg kVTable[] = {
         { "initTestLibrary", initTestLibrary },
         { "addTest", addTest },
@@ -41,14 +42,16 @@ int PluginLibrary::Open(lua_State *L) {
         { "startTestSession", startTestSession },
         { "addInfoToSend", addInfoToSend },
         { "sendInfoToServer", sendInfoToServer },
-
+        
         { NULL, NULL }
     };
-
-    // Set library as upvalue for each library function.
+    
+    // Set library as upvalue for each library function
     Self *library = new Self;
     CoronaLuaPushUserdata(L, library, kMetatableName);
+    
     luaL_openlib(L, kName, kVTable, 1); // leave "library" on top of stack
+    
     return 1;
 }
 
@@ -60,29 +63,32 @@ int PluginLibrary::Finalizer(lua_State *L) {
 }
 
 PluginLibrary * PluginLibrary::ToLibrary(lua_State *L) {
-    // Library is pushed as part of the closure.
+    // library is pushed as part of the closure
     Self *library = (Self *)CoronaLuaToUserdata(L, lua_upvalueindex(1));
     return library;
 }
 
 int PluginLibrary::initTestLibrary(lua_State *L) {
-    NSLog(@"[TestLibrary][bridge]: Initialisation of test library started...");
+    NSLog(@"[TestLibrary][bridge]: Init test library started...");
     Self *library = ToLibrary(L);
     initialLuaState = L;
-
+    
     const char *baseUrlCStr = lua_tostring(L, 1);
     NSString *baseUrl = [NSString stringWithUTF8String:baseUrlCStr];
-    NSLog(@"[TestLibrary][bridge]: Initialising test library with base URL: %@", baseUrl);
-
-    if (CoronaLuaIsListener(L, 2, kEvent)) {
+    
+    NSLog(@"[TestLibrary][bridge]: Init test library with base URL: %@", baseUrl);
+    
+    if (CoronaLuaIsListener(L, 2, kEvent))
+    {
         Self *library = ToLibrary(L);
         CoronaLuaRef listener = CoronaLuaNewRef(L, 2);
         library->InitExecuteCommandListener(listener);
     }
-
+    
     TestLibCommandExecutor *commandExecutor = [[TestLibCommandExecutor alloc] initWithPluginLibrary:library];
     library->testLibrary = [ATLTestLibrary testLibraryWithBaseUrl:baseUrl andCommandDelegate:commandExecutor];
-    NSLog(@"[TestLibrary][bridge]: Test library initialisation completed.");
+    
+    NSLog(@"[TestLibrary][bridge]: Test library initialization completed.");
     return 0;
 }
 
@@ -126,16 +132,17 @@ int PluginLibrary::sendInfoToServer(lua_State *L) {
 
 void PluginLibrary::dispachExecuteCommand(NSString *commandJson) {
     lua_State *L = initialLuaState;
-
-    // Create event and add message to it.
+    
+    // Create event and add message to it
     CoronaLuaNewEvent(L, kEvent);
     lua_pushstring(L, [commandJson UTF8String]);
     lua_setfield(L, -2, "message");
-
-    // Dispatch event to library's listener.
+    
+    // Dispatch event to library's listener
     CoronaLuaDispatchEvent(L, this->GetExecuteCommandListener(), 0);
 }
 
-CORONA_EXPORT int luaopen_plugin_testlibrary(lua_State *L) {
+// ----------------------------------------------------------------------------
+CORONA_EXPORT int luaopen_plugin_adjust_test(lua_State *L) {
     return PluginLibrary::Open( L );
 }

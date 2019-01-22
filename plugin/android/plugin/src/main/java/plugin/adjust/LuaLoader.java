@@ -3,11 +3,12 @@
 //  Adjust SDK
 //
 //  Created by Abdullah Obaied (@obaied) on 14th September 2017.
-//  Copyright (c) 2017-2018 Adjust GmbH. All rights reserved.
+//  Copyright (c) 2017-2019 Adjust GmbH. All rights reserved.
 //
 
 // This corresponds to the name of the Lua library, e.g. [Lua] require "plugin.library".
 // Adjust SDK is named "plugin.adjust".
+
 package plugin.adjust;
 
 import android.net.Uri;
@@ -42,7 +43,6 @@ import com.adjust.sdk.OnSessionTrackingSucceededListener;
 
 /**
  * Implements the Lua interface for a Corona plugin.
- * <p>
  * Only one instance of this class will be created by Corona for the lifetime of the application.
  * This instance will be re-used for every new Corona activity that gets created.
  */
@@ -75,7 +75,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
     /**
      * Creates a new Lua interface to this plugin.
-     * <p>
      * Note that a new LuaLoader instance will not be created for every CoronaActivity instance.
      * That is, only one instance of this class will be created for the lifetime of the application process.
      * This gives a plugin the option to do operations in the background while the CoronaActivity is destroyed.
@@ -97,15 +96,13 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
     /**
      * Called when this plugin is being loaded via the Lua require() function.
-     * <p>
      * Note that this method will be called every time a new CoronaActivity has been launched.
      * This means that you'll need to re-initialize this plugin here.
-     * <p>
      * Warning! This method is not called on the main UI thread.
      *
      * @param L Reference to the Lua state that the require() function was called from.
      * @return Returns the number of values that the require() function will return.
-     * <p>
+     *
      * Expected to return 1, the library that the require() function is loading.
      */
     @Override
@@ -153,7 +150,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
     /**
      * Called after the Corona runtime has been created and just before executing the "main.lua" file.
-     * <p>
      * Warning! This method is not called on the main thread.
      *
      * @param runtime Reference to the CoronaRuntime object that has just been loaded/initialized.
@@ -169,7 +165,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
     /**
      * Called just after the Corona runtime has executed the "main.lua" file.
-     * <p>
      * Warning! This method is not called on the main thread.
      *
      * @param runtime Reference to the CoronaRuntime object that has just been started.
@@ -182,7 +177,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
      * Called just after the Corona runtime has been suspended which pauses all rendering, audio, timers,
      * and other Corona related operations. This can happen when another Android activity (ie: window) has
      * been displayed, when the screen has been powered off, or when the screen lock is shown.
-     * <p>
      * Warning! This method is not called on the main thread.
      *
      * @param runtime Reference to the CoronaRuntime object that has just been suspended.
@@ -194,7 +188,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
     /**
      * Called just after the Corona runtime has been resumed after a suspend.
-     * <p>
      * Warning! This method is not called on the main thread.
      *
      * @param runtime Reference to the CoronaRuntime object that has just been resumed.
@@ -206,11 +199,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
     /**
      * Called just before the Corona runtime terminates.
-     * <p>
      * This happens when the Corona activity is being destroyed which happens when the user presses the Back button
      * on the activity, when the native.requestExit() method is called in Lua, or when the activity's finish()
      * method is called. This does not mean that the application is exiting.
-     * <p>
      * Warning! This method is not called on the main thread.
      *
      * @param runtime Reference to the CoronaRuntime object that is being terminated.

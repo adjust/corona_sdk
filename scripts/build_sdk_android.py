@@ -2,7 +2,7 @@ from scripting_utils import *
 
 def build_plugin(dir_root, dir_dist):
     ## ------------------------------------------------------------------
-    ## Paths
+    ## Paths.
     dir_root_android    = '{0}/plugin/android'.format(dir_root)
     dir_android_plugin  = '{0}/plugin/android/plugin'.format(dir_root)
 

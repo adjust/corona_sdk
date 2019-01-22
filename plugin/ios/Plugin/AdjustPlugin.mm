@@ -3,7 +3,7 @@
 //  Adjust SDK
 //
 //  Created by Abdullah Obaied (@obaied) on 11th September 2017.
-//  Copyright (c) 2017-2018 Adjust GmbH. All rights reserved.
+//  Copyright (c) 2017-2019 Adjust GmbH. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -19,7 +19,7 @@
 #define EVENT_GET_ADID @"adjust_getAdid"
 #define EVENT_GET_GOOGLE_AD_ID @"adjust_getGoogleAdId"
 #define EVENT_GET_AMAZON_AD_ID @"adjust_getAmazonAdId"
-#define GET_SDK_VERSION @"adjust_getSdkVersion"
+#define EVENT_GET_SDK_VERSION @"adjust_getSdkVersion"
 
 #define SDK_PREFIX @"corona4.17.0"
 
@@ -678,7 +678,7 @@ int AdjustPlugin::getSdkVersion(lua_State *L) {
         if (sdkVersion == nil) {
             sdkVersion = @"";
         }
-        [AdjustSdkDelegate dispatchEvent:GET_SDK_VERSION withState:L callback:listener andMessage:[NSString stringWithFormat:@"%@@%@", SDK_PREFIX, sdkVersion]];
+        [AdjustSdkDelegate dispatchEvent:EVENT_GET_SDK_VERSION withState:L callback:listener andMessage:[NSString stringWithFormat:@"%@@%@", SDK_PREFIX, sdkVersion]];
     }
     return 0;
 }

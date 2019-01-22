@@ -1,14 +1,14 @@
 //
 //  TestLibCommandExecutor.h
-//  Adjust SDK Test
+//  Adjust Test Library Plugin
 //
-//  Created by Srdjan Tubin on 14th August 2018.
-//  Copyright (c) 2018 Adjust GmbH. All rights reserved.
+//  Created by Srdjan Tubin (@2beens) on August 2018.
+//  Copyright (c) 2018-2019 Adjust GmbH. All rights reserved.
 //
 
-#import "PluginLibrary.h"
-#import "ATLTestLibrary.h"
 #import <Foundation/Foundation.h>
+#import "ATLTestLibrary.h"
+#import "PluginLibrary.h"
 
 @interface TestLibCommandExecutor : NSObject<AdjustCommandDelegate>
 

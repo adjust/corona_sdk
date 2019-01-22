@@ -1,9 +1,9 @@
 //
 //  TestLibCommandExecutor.mm
-//  Adjust SDK Test
+//  Adjust Test Library Plugin
 //
-//  Created by Srdjan Tubin on 14th August 2018.
-//  Copyright (c) 2018 Adjust GmbH. All rights reserved.
+//  Created by Srdjan Tubin (@2beens) on August 2018.
+//  Copyright (c) 2018-2019 Adjust GmbH. All rights reserved.
 //
 
 #import "TestLibCommandExecutor.h"
@@ -19,7 +19,7 @@
 - (id)initWithPluginLibrary:(PluginLibrary *)pluginLibrary {
     self = [super init];
     if (self == nil) {
-    	return nil;
+        return nil;
     }
 
     self.pluginLibrary = pluginLibrary;

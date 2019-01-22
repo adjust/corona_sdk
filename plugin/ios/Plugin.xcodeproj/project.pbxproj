@@ -63,7 +63,7 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		A447B609165D72A6009EA762 /* Source */ = {
+		9DD299AE21F7250F0054DA79 /* Adjust */ = {
 			isa = PBXGroup;
 			children = (
 				9D04A81B21F6000000987252 /* ADJAttribution.h */,
@@ -75,6 +75,14 @@
 				9D04A81221F6000000987252 /* ADJSessionFailure.h */,
 				9D04A81721F6000000987252 /* ADJSessionSuccess.h */,
 				9D04A80F21F6000000987252 /* Adjust.h */,
+			);
+			name = Adjust;
+			sourceTree = "<group>";
+		};
+		A447B609165D72A6009EA762 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				9DD299AE21F7250F0054DA79 /* Adjust */,
 				9D04A81521F6000000987252 /* AdjustPlugin.h */,
 				9D04A81821F6000000987252 /* AdjustPlugin.mm */,
 				9D04A81621F6000000987252 /* AdjustSdkDelegate.h */,
