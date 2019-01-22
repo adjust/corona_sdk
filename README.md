@@ -26,6 +26,7 @@ This is the Corona SDK of Adjust™. You can read more about Adjust™ at [adjus
       * [Revenue deduplication](#revenue-deduplication)
       * [Callback parameters](#callback-parameters)
       * [Partner parameters](#partner-parameters)
+      * [Callback identifier](#callback-id)
    * [Session parameters](#session-parameters)
       * [Session callback parameters](#session-callback-parameters)
       * [Session partner parameters](#session-partner-parameters)
@@ -339,6 +340,19 @@ adjust.trackEvent({
 
 You can read more about special partners and networks in our [guide to special partners][special-partners].
 
+### <a id="callback-id"></a>Callback identifier
+
+You can also add custom string identifier to each event you want to track. This identifier will later be reported in event success and/or event failure callbacks to enable you to keep track on which event was successfully tracked or not. You can set this identifier by passing the `callbackId` field when tracking event:
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.trackEvent({
+    eventToken = "abc123",
+    callbackId = "Your-Custom-Id"
+})
+```
+
 ### <a id="session-parameters"></a>Session parameters
 
 Some parameters are saved to be sent with every event and session of the Adjust SDK. Once you have added any of these parameters, you don't need to add them every time, since they will be saved locally. If you add the same parameter twice, there will be no effect.
@@ -491,6 +505,7 @@ local function eventTrackingSuccessListener(event)
     print("Event token: " .. json_event_success.eventToken)
     print("Message: " .. json_event_success.message)
     print("Timestamp: " .. json_event_success.timestamp)
+    print("Callback Id: " .. json_event_success.callbackId)
     print("Adid: " .. json_event_success.adid)
     print("JSON response: " .. json_event_success.jsonResponse)
 end
@@ -520,6 +535,7 @@ local function eventTrackingFailureListener(event)
     print("Event token: " .. json_event_failure.eventToken)
     print("Message: " .. json_event_failure.message)
     print("Timestamp: " .. json_event_failure.timestamp)
+    print("Callback Id: " .. json_event_failure.callbackId)
     print("Adid: " .. json_event_failure.adid)
     print("Will retry: " .. json_event_failure.willRetry)
     print("JSON response: " .. json_event_failure.jsonResponse)
@@ -605,6 +621,7 @@ The callback functions will be called after the SDK tries to send a package to t
 Both event response data objects contain:
 
 - `var eventToken` the event token, if the package tracked was an event
+- `var callbackId` the custom defined callback ID set on event object
 
 And both event and session failed objects also contain:
 
