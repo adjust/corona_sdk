@@ -3,12 +3,11 @@
 //  Adjust SDK
 //
 //  Created by Abdullah Obaied (@obaied) on 11th September 2017.
-//  Copyright (c) 2017-2018 Adjust GmbH. All rights reserved.
+//  Copyright (c) 2017-2019 Adjust GmbH. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 #include <CoronaRuntime.h>
-
 #include "CoronaLuaIOS.h"
 #import "Adjust.h"
 #import "AdjustPlugin.h"
@@ -20,6 +19,9 @@
 #define EVENT_GET_ADID @"adjust_getAdid"
 #define EVENT_GET_GOOGLE_AD_ID @"adjust_getGoogleAdId"
 #define EVENT_GET_AMAZON_AD_ID @"adjust_getAmazonAdId"
+#define EVENT_GET_SDK_VERSION @"adjust_getSdkVersion"
+
+#define SDK_PREFIX @"corona4.17.0"
 
 // ----------------------------------------------------------------------------
 
@@ -27,22 +29,16 @@ class AdjustPlugin {
 public:
     typedef AdjustPlugin Self;
 
-public:
     static const char kName[];
     static const char kEvent[];
 
-protected:
-    AdjustPlugin();
+    void InitializeAttributionListener(CoronaLuaRef listener);
+    void InitializeEventTrackingSuccessListener(CoronaLuaRef listener);
+    void InitializeEventTrackingFailureListener(CoronaLuaRef listener);
+    void InitializeSessionTrackingSuccessListener(CoronaLuaRef listener);
+    void InitializeSessionTrackingFailureListener(CoronaLuaRef listener);
+    void InitializeDeferredDeeplinkListener(CoronaLuaRef listener);
 
-public:
-    bool InitializeAttributionListener(CoronaLuaRef listener);
-    bool InitializeEventTrackingSuccessListener(CoronaLuaRef listener);
-    bool InitializeEventTrackingFailureListener(CoronaLuaRef listener);
-    bool InitializeSessionTrackingSuccessListener(CoronaLuaRef listener);
-    bool InitializeSessionTrackingFailureListener(CoronaLuaRef listener);
-    bool InitializeDeferredDeeplinkListener(CoronaLuaRef listener);
-
-public:
     CoronaLuaRef GetAttributionChangedListener() const { return attributionChangedListener; }
     CoronaLuaRef GetEventTrackingSuccessListener() const { return eventTrackingSuccessListener; }
     CoronaLuaRef GetEventTrackingFailureListener() const { return eventTrackingFailureListener; }
@@ -50,16 +46,9 @@ public:
     CoronaLuaRef GetSessionTrackingFailureListener() const { return sessionTrackingFailureListener; }
     CoronaLuaRef GetDeferredDeeplinkListener() const { return deferredDeeplinkListener; }
 
-public:
     static int Open(lua_State *L);
-
-protected:
-    static int Finalizer(lua_State *L);
-
-public:
     static Self *ToLibrary(lua_State *L);
 
-public:
     static int create(lua_State *L);
     static int trackEvent(lua_State *L);
     static int setEnabled(lua_State *L);
@@ -75,18 +64,27 @@ public:
     static int setOfflineMode(lua_State *L);
     static int isEnabled(lua_State *L);
     static int getIdfa(lua_State *L);
+    static int getSdkVersion(lua_State *L);
     static int getAttribution(lua_State *L);
     static int getAdid(lua_State *L);
     static int getGoogleAdId(lua_State *L);
     static int getAmazonAdId(lua_State *L);
     static int gdprForgetMe(lua_State *L);
-
     static int setAttributionListener(lua_State *L);
     static int setEventTrackingSuccessListener(lua_State *L);
     static int setEventTrackingFailureListener(lua_State *L);
     static int setSessionTrackingSuccessListener(lua_State *L);
     static int setSessionTrackingFailureListener(lua_State *L);
     static int setDeferredDeeplinkListener(lua_State *L);
+
+    // For testing purposes only.
+    static int setTestOptions(lua_State *L);
+    static int onResume(lua_State *L);
+    static int onPause(lua_State *L);
+
+protected:
+    static int Finalizer(lua_State *L);
+    AdjustPlugin();
 
 private:
     CoronaLuaRef attributionChangedListener;
@@ -111,58 +109,28 @@ sessionTrackingSuccessListener(NULL),
 sessionTrackingFailureListener(NULL),
 deferredDeeplinkListener(NULL) {}
 
-bool AdjustPlugin::InitializeAttributionListener(CoronaLuaRef listener) {
-    // Can only initialize listener once.
-    bool result = (NULL == attributionChangedListener);
-    if (result) {
-        attributionChangedListener = listener;
-    }
-    return result;
+void AdjustPlugin::InitializeAttributionListener(CoronaLuaRef listener) {
+    attributionChangedListener = listener;
 }
 
-bool AdjustPlugin::InitializeEventTrackingSuccessListener(CoronaLuaRef listener) {
-    // Can only initialize listener once.
-    bool result = (NULL == eventTrackingSuccessListener);
-    if (result) {
-        eventTrackingSuccessListener = listener;
-    }
-    return result;
+void AdjustPlugin::InitializeEventTrackingSuccessListener(CoronaLuaRef listener) {
+    eventTrackingSuccessListener = listener;
 }
 
-bool AdjustPlugin::InitializeEventTrackingFailureListener(CoronaLuaRef listener) {
-    // Can only initialize listener once.
-    bool result = (NULL == eventTrackingFailureListener);
-    if (result) {
-        eventTrackingFailureListener = listener;
-    }
-    return result;
+void AdjustPlugin::InitializeEventTrackingFailureListener(CoronaLuaRef listener) {
+    eventTrackingFailureListener = listener;
 }
 
-bool AdjustPlugin::InitializeSessionTrackingSuccessListener(CoronaLuaRef listener) {
-    // Can only initialize listener once.
-    bool result = (NULL == sessionTrackingSuccessListener);
-    if (result) {
-        sessionTrackingSuccessListener = listener;
-    }
-    return result;
+void AdjustPlugin::InitializeSessionTrackingSuccessListener(CoronaLuaRef listener) {
+    sessionTrackingSuccessListener = listener;
 }
 
-bool AdjustPlugin::InitializeSessionTrackingFailureListener(CoronaLuaRef listener) {
-    // Can only initialize listener once.
-    bool result = (NULL == sessionTrackingFailureListener);
-    if (result) {
-        sessionTrackingFailureListener = listener;
-    }
-    return result;
+void AdjustPlugin::InitializeSessionTrackingFailureListener(CoronaLuaRef listener) {
+    sessionTrackingFailureListener = listener;
 }
 
-bool AdjustPlugin::InitializeDeferredDeeplinkListener(CoronaLuaRef listener) {
-    // Can only initialize listener once.
-    bool result = (NULL == deferredDeeplinkListener);
-    if (result) {
-        deferredDeeplinkListener = listener;
-    }
-    return result;
+void AdjustPlugin::InitializeDeferredDeeplinkListener(CoronaLuaRef listener) {
+    deferredDeeplinkListener = listener;
 }
 
 int
@@ -195,11 +163,15 @@ AdjustPlugin::Open(lua_State *L) {
         { "setDeferredDeeplinkListener", setDeferredDeeplinkListener },
         { "isEnabled", isEnabled },
         { "getIdfa", getIdfa },
+        { "getSdkVersion", getSdkVersion },
         { "getAttribution", getAttribution },
         { "getAdid", getAdid },
         { "getGoogleAdId", getGoogleAdId },
         { "getAmazonAdId", getAmazonAdId },
         { "gdprForgetMe", gdprForgetMe },
+        { "onResume", onResume },
+        { "onPause", onPause },
+        { "setTestOptions", setTestOptions },
 
         { NULL, NULL }
     };
@@ -233,53 +205,55 @@ AdjustPlugin * AdjustPlugin::ToLibrary(lua_State *L) {
     return library;
 }
 
+// Public API.
 int AdjustPlugin::create(lua_State *L) {
-    double delayStart = 0.0;
+    if (!lua_istable(L, 1)) {
+        return 0;
+    }
 
+    double delayStart = 0.0;
     NSUInteger secretId = -1;
     NSUInteger info1 = -1;
     NSUInteger info2 = -1;
     NSUInteger info3 = -1;
     NSUInteger info4 = -1;
-
     BOOL isDeviceKnown = NO;
     BOOL sendInBackground = NO;
     BOOL eventBufferingEnabled = NO;
     BOOL shouldLaunchDeferredDeeplink = YES;
-
     NSString *appToken = nil;
     NSString *userAgent = nil;
     NSString *environment = nil;
     NSString *defaultTracker = nil;
-
     ADJLogLevel logLevel = ADJLogLevelInfo;
 
-    if (!lua_istable(L, 1)) {
-        return 0;
-    }
-
-    // Log level
+    // Log level.
     lua_getfield(L, 1, "logLevel");
     if (!lua_isnil(L, 2)) {
-        const char *logLevel_char = lua_tostring(L, 2);
-        logLevel = [ADJLogger logLevelFromString:[[NSString stringWithUTF8String:logLevel_char] lowercaseString]];
+        const char *cstrLogLevel = lua_tostring(L, 2);
+        if (cstrLogLevel != NULL) {
+            logLevel = [ADJLogger logLevelFromString:[[NSString stringWithUTF8String:cstrLogLevel] lowercaseString]];
+        }
     }
     lua_pop(L, 1);
 
-    // App token
+    // App token.
     lua_getfield(L, 1, "appToken");
     if (!lua_isnil(L, 2)) {
-        const char *appToken_char = lua_tostring(L, 2);
-        appToken = [NSString stringWithUTF8String:appToken_char];
+        const char *cstrAppToken = lua_tostring(L, 2);
+        if (cstrAppToken != NULL) {
+            appToken = [NSString stringWithUTF8String:cstrAppToken];
+        }
     }
     lua_pop(L, 1);
 
-    // Environment
+    // Environment.
     lua_getfield(L, 1, "environment");
     if (!lua_isnil(L, 2)) {
-        const char *environment_char = lua_tostring(L, 2);
-        environment = [NSString stringWithUTF8String:environment_char];
-
+        const char *cstrEnvironment = lua_tostring(L, 2);
+        if (cstrEnvironment != NULL) {
+            environment = [NSString stringWithUTF8String:cstrEnvironment];
+        }
         if ([[environment lowercaseString] isEqualToString:@"sandbox"]) {
             environment = ADJEnvironmentSandbox;
         } else if ([[environment lowercaseString] isEqualToString:@"production"]) {
@@ -292,10 +266,13 @@ int AdjustPlugin::create(lua_State *L) {
                                                 environment:environment
                                       allowSuppressLogLevel:(logLevel == ADJLogLevelSuppress)];
 
-    // Log level
+    // Sdk prefix.
+    [adjustConfig setSdkPrefix:@"corona4.17.0"];
+
+    // Log level.
     [adjustConfig setLogLevel:logLevel];
 
-    // Event Buffering
+    // Event buffering.
     lua_getfield(L, 1, "eventBufferingEnabled");
     if (!lua_isnil(L, 2)) {
         eventBufferingEnabled = lua_toboolean(L, 2);
@@ -303,28 +280,29 @@ int AdjustPlugin::create(lua_State *L) {
     }
     lua_pop(L, 1);
 
-    // Sdk prefix - hardcoded
-    [adjustConfig setSdkPrefix:@"corona4.14.0"];
-
-    // Default tracker
+    // Default tracker.
     lua_getfield(L, 1, "defaultTracker");
     if (!lua_isnil(L, 2)) {
-        const char *defaultTracker_char = lua_tostring(L, 2);
-        defaultTracker = [NSString stringWithUTF8String:defaultTracker_char];
+        const char *cstrDefaultTracker = lua_tostring(L, 2);
+        if (cstrDefaultTracker != NULL) {
+            defaultTracker = [NSString stringWithUTF8String:cstrDefaultTracker];
+        }
         [adjustConfig setDefaultTracker:defaultTracker];
     }
     lua_pop(L, 1);
 
-    // User agent
+    // User agent.
     lua_getfield(L, 1, "userAgent");
     if (!lua_isnil(L, 2)) {
-        const char *userAgent_char = lua_tostring(L, 2);
-        userAgent = [NSString stringWithUTF8String:userAgent_char];
+        const char *cstrUserAgent = lua_tostring(L, 2);
+        if (cstrUserAgent != NULL) {
+            userAgent = [NSString stringWithUTF8String:cstrUserAgent];
+        }
         [adjustConfig setUserAgent:userAgent];
     }
     lua_pop(L, 1);
 
-    // Send in background
+    // Send in background.
     lua_getfield(L, 1, "sendInBackground");
     if (!lua_isnil(L, 2)) {
         sendInBackground = lua_toboolean(L, 2);
@@ -332,14 +310,14 @@ int AdjustPlugin::create(lua_State *L) {
     }
     lua_pop(L, 1);
 
-    // Launching deferred deep link
+    // Launching deferred deep link.
     lua_getfield(L, 1, "shouldLaunchDeeplink");
     if (!lua_isnil(L, 2)) {
         shouldLaunchDeferredDeeplink = lua_toboolean(L, 2);
     }
     lua_pop(L, 1);
 
-    // Delay start
+    // Delay start.
     lua_getfield(L, 1, "delayStart");
     if (!lua_isnil(L, 2)) {
         delayStart = lua_tonumber(L, 2);
@@ -347,7 +325,7 @@ int AdjustPlugin::create(lua_State *L) {
     }
     lua_pop(L, 1);
 
-    // Device known
+    // Device known.
     lua_getfield(L, 1, "isDeviceKnown");
     if (!lua_isnil(L, 2)) {
         isDeviceKnown = lua_toboolean(L, 2);
@@ -355,7 +333,7 @@ int AdjustPlugin::create(lua_State *L) {
     }
     lua_pop(L, 1);
 
-    // App secret
+    // App secret.
     lua_getfield(L, 1, "secretId");
     if (!lua_isnil(L, 2)) {
         secretId = lua_tointeger(L, 2);
@@ -386,6 +364,7 @@ int AdjustPlugin::create(lua_State *L) {
         [adjustConfig setAppSecret:secretId info1:info1 info2:info2 info3:info3 info4:info4];
     }
 
+    // Callbacks.
     Self *library = ToLibrary(L);
     BOOL isAttributionChangedListenerImplmented = library->GetAttributionChangedListener() != NULL;
     BOOL isEventTrackingSuccessListenerImplmented = library->GetEventTrackingSuccessListener() != NULL;
@@ -415,6 +394,7 @@ int AdjustPlugin::create(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::trackEvent(lua_State *L) {
     if (!lua_istable(L, 1)) {
         return 0;
@@ -424,29 +404,34 @@ int AdjustPlugin::trackEvent(lua_State *L) {
     NSString *currency = nil;
     NSString *eventToken = nil;
     NSString *transactionId = nil;
+    NSString *callbackId = nil;
 
-    // Event token
+    // Event token.
     lua_getfield(L, 1, "eventToken");
     if (!lua_isnil(L, 2)) {
-        const char *eventToken_char = lua_tostring(L, 2);
-        eventToken = [NSString stringWithUTF8String:eventToken_char];
+        const char *cstrEventToken = lua_tostring(L, 2);
+        if (cstrEventToken != NULL) {
+            eventToken = [NSString stringWithUTF8String:cstrEventToken];
+        }
     }
     lua_pop(L, 1);
 
     ADJEvent *event = [ADJEvent eventWithEventToken:eventToken];
 
-    // Revenue
+    // Revenue.
     lua_getfield(L, 1, "revenue");
     if (!lua_isnil(L, 2)) {
         revenue = lua_tonumber(L, 2);
     }
     lua_pop(L, 1);
 
-    // Currency
+    // Currency.
     lua_getfield(L, 1, "currency");
     if (!lua_isnil(L, 2)) {
-        const char *currency_char = lua_tostring(L, 2);
-        currency = [NSString stringWithUTF8String:currency_char];
+        const char *cstrCurrency = lua_tostring(L, 2);
+        if (cstrCurrency != NULL) {
+            currency = [NSString stringWithUTF8String:cstrCurrency];
+        }
     }
     lua_pop(L, 1);
 
@@ -454,16 +439,29 @@ int AdjustPlugin::trackEvent(lua_State *L) {
         [event setRevenue:revenue currency:currency];
     }
 
-    // Transaction ID
+    // Transaction ID.
     lua_getfield(L, 1, "transactionId");
     if (!lua_isnil(L, 2)) {
-        const char *transactionId_char = lua_tostring(L, 2);
-        transactionId = [NSString stringWithUTF8String:transactionId_char];
+        const char *cstrTransactionId = lua_tostring(L, 2);
+        if (cstrTransactionId != NULL) {
+            transactionId = [NSString stringWithUTF8String:cstrTransactionId];
+        }
         [event setTransactionId:transactionId];
     }
     lua_pop(L, 1);
 
-    // Callback parameters
+    // Callback ID.
+    lua_getfield(L, 1, "callbackId");
+    if (!lua_isnil(L, 2)) {
+        const char *cstrCallbackId = lua_tostring(L, 2);
+        if (cstrCallbackId != NULL) {
+            callbackId = [NSString stringWithUTF8String:cstrCallbackId];
+        }
+        [event setCallbackId:callbackId];
+    }
+    lua_pop(L, 1);
+
+    // Callback parameters.
     lua_getfield(L, 1, "callbackParameters");
     if (!lua_isnil(L, 2) && lua_istable(L, 2)) {
         NSDictionary *dict = CoronaLuaCreateDictionary(L, 2);
@@ -474,7 +472,7 @@ int AdjustPlugin::trackEvent(lua_State *L) {
     }
     lua_pop(L, 1);
 
-    // Partner Parameters
+    // Partner parameters.
     lua_getfield(L, 1, "partnerParameters");
     if (!lua_isnil(L, 2) && lua_istable(L, 2)) {
         NSDictionary *dict = CoronaLuaCreateDictionary(L, 2);
@@ -489,6 +487,7 @@ int AdjustPlugin::trackEvent(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::setAttributionListener(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -499,6 +498,7 @@ int AdjustPlugin::setAttributionListener(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::setEventTrackingSuccessListener(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -509,6 +509,7 @@ int AdjustPlugin::setEventTrackingSuccessListener(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::setEventTrackingFailureListener(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -519,6 +520,7 @@ int AdjustPlugin::setEventTrackingFailureListener(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::setSessionTrackingSuccessListener(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -529,6 +531,7 @@ int AdjustPlugin::setSessionTrackingSuccessListener(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::setSessionTrackingFailureListener(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -539,6 +542,7 @@ int AdjustPlugin::setSessionTrackingFailureListener(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::setDeferredDeeplinkListener(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -549,73 +553,97 @@ int AdjustPlugin::setDeferredDeeplinkListener(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::setEnabled(lua_State *L) {
     BOOL enabled = lua_toboolean(L, 1);
     [Adjust setEnabled:enabled];
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::setPushToken(lua_State *L) {
-    const char *pushToken_char = lua_tostring(L, 1);
-    NSString *pushToken =[NSString stringWithUTF8String:pushToken_char];
-    [Adjust setPushToken:pushToken];
+    const char *cstrPushToken = lua_tostring(L, 1);
+    if (cstrPushToken != NULL) {
+        NSString *pushToken =[NSString stringWithUTF8String:cstrPushToken];
+        [Adjust setPushToken:pushToken];
+    }
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::appWillOpenUrl(lua_State *L) {
-    const char *urlStr = lua_tostring(L, 1);
-    NSURL *url = [NSURL URLWithString:[NSString stringWithUTF8String:urlStr]];
-    [Adjust appWillOpenUrl:url];
+    const char *cstrUrl = lua_tostring(L, 1);
+    if (cstrUrl != NULL) {
+        NSURL *url = [NSURL URLWithString:[NSString stringWithUTF8String:cstrUrl]];
+        [Adjust appWillOpenUrl:url];
+    }
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::sendFirstPackages(lua_State *L) {
     [Adjust sendFirstPackages];
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::addSessionCallbackParameter(lua_State *L) {
     const char *key = lua_tostring(L, 1);
     const char *value = lua_tostring(L, 2);
-    [Adjust addSessionCallbackParameter:[NSString stringWithUTF8String:key] value:[NSString stringWithUTF8String:value]];
+    if (key != NULL && value != NULL) {
+        [Adjust addSessionCallbackParameter:[NSString stringWithUTF8String:key] value:[NSString stringWithUTF8String:value]];
+    }
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::addSessionPartnerParameter(lua_State *L) {
     const char *key = lua_tostring(L, 1);
     const char *value = lua_tostring(L, 2);
-    [Adjust addSessionPartnerParameter:[NSString stringWithUTF8String:key] value:[NSString stringWithUTF8String:value]];
+    if (key != NULL && value != NULL) {
+        [Adjust addSessionPartnerParameter:[NSString stringWithUTF8String:key] value:[NSString stringWithUTF8String:value]];
+    }
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::removeSessionCallbackParameter(lua_State *L) {
     const char *key = lua_tostring(L, 1);
-    [Adjust removeSessionCallbackParameter:[NSString stringWithUTF8String:key]];
+    if (key != NULL) {
+        [Adjust removeSessionCallbackParameter:[NSString stringWithUTF8String:key]];
+    }
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::removeSessionPartnerParameter(lua_State *L) {
     const char *key = lua_tostring(L, 1);
-    [Adjust removeSessionPartnerParameter:[NSString stringWithUTF8String:key]];
+    if (key != NULL) {
+        [Adjust removeSessionPartnerParameter:[NSString stringWithUTF8String:key]];
+    }
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::resetSessionCallbackParameters(lua_State *L) {
     [Adjust resetSessionCallbackParameters];
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::resetSessionPartnerParameters(lua_State *L) {
     [Adjust resetSessionPartnerParameters];
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::setOfflineMode(lua_State *L) {
     BOOL enabled = lua_toboolean(L, 1);
     [Adjust setOfflineMode:enabled];
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::isEnabled(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -627,6 +655,7 @@ int AdjustPlugin::isEnabled(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::getIdfa(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -640,6 +669,21 @@ int AdjustPlugin::getIdfa(lua_State *L) {
     return 0;
 }
 
+// Public API.
+int AdjustPlugin::getSdkVersion(lua_State *L) {
+    int listenerIndex = 1;
+    if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
+        CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
+        NSString *sdkVersion = [Adjust sdkVersion];
+        if (sdkVersion == nil) {
+            sdkVersion = @"";
+        }
+        [AdjustSdkDelegate dispatchEvent:EVENT_GET_SDK_VERSION withState:L callback:listener andMessage:[NSString stringWithFormat:@"%@@%@", SDK_PREFIX, sdkVersion]];
+    }
+    return 0;
+}
+
+// Public API.
 int AdjustPlugin::getAttribution(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -671,6 +715,7 @@ int AdjustPlugin::getAttribution(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::getAdid(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -684,6 +729,7 @@ int AdjustPlugin::getAdid(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::getGoogleAdId(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -694,6 +740,7 @@ int AdjustPlugin::getGoogleAdId(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::getAmazonAdId(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -704,8 +751,127 @@ int AdjustPlugin::getAmazonAdId(lua_State *L) {
     return 0;
 }
 
+// Public API.
 int AdjustPlugin::gdprForgetMe(lua_State *L) {
     [Adjust gdprForgetMe];
+    return 0;
+}
+
+// For testing purposes only.
+int AdjustPlugin::onResume(lua_State *L) {
+    const char *key = lua_tostring(L, 1);
+    if (key != NULL && [[NSString stringWithUTF8String:key] isEqualToString:@"test"]) {
+        [Adjust trackSubsessionStart];
+    }
+    return 0;
+}
+
+// For testing purposes only.
+int AdjustPlugin::onPause(lua_State *L) {
+    const char *key = lua_tostring(L, 1);
+    if (key != NULL && [[NSString stringWithUTF8String:key] isEqualToString:@"test"]) {
+        [Adjust trackSubsessionEnd];
+    }
+    return 0;
+}
+
+// For testing purposes only.
+int AdjustPlugin::setTestOptions(lua_State *L) {
+    AdjustTestOptions *testOptions = [[AdjustTestOptions alloc] init];
+    
+    lua_getfield(L, 1, "baseUrl");
+    if (!lua_isnil(L, 2)) {
+        const char *baseUrl = lua_tostring(L, 2);
+        if (baseUrl != NULL) {
+            testOptions.baseUrl = [NSString stringWithUTF8String:baseUrl];
+        }
+    }
+    lua_pop(L, 1);
+    
+    lua_getfield(L, 1, "gdprUrl");
+    if (!lua_isnil(L, 2)) {
+        const char *gdprUrl = lua_tostring(L, 2);
+        if (gdprUrl != NULL) {
+            testOptions.gdprUrl = [NSString stringWithUTF8String:gdprUrl];
+        }
+    }
+    lua_pop(L, 1);
+    
+    lua_getfield(L, 1, "basePath");
+    if (!lua_isnil(L, 2)) {
+        const char *basePath = lua_tostring(L, 2);
+        if (basePath != NULL) {
+            testOptions.basePath = [NSString stringWithUTF8String:basePath];
+        }
+    }
+    lua_pop(L, 1);
+    
+    lua_getfield(L, 1, "gdprPath");
+    if (!lua_isnil(L, 2)) {
+        const char *gdprPath = lua_tostring(L, 2);
+        if (gdprPath != NULL) {
+            testOptions.gdprPath = [NSString stringWithUTF8String:gdprPath];
+        }
+    }
+    lua_pop(L, 1);
+    
+    lua_getfield(L, 1, "timerIntervalInMilliseconds");
+    if (!lua_isnil(L, 2)) {
+        NSUInteger timerIntervalInMilliseconds = lua_tointeger(L, 2);
+        testOptions.timerIntervalInMilliseconds = [NSNumber numberWithInteger:timerIntervalInMilliseconds];
+    }
+    lua_pop(L, 1);
+    
+    lua_getfield(L, 1, "timerStartInMilliseconds");
+    if (!lua_isnil(L, 2)) {
+        NSUInteger timerStartInMilliseconds = lua_tointeger(L, 2);
+        testOptions.timerStartInMilliseconds = [NSNumber numberWithInteger:timerStartInMilliseconds];
+    }
+    lua_pop(L, 1);
+    
+    lua_getfield(L, 1, "sessionIntervalInMilliseconds");
+    if (!lua_isnil(L, 2)) {
+        NSUInteger sessionIntervalInMilliseconds = lua_tointeger(L, 2);
+        testOptions.sessionIntervalInMilliseconds = [NSNumber numberWithInteger:sessionIntervalInMilliseconds];
+    }
+    lua_pop(L, 1);
+    
+    lua_getfield(L, 1, "subsessionIntervalInMilliseconds");
+    if (!lua_isnil(L, 2)) {
+        NSUInteger subsessionIntervalInMilliseconds = lua_tointeger(L, 2);
+        testOptions.subsessionIntervalInMilliseconds = [NSNumber numberWithInteger:subsessionIntervalInMilliseconds];
+    }
+    lua_pop(L, 1);
+    
+    lua_getfield(L, 1, "teardown");
+    if (!lua_isnil(L, 2)) {
+        testOptions.teardown = lua_toboolean(L, 2);
+        if(testOptions.teardown) {
+            NSLog(@"[Adjust][bridge]: AdjustSdkDelegate callbacks teardown.");
+            [AdjustSdkDelegate teardown];
+        }
+    }
+    lua_pop(L, 1);
+    
+    lua_getfield(L, 1, "deleteState");
+    if (!lua_isnil(L, 2)) {
+        testOptions.deleteState = lua_toboolean(L, 2);
+    }
+    lua_pop(L, 1);
+    
+    lua_getfield(L, 1, "noBackoffWait");
+    if (!lua_isnil(L, 2)) {
+        testOptions.noBackoffWait = lua_toboolean(L, 2);
+    }
+    lua_pop(L, 1);
+
+    lua_getfield(L, 1, "iAdFrameworkEnabled");
+    if (!lua_isnil(L, 2)) {
+        testOptions.iAdFrameworkEnabled = lua_toboolean(L, 2);
+    }
+    lua_pop(L, 1);
+
+    [Adjust setTestOptions:testOptions];
     return 0;
 }
 

@@ -40,7 +40,7 @@ local function sessionTrackingSuccessListener(event)
     print("[Adjust]: Message: " .. json_session_success.message)
     print("[Adjust]: Timestamp: " .. json_session_success.timestamp)
     print("[Adjust]: Adid: " .. json_session_success.adid)
-    print("[Adjust]: JSON response: " .. json_session_success.jsonResponse)
+    print("[Adjust]: JSON response: " .. json.encode(json_session_success.jsonResponse))
 end
 
 local function sessionTrackingFailureListener(event)
@@ -50,7 +50,7 @@ local function sessionTrackingFailureListener(event)
     print("[Adjust]: Timestamp: " .. json_session_failure.timestamp)
     print("[Adjust]: Adid: " .. json_session_failure.adid)
     print("[Adjust]: Will retry: " .. json_session_failure.adid)
-    print("[Adjust]: JSON response: " .. json_session_failure.jsonResponse)
+    print("[Adjust]: JSON response: " .. json.encode(json_session_failure.jsonResponse))
 end
 
 local function eventTrackingSuccessListener(event)
@@ -60,7 +60,7 @@ local function eventTrackingSuccessListener(event)
     print("[Adjust]: Message: " .. json_event_success.message)
     print("[Adjust]: Timestamp: " .. json_event_success.timestamp)
     print("[Adjust]: Adid: " .. json_event_success.adid)
-    print("[Adjust]: JSON response: " .. json_event_success.jsonResponse)
+    print("[Adjust]: JSON response: " .. json.encode(json_event_success.jsonResponse))
 end
 
 local function eventTrackingFailureListener(event)
@@ -71,7 +71,7 @@ local function eventTrackingFailureListener(event)
     print("[Adjust]: Timestamp: " .. json_event_failure.timestamp)
     print("[Adjust]: Adid: " .. json_event_failure.adid)
     print("[Adjust]: Will retry: " .. json_event_failure.willRetry)
-    print("[Adjust]: JSON response: " .. json_event_failure.jsonResponse)
+    print("[Adjust]: JSON response: " .. json.encode(json_event_failure.jsonResponse))
 end
 
 local function deferredDeeplinkListener(event)

@@ -3,21 +3,19 @@
 //  Adjust SDK
 //
 //  Created by Abdullah Obaied (@obaied) on 14th September 2017.
-//  Copyright (c) 2017-2018 Adjust GmbH. All rights reserved.
+//  Copyright (c) 2017-2019 Adjust GmbH. All rights reserved.
 //
 
 package plugin.adjust;
 
 import android.net.Uri;
-
+import java.util.Map;
+import java.util.HashMap;
 import com.adjust.sdk.AdjustAttribution;
 import com.adjust.sdk.AdjustEventFailure;
 import com.adjust.sdk.AdjustEventSuccess;
 import com.adjust.sdk.AdjustSessionFailure;
 import com.adjust.sdk.AdjustSessionSuccess;
-
-import java.util.HashMap;
-import java.util.Map;
 
 final public class LuaUtil {
     private static final String ATTRIBUTION_TRACKER_TOKEN = "trackerToken";
@@ -33,12 +31,14 @@ final public class LuaUtil {
     private static final String EVENT_SUCCESS_TIMESTAMP = "timestamp";
     private static final String EVENT_SUCCESS_ADID = "adid";
     private static final String EVENT_SUCCESS_EVENT_TOKEN = "eventToken";
+    private static final String EVENT_SUCCESS_CALLBACK_ID = "callbackId";
     private static final String EVENT_SUCCESS_JSON_RESPONSE = "jsonResponse";
 
     private static final String EVENT_FAILED_MESSAGE = "message";
     private static final String EVENT_FAILED_TIMESTAMP = "timestamp";
     private static final String EVENT_FAILED_ADID = "adid";
     private static final String EVENT_FAILED_EVENT_TOKEN = "eventToken";
+    private static final String EVENT_FAILED_CALLBACK_ID = "callbackId";
     private static final String EVENT_FAILED_WILL_RETRY = "willRetry";
     private static final String EVENT_FAILED_JSON_RESPONSE = "jsonResponse";
 
@@ -52,6 +52,8 @@ final public class LuaUtil {
     private static final String SESSION_FAILED_ADID = "adid";
     private static final String SESSION_FAILED_WILL_RETRY = "willRetry";
     private static final String SESSION_FAILED_JSON_RESPONSE = "jsonResponse";
+
+    private static final String DEEPLINK_URI = "uri";
 
     public static Map attributionToMap(AdjustAttribution attribution) {
         Map map = new HashMap();
@@ -80,6 +82,7 @@ final public class LuaUtil {
         map.put(EVENT_SUCCESS_TIMESTAMP, null != eventSuccess.timestamp ? eventSuccess.timestamp : "");
         map.put(EVENT_SUCCESS_ADID, null != eventSuccess.adid ? eventSuccess.adid : "");
         map.put(EVENT_SUCCESS_EVENT_TOKEN, null != eventSuccess.eventToken ? eventSuccess.eventToken : "");
+        map.put(EVENT_SUCCESS_CALLBACK_ID, null != eventSuccess.callbackId ? eventSuccess.callbackId : "");
         map.put(EVENT_SUCCESS_JSON_RESPONSE, null != eventSuccess.jsonResponse ? eventSuccess.jsonResponse.toString() : "");
         return map;
     }
@@ -94,6 +97,7 @@ final public class LuaUtil {
         map.put(EVENT_FAILED_TIMESTAMP, null != eventFailure.timestamp ? eventFailure.timestamp : "");
         map.put(EVENT_FAILED_ADID, null != eventFailure.adid ? eventFailure.adid : "");
         map.put(EVENT_FAILED_EVENT_TOKEN, null != eventFailure.eventToken ? eventFailure.eventToken : "");
+        map.put(EVENT_FAILED_CALLBACK_ID, null != eventFailure.callbackId ? eventFailure.callbackId : "");
         map.put(EVENT_FAILED_WILL_RETRY, eventFailure.willRetry ? "true" : "false");
         map.put(EVENT_FAILED_JSON_RESPONSE, null != eventFailure.jsonResponse ? eventFailure.jsonResponse.toString() : "");
         return map;
@@ -132,7 +136,7 @@ final public class LuaUtil {
             return map;
         }
 
-        map.put("uri", uri.toString());
+        map.put(DEEPLINK_URI, uri.toString());
         return map;
     }
 }

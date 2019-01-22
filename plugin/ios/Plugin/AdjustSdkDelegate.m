@@ -3,11 +3,14 @@
 //  Adjust SDK
 //
 //  Created by Abdullah Obaied (@obaied) on 11th September 2017.
-//  Copyright (c) 2017-2018 Adjust GmbH. All rights reserved.
+//  Copyright (c) 2017-2019 Adjust GmbH. All rights reserved.
 //
 
 #import <objc/runtime.h>
 #import "AdjustSdkDelegate.h"
+
+static dispatch_once_t onceToken;
+static AdjustSdkDelegate *defaultInstance = nil;
 
 @implementation AdjustSdkDelegate
 
@@ -26,6 +29,7 @@ NSString * const KEY_TIMESTAMP = @"timestamp";
 NSString * const KEY_EVENT_TOKEN = @"eventToken";
 NSString * const KEY_JSON_RESPONSE = @"jsonResponse";
 NSString * const KEY_WILL_RETRY = @"willRetry";
+NSString * const KEY_CALLBACK_ID = @"callbackId";
 
 #pragma mark - Object lifecycle methods
 
@@ -47,9 +51,6 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
                                 deferredDeeplinkCallback:(CoronaLuaRef)deferredDeeplinkCallback
                             shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink
                                              andLuaState:(lua_State *)luaState {
-    static dispatch_once_t onceToken;
-    static AdjustSdkDelegate *defaultInstance = nil;
-
     dispatch_once(&onceToken, ^{
         defaultInstance = [[AdjustSdkDelegate alloc] init];
 
@@ -90,6 +91,11 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
     });
 
     return defaultInstance;
+}
+
++ (void)teardown {
+    defaultInstance = nil;
+    onceToken = 0;
 }
 
 + (void)dispatchEvent:(NSString *)eventName
@@ -156,7 +162,9 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
     [AdjustSdkDelegate addKey:KEY_MESSAGE andValue:sessionSuccessResponseData.message toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:sessionSuccessResponseData.timeStamp toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_ADID andValue:sessionSuccessResponseData.adid toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_JSON_RESPONSE andValue:sessionSuccessResponseData.jsonResponse toDictionary:dictionary];
+    if (sessionSuccessResponseData.jsonResponse != nil) {
+        [dictionary setObject:sessionSuccessResponseData.jsonResponse forKey:KEY_JSON_RESPONSE];
+    }
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
@@ -183,7 +191,9 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
     [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:sessionFailureResponseData.timeStamp toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_ADID andValue:sessionFailureResponseData.adid toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_WILL_RETRY andValue:(sessionFailureResponseData.willRetry ? @"true" : @"false") toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_JSON_RESPONSE andValue:sessionFailureResponseData.jsonResponse toDictionary:dictionary];
+    if (sessionFailureResponseData.jsonResponse != nil) {
+        [dictionary setObject:sessionFailureResponseData.jsonResponse forKey:KEY_JSON_RESPONSE];
+    }
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
@@ -210,7 +220,10 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
     [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:eventSuccessResponseData.timeStamp toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_ADID andValue:eventSuccessResponseData.adid toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_EVENT_TOKEN andValue:eventSuccessResponseData.eventToken toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_JSON_RESPONSE andValue:eventSuccessResponseData.jsonResponse toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:KEY_CALLBACK_ID andValue:eventSuccessResponseData.callbackId toDictionary:dictionary];
+    if (eventSuccessResponseData.jsonResponse != nil) {
+        [dictionary setObject:eventSuccessResponseData.jsonResponse forKey:KEY_JSON_RESPONSE];
+    }
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
@@ -237,8 +250,11 @@ NSString * const KEY_WILL_RETRY = @"willRetry";
     [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:eventFailureResponseData.timeStamp toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_ADID andValue:eventFailureResponseData.adid toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_EVENT_TOKEN andValue:eventFailureResponseData.eventToken toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:KEY_CALLBACK_ID andValue:eventFailureResponseData.callbackId toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_WILL_RETRY andValue:(eventFailureResponseData.willRetry ? @"true" : @"false") toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_JSON_RESPONSE andValue:eventFailureResponseData.jsonResponse toDictionary:dictionary];
+    if (eventFailureResponseData.jsonResponse != nil) {
+        [dictionary setObject:eventFailureResponseData.jsonResponse forKey:KEY_JSON_RESPONSE];
+    }
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
