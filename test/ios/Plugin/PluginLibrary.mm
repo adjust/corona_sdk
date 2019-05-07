@@ -76,17 +76,20 @@ int PluginLibrary::initTestLibrary(lua_State *L) {
     const char *baseUrlCStr = lua_tostring(L, 1);
     NSString *baseUrl = [NSString stringWithUTF8String:baseUrlCStr];
     
-    NSLog(@"[TestLibrary][bridge]: Init test library with base URL: %@", baseUrl);
+    const char *controlUrlCStr = lua_tostring(L, 2);
+    NSString *controlUrl = [NSString stringWithUTF8String:controlUrlCStr];
     
-    if (CoronaLuaIsListener(L, 2, kEvent))
+    NSLog(@"[TestLibrary][bridge]: Init test library with base URL: [%@] and control URL: [%@]", baseUrl, controlUrl);
+    
+    if (CoronaLuaIsListener(L, 3, kEvent))
     {
         Self *library = ToLibrary(L);
-        CoronaLuaRef listener = CoronaLuaNewRef(L, 2);
+        CoronaLuaRef listener = CoronaLuaNewRef(L, 3);
         library->InitExecuteCommandListener(listener);
     }
     
     TestLibCommandExecutor *commandExecutor = [[TestLibCommandExecutor alloc] initWithPluginLibrary:library];
-    library->testLibrary = [ATLTestLibrary testLibraryWithBaseUrl:baseUrl andCommandDelegate:commandExecutor];
+    library->testLibrary = [ATLTestLibrary testLibraryWithBaseUrl:baseUrl andControlUrl:controlUrl andCommandDelegate:commandExecutor];
     
     NSLog(@"[TestLibrary][bridge]: Test library initialization completed.");
     return 0;
