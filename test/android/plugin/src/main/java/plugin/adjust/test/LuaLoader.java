@@ -179,8 +179,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 	public int testLib_initTestLibrary(final LuaState L) {
 		Log.d(TAG, "Initialisation of test library started...");
 		String baseUrl = L.checkString(1);
-		if (CoronaLua.isListener(L, 2, "ADJUST")) {
-			this.executeCommandListener = CoronaLua.newRef(L, 2);
+		String controlUrl = L.checkString(2);
+		if (CoronaLua.isListener(L, 3, "ADJUST")) {
+			this.executeCommandListener = CoronaLua.newRef(L, 3);
 		}
 
 		ICommandJsonListener coronaCommandJsonListener = new CoronaCommandJsonListener(new OnExecuteCommandListener() {
@@ -198,7 +199,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 			}
 		});
 
-		this.testLibrary = new TestLibrary(baseUrl, coronaCommandJsonListener);
+		this.testLibrary = new TestLibrary(baseUrl, controlUrl, coronaCommandJsonListener);
 		Log.d(TAG, "Test library initialisation finished.");
 		return 0;
 	}
