@@ -60,6 +60,7 @@ function CommandExecutor:executeCommand(command)
     elseif method == "openDeeplink" then self:openDeeplink()
     elseif method == "sendReferrer" then self:sendReferrer()
     elseif method == "gdprForgetMe" then self:gdprForgetMe()
+    elseif method == "trackAdRevenue" then self:trackAdRevenue()
         
     else print("CommandExecutor: unknown method name: " .. method)
     end
@@ -570,6 +571,12 @@ end
 
 function CommandExecutor:gdprForgetMe()
     adjust.gdprForgetMe()
+end
+
+function CommandExecutor:trackAdRevenue()
+    local source = self.command:getFirstParameterValue("adRevenueSource")
+    local payload = self.command:getFirstParameterValue("adRevenueJsonString")
+    adjust.trackAdRevenue(source, payload)
 end
    
 function CommandExecutor:clearSavedConfigsAndEvents()

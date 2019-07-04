@@ -36,14 +36,15 @@ local protocol
 local port
 if platformInfo == "ios" then
     protocol = "http"
-    port = "8080"
+    port = "9000"
 else
     protocol = "https"
     port = "8443"
 end
-local baseIp = "192.168.8.85"
+local baseIp = "192.168.8.210"
 local baseUrl = protocol .. "://" .. baseIp .. ":" .. port
 local gdprUrl = protocol .. "://" .. baseIp .. ":" .. port
+local controlUrl = "ws://" .. baseIp .. ":1987";
 print("[TestApp]: Using BaseUrl: [" .. baseUrl .. "]--")
 local commandExecutor = command_executor.CommandExecutor:new(nil, baseUrl, gdprUrl)
 
@@ -61,7 +62,7 @@ local function executeCommand(event)
 end
 
 print("[TestApp]: Create and init test lib....")
-testLib.initTestLibrary(baseUrl, executeCommand)
+testLib.initTestLibrary(baseUrl, controlUrl, executeCommand)
 command_executor.setTestLib(testLib)
 command_executor.setPlatform(platformInfo)
 

@@ -46,9 +46,9 @@ def build_testapp(dir_root):
     copy_file('{0}/adjust-sdk-release.jar'.format(dir_jar_in_sdk), '{0}/adjust-android.jar'.format(dir_jar_out_sdk))
 
     # ------------------------------------------------------------------
-    # Running Gradle tasks: clean testlibrary:adjustMakeJarDebug ...
-    debug_green('Running Gradle tasks: clean test-library:adjustMakeJarDebug ...')
-    gradle_run([':test-library:adjustMakeJarDebug'])
+    # Running Gradle tasks: clean testlibrary:adjustTestLibraryJarDebug ...
+    debug_green('Running Gradle tasks: clean test-library:adjustTestLibraryJarDebug ...')
+    gradle_run([':test-library:adjustTestLibraryJarDebug'])
 
     # ------------------------------------------------------------------
     # Copy Adjust Test Library JAR.

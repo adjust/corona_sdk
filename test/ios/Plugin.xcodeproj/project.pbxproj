@@ -25,13 +25,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		52DCB89B2281BAC2005A3092 /* ATLControlSignal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATLControlSignal.h; path = Plugin/ATLControlSignal.h; sourceTree = "<group>"; };
+		52DCB89C2281BAC2005A3092 /* ATLConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATLConstants.h; path = Plugin/ATLConstants.h; sourceTree = "<group>"; };
+		52DCB89D2281BAC2005A3092 /* ATLControlWebSocketClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATLControlWebSocketClient.h; path = Plugin/ATLControlWebSocketClient.h; sourceTree = "<group>"; };
+		52DCB89E2281BAC3005A3092 /* ATLUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATLUtil.h; path = Plugin/ATLUtil.h; sourceTree = "<group>"; };
+		52DCB89F2281BAC3005A3092 /* ATLTestInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATLTestInfo.h; path = Plugin/ATLTestInfo.h; sourceTree = "<group>"; };
+		52DCB8A02281BAC3005A3092 /* ATLUtilNetworking.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATLUtilNetworking.h; path = Plugin/ATLUtilNetworking.h; sourceTree = "<group>"; };
+		52DCB8A12281BAC3005A3092 /* ATLTestLibrary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATLTestLibrary.h; path = Plugin/ATLTestLibrary.h; sourceTree = "<group>"; };
 		9DD2999921F717390054DA79 /* ATLBlockingQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATLBlockingQueue.h; path = Plugin/ATLBlockingQueue.h; sourceTree = "<group>"; };
-		9DD2999A21F717390054DA79 /* ATLControlChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATLControlChannel.h; path = Plugin/ATLControlChannel.h; sourceTree = "<group>"; };
-		9DD2999B21F717390054DA79 /* ATLTestLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATLTestLibrary.h; path = Plugin/ATLTestLibrary.h; sourceTree = "<group>"; };
-		9DD2999C21F717390054DA79 /* ATLConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATLConstants.h; path = Plugin/ATLConstants.h; sourceTree = "<group>"; };
-		9DD2999D21F717390054DA79 /* ATLUtilNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATLUtilNetworking.h; path = Plugin/ATLUtilNetworking.h; sourceTree = "<group>"; };
-		9DD2999E21F717390054DA79 /* ATLUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATLUtil.h; path = Plugin/ATLUtil.h; sourceTree = "<group>"; };
-		9DD2999F21F717390054DA79 /* ATLTestInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATLTestInfo.h; path = Plugin/ATLTestInfo.h; sourceTree = "<group>"; };
 		9DD299A021F717430054DA79 /* PluginLibrary.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PluginLibrary.mm; path = Plugin/PluginLibrary.mm; sourceTree = "<group>"; };
 		9DD299A121F717430054DA79 /* TestLibCommandExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestLibCommandExecutor.h; path = Plugin/TestLibCommandExecutor.h; sourceTree = "<group>"; };
 		9DD299A221F717430054DA79 /* TestLibCommandExecutor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestLibCommandExecutor.mm; path = Plugin/TestLibCommandExecutor.mm; sourceTree = "<group>"; };
@@ -57,12 +58,13 @@
 			isa = PBXGroup;
 			children = (
 				9DD2999921F717390054DA79 /* ATLBlockingQueue.h */,
-				9DD2999C21F717390054DA79 /* ATLConstants.h */,
-				9DD2999A21F717390054DA79 /* ATLControlChannel.h */,
-				9DD2999F21F717390054DA79 /* ATLTestInfo.h */,
-				9DD2999B21F717390054DA79 /* ATLTestLibrary.h */,
-				9DD2999E21F717390054DA79 /* ATLUtil.h */,
-				9DD2999D21F717390054DA79 /* ATLUtilNetworking.h */,
+				52DCB89C2281BAC2005A3092 /* ATLConstants.h */,
+				52DCB89B2281BAC2005A3092 /* ATLControlSignal.h */,
+				52DCB89D2281BAC2005A3092 /* ATLControlWebSocketClient.h */,
+				52DCB89F2281BAC3005A3092 /* ATLTestInfo.h */,
+				52DCB8A12281BAC3005A3092 /* ATLTestLibrary.h */,
+				52DCB89E2281BAC3005A3092 /* ATLUtil.h */,
+				52DCB8A02281BAC3005A3092 /* ATLUtilNetworking.h */,
 			);
 			name = TestLibrary;
 			sourceTree = "<group>";
@@ -140,13 +142,14 @@
 		A484111015114F700074BD57 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1010;
+				LastUpgradeCheck = 1020;
 			};
 			buildConfigurationList = A484111315114F700074BD57 /* Build configuration list for PBXProject "Plugin" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = A484110E15114F700074BD57;
@@ -195,6 +198,7 @@
 			baseConfigurationReference = F572F81A1EE0705B001BC814 /* CoronaNative.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -247,6 +251,7 @@
 			baseConfigurationReference = F572F81A1EE0705B001BC814 /* CoronaNative.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
