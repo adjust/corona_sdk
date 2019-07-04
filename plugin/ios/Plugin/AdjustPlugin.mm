@@ -70,6 +70,7 @@ public:
     static int getGoogleAdId(lua_State *L);
     static int getAmazonAdId(lua_State *L);
     static int gdprForgetMe(lua_State *L);
+    static int trackAdRevenue(lua_State *L);
     static int setAttributionListener(lua_State *L);
     static int setEventTrackingSuccessListener(lua_State *L);
     static int setEventTrackingFailureListener(lua_State *L);
@@ -148,6 +149,7 @@ AdjustPlugin::Open(lua_State *L) {
         { "setPushToken", setPushToken },
         { "appWillOpenUrl", appWillOpenUrl },
         { "sendFirstPackages", sendFirstPackages },
+        { "trackAdRevenue", trackAdRevenue },
         { "addSessionCallbackParameter", addSessionCallbackParameter },
         { "addSessionPartnerParameter", addSessionPartnerParameter },
         { "removeSessionCallbackParameter", removeSessionCallbackParameter },
@@ -583,6 +585,15 @@ int AdjustPlugin::appWillOpenUrl(lua_State *L) {
 // Public API.
 int AdjustPlugin::sendFirstPackages(lua_State *L) {
     [Adjust sendFirstPackages];
+    return 0;
+}
+
+// Public API.
+int AdjustPlugin::trackAdRevenue(lua_State *L) {
+    const char *source = lua_tostring(L, 1);
+    const char *payload = lua_tostring(L, 2);
+    NSData *dataPayload = [[NSString stringWithUTF8String:payload] dataUsingEncoding:NSUTF8StringEncoding];
+    [Adjust trackAdRevenue:[NSString stringWithUTF8String:source] payload:dataPayload];
     return 0;
 }
 
