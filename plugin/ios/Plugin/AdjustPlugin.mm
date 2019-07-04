@@ -21,7 +21,7 @@
 #define EVENT_GET_AMAZON_AD_ID @"adjust_getAmazonAdId"
 #define EVENT_GET_SDK_VERSION @"adjust_getSdkVersion"
 
-#define SDK_PREFIX @"corona4.17.0"
+#define SDK_PREFIX @"corona4.18.0"
 
 // ----------------------------------------------------------------------------
 
@@ -267,7 +267,7 @@ int AdjustPlugin::create(lua_State *L) {
                                       allowSuppressLogLevel:(logLevel == ADJLogLevelSuppress)];
 
     // Sdk prefix.
-    [adjustConfig setSdkPrefix:@"corona4.17.0"];
+    [adjustConfig setSdkPrefix:@"corona4.18.0"];
 
     // Log level.
     [adjustConfig setLogLevel:logLevel];
