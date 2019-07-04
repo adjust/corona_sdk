@@ -14,7 +14,6 @@ package plugin.adjust;
 import android.net.Uri;
 import android.util.Log;
 import org.json.JSONObject;
-import org.json.JSONException;
 import com.ansca.corona.CoronaEnvironment;
 import com.ansca.corona.CoronaLua;
 import com.ansca.corona.CoronaRuntime;
@@ -439,9 +438,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                             LuaLoader.this.attributionChangedListener,
                             EVENT_ATTRIBUTION_CHANGED,
                             new JSONObject(LuaUtil.attributionToMap(adjustAttribution)).toString());
-                    } catch (JSONException err) {
+                    } catch (Exception err) {
                         Log.e(TAG, "adjust_create: Given attribution string is not valid JSON string");
-                        dispatchEvent(L, listener, EVENT_ATTRIBUTION_CHANGED, new JSONObject());
+                        dispatchEvent(L, LuaLoader.this.attributionChangedListener, EVENT_ATTRIBUTION_CHANGED, new JSONObject().toString());
                     }
                 }
             });
@@ -457,9 +456,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                             LuaLoader.this.eventTrackingSuccessListener,
                             EVENT_EVENT_TRACKING_SUCCESS,
                             new JSONObject(LuaUtil.eventSuccessToMap(adjustEventSuccess)).toString());
-                    } catch (JSONException err) {
+                    } catch (Exception err) {
                         Log.e(TAG, "adjust_create: Given event success string is not valid JSON string");
-                        dispatchEvent(L, listener, EVENT_EVENT_TRACKING_SUCCESS, new JSONObject());
+                        dispatchEvent(L, LuaLoader.this.eventTrackingSuccessListener, EVENT_EVENT_TRACKING_SUCCESS, new JSONObject().toString());
                     }
                 }
             });
@@ -475,9 +474,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                             LuaLoader.this.eventTrackingFailureListener,
                             EVENT_EVENT_TRACKING_FAILURE,
                             new JSONObject(LuaUtil.eventFailureToMap(adjustEventFailure)).toString());
-                    } catch (JSONException err) {
+                    } catch (Exception err) {
                         Log.e(TAG, "adjust_create: Given event failure string is not valid JSON string");
-                        dispatchEvent(L, listener, EVENT_EVENT_TRACKING_FAILURE, new JSONObject());
+                        dispatchEvent(L, LuaLoader.this.eventTrackingFailureListener, EVENT_EVENT_TRACKING_FAILURE, new JSONObject().toString());
                     }
                 }
             });
@@ -493,9 +492,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                             LuaLoader.this.sessionTrackingSuccessListener,
                             EVENT_SESSION_TRACKING_SUCCESS,
                             new JSONObject(LuaUtil.sessionSuccessToMap(adjustSessionSuccess)).toString());
-                    } catch (JSONException err) {
+                    } catch (Exception err) {
                         Log.e(TAG, "adjust_create: Given session success string is not valid JSON string");
-                        dispatchEvent(L, listener, EVENT_SESSION_TRACKING_SUCCESS, new JSONObject());
+                        dispatchEvent(L, LuaLoader.this.sessionTrackingSuccessListener, EVENT_SESSION_TRACKING_SUCCESS, new JSONObject().toString());
                     }
                 }
             });
@@ -511,9 +510,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                             LuaLoader.this.sessionTrackingFailureListener,
                             EVENT_SESSION_TRACKING_FAILURE,
                             new JSONObject(LuaUtil.sessionFailureToMap(adjustSessionFailure)).toString());
-                    } catch (JSONException err) {
+                    } catch (Exception err) {
                         Log.e(TAG, "adjust_create: Given session failure string is not valid JSON string");
-                        dispatchEvent(L, listener, EVENT_SESSION_TRACKING_FAILURE, new JSONObject());
+                        dispatchEvent(L, LuaLoader.this.sessionTrackingFailureListener, EVENT_SESSION_TRACKING_FAILURE, new JSONObject().toString());
                     }
                 }
             });
@@ -529,9 +528,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                             LuaLoader.this.deferredDeeplinkListener,
                             EVENT_DEFERRED_DEEPLINK,
                             new JSONObject(LuaUtil.deferredDeeplinkToMap(uri)).toString());
-                    } catch (JSONException err) {
+                    } catch (Exception err) {
                         Log.e(TAG, "adjust_create: Given deferred deep link string is not valid JSON string");
-                        dispatchEvent(L, listener, EVENT_DEFERRED_DEEPLINK, new JSONObject());
+                        dispatchEvent(L, LuaLoader.this.deferredDeeplinkListener, EVENT_DEFERRED_DEEPLINK, new JSONObject().toString());
                     }
                     return LuaLoader.this.shouldLaunchDeeplink;
                 }
@@ -826,9 +825,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             AdjustAttribution attribution = Adjust.getAttribution();
             try {
                 dispatchEvent(L, listener, EVENT_GET_ATTRIBUTION, new JSONObject(LuaUtil.attributionToMap(attribution)).toString());
-            } catch (JSONException err) {
+            } catch (Exception err) {
                 Log.e(TAG, "adjust_getAttribution: Given attribution string is not valid JSON string");
-                dispatchEvent(L, listener, EVENT_GET_ATTRIBUTION, new JSONObject());
+                dispatchEvent(L, listener, EVENT_GET_ATTRIBUTION, new JSONObject().toString());
             }
         }
         return 0;
@@ -860,9 +859,10 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         String payload = L.checkString(2);
         try {
             Adjust.trackAdRevenue(source, new JSONObject(payload));
-        } catch (JSONException err) {
+        } catch (Exception err) {
             Log.e(TAG, "adjust_trackAdRevenue: Given ad revenue payload is not a valid JSON string");
         }
+        return 0;
     }
 
     // Public API.

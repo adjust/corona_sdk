@@ -183,7 +183,7 @@ def xcode_build_project(target, project, configuration='Release', use_modern_bui
         execute_command(['xcodebuild', '-target', target, '-project', project, '-configuration', configuration, 'clean', 'build', '-UseModernBuildSystem=NO'])
 
 def gradle_make_release_jar():
-    execute_command(['./gradlew', 'adjustSdkNonNativeJarRelease'])
+    execute_command(['./gradlew', 'adjustCoreJarRelease'])
 
 def gradle_assemble_release():
     execute_command(['./gradlew', 'clean', 'assembleRelease'])
