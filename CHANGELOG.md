@@ -1,7 +1,18 @@
+### Version 4.18.0 (4th July 2019)
+#### Added
+- Added `trackAdRevenue` method to `Adjust` interface to allow tracking of ad revenue. With this release added support for `MoPub` ad revenue tracking.
+- Added reading of Facebook anonymous ID if available on iOS platform.
+
+#### Native SDKs
+- [iOS@v4.18.0][ios_sdk_v4.18.0]
+- [Android@v4.18.0][android_sdk_v4.18.0]
+
+---
+
 ### Version 4.17.0 (22nd January 2019)
 #### Added
-- Added `getSdkVersion()` method to `Adjust` interface to obtain current SDK version string.
-- Added ability to pass `callbackId` value through `trackEvent()` method of `Adjust` interface, for users to set custom ID on event object which will later be reported in event success/failure callbacks.
+- Added `getSdkVersion` method to `Adjust` interface to obtain current SDK version string.
+- Added ability to pass `callbackId` value through `trackEvent` method of `Adjust` interface, for users to set custom ID on event object which will later be reported in event success/failure callbacks.
 - Added `callbackId` field to event tracking success callback object.
 - Added `callbackId` field to event tracking failure callback object.
 
@@ -82,9 +93,11 @@
 [ios_sdk_v4.13.0]: https://github.com/adjust/ios_sdk/tree/v4.13.0
 [ios_sdk_v4.14.1]: https://github.com/adjust/ios_sdk/tree/v4.14.1
 [ios_sdk_v4.17.1]: https://github.com/adjust/ios_sdk/tree/v4.17.1
+[ios_sdk_v4.18.0]: https://github.com/adjust/ios_sdk/tree/v4.18.0
 
 [android_sdk_v4.12.0]: https://github.com/adjust/android_sdk/tree/v4.12.0
 [android_sdk_v4.12.1]: https://github.com/adjust/android_sdk/tree/v4.12.1
 [android_sdk_v4.13.0]: https://github.com/adjust/android_sdk/tree/v4.13.0
 [android_sdk_v4.14.0]: https://github.com/adjust/android_sdk/tree/v4.14.0
 [android_sdk_v4.17.0]: https://github.com/adjust/android_sdk/tree/v4.17.0
+[android_sdk_v4.18.0]: https://github.com/adjust/android_sdk/tree/v4.18.0
