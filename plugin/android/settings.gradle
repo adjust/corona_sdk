@@ -1,1 +1,2 @@
-include ':app', ':plugin'
+rootProject.name = "Corona Native Android"
+include("app", "plugin")
