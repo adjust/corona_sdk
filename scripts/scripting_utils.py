@@ -143,7 +143,7 @@ def error(msg, do_exit=False):
 
 def check_submodule_dir(platform, submodule_dir):
     if not os.path.isdir(submodule_dir) or not os.listdir(submodule_dir):
-        error('Submodule [{0}] folder empty. Did you forget to run >> git submodule update --init --recursive << ?'.format(platform))
+        error('Submodule [{0}] folder empty. Did you forget to run "git submodule update --init --recursive"?'.format(platform))
         exit()
 
 def is_windows():
@@ -186,7 +186,7 @@ def gradle_make_release_jar():
     execute_command(['./gradlew', 'adjustCoreJarRelease'])
 
 def gradle_assemble_release():
-    execute_command(['./gradlew', 'clean', 'assembleRelease'])
+    execute_command(['./gradlew', 'clean', 'assemble'])
 
 def gradle_export_plugin_jar():
     execute_command(['./gradlew', 'exportPluginJar'])
@@ -196,3 +196,9 @@ def gradle_run(options):
     for opt in options:
         cmd_params.append(opt)
     execute_command(cmd_params)
+
+def extract_plugin_jar_from_aar():
+    execute_command(['unzip', 'plugin-release.aar', '-d', 'temp'])
+    execute_command(['mv', 'temp/classes.jar', 'plugin.adjust.jar'])
+    execute_command(['rm', '-rf', 'temp'])
+    execute_command(['rm', '-rf', 'plugin-release.aar'])
