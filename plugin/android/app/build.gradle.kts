@@ -1220,4 +1220,5 @@ dependencies {
         implementation(project(":plugin"))
     }
     implementation("com.android.support:multidex:1.0.3")
+    implementation("com.android.installreferrer:installreferrer:1.1")
 }
