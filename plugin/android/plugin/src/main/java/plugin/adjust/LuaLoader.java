@@ -138,6 +138,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 new GetAmazonAdIdWrapper(),
                 new GdprForgetMeWrapper(),
                 new TrackAdRevenueWrapper(),
+                new DisableThirdPartySharingWrapper(),
                 new SetTestOptionsWrapper(),
                 new OnResumeWrapper(),
                 new OnPauseWrapper()
@@ -266,6 +267,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         String environment = null;
         String processName = null;
         String defaultTracker = null;
+        String externalDeviceId = null;
         boolean readImei = false;
         boolean isDeviceKnown = false;
         boolean sendInBackground = false;
@@ -352,6 +354,14 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         if (!L.isNil(2)) {
             defaultTracker = L.checkString(2);
             adjustConfig.setDefaultTracker(defaultTracker);
+        }
+        L.pop(1);
+
+        // External device ID.
+        L.getField(1, "externalDeviceId");
+        if (!L.isNil(2)) {
+            externalDeviceId = L.checkString(2);
+            adjustConfig.setExternalDeviceId(externalDeviceId);
         }
         L.pop(1);
 
@@ -871,6 +881,12 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     }
 
     // Public API.
+    private int adjust_disableThirdPartySharing(LuaState L) {
+        Adjust.disableThirdPartySharing(CoronaEnvironment.getApplicationContext());
+        return 0;
+    }
+
+    // Public API.
     private int adjust_setAttributionListener(LuaState L) {
         // Hardcoded listener index for ADJUST.
         int listenerIndex = 1;
@@ -1317,6 +1333,18 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         @Override
         public int invoke(LuaState L) {
             return adjust_trackAdRevenue(L);
+        }
+    }
+
+    private class DisableThirdPartySharingWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "disableThirdPartySharing";
+        }
+
+        @Override
+        public int invoke(LuaState L) {
+            return adjust_disableThirdPartySharing(L);
         }
     }
 
