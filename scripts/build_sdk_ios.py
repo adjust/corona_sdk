@@ -1,78 +1,119 @@
 from scripting_utils import *
 
-def build_plugin(root_dir, dist_dir):
+def build_plugin(dir_root, dir_dist):
     ## ------------------------------------------------------------------
     ## Paths
-    submodule_dir        = '{0}/ext/ios'.format(root_dir)
-    plugin_dir           = '{0}/plugin/ios'.format(root_dir)
-    plugin_output_dir    = '{0}/build/Release-iphoneos'.format(plugin_dir)
-    static_framework_dir = '{0}/sdk/Frameworks/Static/AdjustSdk.framework'.format(submodule_dir)
-    output_dir           = '{0}/plugin/ios/Plugin'.format(root_dir)
+    dir_submodule        = '{0}/ext/ios'.format(dir_root)
+    dir_plugin           = '{0}/plugin/ios'.format(dir_root)
+    dir_plugin_output    = '{0}/build/Release-iphoneos'.format(dir_plugin)
+    dir_static_framework = '{0}/sdk/Frameworks/Static/AdjustSdk.framework'.format(dir_submodule)
+    dir_output           = '{0}/plugin/ios/Plugin'.format(dir_root)
 
     ## ------------------------------------------------------------------
     ## Generate static library and public header files needed for Plugin Xcode project.
     debug_green('Building AdjustSdk.framework as Relese target ...')
-    change_dir('{0}/sdk'.format(submodule_dir))
+    change_dir('{0}/sdk'.format(dir_submodule))
     xcode_build('AdjustStatic')
     
     ## ------------------------------------------------------------------
     ## Copy static library from generated framework to output directory.
     debug_green('Copying AdjustSdk.a from generated framework to output directory ...')
-    copy_file(static_framework_dir + '/Versions/A/AdjustSdk', output_dir + '/AdjustSdk.a')
+    copy_file(dir_static_framework + '/Versions/A/AdjustSdk', dir_output + '/AdjustSdk.a')
 
     ## ------------------------------------------------------------------
     ## Copy public headers from generated framework to output directory.
     debug_green('Copying headers from AdjustSdk.framework to output directory ...')
-    copy_files('*', static_framework_dir + '/Versions/A/Headers/', output_dir)
+    copy_files('*', dir_static_framework + '/Versions/A/Headers/', dir_output)
 
     ## ------------------------------------------------------------------
     ## Build static library of Corona SDK for iOS (libplugin_adjust.a).
     debug_green('Building plugin_adjust target of the Plugin Xcode project ...')
-    change_dir(plugin_dir)
+    change_dir(dir_plugin)
     xcode_build_project('plugin_adjust', 'Plugin.xcodeproj')
 
     ## ------------------------------------------------------------------
     ## Copy Corona plugin static library to dist folder into VERSION subfolder.
     debug_green('Copying Corona plugin static library file to dist directory ...')
-    copy_file(plugin_output_dir + '/libplugin_adjust.a', dist_dir + '/libplugin_adjust.a')
+    copy_file(dir_plugin_output + '/libplugin_adjust.a', dir_dist + '/libplugin_adjust.a')
 
-def build_testapp(root_dir):
+def build_app_example(dir_root):
     ## ------------------------------------------------------------------
     ## paths
-    adjust_sdk_dir       = '{0}/ext/ios/sdk'.format(root_dir)
-    plugin_dir           = '{0}/plugin/ios'.format(root_dir)
-    plugin_output_dir    = '{0}/build/Release-iphoneos'.format(plugin_dir)
-    ios_test_app_dir     = '{0}/test/ios'.format(root_dir)
-    output_dir           = '{0}/Plugin'.format(ios_test_app_dir)
-    static_framework_dir = '{0}/Frameworks/Static/AdjustSdk.framework'.format(adjust_sdk_dir)
+    dir_adjust_sdk       = '{0}/ext/ios/sdk'.format(dir_root)
+    dir_plugin           = '{0}/plugin/ios'.format(dir_root)
+    dir_plugin_output    = '{0}/build/Release-iphoneos'.format(dir_plugin)
+    dir_ios_app          = '{0}/plugin/ios'.format(dir_root)
+    dir_output           = '{0}/Plugin'.format(dir_ios_app)
+    dir_static_framework = '{0}/Frameworks/Static/AdjustSdk.framework'.format(dir_adjust_sdk)
 
     ## ------------------------------------------------------------------
     ## Generate static library and public header files.
     debug_green('Building AdjustSdk.framework as Relese target ...')
-    change_dir(adjust_sdk_dir)
+    change_dir(dir_adjust_sdk)
     xcode_build('AdjustStatic')
 
     ## ------------------------------------------------------------------
     ## Copy static library from generated framework to output directory.
     debug_green('Copying static library from generated framework to output directory ...')
-    copy_file(static_framework_dir + '/Versions/A/AdjustSdk', output_dir + '/AdjustSdk.a')
+    copy_file(dir_static_framework + '/Versions/A/AdjustSdk', dir_output + '/AdjustSdk.a')
 
     ## ------------------------------------------------------------------
     ## Copy public headers from generated framework to output directory.
     debug_green('Copying static library from generated framework to output directory ...')
-    copy_files('*', static_framework_dir + '/Versions/A/Headers/', output_dir)
+    copy_files('*', dir_static_framework + '/Versions/A/Headers/', dir_output)
 
     ## ------------------------------------------------------------------
     ## Build static library of Corona SDK for iOS (libplugin_adjust.a).
     debug_green('Building static library of Corona SDK for iOS (libplugin_adjust.a) ...')
-    change_dir(plugin_dir)
+    change_dir(dir_plugin)
+    xcode_build_project('plugin_adjust', 'Plugin.xcodeproj')
+
+    ## ------------------------------------------------------------------
+    ## Copy Corona plugin static library to example app dir.
+    debug_green('Copying static library from generated framework to output directory (example app dir) ...')
+    copy_file(dir_plugin_output + '/libplugin_adjust.a', dir_ios_app + '/libplugin_adjust.a')
+
+    ## ------------------------------------------------------------------
+    ## Script completed.
+    debug_green('Open Xcode and run the example app project located in {0}/plugin/ios/App.xcodeproj'.format(dir_root))
+
+def build_app_test(dir_root):
+    ## ------------------------------------------------------------------
+    ## paths
+    dir_adjust_sdk       = '{0}/ext/ios/sdk'.format(dir_root)
+    dir_plugin           = '{0}/plugin/ios'.format(dir_root)
+    dir_plugin_output    = '{0}/build/Release-iphoneos'.format(dir_plugin)
+    dir_ios_app          = '{0}/test/ios'.format(dir_root)
+    dir_output           = '{0}/Plugin'.format(dir_ios_app)
+    dir_static_framework = '{0}/Frameworks/Static/AdjustSdk.framework'.format(dir_adjust_sdk)
+
+    ## ------------------------------------------------------------------
+    ## Generate static library and public header files.
+    debug_green('Building AdjustSdk.framework as Relese target ...')
+    change_dir(dir_adjust_sdk)
+    xcode_build('AdjustStatic')
+
+    ## ------------------------------------------------------------------
+    ## Copy static library from generated framework to output directory.
+    debug_green('Copying static library from generated framework to output directory ...')
+    copy_file(dir_static_framework + '/Versions/A/AdjustSdk', dir_output + '/AdjustSdk.a')
+
+    ## ------------------------------------------------------------------
+    ## Copy public headers from generated framework to output directory.
+    debug_green('Copying static library from generated framework to output directory ...')
+    copy_files('*', dir_static_framework + '/Versions/A/Headers/', dir_output)
+
+    ## ------------------------------------------------------------------
+    ## Build static library of Corona SDK for iOS (libplugin_adjust.a).
+    debug_green('Building static library of Corona SDK for iOS (libplugin_adjust.a) ...')
+    change_dir(dir_plugin)
     xcode_build_project('plugin_adjust', 'Plugin.xcodeproj')
 
     ## ------------------------------------------------------------------
     ## Copy Corona plugin static library to test app dir.
     debug_green('Copying static library from generated framework to output directory (test app dir) ...')
-    copy_file(plugin_output_dir + '/libplugin_adjust.a', ios_test_app_dir + '/libplugin_adjust.a')
+    copy_file(dir_plugin_output + '/libplugin_adjust.a', dir_ios_app + '/libplugin_adjust.a')
 
     ## ------------------------------------------------------------------
     ## Script completed.
-    debug_green('Open Xcode and run the TestApp project located in {0}/test/ios/App.xcodeproj'.format(root_dir))
+    debug_green('Open Xcode and run the test app project located in {0}/test/ios/App.xcodeproj'.format(dir_root))

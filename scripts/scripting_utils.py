@@ -1,14 +1,13 @@
-##
-##  Various util python methods which can be utilized and shared among different scripts
-##
 import os, shutil, glob, platform, subprocess
 
+## ------------------------------------------------------------------
+## Tag.
 def set_log_tag(t):
     global TAG
     TAG = t
 
-############################################################
-### Colors for terminal.
+## ------------------------------------------------------------------
+## Terminal colours.
 
 CEND = '\033[0m'
 
@@ -55,8 +54,8 @@ CVIOLETBG2 = '\33[105m'
 CBEIGEBG2  = '\33[106m'
 CWHITEBG2  = '\33[107m'
 
-############################################################
-### File system util methods.
+## ------------------------------------------------------------------
+## File system methods.
 
 def copy_file(sourceFile, destFile):
     debug('copying: {0} -> {1}'.format(sourceFile, destFile))
@@ -108,8 +107,8 @@ def create_dir_if_not_exist(dir):
     if not os.path.exists(dir):
         os.makedirs(dir)
 
-############################################################
-### Debug messages util methods.
+## ------------------------------------------------------------------
+## Logging methods.
 
 def debug(msg):
     if not is_windows():
@@ -138,8 +137,8 @@ def error(msg, do_exit=False):
     if do_exit:
         exit()
 
-############################################################
-### Util.
+## ------------------------------------------------------------------
+## Random utility methods.
 
 def check_submodule_dir(platform, submodule_dir):
     if not os.path.isdir(submodule_dir) or not os.listdir(submodule_dir):
