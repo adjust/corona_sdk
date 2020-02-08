@@ -185,7 +185,7 @@ def gradle_make_release_jar():
     execute_command(['./gradlew', 'adjustCoreJarRelease'])
 
 def gradle_assemble_release():
-    execute_command(['./gradlew', 'clean', 'assemble'])
+    execute_command(['./gradlew', 'plugin:clean', 'plugin:assemble'])
 
 def gradle_export_plugin_jar():
     execute_command(['./gradlew', 'exportPluginJar'])
