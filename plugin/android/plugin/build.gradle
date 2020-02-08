@@ -13,5 +13,5 @@ android {
 
 dependencies {
     implementation ':Corona@aar'
-    api 'com.adjust.sdk:adjust-android:4.18.0'
+    api 'com.adjust.sdk:adjust-android:4.20.0'
 }
