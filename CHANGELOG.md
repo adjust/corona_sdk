@@ -1,3 +1,17 @@
+### Version 4.20.0 (9th February 2019)
+#### Added
+- Added `disableThirdPartySharing` method to `Adjust` interface to allow disabling of data sharing with third parties outside of Adjust ecosystem.
+- Added external device ID support.
+
+#### Fixed
+- Fixed potential events submission after Lua state has already been destroyed (thanks to @Shchvova).
+
+#### Native SDKs
+- [iOS@v4.20.0][ios_sdk_v4.20.0]
+- [Android@v4.20.0][android_sdk_v4.20.0]
+
+---
+
 ### Version 4.18.0 (4th July 2019)
 #### Added
 - Added `trackAdRevenue` method to `Adjust` interface to allow tracking of ad revenue. With this release added support for `MoPub` ad revenue tracking.
@@ -94,6 +108,7 @@
 [ios_sdk_v4.14.1]: https://github.com/adjust/ios_sdk/tree/v4.14.1
 [ios_sdk_v4.17.1]: https://github.com/adjust/ios_sdk/tree/v4.17.1
 [ios_sdk_v4.18.0]: https://github.com/adjust/ios_sdk/tree/v4.18.0
+[ios_sdk_v4.20.0]: https://github.com/adjust/ios_sdk/tree/v4.20.0
 
 [android_sdk_v4.12.0]: https://github.com/adjust/android_sdk/tree/v4.12.0
 [android_sdk_v4.12.1]: https://github.com/adjust/android_sdk/tree/v4.12.1
@@ -101,3 +116,4 @@
 [android_sdk_v4.14.0]: https://github.com/adjust/android_sdk/tree/v4.14.0
 [android_sdk_v4.17.0]: https://github.com/adjust/android_sdk/tree/v4.17.0
 [android_sdk_v4.18.0]: https://github.com/adjust/android_sdk/tree/v4.18.0
+[android_sdk_v4.20.0]: https://github.com/adjust/android_sdk/tree/v4.20.0
