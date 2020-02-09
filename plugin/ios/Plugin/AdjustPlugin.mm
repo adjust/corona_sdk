@@ -21,7 +21,7 @@
 #define EVENT_GET_AMAZON_AD_ID @"adjust_getAmazonAdId"
 #define EVENT_GET_SDK_VERSION @"adjust_getSdkVersion"
 
-#define SDK_PREFIX @"corona4.18.0"
+#define SDK_PREFIX @"corona4.20.0"
 
 // ----------------------------------------------------------------------------
 
@@ -71,6 +71,7 @@ public:
     static int getAmazonAdId(lua_State *L);
     static int gdprForgetMe(lua_State *L);
     static int trackAdRevenue(lua_State *L);
+    static int disableThirdPartySharing(lua_State *L);
     static int setAttributionListener(lua_State *L);
     static int setEventTrackingSuccessListener(lua_State *L);
     static int setEventTrackingFailureListener(lua_State *L);
@@ -150,6 +151,7 @@ AdjustPlugin::Open(lua_State *L) {
         { "appWillOpenUrl", appWillOpenUrl },
         { "sendFirstPackages", sendFirstPackages },
         { "trackAdRevenue", trackAdRevenue },
+        { "disableThirdPartySharing", disableThirdPartySharing },
         { "addSessionCallbackParameter", addSessionCallbackParameter },
         { "addSessionPartnerParameter", addSessionPartnerParameter },
         { "removeSessionCallbackParameter", removeSessionCallbackParameter },
@@ -227,6 +229,7 @@ int AdjustPlugin::create(lua_State *L) {
     NSString *userAgent = nil;
     NSString *environment = nil;
     NSString *defaultTracker = nil;
+    NSString *externalDeviceId = nil;
     ADJLogLevel logLevel = ADJLogLevelInfo;
 
     // Log level.
@@ -269,7 +272,7 @@ int AdjustPlugin::create(lua_State *L) {
                                       allowSuppressLogLevel:(logLevel == ADJLogLevelSuppress)];
 
     // Sdk prefix.
-    [adjustConfig setSdkPrefix:@"corona4.18.0"];
+    [adjustConfig setSdkPrefix:@"corona4.20.0"];
 
     // Log level.
     [adjustConfig setLogLevel:logLevel];
@@ -290,6 +293,17 @@ int AdjustPlugin::create(lua_State *L) {
             defaultTracker = [NSString stringWithUTF8String:cstrDefaultTracker];
         }
         [adjustConfig setDefaultTracker:defaultTracker];
+    }
+    lua_pop(L, 1);
+
+    // External device ID.
+    lua_getfield(L, 1, "externalDeviceId");
+    if (!lua_isnil(L, 2)) {
+        const char *cstrExternalDeviceId = lua_tostring(L, 2);
+        if (cstrExternalDeviceId != NULL) {
+            externalDeviceId = [NSString stringWithUTF8String:cstrExternalDeviceId];
+        }
+        [adjustConfig setExternalDeviceId:externalDeviceId];
     }
     lua_pop(L, 1);
 
@@ -594,6 +608,12 @@ int AdjustPlugin::trackAdRevenue(lua_State *L) {
     const char *payload = lua_tostring(L, 2);
     NSData *dataPayload = [[NSString stringWithUTF8String:payload] dataUsingEncoding:NSUTF8StringEncoding];
     [Adjust trackAdRevenue:[NSString stringWithUTF8String:source] payload:dataPayload];
+    return 0;
+}
+
+// Public API.
+int AdjustPlugin::disableThirdPartySharing(lua_State *L) {
+    [Adjust disableThirdPartySharing];
     return 0;
 }
 

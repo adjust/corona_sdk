@@ -196,7 +196,7 @@
 				9DD299B321F725350054DA79 /* MainWindow-iPad.xib */,
 			);
 			name = resource;
-			path = ../../../../../../Applications/Corona/Native/Corona/ios/resource;
+			path = ../../../../../../Applications/Corona-3573/Native/Corona/ios/resource;
 			sourceTree = "<group>";
 		};
 		A447B66F16670015009EA762 /* CoronaNative */ = {
@@ -336,7 +336,7 @@
 		A484111015114F700074BD57 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1010;
+				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					A484111815114F700074BD57 = {
 						DevelopmentTeam = QGUGW9AUMK;
@@ -350,10 +350,11 @@
 			};
 			buildConfigurationList = A484111315114F700074BD57 /* Build configuration list for PBXProject "App" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = A484110E15114F700074BD57;
 			productRefGroup = A484111A15114F700074BD57 /* Products */;
@@ -529,6 +530,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -581,6 +583,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;

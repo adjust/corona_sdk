@@ -49,7 +49,7 @@ import com.adjust.sdk.OnSessionTrackingSucceededListener;
 @SuppressWarnings("WeakerAccess")
 public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private static final String TAG = "LuaLoader";
-    private static final String SDK_PREFIX = "corona4.18.0";
+    private static final String SDK_PREFIX = "corona4.20.0";
 
     public static final String EVENT_ATTRIBUTION_CHANGED = "adjust_attribution";
     public static final String EVENT_SESSION_TRACKING_SUCCESS = "adjust_sessionTrackingSuccess";
@@ -138,6 +138,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 new GetAmazonAdIdWrapper(),
                 new GdprForgetMeWrapper(),
                 new TrackAdRevenueWrapper(),
+                new DisableThirdPartySharingWrapper(),
                 new SetTestOptionsWrapper(),
                 new OnResumeWrapper(),
                 new OnPauseWrapper()
@@ -225,27 +226,32 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         deferredDeeplinkListener = CoronaLua.REFNIL;
     }
 
-    private void dispatchEvent(final LuaState luaState, final int listener, final String name, final String message) {
-        CoronaRuntimeTaskDispatcher dispatcher = CoronaEnvironment.getCoronaActivity().getRuntimeTaskDispatcher();
-        if (dispatcher == null) {
-            return;
-        }
-
-        dispatcher.send(new CoronaRuntimeTask() {
-            @Override
-            public void executeUsing(CoronaRuntime runtime) {
-                CoronaLua.newEvent(luaState, name);
-                luaState.pushString(message);
-                luaState.setField(-2, "message");
-
-                // Dispatch event to library's listener
-                try {
-                    CoronaLua.dispatchEvent(luaState, listener, 0);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+    private void dispatchEvent(final int listener, final String name, final String message) {
+        try {
+            CoronaRuntimeTaskDispatcher dispatcher = CoronaEnvironment.getCoronaActivity().getRuntimeTaskDispatcher();
+            if (dispatcher == null) {
+                return;
             }
-        });
+            dispatcher.send(new CoronaRuntimeTask() {
+                @Override
+                public void executeUsing(CoronaRuntime runtime) {
+                    // Dispatch event to library's listener
+                    try {
+                        LuaState luaState = runtime.getLuaState();
+
+                        CoronaLua.newEvent(luaState, name);
+                        luaState.pushString(message);
+                        luaState.setField(-2, "message");
+
+                        CoronaLua.dispatchEvent(luaState, listener, 0);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // Public API.
@@ -261,6 +267,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         String environment = null;
         String processName = null;
         String defaultTracker = null;
+        String externalDeviceId = null;
         boolean readImei = false;
         boolean isDeviceKnown = false;
         boolean sendInBackground = false;
@@ -350,6 +357,14 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
+        // External device ID.
+        L.getField(1, "externalDeviceId");
+        if (!L.isNil(2)) {
+            externalDeviceId = L.checkString(2);
+            adjustConfig.setExternalDeviceId(externalDeviceId);
+        }
+        L.pop(1);
+
         // User agent.
         L.getField(1, "userAgent");
         if (!L.isNil(2)) {
@@ -434,13 +449,13 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 @Override
                 public void onAttributionChanged(AdjustAttribution adjustAttribution) {
                     try {
-                        dispatchEvent(L,
+                        dispatchEvent(
                             LuaLoader.this.attributionChangedListener,
                             EVENT_ATTRIBUTION_CHANGED,
                             new JSONObject(LuaUtil.attributionToMap(adjustAttribution)).toString());
                     } catch (Exception err) {
                         Log.e(TAG, "adjust_create: Given attribution string is not valid JSON string");
-                        dispatchEvent(L, LuaLoader.this.attributionChangedListener, EVENT_ATTRIBUTION_CHANGED, new JSONObject().toString());
+                        dispatchEvent(LuaLoader.this.attributionChangedListener, EVENT_ATTRIBUTION_CHANGED, new JSONObject().toString());
                     }
                 }
             });
@@ -452,13 +467,13 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 @Override
                 public void onFinishedEventTrackingSucceeded(AdjustEventSuccess adjustEventSuccess) {
                     try {
-                        dispatchEvent(L,
+                        dispatchEvent(
                             LuaLoader.this.eventTrackingSuccessListener,
                             EVENT_EVENT_TRACKING_SUCCESS,
                             new JSONObject(LuaUtil.eventSuccessToMap(adjustEventSuccess)).toString());
                     } catch (Exception err) {
                         Log.e(TAG, "adjust_create: Given event success string is not valid JSON string");
-                        dispatchEvent(L, LuaLoader.this.eventTrackingSuccessListener, EVENT_EVENT_TRACKING_SUCCESS, new JSONObject().toString());
+                        dispatchEvent(LuaLoader.this.eventTrackingSuccessListener, EVENT_EVENT_TRACKING_SUCCESS, new JSONObject().toString());
                     }
                 }
             });
@@ -470,13 +485,13 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 @Override
                 public void onFinishedEventTrackingFailed(AdjustEventFailure adjustEventFailure) {
                     try {
-                        dispatchEvent(L,
+                        dispatchEvent(
                             LuaLoader.this.eventTrackingFailureListener,
                             EVENT_EVENT_TRACKING_FAILURE,
                             new JSONObject(LuaUtil.eventFailureToMap(adjustEventFailure)).toString());
                     } catch (Exception err) {
                         Log.e(TAG, "adjust_create: Given event failure string is not valid JSON string");
-                        dispatchEvent(L, LuaLoader.this.eventTrackingFailureListener, EVENT_EVENT_TRACKING_FAILURE, new JSONObject().toString());
+                        dispatchEvent(LuaLoader.this.eventTrackingFailureListener, EVENT_EVENT_TRACKING_FAILURE, new JSONObject().toString());
                     }
                 }
             });
@@ -488,13 +503,13 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 @Override
                 public void onFinishedSessionTrackingSucceeded(AdjustSessionSuccess adjustSessionSuccess) {
                     try {
-                        dispatchEvent(L,
+                        dispatchEvent(
                             LuaLoader.this.sessionTrackingSuccessListener,
                             EVENT_SESSION_TRACKING_SUCCESS,
                             new JSONObject(LuaUtil.sessionSuccessToMap(adjustSessionSuccess)).toString());
                     } catch (Exception err) {
                         Log.e(TAG, "adjust_create: Given session success string is not valid JSON string");
-                        dispatchEvent(L, LuaLoader.this.sessionTrackingSuccessListener, EVENT_SESSION_TRACKING_SUCCESS, new JSONObject().toString());
+                        dispatchEvent(LuaLoader.this.sessionTrackingSuccessListener, EVENT_SESSION_TRACKING_SUCCESS, new JSONObject().toString());
                     }
                 }
             });
@@ -506,13 +521,13 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 @Override
                 public void onFinishedSessionTrackingFailed(AdjustSessionFailure adjustSessionFailure) {
                     try {
-                        dispatchEvent(L,
+                        dispatchEvent(
                             LuaLoader.this.sessionTrackingFailureListener,
                             EVENT_SESSION_TRACKING_FAILURE,
                             new JSONObject(LuaUtil.sessionFailureToMap(adjustSessionFailure)).toString());
                     } catch (Exception err) {
                         Log.e(TAG, "adjust_create: Given session failure string is not valid JSON string");
-                        dispatchEvent(L, LuaLoader.this.sessionTrackingFailureListener, EVENT_SESSION_TRACKING_FAILURE, new JSONObject().toString());
+                        dispatchEvent(LuaLoader.this.sessionTrackingFailureListener, EVENT_SESSION_TRACKING_FAILURE, new JSONObject().toString());
                     }
                 }
             });
@@ -524,13 +539,13 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 @Override
                 public boolean launchReceivedDeeplink(Uri uri) {
                     try {
-                        dispatchEvent(L,
+                        dispatchEvent(
                             LuaLoader.this.deferredDeeplinkListener,
                             EVENT_DEFERRED_DEEPLINK,
                             new JSONObject(LuaUtil.deferredDeeplinkToMap(uri)).toString());
                     } catch (Exception err) {
                         Log.e(TAG, "adjust_create: Given deferred deep link string is not valid JSON string");
-                        dispatchEvent(L, LuaLoader.this.deferredDeeplinkListener, EVENT_DEFERRED_DEEPLINK, new JSONObject().toString());
+                        dispatchEvent(LuaLoader.this.deferredDeeplinkListener, EVENT_DEFERRED_DEEPLINK, new JSONObject().toString());
                     }
                     return LuaLoader.this.shouldLaunchDeeplink;
                 }
@@ -663,7 +678,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         // Assign and dispatch event immediately.
         if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
             listener = CoronaLua.newRef(L, listenerIndex);
-            dispatchEvent(L, listener, EVENT_IS_ADJUST_ENABLED, Adjust.isEnabled() ? "true" : "false");
+            dispatchEvent(listener, EVENT_IS_ADJUST_ENABLED, Adjust.isEnabled() ? "true" : "false");
         }
         return 0;
     }
@@ -739,7 +754,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         // Assign and dispatch event immediately.
         if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
             listener = CoronaLua.newRef(L, listenerIndex);
-            dispatchEvent(L, listener, EVENT_GET_IDFA, "");
+            dispatchEvent(listener, EVENT_GET_IDFA, "");
         }
         return 0;
     }
@@ -757,7 +772,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             if (sdkVersion == null) {
                 sdkVersion = "";
             }
-            dispatchEvent(L, listener, EVENT_GET_SDK_VERSION, SDK_PREFIX + "@" + sdkVersion);
+            dispatchEvent(listener, EVENT_GET_SDK_VERSION, SDK_PREFIX + "@" + sdkVersion);
         }
         return 0;
     }
@@ -775,7 +790,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             Adjust.getGoogleAdId(CoronaEnvironment.getCoronaActivity(), new OnDeviceIdsRead() {
                 @Override
                 public void onGoogleAdIdRead(String googleAdId) {
-                    dispatchEvent(L, finalListener, EVENT_GET_GOOGLE_AD_ID, googleAdId != null ? googleAdId : "");
+                    dispatchEvent(finalListener, EVENT_GET_GOOGLE_AD_ID, googleAdId != null ? googleAdId : "");
                 }
             });
         }
@@ -795,7 +810,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             if (adid == null) {
                 adid = "";
             }
-            dispatchEvent(L, listener, EVENT_GET_ADID, adid);
+            dispatchEvent(listener, EVENT_GET_ADID, adid);
         }
         return 0;
     }
@@ -808,7 +823,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         // Assign and dispatch event immediately.
         if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
             listener = CoronaLua.newRef(L, listenerIndex);
-            dispatchEvent(L, listener, EVENT_GET_AMAZON_AD_ID, "");
+            dispatchEvent(listener, EVENT_GET_AMAZON_AD_ID, "");
         }
         return 0;
     }
@@ -824,10 +839,10 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             listener = CoronaLua.newRef(L, listenerIndex);
             AdjustAttribution attribution = Adjust.getAttribution();
             try {
-                dispatchEvent(L, listener, EVENT_GET_ATTRIBUTION, new JSONObject(LuaUtil.attributionToMap(attribution)).toString());
+                dispatchEvent(listener, EVENT_GET_ATTRIBUTION, new JSONObject(LuaUtil.attributionToMap(attribution)).toString());
             } catch (Exception err) {
                 Log.e(TAG, "adjust_getAttribution: Given attribution string is not valid JSON string");
-                dispatchEvent(L, listener, EVENT_GET_ATTRIBUTION, new JSONObject().toString());
+                dispatchEvent(listener, EVENT_GET_ATTRIBUTION, new JSONObject().toString());
             }
         }
         return 0;
@@ -862,6 +877,12 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         } catch (Exception err) {
             Log.e(TAG, "adjust_trackAdRevenue: Given ad revenue payload is not a valid JSON string");
         }
+        return 0;
+    }
+
+    // Public API.
+    private int adjust_disableThirdPartySharing(LuaState L) {
+        Adjust.disableThirdPartySharing(CoronaEnvironment.getApplicationContext());
         return 0;
     }
 
@@ -1312,6 +1333,18 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         @Override
         public int invoke(LuaState L) {
             return adjust_trackAdRevenue(L);
+        }
+    }
+
+    private class DisableThirdPartySharingWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "disableThirdPartySharing";
+        }
+
+        @Override
+        public int invoke(LuaState L) {
+            return adjust_disableThirdPartySharing(L);
         }
     }
 
