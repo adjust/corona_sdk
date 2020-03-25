@@ -39,7 +39,7 @@ function CommandExecutor:executeCommand(command)
     self.command = command
     local method = command.methodName
     
-    if     method == "testOptions" then self:testOptions()
+    if method == "testOptions" then self:testOptions()
     elseif method == "config" then self:config()
     elseif method == "start" then self:start()
     elseif method == "event" then self:event()
@@ -61,6 +61,7 @@ function CommandExecutor:executeCommand(command)
     elseif method == "sendReferrer" then self:sendReferrer()
     elseif method == "gdprForgetMe" then self:gdprForgetMe()
     elseif method == "trackAdRevenue" then self:trackAdRevenue()
+    elseif method == "disableThirdPartySharing" then self:disableThirdPartySharing()
         
     else print("CommandExecutor: unknown method name: " .. method)
     end
@@ -184,11 +185,15 @@ function CommandExecutor:config()
     end
     
     if self.command:containsParameter("sdkPrefix") then
-        -- not needed ...
+        -- not needed
     end
     
     if self.command:containsParameter("defaultTracker") then
         adjustConfig.defaultTracker = self.command:getFirstParameterValue("defaultTracker")
+    end
+
+    if self.command:containsParameter("externalDeviceId") then
+        adjustConfig.externalDeviceId = self.command:getFirstParameterValue("externalDeviceId")
     end
     
     if self.command:containsParameter("appSecret") then
@@ -211,6 +216,14 @@ function CommandExecutor:config()
     if self.command:containsParameter("eventBufferingEnabled") then
         adjustConfig.eventBufferingEnabled = (self.command:getFirstParameterValue("eventBufferingEnabled") == "true")
     end
+
+    if self.command:containsParameter("allowiAdInfoReading") then
+        adjustConfig.allowiAdInfoReading = (self.command:getFirstParameterValue("allowiAdInfoReading") == "true")
+    end
+
+    if self.command:containsParameter("allowIdfaReading") then
+        adjustConfig.allowIdfaReading = (self.command:getFirstParameterValue("allowIdfaReading") == "true")
+    end
     
     if self.command:containsParameter("sendInBackground") then
         adjustConfig.sendInBackground = (self.command:getFirstParameterValue("sendInBackground") == "true")
@@ -219,9 +232,6 @@ function CommandExecutor:config()
     if self.command:containsParameter("userAgent") then
         adjustConfig.userAgent = self.command:getFirstParameterValue("userAgent")
     end
-    
-    ------------- callbacks -----------------------------------------------------------------------------------------
-    -----------------------------------------------------------------------------------------------------------------
     
     -- first, clear all callback
     adjust.setDeferredDeeplinkListener(deferredDeeplinkListenerEmpty)
@@ -234,37 +244,37 @@ function CommandExecutor:config()
     if self.command:containsParameter("deferredDeeplinkCallback") then
         localBasePath = self.basePath
         adjustConfig.shouldLaunchDeeplink = (self.command:getFirstParameterValue("deferredDeeplinkCallback") == "true")
-        print("[TestApp]: setting deferred deeplink callback... adjustConfig.shouldLaunchDeeplink=" .. tostring(adjustConfig.shouldLaunchDeeplink))
+        print("[CommandExecutor]: Setting deferred deeplink callback... adjustConfig.shouldLaunchDeeplink=" .. tostring(adjustConfig.shouldLaunchDeeplink))
         adjust.setDeferredDeeplinkListener(deferredDeeplinkListener)
     end
     
     if self.command:containsParameter("attributionCallbackSendAll") then
         localBasePath = self.basePath
-        print("[TestApp]: setting attribution callback... lbp=" .. localBasePath)
+        print("[CommandExecutor]: Setting attribution callback... lbp=" .. localBasePath)
         adjust.setAttributionListener(attributionListener)
     end
     
     if self.command:containsParameter("sessionCallbackSendSuccess") then
         localBasePath = self.basePath
-        print("[TestApp]: setting session send success callback... local-base-path=" .. localBasePath)
+        print("[CommandExecutor]: Setting session send success callback... local-base-path=" .. localBasePath)
         adjust.setSessionTrackingSuccessListener(sessionTrackingSuccessListener)
     end
     
     if self.command:containsParameter("sessionCallbackSendFailure") then
         localBasePath = self.basePath
-        print("[TestApp]: setting session send failure callback... local-base-path=" .. localBasePath)
+        print("[CommandExecutor]: Setting session send failure callback... local-base-path=" .. localBasePath)
         adjust.setSessionTrackingFailureListener(sessionTrackingFailureListener)
     end
     
     if self.command:containsParameter("eventCallbackSendSuccess") then
         localBasePath = self.basePath
-        print("[TestApp]: setting event tracking success callback... local-base-path=" .. localBasePath)
+        print("[CommandExecutor]: Setting event tracking success callback... local-base-path=" .. localBasePath)
         adjust.setEventTrackingSuccessListener(eventTrackingSuccessListener)
     end
     
     if self.command:containsParameter("eventCallbackSendFailure") then
         localBasePath = self.basePath
-        print("[TestApp]: setting event tracking failed callback... local-base-path=" .. localBasePath)
+        print("[CommandExecutor]: Setting event tracking failed callback... local-base-path=" .. localBasePath)
         adjust.setEventTrackingFailureListener(eventTrackingFailureListener)
     end
 end
@@ -283,10 +293,10 @@ function eventTrackingFailureListenerEmpty(event)
 end
 
 function deferredDeeplinkListener(event)
-    print("[TestApp]: deferred deeplink received!")
+    print("[CommandExecutor]: Deferred deeplink received!")
     
     if event == nil then
-        print("[TestApp]: deeplink response, uri = nil")
+        print("[CommandExecutor]: Deeplink response, uri = nil")
         return false
     end
     
@@ -297,13 +307,13 @@ function deferredDeeplinkListener(event)
         deeplink = json.decode(event.message).uri
     end
     
-    print("[TestApp]: deferred deeplink: " .. deeplink)
+    print("[CommandExecutor]: deferred deeplink: " .. deeplink)
     testLib.addInfoToSend("deeplink", deeplink)
     testLib.sendInfoToServer(localBasePath)
 end
 
 function attributionListener(event)
-    print("[TestApp]: attribution received!")
+    print("[CommandExecutor]: Attribution received!")
     local json_attribution = json.decode(event.message)
     testLib.addInfoToSend("trackerToken", json_attribution.trackerToken)
     testLib.addInfoToSend("trackerName", json_attribution.trackerName)
@@ -317,7 +327,7 @@ function attributionListener(event)
 end
 
 function sessionTrackingSuccessListener(event)
-    print("[TestApp]: session tracking success event received!")
+    print("[CommandExecutor]: Session tracking success event received!")
     local json_session_success = json.decode(event.message)
     testLib.addInfoToSend("message", json_session_success.message)
     testLib.addInfoToSend("timestamp", json_session_success.timestamp)
@@ -333,7 +343,7 @@ function sessionTrackingSuccessListener(event)
 end
 
 function sessionTrackingFailureListener(event)
-    print("[TestApp]: session tracking failure event received!")
+    print("[CommandExecutor]: Session tracking failure event received!")
     local json_session_failure = json.decode(event.message)
     testLib.addInfoToSend("message", json_session_failure.message)
     testLib.addInfoToSend("timestamp", json_session_failure.timestamp)
@@ -350,7 +360,7 @@ function sessionTrackingFailureListener(event)
 end
 
 function eventTrackingSuccessListener(event)
-    print("[TestApp]: event tracking success event received!")
+    print("[CommandExecutor]: Event tracking success event received!")
     local json_event_success = json.decode(event.message)
     testLib.addInfoToSend("message", json_event_success.message)
     testLib.addInfoToSend("timestamp", json_event_success.timestamp)
@@ -368,7 +378,7 @@ function eventTrackingSuccessListener(event)
 end
 
 function eventTrackingFailureListener(event)
-    print("[TestApp]: event tracking failed event received!")
+    print("[CommandExecutor]: Event tracking failed event received!")
     local json_event_failure = json.decode(event.message)
     testLib.addInfoToSend("message", json_event_failure.message)
     testLib.addInfoToSend("timestamp", json_event_failure.timestamp)
@@ -397,7 +407,7 @@ function CommandExecutor:start()
     end
    
     local adjustConfig = self.savedConfigs[configNumber]
-    print("[TestApp]: sending adjust config to adjust.create: " .. json.encode(adjustConfig))
+    print("[CommandExecutor]: Sending adjust config to adjust.create: " .. json.encode(adjustConfig))
     adjust.create(adjustConfig)
     
     self.savedConfigs[configNumber] = nil
@@ -520,7 +530,6 @@ function CommandExecutor:addSessionPartnerParameter()
         for i=1, #keyValuePairs, 2 do
             local key = keyValuePairs[i]
             local value = keyValuePairs[i + 1]
-            print("----> adding session pp: " .. key .. ", " .. value)
             adjust.addSessionPartnerParameter(key, value)
         end
     end
@@ -571,6 +580,10 @@ end
 
 function CommandExecutor:gdprForgetMe()
     adjust.gdprForgetMe()
+end
+
+function CommandExecutor:disableThirdPartySharing()
+    adjust.disableThirdPartySharing()
 end
 
 function CommandExecutor:trackAdRevenue()
