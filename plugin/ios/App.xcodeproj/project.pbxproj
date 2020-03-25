@@ -21,6 +21,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		9D673C80242ADA5F000EC752 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D673C7F242ADA5F000EC752 /* AdSupport.framework */; };
+		9D673C82242ADA63000EC752 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D673C81242ADA63000EC752 /* iAd.framework */; };
 		9DD299B421F725350054DA79 /* _CoronaSplashScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 9DD299B021F725350054DA79 /* _CoronaSplashScreen.png */; };
 		9DD299B521F725350054DA79 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9DD299B121F725350054DA79 /* MainWindow.xib */; };
 		9DD299B621F725350054DA79 /* CoronaResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 9DD299B221F725350054DA79 /* CoronaResources.bundle */; };
@@ -85,6 +87,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9D673C7F242ADA5F000EC752 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
+		9D673C81242ADA63000EC752 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
 		9DD299B021F725350054DA79 /* _CoronaSplashScreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = _CoronaSplashScreen.png; sourceTree = "<group>"; };
 		9DD299B121F725350054DA79 /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
 		9DD299B221F725350054DA79 /* CoronaResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = CoronaResources.bundle; sourceTree = "<group>"; };
@@ -172,9 +176,11 @@
 				A484118215128D5D0074BD57 /* MapKit.framework in Frameworks */,
 				A484118315128D5D0074BD57 /* MediaPlayer.framework in Frameworks */,
 				A484118415128D5D0074BD57 /* MessageUI.framework in Frameworks */,
+				9D673C82242ADA63000EC752 /* iAd.framework in Frameworks */,
 				A484118515128D5D0074BD57 /* MobileCoreServices.framework in Frameworks */,
 				A484118615128D5D0074BD57 /* OpenAL.framework in Frameworks */,
 				A484112615114F700074BD57 /* OpenGLES.framework in Frameworks */,
+				9D673C80242ADA5F000EC752 /* AdSupport.framework in Frameworks */,
 				A484118715128D5D0074BD57 /* QuartzCore.framework in Frameworks */,
 				A484118815128D5D0074BD57 /* Security.framework in Frameworks */,
 				A484118915128D5D0074BD57 /* StoreKit.framework in Frameworks */,
@@ -196,7 +202,7 @@
 				9DD299B321F725350054DA79 /* MainWindow-iPad.xib */,
 			);
 			name = resource;
-			path = ../../../../../../Applications/Corona-3573/Native/Corona/ios/resource;
+			path = "../../../../../../Applications/Corona-3573/Native/Corona/ios/resource";
 			sourceTree = "<group>";
 		};
 		A447B66F16670015009EA762 /* CoronaNative */ = {
@@ -242,6 +248,8 @@
 		A484111C15114F700074BD57 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9D673C81242ADA63000EC752 /* iAd.framework */,
+				9D673C7F242ADA5F000EC752 /* AdSupport.framework */,
 				E640B2F31BFC00BA0031FAE9 /* Photos.framework */,
 				E640B2F11BFC00B00031FAE9 /* AssetsLibrary.framework */,
 				F5E548081BE7FF0200091810 /* GameController.framework */,

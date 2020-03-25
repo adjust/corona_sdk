@@ -36,12 +36,12 @@ local protocol
 local port
 if platformInfo == "ios" then
     protocol = "http"
-    port = "9000"
+    port = "8080"
 else
     protocol = "https"
     port = "8443"
 end
-local baseIp = "192.168.8.210"
+local baseIp = "192.168.2.101"
 local baseUrl = protocol .. "://" .. baseIp .. ":" .. port
 local gdprUrl = protocol .. "://" .. baseIp .. ":" .. port
 local controlUrl = "ws://" .. baseIp .. ":1987";
