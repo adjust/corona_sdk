@@ -3,7 +3,7 @@
 path=$(dirname "$0")
 
 OUTPUT_DIR=$1
-TARGET_NAME=plugin_library
+TARGET_NAME=plugin_adjust
 OUTPUT_SUFFIX=a
 CONFIG=Release
 
@@ -108,8 +108,15 @@ build_plugin_structure() {
 	else
 		echo "No 3rd party frameworks"
 	fi
+
+	(
+		SFNAME="$TARGET_NAME-$(basename "$PLUGIN_DEST").tgz"
+		cd "$PLUGIN_DEST"
+		COPYFILE_DISABLE=true tar -czvf ../"$SFNAME" --exclude=".*" *
+	)
 }
 
+rm -r "$path/BuiltPlugin"
 
 
 build_plugin_structure "$OUTPUT_DIR/BuiltPlugin/iphone" iphoneos  " -extract armv7 -extract  arm64 "

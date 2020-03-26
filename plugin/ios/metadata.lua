@@ -3,8 +3,8 @@ local metadata =
 	plugin =
 	{
 		format = 'staticLibrary',
-		staticLibs = { 'plugin_library', },
-		frameworks = {},
+		staticLibs = { 'plugin_adjust' },
+		frameworks = { 'AdSupport', 'CoreTelephony', },
 		frameworksOptional = {},
 		-- usesSwift = true,
 	},
