@@ -219,3 +219,4 @@ plugin/android/app/src/main/jniLibs
 
 test/android/.idea
 plugin/android/.idea
+plugin/ios/BuiltPlugin
