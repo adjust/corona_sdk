@@ -71,6 +71,7 @@ public:
     static int getAmazonAdId(lua_State *L);
     static int gdprForgetMe(lua_State *L);
     static int trackAdRevenue(lua_State *L);
+    static int trackAppStoreSubscription(lua_State *L);
     static int disableThirdPartySharing(lua_State *L);
     static int setAttributionListener(lua_State *L);
     static int setEventTrackingSuccessListener(lua_State *L);
@@ -522,6 +523,117 @@ int AdjustPlugin::trackEvent(lua_State *L) {
 }
 
 // Public API.
+int AdjustPlugin::trackAppStoreSubscription(lua_State *L) {
+    if (!lua_istable(L, 1)) {
+        return 0;
+    }
+
+    NSString *price = nil;
+    NSString *currency = nil;
+    NSString *transactionId = nil;
+    NSString *receipt = nil;
+
+    NSDecimalNumber *priceValue;
+    NSData *receiptValue;
+
+    // Price.
+    lua_getfield(L, 1, "price");
+    if (!lua_isnil(L, 2)) {
+        const char *cstrPrice = lua_tostring(L, 2);
+        if (cstrPrice != NULL) {
+            price = [NSString stringWithUTF8String:cstrPrice];
+            priceValue = [NSDecimalNumber decimalNumberWithString:price];
+        }
+    }
+    lua_pop(L, 1);
+
+    // Currency.
+    lua_getfield(L, 1, "currency");
+    if (!lua_isnil(L, 2)) {
+        const char *cstrCurrency = lua_tostring(L, 2);
+        if (cstrCurrency != NULL) {
+            currency = [NSString stringWithUTF8String:cstrCurrency];
+        }
+    }
+    lua_pop(L, 1);
+
+    // Transaction ID.
+    lua_getfield(L, 1, "transactionId");
+    if (!lua_isnil(L, 2)) {
+        const char *cstrTransactionId = lua_tostring(L, 2);
+        if (cstrTransactionId != NULL) {
+            transactionId = [NSString stringWithUTF8String:cstrTransactionId];
+        }
+    }
+    lua_pop(L, 1);
+
+    // Receipt.
+    lua_getfield(L, 1, "receipt");
+    if (!lua_isnil(L, 2)) {
+        const char *cstrReceipt = lua_tostring(L, 2);
+        if (cstrReceipt != NULL) {
+            receipt = [NSString stringWithUTF8String:cstrReceipt];
+            receiptValue = [receipt dataUsingEncoding:NSUTF8StringEncoding];
+        }
+    }
+    lua_pop(L, 1);
+
+    ADJSubscription *subscription = [[ADJSubscription alloc] initWithPrice:priceValue
+                                                                  currency:currency
+                                                             transactionId:transactionId
+                                                                andReceipt:receiptValue];
+
+    // Transaction date.
+    lua_getfield(L, 1, "transactionDate");
+    if (!lua_isnil(L, 2)) {
+        const char *cstrTransactionDate = lua_tostring(L, 2);
+        if (cstrTransactionDate != NULL) {
+            NSString *transactionDate = [NSString stringWithUTF8String:cstrTransactionDate];
+            NSTimeInterval transactionDateInterval = [transactionDate doubleValue];
+            NSDate *oTransactionDate = [NSDate dateWithTimeIntervalSince1970:transactionDateInterval];
+            [subscription setTransactionDate:oTransactionDate];
+        }
+    }
+    lua_pop(L, 1);
+
+    // Sales region.
+    lua_getfield(L, 1, "salesRegion");
+    if (!lua_isnil(L, 2)) {
+        const char *cstrSalesRegion = lua_tostring(L, 2);
+        if (cstrSalesRegion != NULL) {
+            NSString *salesRegion = [NSString stringWithUTF8String:cstrSalesRegion];
+            [subscription setSalesRegion:salesRegion];
+        }
+    }
+    lua_pop(L, 1);
+
+    // Callback parameters.
+    lua_getfield(L, 1, "callbackParameters");
+    if (!lua_isnil(L, 2) && lua_istable(L, 2)) {
+        NSDictionary *dict = CoronaLuaCreateDictionary(L, 2);
+        for (id key in dict) {
+            NSDictionary *callbackParams = [dict objectForKey:key];
+            [subscription addCallbackParameter:callbackParams[@"key"] value:callbackParams[@"value"]];
+        }
+    }
+    lua_pop(L, 1);
+
+    // Partner parameters.
+    lua_getfield(L, 1, "partnerParameters");
+    if (!lua_isnil(L, 2) && lua_istable(L, 2)) {
+        NSDictionary *dict = CoronaLuaCreateDictionary(L, 2);
+        for(id key in dict) {
+            NSDictionary *partnerParams = [dict objectForKey:key];
+            [subscription addPartnerParameter:partnerParams[@"key"] value:partnerParams[@"value"]];
+        }
+    }
+    lua_pop(L, 1);
+
+    [Adjust trackSubscription:subscription];
+    return 0;
+}
+
+// Public API.
 int AdjustPlugin::setAttributionListener(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
@@ -845,21 +957,21 @@ int AdjustPlugin::setTestOptions(lua_State *L) {
         }
     }
     lua_pop(L, 1);
-    
-    lua_getfield(L, 1, "basePath");
+
+    lua_getfield(L, 1, "subscriptionUrl");
     if (!lua_isnil(L, 2)) {
-        const char *basePath = lua_tostring(L, 2);
-        if (basePath != NULL) {
-            testOptions.basePath = [NSString stringWithUTF8String:basePath];
+        const char *subscriptionUrl = lua_tostring(L, 2);
+        if (subscriptionUrl != NULL) {
+            testOptions.subscriptionUrl = [NSString stringWithUTF8String:subscriptionUrl];
         }
     }
     lua_pop(L, 1);
     
-    lua_getfield(L, 1, "gdprPath");
+    lua_getfield(L, 1, "extraPath");
     if (!lua_isnil(L, 2)) {
-        const char *gdprPath = lua_tostring(L, 2);
-        if (gdprPath != NULL) {
-            testOptions.gdprPath = [NSString stringWithUTF8String:gdprPath];
+        const char *extraPath = lua_tostring(L, 2);
+        if (extraPath != NULL) {
+            testOptions.extraPath = [NSString stringWithUTF8String:extraPath];
         }
     }
     lua_pop(L, 1);

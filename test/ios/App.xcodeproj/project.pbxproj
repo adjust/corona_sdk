@@ -199,7 +199,7 @@
 				9DD2998921F717060054DA79 /* MainWindow-iPad.xib */,
 			);
 			name = resource;
-			path = ../../../../../../Applications/Corona/Native/Corona/ios/resource;
+			path = ../../../../../../Applications/Corona-3582/Native/Corona/ios/resource;
 			sourceTree = "<group>";
 		};
 		A447B66F16670015009EA762 /* CoronaNative */ = {

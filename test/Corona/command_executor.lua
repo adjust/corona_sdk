@@ -11,19 +11,23 @@ localBasePath = ""
 CommandExecutor = {
     baseUrl = "",
     gdprUrl = "",
-    basePath = "", 
-    gdprPath = "", 
-    savedEvents = {}, 
+    subscriptionUrl = "",
+    basePath = "",
+    gdprPath = "",
+    subscriptionPath = "",
+    extraPath = "",
+    savedEvents = {},
     savedConfigs = {},
     command = nil
 }
 
-function CommandExecutor:new (o, baseUrl, gdprUrl)
+function CommandExecutor:new (o, baseUrl, gdprUrl, subscriptionUrl)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
     self.baseUrl = baseUrl
     self.gdprUrl = gdprUrl
+    self.subscriptionUrl = subscriptionUrl
     return o
 end
 
@@ -62,6 +66,7 @@ function CommandExecutor:executeCommand(command)
     elseif method == "gdprForgetMe" then self:gdprForgetMe()
     elseif method == "trackAdRevenue" then self:trackAdRevenue()
     elseif method == "disableThirdPartySharing" then self:disableThirdPartySharing()
+    elseif method == "trackSubscription" then self:trackSubscription()
         
     else print("CommandExecutor: unknown method name: " .. method)
     end
@@ -71,10 +76,13 @@ function CommandExecutor:testOptions()
     local testOptions = {}
     testOptions.baseUrl = self.baseUrl
     testOptions.gdprUrl = self.gdprUrl
+    testOptions.subscriptionUrl = self.subscriptionUrl
     
     if self.command:containsParameter("basePath") then
         self.basePath = self.command:getFirstParameterValue("basePath")
         self.gdprPath = self.command:getFirstParameterValue("basePath")
+        self.subscriptionPath = self.command:getFirstParameterValue("basePath")
+        self.extraPath = self.command:getFirstParameterValue("basePath")
     end
     
     if self.command:containsParameter("timerInterval") then
@@ -132,6 +140,8 @@ function CommandExecutor:testOptions()
                 testOptions.teardown = true
                 testOptions.basePath = self.basePath
                 testOptions.gdprPath = self.gdprPath
+                testOptions.subscriptionPath = self.subscriptionPath
+                testOptions.extraPath = self.extraPath
                 testOptions.useTestConnectionOptions = true
                 testOptions.tryInstallReferrer = false
             elseif option == "deleteState" then 
@@ -147,6 +157,8 @@ function CommandExecutor:testOptions()
                 testOptions.teardown = true
                 testOptions.basePath = nil
                 testOptions.gdprPath = nil
+                testOptions.subscriptionPath = nil
+                testOptions.extraPath = nil
                 testOptions.useTestConnectionOptions = false
             elseif option == "test" then 
                 self:clearSavedConfigsAndEvents()
@@ -590,6 +602,15 @@ function CommandExecutor:trackAdRevenue()
     local source = self.command:getFirstParameterValue("adRevenueSource")
     local payload = self.command:getFirstParameterValue("adRevenueJsonString")
     adjust.trackAdRevenue(source, payload)
+end
+
+function CommandExecutor:trackSubscription()
+    if platformInfo == "ios" then
+        local source = self.command:getFirstParameterValue("adRevenueSource")
+        local payload = self.command:getFirstParameterValue("adRevenueJsonString")
+    else
+        
+    end
 end
    
 function CommandExecutor:clearSavedConfigsAndEvents()
