@@ -1,3 +1,19 @@
+### Version 4.23.0 (8th September 2020)
+#### Added
+- Added subscription tracking feature.
+- Added communication with SKAdNetwork framework by default on iOS 14.
+- Added method `handleSkAdNetwork` key handling to configuration map to switch off default communication with SKAdNetwork framework in iOS 14.
+- Added wrapper method `requestTrackingAuthorizationWithCompletionHandler` to `Adjust` to allow asking for user's consent to be tracked in iOS 14 and immediate propagation of user's choice to backend.
+- Added handling of new iAd framework error codes introduced in iOS 14.
+- Added sending of value of user's consent to be tracked with each package.
+- Added `urlStrategy` key handling to configuration map to allow selection of URL strategy for specific market.
+
+#### Native SDKs
+- [iOS@v4.23.0][ios_sdk_v4.23.0]
+- [Android@v4.24.0][android_sdk_v4.24.0]
+
+---
+
 ### Version 4.21.0 (25th March 2020)
 #### Added
 - Added support for signature library as a plugin.
@@ -122,6 +138,7 @@
 [ios_sdk_v4.18.0]: https://github.com/adjust/ios_sdk/tree/v4.18.0
 [ios_sdk_v4.20.0]: https://github.com/adjust/ios_sdk/tree/v4.20.0
 [ios_sdk_v4.21.0]: https://github.com/adjust/ios_sdk/tree/v4.21.0
+[ios_sdk_v4.23.0]: https://github.com/adjust/ios_sdk/tree/v4.23.0
 
 [android_sdk_v4.12.0]: https://github.com/adjust/android_sdk/tree/v4.12.0
 [android_sdk_v4.12.1]: https://github.com/adjust/android_sdk/tree/v4.12.1
@@ -131,3 +148,4 @@
 [android_sdk_v4.18.0]: https://github.com/adjust/android_sdk/tree/v4.18.0
 [android_sdk_v4.20.0]: https://github.com/adjust/android_sdk/tree/v4.20.0
 [android_sdk_v4.21.0]: https://github.com/adjust/android_sdk/tree/v4.21.0
+[android_sdk_v4.24.0]: https://github.com/adjust/android_sdk/tree/v4.24.0
