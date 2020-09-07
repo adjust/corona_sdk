@@ -122,6 +122,11 @@ adjust.create({
 
 adjust.requestTrackingAuthorizationWithCompletionHandler(function(event)
     print("[Adjust]: Authorization status = " .. event.message)
+    if     event.message == "0" then print("[Adjust]: ATTrackingManagerAuthorizationStatusNotDetermined")
+    elseif event.message == "1" then print("[Adjust]: ATTrackingManagerAuthorizationStatusRestricted")
+    elseif event.message == "2" then print("[Adjust]: ATTrackingManagerAuthorizationStatusDenied")
+    elseif event.message == "3" then print("[Adjust]: ATTrackingManagerAuthorizationStatusAuthorized")
+    end
 end)
 
 -- adjust.setPushToken("{YourPushToken}")
