@@ -11,19 +11,24 @@ localBasePath = ""
 CommandExecutor = {
     baseUrl = "",
     gdprUrl = "",
-    basePath = "", 
-    gdprPath = "", 
-    savedEvents = {}, 
+    subscriptionUrl = "",
+    extraPath = "",
+    basePath = "",
+    gdprPath = "",
+    subscriptionPath = "",
+    extraPath = "",
+    savedEvents = {},
     savedConfigs = {},
     command = nil
 }
 
-function CommandExecutor:new (o, baseUrl, gdprUrl)
+function CommandExecutor:new (o, baseUrl, gdprUrl, subscriptionUrl)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
     self.baseUrl = baseUrl
     self.gdprUrl = gdprUrl
+    self.subscriptionUrl = subscriptionUrl
     return o
 end
 
@@ -62,6 +67,7 @@ function CommandExecutor:executeCommand(command)
     elseif method == "gdprForgetMe" then self:gdprForgetMe()
     elseif method == "trackAdRevenue" then self:trackAdRevenue()
     elseif method == "disableThirdPartySharing" then self:disableThirdPartySharing()
+    elseif method == "trackSubscription" then self:trackSubscription()
         
     else print("CommandExecutor: unknown method name: " .. method)
     end
@@ -71,10 +77,13 @@ function CommandExecutor:testOptions()
     local testOptions = {}
     testOptions.baseUrl = self.baseUrl
     testOptions.gdprUrl = self.gdprUrl
+    testOptions.subscriptionUrl = self.subscriptionUrl
     
     if self.command:containsParameter("basePath") then
         self.basePath = self.command:getFirstParameterValue("basePath")
         self.gdprPath = self.command:getFirstParameterValue("basePath")
+        self.subscriptionPath = self.command:getFirstParameterValue("basePath")
+        self.extraPath = self.command:getFirstParameterValue("basePath")
     end
     
     if self.command:containsParameter("timerInterval") then
@@ -132,6 +141,8 @@ function CommandExecutor:testOptions()
                 testOptions.teardown = true
                 testOptions.basePath = self.basePath
                 testOptions.gdprPath = self.gdprPath
+                testOptions.subscriptionPath = self.subscriptionPath
+                testOptions.extraPath = self.extraPath
                 testOptions.useTestConnectionOptions = true
                 testOptions.tryInstallReferrer = false
             elseif option == "deleteState" then 
@@ -147,6 +158,8 @@ function CommandExecutor:testOptions()
                 testOptions.teardown = true
                 testOptions.basePath = nil
                 testOptions.gdprPath = nil
+                testOptions.subscriptionPath = nil
+                testOptions.extraPath = nil
                 testOptions.useTestConnectionOptions = false
             elseif option == "test" then 
                 self:clearSavedConfigsAndEvents()
@@ -590,6 +603,98 @@ function CommandExecutor:trackAdRevenue()
     local source = self.command:getFirstParameterValue("adRevenueSource")
     local payload = self.command:getFirstParameterValue("adRevenueJsonString")
     adjust.trackAdRevenue(source, payload)
+end
+
+function CommandExecutor:trackSubscription()
+    if platformInfo == "ios" then
+        local price = self.command:getFirstParameterValue("revenue")
+        local currency = self.command:getFirstParameterValue("currency")
+        local transactionId = self.command:getFirstParameterValue("transactionId")
+        local receipt = self.command:getFirstParameterValue("receipt")
+        local transactionDate = self.command:getFirstParameterValue("transactionDate")
+        local salesRegion = self.command:getFirstParameterValue("salesRegion")
+        
+        local subscription = {}
+        subscription.price = price
+        subscription.currency = currency
+        subscription.transactionId = transactionId
+        subscription.receipt = receipt
+        subscription.transactionDate = transactionDate
+        subscription.salesRegion = salesRegion
+
+        if self.command:containsParameter("callbackParams") then
+            local callbackParams = self.command.parameters["callbackParams"]
+            subscription.callbackParameters = {}
+            local k = 1
+            for i=1, #callbackParams, 2 do
+                subscription.callbackParameters[k] = { 
+                    key = callbackParams[i], 
+                    value = callbackParams[i + 1] 
+                }
+                k = k + 1
+            end
+        end
+        
+        if self.command:containsParameter("partnerParams") then
+            local partnerParams = self.command.parameters["partnerParams"]
+            subscription.partnerParameters = {}
+            local k = 1
+            for i=1, #partnerParams, 2 do
+                subscription.partnerParameters[k] = { 
+                    key = partnerParams[i], 
+                    value = partnerParams[i + 1] 
+                }
+                k = k + 1
+            end
+        end
+
+        adjust.trackAppStoreSubscription(subscription)
+    else
+        local price = self.command:getFirstParameterValue("revenue")
+        local currency = self.command:getFirstParameterValue("currency")
+        local sku = self.command:getFirstParameterValue("productId")
+        local signature = self.command:getFirstParameterValue("receipt")
+        local purchaseToken = self.command:getFirstParameterValue("purchaseToken")
+        local orderId = self.command:getFirstParameterValue("transactionId")
+        local purchaseTime = self.command:getFirstParameterValue("transactionDate")
+
+        local subscription = {}
+        subscription.price = price
+        subscription.currency = currency
+        subscription.sku = sku
+        subscription.signature = signature
+        subscription.purchaseToken = purchaseToken
+        subscription.orderId = orderId
+        subscription.purchaseTime = purchaseTime
+
+        if self.command:containsParameter("callbackParams") then
+            local callbackParams = self.command.parameters["callbackParams"]
+            subscription.callbackParameters = {}
+            local k = 1
+            for i=1, #callbackParams, 2 do
+                subscription.callbackParameters[k] = { 
+                    key = callbackParams[i], 
+                    value = callbackParams[i + 1] 
+                }
+                k = k + 1
+            end
+        end
+        
+        if self.command:containsParameter("partnerParams") then
+            local partnerParams = self.command.parameters["partnerParams"]
+            subscription.partnerParameters = {}
+            local k = 1
+            for i=1, #partnerParams, 2 do
+                subscription.partnerParameters[k] = { 
+                    key = partnerParams[i], 
+                    value = partnerParams[i + 1] 
+                }
+                k = k + 1
+            end
+        end
+
+        adjust.trackPlayStoreSubscription(subscription)
+    end
 end
    
 function CommandExecutor:clearSavedConfigsAndEvents()
