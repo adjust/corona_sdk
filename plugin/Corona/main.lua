@@ -90,23 +90,21 @@ adjust.setDeferredDeeplinkListener(deferredDeeplinkListener)
 adjust.addSessionCallbackParameter("scp1", "scp1_value1")
 adjust.addSessionCallbackParameter("scp2", "scp2_value2")
 adjust.addSessionCallbackParameter("scp3", "scp3_value3")
-
 adjust.removeSessionCallbackParameter("scp2")
-
 adjust.resetSessionCallbackParameters()
 
 adjust.addSessionPartnerParameter("spp1", "spp1_value1")
 adjust.addSessionPartnerParameter("spp2", "spp2_value2")
 adjust.addSessionPartnerParameter("spp3", "spp3_value3")
-
 adjust.removeSessionPartnerParameter("spp1")
-
 adjust.resetSessionPartnerParameters()
 
 adjust.create({
     appToken = "2fm9gkqubvpc",
     environment = "SANDBOX",
     logLevel = "VERBOSE",
+    handleSkAdNetwork = false,
+    urlStrategy = "india",
     -- shouldLaunchDeeplink = false,
     -- eventBufferingEnabled = true,
     -- delayStart = 6.0,
@@ -122,6 +120,10 @@ adjust.create({
     -- info4 = eee,
 })
 
+adjust.requestTrackingAuthorizationWithCompletionHandler(function(event)
+    print("[Adjust]: Authorization status = " .. event.message)
+end)
+
 -- adjust.setPushToken("{YourPushToken}")
 -- adjust.sendFirstPackages()
 
@@ -135,6 +137,62 @@ local function handleTrackSimpleEvent(event)
     if ("ended" == event.phase) then
         adjust.trackEvent({
             eventToken = "g3mfiw"
+        })
+        adjust.trackAppStoreSubscription({
+            price = "6.66",
+            currency = "CAD",
+            transactionId = "random-transaction-id",
+            receipt = "random-receipt",
+            transactionDate = "1234567890",
+            salesRegion = "CA",
+            callbackParameters = {
+                {
+                    key = "callback_key1",
+                    value = "callback_value1",
+                },
+                {
+                    key = "callback_key2",
+                    value = "callback_value2",
+                },
+            },
+            partnerParameters = {
+                {
+                    key = "callback_key3",
+                    value = "callback_value3",
+                },
+                {
+                    key = "callback_key6",
+                    value = "callback_value6",
+                },
+            },
+        })
+        adjust.trackPlayStoreSubscription({
+            price = "6",
+            currency = "CAD",
+            orderId = "random-order-id",
+            signature = "random-signature",
+            purchaseToken = "random-purchase-token",
+            purchaseTime = "1234567890",
+            callbackParameters = {
+                {
+                    key = "callback_key1",
+                    value = "callback_value1",
+                },
+                {
+                    key = "callback_key2",
+                    value = "callback_value2",
+                },
+            },
+            partnerParameters = {
+                {
+                    key = "callback_key3",
+                    value = "callback_value3",
+                },
+                {
+                    key = "callback_key6",
+                    value = "callback_value6",
+                },
+            },
         })
     end
 end

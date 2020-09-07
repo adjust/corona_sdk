@@ -12,6 +12,7 @@ CommandExecutor = {
     baseUrl = "",
     gdprUrl = "",
     subscriptionUrl = "",
+    extraPath = "",
     basePath = "",
     gdprPath = "",
     subscriptionPath = "",
@@ -606,10 +607,93 @@ end
 
 function CommandExecutor:trackSubscription()
     if platformInfo == "ios" then
-        local source = self.command:getFirstParameterValue("adRevenueSource")
-        local payload = self.command:getFirstParameterValue("adRevenueJsonString")
-    else
+        local price = self.command:getFirstParameterValue("revenue")
+        local currency = self.command:getFirstParameterValue("currency")
+        local transactionId = self.command:getFirstParameterValue("transactionId")
+        local receipt = self.command:getFirstParameterValue("receipt")
+        local transactionDate = self.command:getFirstParameterValue("transactionDate")
+        local salesRegion = self.command:getFirstParameterValue("salesRegion")
         
+        local subscription = {}
+        subscription.price = price
+        subscription.currency = currency
+        subscription.transactionId = transactionId
+        subscription.receipt = receipt
+        subscription.transactionDate = transactionDate
+        subscription.salesRegion = salesRegion
+
+        if self.command:containsParameter("callbackParams") then
+            local callbackParams = self.command.parameters["callbackParams"]
+            subscription.callbackParameters = {}
+            local k = 1
+            for i=1, #callbackParams, 2 do
+                subscription.callbackParameters[k] = { 
+                    key = callbackParams[i], 
+                    value = callbackParams[i + 1] 
+                }
+                k = k + 1
+            end
+        end
+        
+        if self.command:containsParameter("partnerParams") then
+            local partnerParams = self.command.parameters["partnerParams"]
+            subscription.partnerParameters = {}
+            local k = 1
+            for i=1, #partnerParams, 2 do
+                subscription.partnerParameters[k] = { 
+                    key = partnerParams[i], 
+                    value = partnerParams[i + 1] 
+                }
+                k = k + 1
+            end
+        end
+
+        adjust.trackAppStoreSubscription(subscription)
+    else
+        local price = self.command:getFirstParameterValue("revenue")
+        local currency = self.command:getFirstParameterValue("currency")
+        local sku = self.command:getFirstParameterValue("productId")
+        local signature = self.command:getFirstParameterValue("receipt")
+        local purchaseToken = self.command:getFirstParameterValue("purchaseToken")
+        local orderId = self.command:getFirstParameterValue("transactionId")
+        local purchaseTime = self.command:getFirstParameterValue("transactionDate")
+
+        local subscription = {}
+        subscription.price = price
+        subscription.currency = currency
+        subscription.sku = sku
+        subscription.signature = signature
+        subscription.purchaseToken = purchaseToken
+        subscription.orderId = orderId
+        subscription.purchaseTime = purchaseTime
+
+        if self.command:containsParameter("callbackParams") then
+            local callbackParams = self.command.parameters["callbackParams"]
+            subscription.callbackParameters = {}
+            local k = 1
+            for i=1, #callbackParams, 2 do
+                subscription.callbackParameters[k] = { 
+                    key = callbackParams[i], 
+                    value = callbackParams[i + 1] 
+                }
+                k = k + 1
+            end
+        end
+        
+        if self.command:containsParameter("partnerParams") then
+            local partnerParams = self.command.parameters["partnerParams"]
+            subscription.partnerParameters = {}
+            local k = 1
+            for i=1, #partnerParams, 2 do
+                subscription.partnerParameters[k] = { 
+                    key = partnerParams[i], 
+                    value = partnerParams[i + 1] 
+                }
+                k = k + 1
+            end
+        end
+
+        adjust.trackPlayStoreSubscription(subscription)
     end
 end
    

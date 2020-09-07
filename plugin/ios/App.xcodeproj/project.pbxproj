@@ -23,6 +23,8 @@
 /* Begin PBXBuildFile section */
 		9D673C80242ADA5F000EC752 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D673C7F242ADA5F000EC752 /* AdSupport.framework */; };
 		9D673C82242ADA63000EC752 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D673C81242ADA63000EC752 /* iAd.framework */; };
+		9DB9CA9D250658800020508F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A484117515128D5D0074BD57 /* StoreKit.framework */; };
+		9DB9CA9F2506588E0020508F /* AppTrackingTransparency.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DB9CA9E2506588E0020508F /* AppTrackingTransparency.framework */; };
 		9DD299B421F725350054DA79 /* _CoronaSplashScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 9DD299B021F725350054DA79 /* _CoronaSplashScreen.png */; };
 		9DD299B521F725350054DA79 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9DD299B121F725350054DA79 /* MainWindow.xib */; };
 		9DD299B621F725350054DA79 /* CoronaResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 9DD299B221F725350054DA79 /* CoronaResources.bundle */; };
@@ -89,6 +91,7 @@
 /* Begin PBXFileReference section */
 		9D673C7F242ADA5F000EC752 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		9D673C81242ADA63000EC752 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
+		9DB9CA9E2506588E0020508F /* AppTrackingTransparency.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppTrackingTransparency.framework; path = System/Library/Frameworks/AppTrackingTransparency.framework; sourceTree = SDKROOT; };
 		9DD299B021F725350054DA79 /* _CoronaSplashScreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = _CoronaSplashScreen.png; sourceTree = "<group>"; };
 		9DD299B121F725350054DA79 /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
 		9DD299B221F725350054DA79 /* CoronaResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = CoronaResources.bundle; sourceTree = "<group>"; };
@@ -153,6 +156,7 @@
 				F51C66D61EE0D3B20040E4BE /* libplugin_adjust.a in Frameworks */,
 				E640B2F41BFC00BA0031FAE9 /* Photos.framework in Frameworks */,
 				E640B2F21BFC00B00031FAE9 /* AssetsLibrary.framework in Frameworks */,
+				9DB9CA9D250658800020508F /* StoreKit.framework in Frameworks */,
 				F5BB41531BC42ACF0033F6FA /* CoreText.framework in Frameworks */,
 				A46885F418068C2900381941 /* CoreVideo.framework in Frameworks */,
 				A46885F218068C2200381941 /* GLKit.framework in Frameworks */,
@@ -176,6 +180,7 @@
 				A484118215128D5D0074BD57 /* MapKit.framework in Frameworks */,
 				A484118315128D5D0074BD57 /* MediaPlayer.framework in Frameworks */,
 				A484118415128D5D0074BD57 /* MessageUI.framework in Frameworks */,
+				9DB9CA9F2506588E0020508F /* AppTrackingTransparency.framework in Frameworks */,
 				9D673C82242ADA63000EC752 /* iAd.framework in Frameworks */,
 				A484118515128D5D0074BD57 /* MobileCoreServices.framework in Frameworks */,
 				A484118615128D5D0074BD57 /* OpenAL.framework in Frameworks */,
@@ -248,6 +253,7 @@
 		A484111C15114F700074BD57 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9DB9CA9E2506588E0020508F /* AppTrackingTransparency.framework */,
 				9D673C81242ADA63000EC752 /* iAd.framework */,
 				9D673C7F242ADA5F000EC752 /* AdSupport.framework */,
 				E640B2F31BFC00BA0031FAE9 /* Photos.framework */,

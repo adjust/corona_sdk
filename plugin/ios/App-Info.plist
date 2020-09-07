@@ -36,6 +36,8 @@
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>We will we will track you (clap clap stomp)</string>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleBlackTranslucent</string>
 </dict>

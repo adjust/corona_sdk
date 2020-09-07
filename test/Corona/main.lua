@@ -44,9 +44,10 @@ end
 local baseIp = "192.168.86.32"
 local baseUrl = protocol .. "://" .. baseIp .. ":" .. port
 local gdprUrl = protocol .. "://" .. baseIp .. ":" .. port
+local subscriptionUrl = protocol .. "://" .. baseIp .. ":" .. port
 local controlUrl = "ws://" .. baseIp .. ":1987";
 print("[TestApp]: Using BaseUrl: [" .. baseUrl .. "]--")
-local commandExecutor = command_executor.CommandExecutor:new(nil, baseUrl, gdprUrl)
+local commandExecutor = command_executor.CommandExecutor:new(nil, baseUrl, gdprUrl, subscriptionUrl)
 
 local function executeCommand(event)
     local rawCommand = json.decode(event.message)
