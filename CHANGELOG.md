@@ -1,3 +1,13 @@
+### Version 4.23.1 (29th September 2020)
+#### Fixed
+- Fixed duplicate `ADJUrlStrategy` symbol error.
+
+#### Native SDKs
+- [iOS@v4.23.2][ios_sdk_v4.23.2]
+- [Android@v4.24.1][android_sdk_v4.24.1]
+
+---
+
 ### Version 4.23.0 (8th September 2020)
 #### Added
 - Added subscription tracking feature.
@@ -139,6 +149,7 @@
 [ios_sdk_v4.20.0]: https://github.com/adjust/ios_sdk/tree/v4.20.0
 [ios_sdk_v4.21.0]: https://github.com/adjust/ios_sdk/tree/v4.21.0
 [ios_sdk_v4.23.0]: https://github.com/adjust/ios_sdk/tree/v4.23.0
+[ios_sdk_v4.23.2]: https://github.com/adjust/ios_sdk/tree/v4.23.2
 
 [android_sdk_v4.12.0]: https://github.com/adjust/android_sdk/tree/v4.12.0
 [android_sdk_v4.12.1]: https://github.com/adjust/android_sdk/tree/v4.12.1
@@ -149,3 +160,4 @@
 [android_sdk_v4.20.0]: https://github.com/adjust/android_sdk/tree/v4.20.0
 [android_sdk_v4.21.0]: https://github.com/adjust/android_sdk/tree/v4.21.0
 [android_sdk_v4.24.0]: https://github.com/adjust/android_sdk/tree/v4.24.0
+[android_sdk_v4.24.1]: https://github.com/adjust/android_sdk/tree/v4.24.1
