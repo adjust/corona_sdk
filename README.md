@@ -1,6 +1,6 @@
 ## Summary
 
-This is the Corona SDK of Adjust™. You can read more about Adjust™ at [adjust.com].
+This is the Adjust™ plugin for Solar2D (ex Corona SDK). You can read more about Adjust™ at [adjust.com].
 
 ## Table of contents
 
