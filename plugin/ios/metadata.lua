@@ -4,7 +4,7 @@ local metadata =
 	{
 		format = 'staticLibrary',
 		staticLibs = { 'plugin_adjust' },
-		frameworks = { 'AdSupport', 'CoreTelephony', },
+		frameworks = { 'AdSupport', 'CoreTelephony', 'StoreKit', 'AppTrackingTransparency'},
 		frameworksOptional = {},
 		-- usesSwift = true,
 	},

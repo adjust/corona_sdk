@@ -1,13 +1,30 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
+    }
+}
+
+task extractPluginJar() {
+    group "Corona-dev"
+    dependsOn assemble
+    doLast {
+        copy {
+            from {
+                zipTree("$buildDir/outputs/aar/${project.name}-release.aar").matching {
+                    include 'classes.jar'
+                }.singleFile
+            }
+            into "$buildDir/outputs/"
+            String packageName = new XmlSlurper().parse(file('src/main/AndroidManifest.xml')).@package.text()
+            rename "classes.jar", "${packageName}.jar"
+        }
     }
 }
 
