@@ -8,5 +8,5 @@
         branch = master
 [submodule "dist_directory"]
 	path = dist_directory
-	url = https://github.com/solar2d/com.adjust_plugin.adjust.git
+	url = https://github.com/solar2d/com.adjust-plugin.adjust.git
 	branch = master
