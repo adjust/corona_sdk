@@ -18,7 +18,13 @@ settings =
 		xcassets = "Images.xcassets",
 		plist =
 		{
+			NSUserTrackingUsageDescription = "This would allow the app to advertise better.",
 			UILaunchStoryboardName = "LaunchScreen",
 		},
 	},
+    plugins =
+    {
+        ['plugin.adjust'] = { publisherId = 'com.adjust' },
+    }
+
 }
