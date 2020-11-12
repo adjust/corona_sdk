@@ -5,6 +5,7 @@ This is the Corona SDK of Adjust™. You can read more about Adjust™ at [adjus
 ## Table of contents
 
 * [Example app](#example-app)
+* [Simulator integration](#sim-integration)
 * [Basic integration](#basic-integration)
    * [Get the SDK](#sdk-get)
    * [Add the SDK to your app](#sdk-add)
@@ -67,6 +68,28 @@ This is the Corona SDK of Adjust™. You can read more about Adjust™ at [adjus
 ## <a id="example-app"></a>Example app
 
 There is example inside the [`plugin` directory][plugin]. In there in you can check how to integrate the Adjust SDK into your app.
+
+## <a id="sim-integration"></a>Simulator integration
+
+Easiest way to add Adjust plugin to your Simulator project is to add `build.settings` entry:
+
+```lua
+settings = 
+{
+    iphone =
+    {
+        plist =
+        {
+            NSUserTrackingUsageDescription = "This would allow the app to advertise better.",
+        },
+    },
+    plugins =
+    {
+        ['plugin.adjust'] = { publisherId = 'com.adjust' },
+    }
+}
+
+```
 
 ## <a id="basic-integration"></a>Basic integration
 

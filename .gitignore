@@ -220,3 +220,4 @@ plugin/android/app/src/main/jniLibs
 test/android/.idea
 plugin/android/.idea
 plugin/ios/BuiltPlugin
+plugin/ios/libplugin_adjust.a

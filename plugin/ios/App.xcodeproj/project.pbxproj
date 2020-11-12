@@ -207,7 +207,7 @@
 				9DD299B321F725350054DA79 /* MainWindow-iPad.xib */,
 			);
 			name = resource;
-			path = "../../../../../../Applications/Corona-3582/Native/Corona/ios/resource";
+			path = "$HOME/Library/Application Support/Corona/Native/Corona/ios/resource";
 			sourceTree = "<group>";
 		};
 		A447B66F16670015009EA762 /* CoronaNative */ = {
