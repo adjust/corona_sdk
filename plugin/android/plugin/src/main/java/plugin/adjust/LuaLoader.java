@@ -146,7 +146,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 new GetIdfaWrapper(),
                 new TrackAppStoreSubscriptionWrapper(),
                 new RequestTrackingAuthorizationWithCompletionHandlerWrapper(),
-                new SetTestOptionsWrapper()
+                new SetTestOptionsWrapper(),
+                new AppTrackingAuthorizationStatusWrapper(),
+                new UpdateConversionValueWrapper(),
         };
         String libName = L.toString(1);
         L.register(libName, luaFunctions);
@@ -279,6 +281,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         boolean sendInBackground = false;
         boolean isLogLevelSuppress = false;
         boolean eventBufferingEnabled = false;
+        boolean needsCost = false;
         double delayStart = 0.0;
         long secretId = -1L;
         long info1 = -1L;
@@ -411,6 +414,14 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         if (!L.isNil(2)) {
             delayStart = L.checkNumber(2);
             adjustConfig.setDelayStart(delayStart);
+        }
+        L.pop(1);
+
+        // Needs cost.
+        L.getField(1, "needsCost");
+        if (!L.isNil(2)) {
+            needsCost = L.toBoolean(2);
+            adjustConfig.setNeedsCost(needsCost);
         }
         L.pop(1);
 
@@ -1175,11 +1186,12 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
-        L.getField(1, "useTestConnectionOptions");
-        if (!L.isNil(2)) {
-            adjustTestOptions.useTestConnectionOptions = L.checkBoolean(2);
-        }
-        L.pop(1);
+//        // This was moved to AdjustFactory.setConnectionOptions();
+//        L.getField(1, "useTestConnectionOptions");
+//        if (!L.isNil(2)) {
+//            adjustTestOptions.useTestConnectionOptions = L.checkBoolean(2);
+//        }
+//        L.pop(1);
 
         L.getField(1, "timerIntervalInMilliseconds");
         if (!L.isNil(2)) {
@@ -1598,6 +1610,29 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             return adjust_getIdfa(L);
         }
     }
+
+    private class AppTrackingAuthorizationStatusWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "appTrackingAuthorizationStatus";
+        }
+        @Override
+        public int invoke(LuaState luaState) {
+            luaState.pushInteger(0);
+            return 0;
+        }
+    }
+    private class UpdateConversionValueWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "updateConversionValue";
+        }
+        @Override
+        public int invoke(LuaState luaState) {
+            return 0;
+        }
+    }
+
 
     private class RequestTrackingAuthorizationWithCompletionHandlerWrapper implements NamedJavaFunction {
         @Override

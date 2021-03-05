@@ -73,6 +73,8 @@ public:
     static int trackAppStoreSubscription(lua_State *L);
     static int disableThirdPartySharing(lua_State *L);
     static int requestTrackingAuthorizationWithCompletionHandler(lua_State *L);
+    static int appTrackingAuthorizationStatus(lua_State *L);
+    static int updateConversionValue(lua_State *L);
     static int setAttributionListener(lua_State *L);
     static int setEventTrackingSuccessListener(lua_State *L);
     static int setEventTrackingFailureListener(lua_State *L);
@@ -179,6 +181,8 @@ AdjustPlugin::Open(lua_State *L) {
         { "gdprForgetMe", gdprForgetMe },
         { "disableThirdPartySharing", disableThirdPartySharing },
         { "requestTrackingAuthorizationWithCompletionHandler", requestTrackingAuthorizationWithCompletionHandler },
+        { "appTrackingAuthorizationStatus", appTrackingAuthorizationStatus },
+        { "updateConversionValue", updateConversionValue },
         { "getGoogleAdId", getGoogleAdId },
         { "getAmazonAdId", getAmazonAdId },
         { "trackPlayStoreSubscription", trackPlayStoreSubscription },
@@ -236,6 +240,7 @@ int AdjustPlugin::create(lua_State *L) {
     BOOL allowiAdInfoReading = YES;
     BOOL allowIdfaReading = YES;
     BOOL handleSkAdNetwork = YES;
+    BOOL needsCost = NO;
     BOOL shouldLaunchDeferredDeeplink = YES;
     NSString *appToken = nil;
     NSString *userAgent = nil;
@@ -323,6 +328,15 @@ int AdjustPlugin::create(lua_State *L) {
         }
     }
     lua_pop(L, 1);
+    
+    // SKAdNetwork handling.
+    lua_getfield(L, 1, "needsCost");
+    if (!lua_isnil(L, 2)) {
+        needsCost = lua_toboolean(L, 2);
+		[adjustConfig setNeedsCost:needsCost];
+    }
+    lua_pop(L, 1);
+
 
     // Default tracker.
     lua_getfield(L, 1, "defaultTracker");
@@ -891,6 +905,9 @@ int AdjustPlugin::getAttribution(lua_State *L) {
             [AdjustSdkDelegate addKey:@"adgroup" andValue:attribution.adgroup toDictionary:dictionary];
             [AdjustSdkDelegate addKey:@"clickLabel" andValue:attribution.clickLabel toDictionary:dictionary];
             [AdjustSdkDelegate addKey:@"adid" andValue:attribution.adid toDictionary:dictionary];
+			[AdjustSdkDelegate addKey:@"costType" andValue:attribution.costType toDictionary:dictionary];
+			[AdjustSdkDelegate addKey:@"costAmount" andValue:attribution.costAmount toDictionary:dictionary];
+			[AdjustSdkDelegate addKey:@"costCurrency" andValue:attribution.costCurrency toDictionary:dictionary];
         }
 
         NSError *error;
@@ -944,6 +961,20 @@ int AdjustPlugin::requestTrackingAuthorizationWithCompletionHandler(lua_State *L
         }];
     }
     return 0;
+}
+
+// Public API.
+int AdjustPlugin::appTrackingAuthorizationStatus(lua_State *L) {
+	int status = [Adjust appTrackingAuthorizationStatus];
+	lua_pushinteger(L, status);
+	return 1;
+}
+
+// Public API.
+int AdjustPlugin::updateConversionValue(lua_State *L) {
+	NSInteger value = lua_tointeger(L, 1);
+	[Adjust updateConversionValue:value];
+	return 0;
 }
 
 // Android specific.
