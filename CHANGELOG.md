@@ -1,3 +1,8 @@
+### Version 4.26.2 Android/4.26.1 iOS (5th March 2021)
+- Added method `appTrackingAuthorizationStatus`: returns integer of user consent (effective only on iOS, no-op on Android)
+- Added method `updateConversionValue`: sets iOS Conversion value (no-op on Android)
+- Added `needsCost` value of `create` method of `Adjust` along with `costType`, `needsCost` and `costAmount` fields in `attribution` data.
+
 ### Version 4.23.1 (29th September 2020)
 #### Fixed
 - Fixed duplicate `ADJUrlStrategy` symbol error.

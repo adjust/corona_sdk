@@ -25,7 +25,9 @@ This is the Adjust™ plugin for Solar2D (ex Corona SDK). You can read more abou
 * [Additional features](#additional-features)
    * [AppTrackingTransparency framework](#att-framework)
       * [App-tracking authorisation wrapper](#ata-wrapper)
+      * [App-tracking authorisation status query](#ata-query)
    * [SKAdNetwork framework](#skadn-framework)
+      * [Update SKAdNetwork conversion value](#skadn-value) 
    * [Event tracking](#event-tracking)
       * [Revenue tracking](#revenue-tracking)
       * [Revenue deduplication](#revenue-deduplication)
@@ -108,7 +110,7 @@ You can now add the Adjust SDK to your Corona Enterprise app project. The Adjust
 Inside your Android Studio app project, create a `libs` folder inside of your app folder and add the `plugin.adjust.jar` file to it. After that, please update your app's `build.gradle` file and add the following lines to your `dependencies` section:
 
 ```
-compile 'com.adjust.sdk:adjust-android:4.13.0'
+compile 'com.adjust.sdk:adjust-android:4.26.2'
 compile 'com.android.installreferrer:installreferrer:1.0'
 ```
 
@@ -309,6 +311,29 @@ adjust.requestTrackingAuthorizationWithCompletionHandler(function(event)
 end)
 ```
 
+### <a id="ata-query"></a>App-tracking authorisation query
+
+**Note**: This feature exists only in iOS platform.
+
+You can determine authorization tracking status by querying it without performing the request with `Adjust.appTrackingAuthorizationStatus()`. Return would values are same as for the request:
+
+- 0: `ATTrackingManagerAuthorizationStatusNotDetermined`
+- 1: `ATTrackingManagerAuthorizationStatusRestricted`
+- 2: `ATTrackingManagerAuthorizationStatusDenied`
+- 3: `ATTrackingManagerAuthorizationStatusAuthorized`
+
+To use this wrapper, you can call it as such:
+
+```lua
+local status = adjust.appTrackingAuthorizationStatus()
+print("[Adjust]: Authorization status = " .. status)
+if     status == "0" then print("[Adjust]: ATTrackingManagerAuthorizationStatusNotDetermined")
+elseif status == "1" then print("[Adjust]: ATTrackingManagerAuthorizationStatusRestricted")
+elseif status == "2" then print("[Adjust]: ATTrackingManagerAuthorizationStatusDenied")
+elseif status == "3" then print("[Adjust]: ATTrackingManagerAuthorizationStatusAuthorized")
+end
+```
+
 ### <a id="skadn-framework"></a>SKAdNetwork framework
 
 **Note**: This feature exists only in iOS platform.
@@ -326,6 +351,16 @@ adjust.create({
     logLevel = "VERBOSE",
     handleSkAdNetwork = false
 })
+```
+
+### <a id="skadn-value"></a>Update SKAdNetwork conversion value
+
+**Note**: This feature exists only in iOS platform.
+
+You can use Adjust SDK wrapper method `updateConversionValue` to update SKAdNetwork conversion value for your user:
+
+```lua
+adjust.updateConversionValue(6)
 ```
 
 ### <a id="event-tracking"></a>Event tracking
@@ -662,6 +697,22 @@ In this case, the Adjust SDK not send the initial install session and any events
 
 **The maximum start time delay of the Adjust SDK is 10 seconds**.
 
+### <a id="needs-cost"></a>Needs cost
+
+To receive cost in attribution data you need to request it explicitly in `create` call
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.create({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE",
+    needsCost = true
+})
+```
+
+If it is set to `true`, fields `costType`, `costAmount` and `costCurrency` would be set in the [attribution callback](#attribution-callback) event.
+
 ### <a id="attribution-callback"></a>Attribution callback
 
 You can register a listener to be notified of tracker attribution changes. Due to the different sources considered for attribution, this information cannot be provided synchronously. The simplest way to achieve this is to create a single anonymous listener which is going to be called **each time a user's attribution value changes**. Use the `setAttributionListener` method of the `adjust` instance to set the listener before starting the SDK:
@@ -681,6 +732,9 @@ local function attributionListener(event)
     print("Adgroup: " .. json_attribution.adgroup)
     print("Click label: " .. json_attribution.clickLabel)
     print("ADID: " .. json_attribution.adid)
+    print("Cost Type: " .. json_attribution.costType)
+    print("Cost Amount: " .. json_attribution.costAmount)
+    print("Cost Currency: " .. json_attribution.costCurrency)
 end
 
 -- ...
@@ -692,7 +746,8 @@ adjust.setAttributionListener(attributionListener)
 adjust.create({
     appToken = "{YourAppToken}",
     environment = "SANDBOX",
-    logLevel = "VERBOSE"
+    logLevel = "VERBOSE",
+    needsCost = true,
 })
 ```
 
@@ -706,6 +761,10 @@ Within the listener function you have access to the `attribution` parameters. He
 - `creative`        the creative grouping level of the current attribution
 - `clickLabel`      the click label of the current attribution
 - `adid`            the Adjust device identifier
+- `costType`        the cost type, use `needsCost` to request this value
+- `costAmount`      the price, use `needsCost` to request this value
+- `costCurrency`    the currency used, use `needsCost` to request this value
+
 
 Please make sure to consider our [applicable attribution data policies][attribution-data].
 
