@@ -1,10 +1,10 @@
-### Version 4.23.1 (29th September 2020)
-#### Fixed
-- Fixed duplicate `ADJUrlStrategy` symbol error.
+### Version 4.28.0 (3rd April 2021)
+#### Changed
+- Removed native iOS legacy code.
 
 #### Native SDKs
-- [iOS@v4.23.2][ios_sdk_v4.23.2]
-- [Android@v4.24.1][android_sdk_v4.24.1]
+- [Android@v4.27.0][android_sdk_v4.27.0]
+- [iOS@v4.28.0][ios_sdk_v4.28.0]
 
 ---
 
@@ -150,6 +150,7 @@
 [ios_sdk_v4.21.0]: https://github.com/adjust/ios_sdk/tree/v4.21.0
 [ios_sdk_v4.23.0]: https://github.com/adjust/ios_sdk/tree/v4.23.0
 [ios_sdk_v4.23.2]: https://github.com/adjust/ios_sdk/tree/v4.23.2
+[ios_sdk_v4.28.0]: https://github.com/adjust/ios_sdk/tree/v4.28.0
 
 [android_sdk_v4.12.0]: https://github.com/adjust/android_sdk/tree/v4.12.0
 [android_sdk_v4.12.1]: https://github.com/adjust/android_sdk/tree/v4.12.1
@@ -161,3 +162,4 @@
 [android_sdk_v4.21.0]: https://github.com/adjust/android_sdk/tree/v4.21.0
 [android_sdk_v4.24.0]: https://github.com/adjust/android_sdk/tree/v4.24.0
 [android_sdk_v4.24.1]: https://github.com/adjust/android_sdk/tree/v4.24.1
+[android_sdk_v4.27.0]: https://github.com/adjust/android_sdk/tree/v4.27.0

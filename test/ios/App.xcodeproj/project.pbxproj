@@ -21,6 +21,9 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		9D28CC1A2617E89900AEDF67 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D28CC192617E89900AEDF67 /* AdSupport.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		9D28CC1C2617E8A400AEDF67 /* AdServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D28CC1B2617E8A400AEDF67 /* AdServices.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		9D28CC1E2617E8AB00AEDF67 /* AppTrackingTransparency.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D28CC1D2617E8AB00AEDF67 /* AppTrackingTransparency.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		9DD2998A21F717060054DA79 /* _CoronaSplashScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 9DD2998621F717060054DA79 /* _CoronaSplashScreen.png */; };
 		9DD2998B21F717060054DA79 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9DD2998721F717060054DA79 /* MainWindow.xib */; };
 		9DD2998C21F717060054DA79 /* CoronaResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 9DD2998821F717060054DA79 /* CoronaResources.bundle */; };
@@ -86,6 +89,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9D28CC192617E89900AEDF67 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
+		9D28CC1B2617E8A400AEDF67 /* AdServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdServices.framework; path = System/Library/Frameworks/AdServices.framework; sourceTree = SDKROOT; };
+		9D28CC1D2617E8AB00AEDF67 /* AppTrackingTransparency.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppTrackingTransparency.framework; path = System/Library/Frameworks/AppTrackingTransparency.framework; sourceTree = SDKROOT; };
 		9DD2998621F717060054DA79 /* _CoronaSplashScreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = _CoronaSplashScreen.png; sourceTree = "<group>"; };
 		9DD2998721F717060054DA79 /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
 		9DD2998821F717060054DA79 /* CoronaResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = CoronaResources.bundle; sourceTree = "<group>"; };
@@ -162,6 +168,8 @@
 				A484117915128D5D0074BD57 /* AudioToolbox.framework in Frameworks */,
 				A484117A15128D5D0074BD57 /* AVFoundation.framework in Frameworks */,
 				A484117B15128D5D0074BD57 /* CFNetwork.framework in Frameworks */,
+				9D28CC1A2617E89900AEDF67 /* AdSupport.framework in Frameworks */,
+				9D28CC1C2617E8A400AEDF67 /* AdServices.framework in Frameworks */,
 				A484112215114F700074BD57 /* CoreGraphics.framework in Frameworks */,
 				A484117C15128D5D0074BD57 /* CoreLocation.framework in Frameworks */,
 				A484117D15128D5D0074BD57 /* CoreMedia.framework in Frameworks */,
@@ -173,6 +181,7 @@
 				A484118115128D5D0074BD57 /* libobjc.dylib in Frameworks */,
 				A48411CA15129F610074BD57 /* libsqlite3.dylib in Frameworks */,
 				A484118215128D5D0074BD57 /* MapKit.framework in Frameworks */,
+				9D28CC1E2617E8AB00AEDF67 /* AppTrackingTransparency.framework in Frameworks */,
 				A484118315128D5D0074BD57 /* MediaPlayer.framework in Frameworks */,
 				A484118415128D5D0074BD57 /* MessageUI.framework in Frameworks */,
 				A484118515128D5D0074BD57 /* MobileCoreServices.framework in Frameworks */,
@@ -199,7 +208,7 @@
 				9DD2998921F717060054DA79 /* MainWindow-iPad.xib */,
 			);
 			name = resource;
-			path = ../../../../../../Applications/Corona-3582/Native/Corona/ios/resource;
+			path = "../../../../../../Applications/Corona-3642/Native/Corona/ios/resource";
 			sourceTree = "<group>";
 		};
 		A447B66F16670015009EA762 /* CoronaNative */ = {
@@ -245,6 +254,9 @@
 		A484111C15114F700074BD57 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9D28CC1D2617E8AB00AEDF67 /* AppTrackingTransparency.framework */,
+				9D28CC1B2617E8A400AEDF67 /* AdServices.framework */,
+				9D28CC192617E89900AEDF67 /* AdSupport.framework */,
 				9DD299AB21F719360054DA79 /* libplugin_adjust.a */,
 				E640B2F31BFC00BA0031FAE9 /* Photos.framework */,
 				E640B2F11BFC00B00031FAE9 /* AssetsLibrary.framework */,

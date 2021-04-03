@@ -22,7 +22,7 @@
 #define EVENT_GET_SDK_VERSION @"adjust_getSdkVersion"
 #define EVENT_GET_AUTHORIZATION_STATUS @"adjust_requestTrackingAuthorizationWithCompletionHandler"
 
-#define SDK_PREFIX @"corona4.23.1"
+#define SDK_PREFIX @"corona4.28.0"
 
 // ----------------------------------------------------------------------------
 
@@ -285,7 +285,7 @@ int AdjustPlugin::create(lua_State *L) {
                                       allowSuppressLogLevel:(logLevel == ADJLogLevelSuppress)];
 
     // SDK prefix.
-    [adjustConfig setSdkPrefix:@"corona4.23.1"];
+    [adjustConfig setSdkPrefix:@"corona4.28.0"];
 
     // Log level.
     [adjustConfig setLogLevel:logLevel];
