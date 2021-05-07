@@ -1,11 +1,21 @@
-### Version 4.29.0 (xx May 2021)
+### Version 4.29.0 (7th May 2021)
 #### Added
+- Added official support for Solar2D.
 - Added support for Apple Search Ads attribution with usage of `AdServices.framework`.
 - Added `appTrackingAuthorizationStatus` getter to `Adjust` API to be able to get current app tracking status.
 - Added improved measurement consent management and third party sharing system.
 - Added wrapper method `updateConversionValue` to `Adjust` API to allow updating `SKAdNetwork` conversion value via SDK API.
-- Added data residency feature. Support for EU and TR data residency region is added. You can choose this setting by setting `urlStrategy` key with [EU-VALUE] or [TR-VALUE].
+- Added data residency feature. Support for EU and TR data residency region is added. To enable this feature, make sure to pass `"data-residency-eu"` or `"data-residency-tr"` as value of `urlStrategy` key when initialising Adjust SDK.
 - Added `adjustConversionValueUpdated` callback which can be used to get information when Adjust SDK updates conversion value for the user.
+- Added possibility to pass `needsCost` key when initialising Adjust SDK to indicate if cost data is needed in attribution callback (by default cost data will not be part of attribution callback if not enabled with this setter method).
+- Added support for new ways of preinstall tracking in Android. To enable this feature, make sure to pass `preinstallTrackingEnabled = true` when initialising Adjust SDK.
+- Added support for setting custom preinstall file location in Android. To enable this feature, make sure to pass your custom path as value of `preinstallFilePath` key when initialising Adjust SDK.
+
+#### Fixed
+- Fixed missing handling of `sku` parameter when performing subscription tracking in Android.
+
+#### Kudos
+- Huge kudos to @Shchvova for amazing help in this release with adding support for Solar2D as well adding support for new features from native SDKs to Corona SDK.
 
 #### Native SDKs
 - [Android@v4.28.0][android_sdk_v4.28.0]
