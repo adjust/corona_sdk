@@ -32,6 +32,9 @@ local function attributionListener(event)
     print("[Adjust]: Creative: " .. json_attribution.creative)
     print("[Adjust]: Adgroup: " .. json_attribution.adgroup)
     print("[Adjust]: ADID: " .. json_attribution.adid)
+    print("[Adjust]: Cost type: " .. json_attribution.costType)
+    print("[Adjust]: Cost amount: " .. json_attribution.costAmount)
+    print("[Adjust]: Cost currency: " .. json_attribution.costCurrency)
 end
 
 local function sessionTrackingSuccessListener(event)
@@ -143,62 +146,78 @@ local function handleTrackSimpleEvent(event)
         adjust.trackEvent({
             eventToken = "g3mfiw"
         })
-        adjust.trackAppStoreSubscription({
-            price = "6.66",
-            currency = "CAD",
-            transactionId = "random-transaction-id",
-            receipt = "random-receipt",
-            transactionDate = "1234567890",
-            salesRegion = "CA",
-            callbackParameters = {
+        adjust.trackThirdPartySharing({
+            enabled = true,
+            granularOptions = {
                 {
-                    key = "callback_key1",
-                    value = "callback_value1",
+                    partnerName = "Facebook",
+                    key = "FB-key",
+                    value = "FB-value",
                 },
                 {
-                    key = "callback_key2",
-                    value = "callback_value2",
-                },
-            },
-            partnerParameters = {
-                {
-                    key = "callback_key3",
-                    value = "callback_value3",
-                },
-                {
-                    key = "callback_key6",
-                    value = "callback_value6",
+                    partnerName = "NotFacebook",
+                    key = "NFB-key",
+                    value = "NFB-value",
                 },
             },
         })
-        adjust.trackPlayStoreSubscription({
-            price = "6",
-            currency = "CAD",
-            orderId = "random-order-id",
-            signature = "random-signature",
-            purchaseToken = "random-purchase-token",
-            purchaseTime = "1234567890",
-            callbackParameters = {
-                {
-                    key = "callback_key1",
-                    value = "callback_value1",
-                },
-                {
-                    key = "callback_key2",
-                    value = "callback_value2",
-                },
-            },
-            partnerParameters = {
-                {
-                    key = "callback_key3",
-                    value = "callback_value3",
-                },
-                {
-                    key = "callback_key6",
-                    value = "callback_value6",
-                },
-            },
-        })
+        -- adjust.trackAppStoreSubscription({
+        --     price = "6.66",
+        --     currency = "CAD",
+        --     transactionId = "random-transaction-id",
+        --     receipt = "random-receipt",
+        --     transactionDate = "1234567890",
+        --     salesRegion = "CA",
+        --     callbackParameters = {
+        --         {
+        --             key = "callback_key1",
+        --             value = "callback_value1",
+        --         },
+        --         {
+        --             key = "callback_key2",
+        --             value = "callback_value2",
+        --         },
+        --     },
+        --     partnerParameters = {
+        --         {
+        --             key = "callback_key3",
+        --             value = "callback_value3",
+        --         },
+        --         {
+        --             key = "callback_key6",
+        --             value = "callback_value6",
+        --         },
+        --     },
+        -- })
+        -- adjust.trackPlayStoreSubscription({
+        --     price = "6",
+        --     currency = "CAD",
+        --     sku = "random-product-id",
+        --     orderId = "random-order-id",
+        --     signature = "random-signature",
+        --     purchaseToken = "random-purchase-token",
+        --     purchaseTime = "1234567890",
+        --     callbackParameters = {
+        --         {
+        --             key = "callback_key1",
+        --             value = "callback_value1",
+        --         },
+        --         {
+        --             key = "callback_key2",
+        --             value = "callback_value2",
+        --         },
+        --     },
+        --     partnerParameters = {
+        --         {
+        --             key = "callback_key3",
+        --             value = "callback_value3",
+        --         },
+        --         {
+        --             key = "callback_key6",
+        --             value = "callback_value6",
+        --         },
+        --     },
+        -- })
     end
 end
 
@@ -440,6 +459,9 @@ local function handleGetAttribution(event)
             print("Adgroup: " .. json_attribution.adgroup)
             print("Click label: " .. json_attribution.clickLabel)
             print("ADID: " .. json_attribution.adid)
+            print("Cost type: " .. json_attribution.costType)
+            print("Cost amount: " .. json_attribution.costAmount)
+            print("Cost currency: " .. json_attribution.costCurrency)
         end)
     end
 end

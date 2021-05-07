@@ -3,7 +3,7 @@
 //  Adjust SDK
 //
 //  Created by Abdullah Obaied (@obaied) on 14th September 2017.
-//  Copyright (c) 2017-2019 Adjust GmbH. All rights reserved.
+//  Copyright (c) 2017-2021 Adjust GmbH. All rights reserved.
 //
 
 // This corresponds to the name of the Lua library, e.g. [Lua] require "plugin.library".
@@ -32,6 +32,8 @@ import com.adjust.sdk.AdjustEventFailure;
 import com.adjust.sdk.AdjustEventSuccess;
 import com.adjust.sdk.AdjustSessionFailure;
 import com.adjust.sdk.AdjustSessionSuccess;
+import com.adjust.sdk.AdjustAdRevenue;
+import com.adjust.sdk.AdjustThirdPartySharing;
 import com.adjust.sdk.AdjustTestOptions;
 import com.adjust.sdk.LogLevel;
 import com.adjust.sdk.OnAttributionChangedListener;
@@ -50,7 +52,7 @@ import com.adjust.sdk.OnSessionTrackingSucceededListener;
 @SuppressWarnings("WeakerAccess")
 public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private static final String TAG = "LuaLoader";
-    private static final String SDK_PREFIX = "corona4.28.0";
+    private static final String SDK_PREFIX = "corona4.29.0";
 
     public static final String EVENT_ATTRIBUTION_CHANGED = "adjust_attribution";
     public static final String EVENT_SESSION_TRACKING_SUCCESS = "adjust_sessionTrackingSuccess";
@@ -73,6 +75,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private int sessionTrackingSuccessListener;
     private int sessionTrackingFailureListener;
     private int deferredDeeplinkListener;
+    private int conversionValueUpdatedListener;
     private boolean shouldLaunchDeeplink = true;
 
     /**
@@ -141,14 +144,19 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 new GdprForgetMeWrapper(),
                 new TrackAdRevenueWrapper(),
                 new DisableThirdPartySharingWrapper(),
-                new OnResumeWrapper(),
-                new OnPauseWrapper(),
+                new TrackThirdPartySharingWrapper(),
+                new TrackMeasurementConsentWrapper(),
+                // iOS only.
                 new GetIdfaWrapper(),
-                new TrackAppStoreSubscriptionWrapper(),
-                new RequestTrackingAuthorizationWithCompletionHandlerWrapper(),
-                new SetTestOptionsWrapper(),
                 new AppTrackingAuthorizationStatusWrapper(),
                 new UpdateConversionValueWrapper(),
+                new TrackAppStoreSubscriptionWrapper(),
+                new RequestTrackingAuthorizationWithCompletionHandlerWrapper(),
+                new SetConversionValueUpdatedListenerWrapper(),
+                // Testing.
+                new SetTestOptionsWrapper(),
+                new OnResumeWrapper(),
+                new OnPauseWrapper(),
         };
         String libName = L.toString(1);
         L.register(libName, luaFunctions);
@@ -224,6 +232,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         CoronaLua.deleteRef(runtime.getLuaState(), eventTrackingSuccessListener);
         CoronaLua.deleteRef(runtime.getLuaState(), eventTrackingFailureListener);
         CoronaLua.deleteRef(runtime.getLuaState(), deferredDeeplinkListener);
+        CoronaLua.deleteRef(runtime.getLuaState(), conversionValueUpdatedListener);
 
         attributionChangedListener = CoronaLua.REFNIL;
         eventTrackingSuccessListener = CoronaLua.REFNIL;
@@ -231,6 +240,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         sessionTrackingSuccessListener = CoronaLua.REFNIL;
         sessionTrackingFailureListener = CoronaLua.REFNIL;
         deferredDeeplinkListener = CoronaLua.REFNIL;
+        conversionValueUpdatedListener = CoronaLua.REFNIL;
     }
 
     private void dispatchEvent(final int listener, final String name, final String message) {
@@ -276,12 +286,14 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         String defaultTracker = null;
         String externalDeviceId = null;
         String urlStrategy = null;
+        String preinstallFilePath = null;
         boolean readImei = false;
         boolean isDeviceKnown = false;
         boolean sendInBackground = false;
         boolean isLogLevelSuppress = false;
         boolean eventBufferingEnabled = false;
         boolean needsCost = false;
+        boolean preinstallTrackingEnabled = false;
         double delayStart = 0.0;
         long secretId = -1L;
         long info1 = -1L;
@@ -382,6 +394,10 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 adjustConfig.setUrlStrategy(AdjustConfig.URL_STRATEGY_CHINA);
             } else if (urlStrategy.equalsIgnoreCase("india")) {
                 adjustConfig.setUrlStrategy(AdjustConfig.URL_STRATEGY_INDIA);
+            } else if (urlStrategy.equalsIgnoreCase("data-residency-eu")) {
+                adjustConfig.setUrlStrategy(AdjustConfig.DATA_RESIDENCY_EU);
+            } else if (urlStrategy.equalsIgnoreCase("data-residency-tr")) {
+                adjustConfig.setUrlStrategy(AdjustConfig.DATA_RESIDENCY_TR);
             }
         }
         L.pop(1);
@@ -391,6 +407,14 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         if (!L.isNil(2)) {
             userAgent = L.checkString(2);
             adjustConfig.setUserAgent(userAgent);
+        }
+        L.pop(1);
+
+        // Preinstall file path.
+        L.getField(1, "preinstallFilePath");
+        if (!L.isNil(2)) {
+            preinstallFilePath = L.checkString(2);
+            adjustConfig.setPreinstallFilePath(preinstallFilePath);
         }
         L.pop(1);
 
@@ -430,6 +454,14 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         if (!L.isNil(2)) {
             isDeviceKnown = L.checkBoolean(2);
             adjustConfig.setDeviceKnown(isDeviceKnown);
+        }
+        L.pop(1);
+
+        // Preinstall tracking.
+        L.getField(1, "preinstallTrackingEnabled");
+        if (!L.isNil(2)) {
+            preinstallTrackingEnabled = L.checkBoolean(2);
+            adjustConfig.setPreinstallTrackingEnabled(preinstallTrackingEnabled);
         }
         L.pop(1);
 
@@ -719,6 +751,13 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
+        // SKU.
+        L.getField(1, "sku");
+        if (!L.isNil(2)) {
+            sku = L.checkString(2);
+        }
+        L.pop(1);
+
         // Order ID.
         L.getField(1, "orderId");
         if (!L.isNil(2)) {
@@ -1000,12 +1039,129 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
     // Public API.
     private int adjust_trackAdRevenue(LuaState L) {
-        String source = L.checkString(1);
-        String payload = L.checkString(2);
-        try {
-            Adjust.trackAdRevenue(source, new JSONObject(payload));
-        } catch (Exception err) {
-            Log.e(TAG, "adjust_trackAdRevenue: Given ad revenue payload is not a valid JSON string");
+        if (L.getTop() == 2) {
+            // Old API.
+            String source = L.checkString(1);
+            String payload = L.checkString(2);
+            try {
+                Adjust.trackAdRevenue(source, new JSONObject(payload));
+            } catch (Exception err) {
+                Log.e(TAG, "adjust_trackAdRevenue: Given ad revenue payload is not a valid JSON string");
+            }
+        } else {
+            // New API.
+            if (!L.isTable(1)) {
+                Log.e(TAG, "adjust_trackAdRevenue: adjust_trackAdRevenue() must be supplied with a table");
+                return 0;
+            }
+
+            // Source.
+            String source = null;
+            double revenue = -1.0;
+            String currency = null;
+
+            L.getField(1, "source");
+            if (!L.isNil(2)) {
+                source = L.checkString(2);
+            }
+            L.pop(1);
+
+            AdjustAdRevenue adjustAdRevenue = new AdjustAdRevenue(source);
+
+            // Revenue.
+            L.getField(1, "revenue");
+            if (!L.isNil(2)) {
+                revenue = L.checkNumber(2);
+            }
+            L.pop(1);
+
+            // Currency.
+            L.getField(1, "currency");
+            if (!L.isNil(2)) {
+                currency = L.checkString(2);
+            }
+            L.pop(1);
+
+            // Set revenue and currency.
+            if (currency != null && revenue != -1.0) {
+                adjustAdRevenue.setRevenue(revenue, currency);
+            }
+
+            // Ad impressions count.
+            L.getField(1, "adImpressionsCount");
+            if (!L.isNil(2)) {
+                adjustAdRevenue.setAdImpressionsCount(L.checkInteger(2));
+            }
+            L.pop(1);
+
+            // Ad revenue network.
+            L.getField(1, "adRevenueNetwork");
+            if (!L.isNil(2)) {
+                adjustAdRevenue.setAdRevenueNetwork(L.checkString(2));
+            }
+            L.pop(1);
+
+            // Ad revenue unit.
+            L.getField(1, "adRevenueUnit");
+            if (!L.isNil(2)) {
+                adjustAdRevenue.setAdRevenueUnit(L.checkString(2));
+            }
+            L.pop(1);
+
+            // Ad revenue placement.
+            L.getField(1, "adRevenuePlacement");
+            if (!L.isNil(2)) {
+                adjustAdRevenue.setAdRevenuePlacement(L.checkString(2));
+            }
+            L.pop(1);
+
+            // Callback parameters.
+            L.getField(1, "callbackParameters");
+            if (!L.isNil(2) && L.isTable(2)) {
+                int length = L.length(2);
+
+                for (int i = 1; i <= length; i++) {
+                    // Push the table to the stack
+                    L.rawGet(2, i);
+
+                    L.getField(3, "key");
+                    String key = L.checkString(4);
+                    L.pop(1);
+
+                    L.getField(3, "value");
+                    String value = L.checkString(4);
+                    L.pop(1);
+
+                    adjustAdRevenue.addCallbackParameter(key, value);
+                    L.pop(1);
+                }
+            }
+            L.pop(1);
+
+            // Partner parameters.
+            L.getField(1, "partnerParameters");
+            if (!L.isNil(2) && L.isTable(2)) {
+                int length = L.length(2);
+
+                for (int i = 1; i <= length; i++) {
+                    // Push the table to the stack
+                    L.rawGet(2, i);
+
+                    L.getField(3, "key");
+                    String key = L.checkString(4);
+                    L.pop(1);
+
+                    L.getField(3, "value");
+                    String value = L.checkString(4);
+                    L.pop(1);
+
+                    adjustAdRevenue.addPartnerParameter(key, value);
+                    L.pop(1);
+                }
+            }
+            L.pop(1);
+
+            Adjust.trackAdRevenue(adjustAdRevenue);
         }
         return 0;
     }
@@ -1013,6 +1169,61 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     // Public API.
     private int adjust_disableThirdPartySharing(LuaState L) {
         Adjust.disableThirdPartySharing(CoronaEnvironment.getApplicationContext());
+        return 0;
+    }
+
+    // Public API.
+    private int adjust_trackThirdPartySharing(LuaState L) {
+        if (!L.isTable(1)) {
+            Log.e(TAG, "adjust_trackThirdPartySharing: adjust_trackThirdPartySharing() must be supplied with a table");
+            return 0;
+        }
+
+        // Enabled.
+        Boolean enabled = null;
+        L.getField(1, "enabled");
+        if (!L.isNil(2)) {
+            enabled = L.checkBoolean(2);
+        }
+        L.pop(1);
+
+        AdjustThirdPartySharing adjustThirdPartySharing = new AdjustThirdPartySharing(enabled);
+
+        // Granular options.
+        L.getField(1, "granularOptions");
+        if (!L.isNil(2) && L.isTable(2)) {
+            int length = L.length(2);
+
+            for (int i = 1; i <= length; i++) {
+                // Push the table to the stack
+                L.rawGet(2, i);
+
+                L.getField(3, "partnerName");
+                String partnerName = L.checkString(4);
+                L.pop(1);
+
+                L.getField(3, "key");
+                String key = L.checkString(4);
+                L.pop(1);
+
+                L.getField(3, "value");
+                String value = L.checkString(4);
+                L.pop(1);
+
+                adjustThirdPartySharing.addGranularOption(partnerName, key, value);
+                L.pop(1);
+            }
+        }
+        L.pop(1);
+
+        Adjust.trackThirdPartySharing(adjustThirdPartySharing);
+        return 0;
+    }
+
+    // Public API.
+    private int adjust_trackMeasurementConsent(LuaState L) {
+        boolean measurementConsent = L.checkBoolean(1);
+        Adjust.trackMeasurementConsent(measurementConsent);
         return 0;
     }
 
@@ -1112,6 +1323,17 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
+    // iOS platform.
+    // Public API.
+    private int adjust_setConversionValueUpdatedListener(LuaState L) {
+        // Hardcoded listener index for ADJUST.
+        int listenerIndex = 1;
+        if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
+            this.conversionValueUpdatedListener = CoronaLua.newRef(L, listenerIndex);
+        }
+        return 0;
+    }
+
     // For testing purposes only.
     private int adjust_onResume(LuaState L) {
         String param = L.checkString(1);
@@ -1186,12 +1408,12 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
-//        // This was moved to AdjustFactory.setConnectionOptions();
-//        L.getField(1, "useTestConnectionOptions");
-//        if (!L.isNil(2)) {
-//            adjustTestOptions.useTestConnectionOptions = L.checkBoolean(2);
-//        }
-//        L.pop(1);
+        // // This was moved to AdjustFactory.setConnectionOptions();
+        // L.getField(1, "useTestConnectionOptions");
+        // if (!L.isNil(2)) {
+        //     adjustTestOptions.useTestConnectionOptions = L.checkBoolean(2);
+        // }
+        // L.pop(1);
 
         L.getField(1, "timerIntervalInMilliseconds");
         if (!L.isNil(2)) {
@@ -1527,6 +1749,30 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
+    private class TrackThirdPartySharingWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "trackThirdPartySharing";
+        }
+
+        @Override
+        public int invoke(LuaState L) {
+            return adjust_trackThirdPartySharing(L);
+        }
+    }
+
+    private class TrackMeasurementConsentWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "trackMeasurementConsent";
+        }
+
+        @Override
+        public int invoke(LuaState L) {
+            return adjust_trackMeasurementConsent(L);
+        }
+    }
+
     private class SetAttributionListenerWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -1596,6 +1842,18 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         @Override
         public int invoke(LuaState L) {
             return adjust_setDeferredDeeplinkListener(L);
+        }
+    }
+
+    private class SetConversionValueUpdatedListenerWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "setConversionValueUpdatedListener";
+        }
+
+        @Override
+        public int invoke(LuaState L) {
+            return adjust_setConversionValueUpdatedListener(L);
         }
     }
 

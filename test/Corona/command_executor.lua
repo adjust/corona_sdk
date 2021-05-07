@@ -68,6 +68,9 @@ function CommandExecutor:executeCommand(command)
     elseif method == "trackAdRevenue" then self:trackAdRevenue()
     elseif method == "disableThirdPartySharing" then self:disableThirdPartySharing()
     elseif method == "trackSubscription" then self:trackSubscription()
+    elseif method == "trackAdRevenueV2" then self:trackAdRevenueV2()
+    elseif method == "thirdPartySharing" then self:trackThirdPartySharing()
+    elseif method == "measurementConsent" then self:trackMeasurementConsent()
         
     else print("CommandExecutor: unknown method name: " .. method)
     end
@@ -130,6 +133,15 @@ function CommandExecutor:testOptions()
             testOptions.iAdFrameworkEnabled = true
         else
             testOptions.iAdFrameworkEnabled = false
+        end
+    end
+
+    if self.command:containsParameter("adServicesFrameworkEnabled") then
+        local adServicesFrameworkEnabled = self.command:getFirstParameterValue("adServicesFrameworkEnabled")
+        if adServicesFrameworkEnabled == "true" then
+            testOptions.adServicesFrameworkEnabled = true
+        else
+            testOptions.adServicesFrameworkEnabled = false
         end
     end
     
@@ -225,6 +237,10 @@ function CommandExecutor:config()
     if self.command:containsParameter("deviceKnown") then
         adjustConfig.isDeviceKnown = (self.command:getFirstParameterValue("deviceKnown") == "true")
     end
+
+    if self.command:containsParameter("needsCost") then
+        adjustConfig.needsCost = (self.command:getFirstParameterValue("needsCost") == "true")
+    end
     
     if self.command:containsParameter("eventBufferingEnabled") then
         adjustConfig.eventBufferingEnabled = (self.command:getFirstParameterValue("eventBufferingEnabled") == "true")
@@ -232,6 +248,10 @@ function CommandExecutor:config()
 
     if self.command:containsParameter("allowiAdInfoReading") then
         adjustConfig.allowiAdInfoReading = (self.command:getFirstParameterValue("allowiAdInfoReading") == "true")
+    end
+
+    if self.command:containsParameter("allowAdServicesInfoReading") then
+        adjustConfig.allowAdServicesInfoReading = (self.command:getFirstParameterValue("allowAdServicesInfoReading") == "true")
     end
 
     if self.command:containsParameter("allowIdfaReading") then
@@ -336,6 +356,9 @@ function attributionListener(event)
     testLib.addInfoToSend("creative", json_attribution.creative)
     testLib.addInfoToSend("clickLabel", json_attribution.clickLabel)
     testLib.addInfoToSend("adid", json_attribution.adid)
+    testLib.addInfoToSend("costType", json_attribution.costType)
+    testLib.addInfoToSend("costAmount", json_attribution.costAmount)
+    testLib.addInfoToSend("costCurrency", json_attribution.costCurrency)
     testLib.sendInfoToServer(localBasePath)
 end
 
@@ -695,6 +718,96 @@ function CommandExecutor:trackSubscription()
 
         adjust.trackPlayStoreSubscription(subscription)
     end
+end
+
+function CommandExecutor:trackThirdPartySharing()
+    local enabled = nil;
+    if self.command:containsParameter("isEnabled") then
+        enabled = (self.command:getFirstParameterValue("isEnabled") == "true");
+    end
+    local thirdPartySharing = {}
+    thirdPartySharing.enabled = enabled
+
+    if self.command:containsParameter("granularOptions") then
+        local granularOptions = self.command.parameters["granularOptions"]
+        thirdPartySharing.granularOptions = {}
+        local k = 1
+        for i=1, #granularOptions, 3 do
+            thirdPartySharing.granularOptions[k] = {
+                partnerName = granularOptions[i],
+                key = granularOptions[i + 1], 
+                value = granularOptions[i + 2] 
+            }
+            k = k + 1
+        end
+    end
+
+    adjust.trackThirdPartySharing(thirdPartySharing)
+end
+
+function CommandExecutor:trackMeasurementConsent()
+    local measurementConsent = (self.command:getFirstParameterValue("isEnabled") == "true")
+    adjust.trackMeasurementConsent(measurementConsent)
+end
+
+function CommandExecutor:trackAdRevenueV2()
+    local source = nil;
+    if self.command:containsParameter("adRevenueSource") then
+        source = self.command:getFirstParameterValue("adRevenueSource");
+    end
+
+    local adRevenue = {}
+    adRevenue.source = source
+
+    if self.command:containsParameter("revenue") then
+        local revenueParams = self.command.parameters["revenue"]
+        adRevenue.currency = revenueParams[1]
+        adRevenue.revenue = tonumber(revenueParams[2])
+    end
+
+    if self.command:containsParameter("adImpressionsCount") then
+        adRevenue.adImpressionsCount = self.command:getFirstParameterValue("adImpressionsCount");
+    end
+
+    if self.command:containsParameter("adRevenueUnit") then
+        adRevenue.adRevenueUnit = self.command:getFirstParameterValue("adRevenueUnit");
+    end
+
+    if self.command:containsParameter("adRevenueNetwork") then
+        adRevenue.adRevenueNetwork = self.command:getFirstParameterValue("adRevenueNetwork");
+    end
+
+    if self.command:containsParameter("adRevenuePlacement") then
+        adRevenue.adRevenuePlacement = self.command:getFirstParameterValue("adRevenuePlacement");
+    end
+
+    if self.command:containsParameter("callbackParams") then
+        local callbackParams = self.command.parameters["callbackParams"]
+        adRevenue.callbackParameters = {}
+        local k = 1
+        for i=1, #callbackParams, 2 do
+            adRevenue.callbackParameters[k] = { 
+                key = callbackParams[i], 
+                value = callbackParams[i + 1] 
+            }
+            k = k + 1
+        end
+    end
+    
+    if self.command:containsParameter("partnerParams") then
+        local partnerParams = self.command.parameters["partnerParams"]
+        adRevenue.partnerParameters = {}
+        local k = 1
+        for i=1, #partnerParams, 2 do
+            adRevenue.partnerParameters[k] = { 
+                key = partnerParams[i], 
+                value = partnerParams[i + 1] 
+            }
+            k = k + 1
+        end
+    end
+
+    adjust.trackAdRevenue(adRevenue)
 end
    
 function CommandExecutor:clearSavedConfigsAndEvents()

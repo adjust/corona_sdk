@@ -1,3 +1,18 @@
+### Version 4.29.0 (xx May 2021)
+#### Added
+- Added support for Apple Search Ads attribution with usage of `AdServices.framework`.
+- Added `appTrackingAuthorizationStatus` getter to `Adjust` API to be able to get current app tracking status.
+- Added improved measurement consent management and third party sharing system.
+- Added wrapper method `updateConversionValue` to `Adjust` API to allow updating `SKAdNetwork` conversion value via SDK API.
+- Added data residency feature. Support for EU and TR data residency region is added. You can choose this setting by setting `urlStrategy` key with [EU-VALUE] or [TR-VALUE].
+- Added `adjustConversionValueUpdated` callback which can be used to get information when Adjust SDK updates conversion value for the user.
+
+#### Native SDKs
+- [Android@v4.28.0][android_sdk_v4.28.0]
+- [iOS@v4.29.1][ios_sdk_v4.29.1]
+
+---
+
 ### Version 4.28.0 (3rd April 2021)
 #### Changed
 - Removed native iOS legacy code.
@@ -151,6 +166,7 @@
 [ios_sdk_v4.23.0]: https://github.com/adjust/ios_sdk/tree/v4.23.0
 [ios_sdk_v4.23.2]: https://github.com/adjust/ios_sdk/tree/v4.23.2
 [ios_sdk_v4.28.0]: https://github.com/adjust/ios_sdk/tree/v4.28.0
+[ios_sdk_v4.29.1]: https://github.com/adjust/ios_sdk/tree/v4.29.1
 
 [android_sdk_v4.12.0]: https://github.com/adjust/android_sdk/tree/v4.12.0
 [android_sdk_v4.12.1]: https://github.com/adjust/android_sdk/tree/v4.12.1
@@ -163,3 +179,4 @@
 [android_sdk_v4.24.0]: https://github.com/adjust/android_sdk/tree/v4.24.0
 [android_sdk_v4.24.1]: https://github.com/adjust/android_sdk/tree/v4.24.1
 [android_sdk_v4.27.0]: https://github.com/adjust/android_sdk/tree/v4.27.0
+[android_sdk_v4.28.0]: https://github.com/adjust/android_sdk/tree/v4.28.0

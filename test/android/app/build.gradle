@@ -38,13 +38,12 @@ if (platform == "win") {
 }
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    compileSdkVersion 30
 
     defaultConfig {
         applicationId "$appName"
         minSdkVersion 15
-        targetSdkVersion 27
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
     }

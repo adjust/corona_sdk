@@ -41,7 +41,7 @@ else
     protocol = "https"
     port = "8443"
 end
-local baseIp = "192.168.86.75"
+local baseIp = "192.168.0.22"
 local baseUrl = protocol .. "://" .. baseIp .. ":" .. port
 local gdprUrl = protocol .. "://" .. baseIp .. ":" .. port
 local subscriptionUrl = protocol .. "://" .. baseIp .. ":" .. port
@@ -68,7 +68,7 @@ command_executor.setTestLib(testLib)
 command_executor.setPlatform(platformInfo)
 
 print("[TestApp]: Setting test lib tests....")
---testLib.addTest("current/session-event-callbacks/Test_EventCallback_success")
+testLib.addTest("Test_Parameters")
 --testLib.addTestDirectory("current/session-event-callbacks")
 
 -- Start Test Session

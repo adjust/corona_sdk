@@ -3,7 +3,7 @@
 //  Adjust SDK
 //
 //  Created by Abdullah Obaied (@obaied) on 11th September 2017.
-//  Copyright (c) 2017-2019 Adjust GmbH. All rights reserved.
+//  Copyright (c) 2017-2021 Adjust GmbH. All rights reserved.
 //
 
 #import <objc/runtime.h>
@@ -24,6 +24,9 @@ NSString * const KEY_CREATIVE = @"creative";
 NSString * const KEY_ADGROUP = @"adgroup";
 NSString * const KEY_CLICK_LABEL = @"clickLabel";
 NSString * const KEY_ADID = @"adid";
+NSString * const KEY_COST_TYPE = @"costType";
+NSString * const KEY_COST_AMOUNT = @"costAmount";
+NSString * const KEY_COST_CURRENCY = @"costCurrency";
 NSString * const KEY_MESSAGE = @"message";
 NSString * const KEY_TIMESTAMP = @"timestamp";
 NSString * const KEY_EVENT_TOKEN = @"eventToken";
@@ -49,6 +52,7 @@ NSString * const KEY_CALLBACK_ID = @"callbackId";
                           sessionTrackingSuccessCallback:(CoronaLuaRef)sessionTrackingSuccessCallback
                           sessionTrackingFailureCallback:(CoronaLuaRef)sessionTrackingFailureCallback
                                 deferredDeeplinkCallback:(CoronaLuaRef)deferredDeeplinkCallback
+                          conversionValueUpdatedCallback:(CoronaLuaRef)conversionValueUpdatedCallback
                             shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink
                                              andLuaState:(lua_State *)luaState {
     dispatch_once(&onceToken, ^{
@@ -79,6 +83,10 @@ NSString * const KEY_CALLBACK_ID = @"callbackId";
             [defaultInstance swizzleOriginalSelector:@selector(adjustDeeplinkResponse:)
                                         withSelector:@selector(adjustDeeplinkResponseWannabe:)];
         }
+        if (conversionValueUpdatedCallback != NULL) {
+            [defaultInstance swizzleOriginalSelector:@selector(adjustConversionValueUpdated:)
+                                        withSelector:@selector(adjustConversionValueUpdatedWannabe:)];
+        }
 
         [defaultInstance setAttributionChangedCallback:attributionCallback];
         [defaultInstance setEventTrackingSuccessCallback:eventTrackingSuccessCallback];
@@ -86,6 +94,7 @@ NSString * const KEY_CALLBACK_ID = @"callbackId";
         [defaultInstance setSessionTrackingSuccessCallback:sessionTrackingSuccessCallback];
         [defaultInstance setSessionTrackingFailureCallback:sessionTrackingFailureCallback];
         [defaultInstance setDeferredDeeplinkCallback:deferredDeeplinkCallback];
+        [defaultInstance setConversionValueUpdatedCallback:conversionValueUpdatedCallback];
         [defaultInstance setShouldLaunchDeferredDeeplink:shouldLaunchDeferredDeeplink];
         [defaultInstance setLuaState:luaState];
     });
@@ -137,6 +146,9 @@ NSString * const KEY_CALLBACK_ID = @"callbackId";
     [AdjustSdkDelegate addKey:KEY_ADGROUP andValue:attribution.adgroup toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_CLICK_LABEL andValue:attribution.clickLabel toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_ADID andValue:attribution.adid toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:KEY_COST_TYPE andValue:attribution.costType toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:KEY_COST_AMOUNT andValue:attribution.costAmount toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:KEY_COST_CURRENCY andValue:attribution.costCurrency toDictionary:dictionary];
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
@@ -278,6 +290,14 @@ NSString * const KEY_CALLBACK_ID = @"callbackId";
                             callback:_deferredDeeplinkCallback
                           andMessage:strDeeplink];
     return _shouldLaunchDeferredDeeplink;
+}
+
+- (void)adjustConversionValueUpdatedWannabe:(NSNumber *)conversionValue {
+    NSString *strConversionValue = [conversionValue stringValue];
+    [AdjustSdkDelegate dispatchEvent:ADJ_CONVERSION_VALUE_UPDATED
+                           withState:_luaState
+                            callback:_conversionValueUpdatedCallback
+                          andMessage:strConversionValue];
 }
 
 #pragma mark - Private & helper methods
