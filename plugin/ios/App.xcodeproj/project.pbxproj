@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		9D48258126453C5F00E9227D /* AdServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D48258026453C5F00E9227D /* AdServices.framework */; };
 		9D673C80242ADA5F000EC752 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D673C7F242ADA5F000EC752 /* AdSupport.framework */; };
 		9D673C82242ADA63000EC752 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D673C81242ADA63000EC752 /* iAd.framework */; };
 		9DB9CA9D250658800020508F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A484117515128D5D0074BD57 /* StoreKit.framework */; };
@@ -89,6 +90,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9D48258026453C5F00E9227D /* AdServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdServices.framework; path = System/Library/Frameworks/AdServices.framework; sourceTree = SDKROOT; };
 		9D673C7F242ADA5F000EC752 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		9D673C81242ADA63000EC752 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
 		9DB9CA9E2506588E0020508F /* AppTrackingTransparency.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppTrackingTransparency.framework; path = System/Library/Frameworks/AppTrackingTransparency.framework; sourceTree = SDKROOT; };
@@ -178,6 +180,7 @@
 				A484118115128D5D0074BD57 /* libobjc.dylib in Frameworks */,
 				A48411CA15129F610074BD57 /* libsqlite3.dylib in Frameworks */,
 				A484118215128D5D0074BD57 /* MapKit.framework in Frameworks */,
+				9D48258126453C5F00E9227D /* AdServices.framework in Frameworks */,
 				A484118315128D5D0074BD57 /* MediaPlayer.framework in Frameworks */,
 				A484118415128D5D0074BD57 /* MessageUI.framework in Frameworks */,
 				9DB9CA9F2506588E0020508F /* AppTrackingTransparency.framework in Frameworks */,
@@ -253,6 +256,7 @@
 		A484111C15114F700074BD57 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9D48258026453C5F00E9227D /* AdServices.framework */,
 				9DB9CA9E2506588E0020508F /* AppTrackingTransparency.framework */,
 				9D673C81242ADA63000EC752 /* iAd.framework */,
 				9D673C7F242ADA5F000EC752 /* AdSupport.framework */,

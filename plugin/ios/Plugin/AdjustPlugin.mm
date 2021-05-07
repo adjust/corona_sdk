@@ -185,6 +185,7 @@ AdjustPlugin::Open(lua_State *L) {
         { "setSessionTrackingSuccessListener", setSessionTrackingSuccessListener },
         { "setSessionTrackingFailureListener", setSessionTrackingFailureListener },
         { "setDeferredDeeplinkListener", setDeferredDeeplinkListener },
+        { "setConversionValueUpdatedListener", setConversionValueUpdatedListener },
         { "isEnabled", isEnabled },
         { "getIdfa", getIdfa },
         { "getSdkVersion", getSdkVersion },
@@ -503,7 +504,8 @@ int AdjustPlugin::create(lua_State *L) {
                                                 sessionTrackingFailureCallback:library->GetSessionTrackingFailureListener()
                                                       deferredDeeplinkCallback:library->GetDeferredDeeplinkListener()
                                                 conversionValueUpdatedCallback:library->GetConversionValueUpdatedListener()
-                                                  shouldLaunchDeferredDeeplink:shouldLaunchDeferredDeeplink andLuaState:L]];
+                                                  shouldLaunchDeferredDeeplink:shouldLaunchDeferredDeeplink
+                                                                   andLuaState:L]];
     }
 
     [Adjust appDidLaunch:adjustConfig];
@@ -777,6 +779,17 @@ int AdjustPlugin::setDeferredDeeplinkListener(lua_State *L) {
         Self *library = ToLibrary(L);
         CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
         library->InitializeDeferredDeeplinkListener(listener);
+    }
+    return 0;
+}
+
+// Public API.
+int AdjustPlugin::setConversionValueUpdatedListener(lua_State *L) {
+    int listenerIndex = 1;
+    if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
+        Self *library = ToLibrary(L);
+        CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
+        library->InitializeConversionValueUpdatedListener(listener);
     }
     return 0;
 }

@@ -2,8 +2,7 @@ local adjust = require "plugin.adjust"
 local widget = require "widget"
 local json = require "json"
 
--- Setting up a system event listener for deeplink support
--- ---------------------------------------------------------
+-- setting up a system event listener for deeplink support
 local function onSystemEvent(event)
     if event.type == "applicationOpen" and event.url then
         print("[Adjust]: applicationOpen event. url = " .. event.url)
@@ -20,8 +19,7 @@ if launchArgs and launchArgs.url then
     adjust.appWillOpenUrl(launchArgs.url)
 end
 
--- Setup listeners
--- ------------------------
+-- set up listeners
 local function attributionListener(event)
     local json_attribution = json.decode(event.message)
     print("[Adjust]: Attribution changed!")
@@ -81,15 +79,20 @@ local function deferredDeeplinkListener(event)
     print("[Adjust]: Received event from deferredDeeplinkListener (" .. event.name .. "): ", event.message)
 end
 
+local function conversionValueUpdatedListener(event)
+    print("[Adjust]: Update conversion value: " .. event.message)
+end
+
+-- initialize Adjust SDK
+
 adjust.setAttributionListener(attributionListener)
 adjust.setEventTrackingSuccessListener(eventTrackingSuccessListener)
 adjust.setEventTrackingFailureListener(eventTrackingFailureListener)
 adjust.setSessionTrackingSuccessListener(sessionTrackingSuccessListener)
 adjust.setSessionTrackingFailureListener(sessionTrackingFailureListener)
 adjust.setDeferredDeeplinkListener(deferredDeeplinkListener)
+adjust.setConversionValueUpdatedListener(conversionValueUpdatedListener)
 
--- Init Adjust
--- ------------------------
 adjust.addSessionCallbackParameter("scp1", "scp1_value1")
 adjust.addSessionCallbackParameter("scp2", "scp2_value2")
 adjust.addSessionCallbackParameter("scp3", "scp3_value3")
@@ -106,8 +109,10 @@ adjust.create({
     appToken = "2fm9gkqubvpc",
     environment = "SANDBOX",
     logLevel = "VERBOSE",
-    handleSkAdNetwork = false,
-    urlStrategy = "india",
+    -- don't use any of the fields below if your are not sure what is their purpose
+    -- please check https://github.com/adjust/corona_sdk/blob/master/README.md first
+    -- handleSkAdNetwork = false,
+    -- urlStrategy = "india",
     -- shouldLaunchDeeplink = false,
     -- eventBufferingEnabled = true,
     -- delayStart = 6.0,
@@ -135,7 +140,7 @@ end)
 -- adjust.setPushToken("{YourPushToken}")
 -- adjust.sendFirstPackages()
 
--- Setting up assets
+-- setting up assets
 -- ------------------------
 display.setDefault("background", 1, 1, 1)
 
@@ -146,21 +151,23 @@ local function handleTrackSimpleEvent(event)
         adjust.trackEvent({
             eventToken = "g3mfiw"
         })
-        adjust.trackThirdPartySharing({
-            enabled = true,
-            granularOptions = {
-                {
-                    partnerName = "Facebook",
-                    key = "FB-key",
-                    value = "FB-value",
-                },
-                {
-                    partnerName = "NotFacebook",
-                    key = "NFB-key",
-                    value = "NFB-value",
-                },
-            },
-        })
+        adjust.updateConversionValue(6)
+        -- adjust.trackMeasurementConsent(true)
+        -- adjust.trackThirdPartySharing({
+        --     enabled = true,
+        --     granularOptions = {
+        --         {
+        --             partnerName = "Facebook",
+        --             key = "FB-key",
+        --             value = "FB-value",
+        --         },
+        --         {
+        --             partnerName = "NotFacebook",
+        --             key = "NFB-key",
+        --             value = "NFB-value",
+        --         },
+        --     },
+        -- })
         -- adjust.trackAppStoreSubscription({
         --     price = "6.66",
         --     currency = "CAD",
