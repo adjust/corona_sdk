@@ -1,1 +1,2 @@
-include ':app', ':plugin'
+rootProject.name = "Adjust Test"
+include("app", "plugin")
