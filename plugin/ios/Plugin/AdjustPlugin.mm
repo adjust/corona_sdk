@@ -358,7 +358,7 @@ int AdjustPlugin::create(lua_State *L) {
     lua_getfield(L, 1, "needsCost");
     if (!lua_isnil(L, 2)) {
         needsCost = lua_toboolean(L, 2);
-		[adjustConfig setNeedsCost:needsCost];
+        [adjustConfig setNeedsCost:needsCost];
     }
     lua_pop(L, 1);
 
@@ -1051,9 +1051,9 @@ int AdjustPlugin::getAttribution(lua_State *L) {
             [AdjustSdkDelegate addKey:@"adgroup" andValue:attribution.adgroup toDictionary:dictionary];
             [AdjustSdkDelegate addKey:@"clickLabel" andValue:attribution.clickLabel toDictionary:dictionary];
             [AdjustSdkDelegate addKey:@"adid" andValue:attribution.adid toDictionary:dictionary];
-			[AdjustSdkDelegate addKey:@"costType" andValue:attribution.costType toDictionary:dictionary];
-			[AdjustSdkDelegate addKey:@"costAmount" andValue:attribution.costAmount toDictionary:dictionary];
-			[AdjustSdkDelegate addKey:@"costCurrency" andValue:attribution.costCurrency toDictionary:dictionary];
+            [AdjustSdkDelegate addKey:@"costType" andValue:attribution.costType toDictionary:dictionary];
+            [AdjustSdkDelegate addKey:@"costAmount" andValue:attribution.costAmount toDictionary:dictionary];
+            [AdjustSdkDelegate addKey:@"costCurrency" andValue:attribution.costCurrency toDictionary:dictionary];
         }
 
         NSError *error;
@@ -1111,16 +1111,16 @@ int AdjustPlugin::requestTrackingAuthorizationWithCompletionHandler(lua_State *L
 
 // Public API.
 int AdjustPlugin::appTrackingAuthorizationStatus(lua_State *L) {
-	int status = [Adjust appTrackingAuthorizationStatus];
-	lua_pushinteger(L, status);
-	return 1;
+    int status = [Adjust appTrackingAuthorizationStatus];
+    lua_pushinteger(L, status);
+    return 1;
 }
 
 // Public API.
 int AdjustPlugin::updateConversionValue(lua_State *L) {
-	NSInteger value = lua_tointeger(L, 1);
-	[Adjust updateConversionValue:value];
-	return 0;
+    NSInteger value = lua_tointeger(L, 1);
+    [Adjust updateConversionValue:value];
+    return 0;
 }
 
 // Public API.
