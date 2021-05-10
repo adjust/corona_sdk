@@ -3,7 +3,7 @@
 path=$(dirname "$0")
 
 OUTPUT_DIR=$1
-TARGET_NAME=plugin_library
+TARGET_NAME=plugin_adjust
 OUTPUT_SUFFIX=a
 CONFIG=Release
 
@@ -49,11 +49,6 @@ checkError
 # iOS-sim
 xcodebuild -project "$path/Plugin.xcodeproj" -configuration $CONFIG -sdk iphonesimulator
 checkError
-
-# create universal binary
-lipo -create "$path"/build/$CONFIG-iphoneos/lib$TARGET_NAME.$OUTPUT_SUFFIX "$path"/build/$CONFIG-iphonesimulator/lib$TARGET_NAME.$OUTPUT_SUFFIX -output "$OUTPUT_DIR"/lib$TARGET_NAME.$OUTPUT_SUFFIX
-checkError
-
 
 # copy corona plugin structure
 
@@ -108,8 +103,15 @@ build_plugin_structure() {
 	else
 		echo "No 3rd party frameworks"
 	fi
+
+	(
+		SFNAME="$TARGET_NAME-$(basename "$PLUGIN_DEST").tgz"
+		cd "$PLUGIN_DEST"
+		COPYFILE_DISABLE=true tar -czvf ../"$SFNAME" --exclude=".*" *
+	)
 }
 
+rm -r "$path/BuiltPlugin"
 
 
 build_plugin_structure "$OUTPUT_DIR/BuiltPlugin/iphone" iphoneos  " -extract armv7 -extract  arm64 "
@@ -117,6 +119,15 @@ build_plugin_structure "$OUTPUT_DIR/BuiltPlugin/iphone" iphoneos  " -extract arm
 build_plugin_structure "$OUTPUT_DIR/BuiltPlugin/iphone-sim" iphonesimulator  " -extract i386  -extract  x86_64 "
 
 
+# create universal binary
+if lipo "$path"/build/$CONFIG-iphonesimulator/lib$TARGET_NAME.$OUTPUT_SUFFIX -verify_arch arm64
+then
+	lipo "$path"/build/$CONFIG-iphonesimulator/lib$TARGET_NAME.$OUTPUT_SUFFIX -remove arm64 -output "$path"/build/$CONFIG-iphonesimulator/lib$TARGET_NAME.$OUTPUT_SUFFIX.noarm
+else
+	cp "$path"/build/$CONFIG-iphonesimulator/lib$TARGET_NAME.$OUTPUT_SUFFIX "$path"/build/$CONFIG-iphonesimulator/lib$TARGET_NAME.$OUTPUT_SUFFIX.noarm
+fi
+lipo -create "$path"/build/$CONFIG-iphoneos/lib$TARGET_NAME.$OUTPUT_SUFFIX "$path"/build/$CONFIG-iphonesimulator/lib$TARGET_NAME.$OUTPUT_SUFFIX.noarm -output "$OUTPUT_DIR"/lib$TARGET_NAME.$OUTPUT_SUFFIX
+checkError
 
 
 echo "$OUTPUT_DIR"/lib$TARGET_NAME.$OUTPUT_SUFFIX 

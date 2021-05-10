@@ -54,14 +54,15 @@ def build_app_example(dir_root):
 def build_app_test(dir_root):
     ## ------------------------------------------------------------------
     ## Paths.
-    dir_test_app            = '{0}/test/android/app'.format(dir_root)
-    dir_root_android        = '{0}/plugin/android'.format(dir_root)
-    dir_android_plugin      = '{0}/plugin/android/plugin'.format(dir_root)
-    dir_sdk                 = '{0}/ext/android/sdk/Adjust'.format(dir_root)
-    dir_jar_in_sdk          = '{0}/sdk-core/build/libs'.format(dir_sdk)
-    dir_jar_out_sdk         = '{0}/libs'.format(dir_test_app)
-    dir_jar_in_sdk_test     = '{0}/test-library/build/libs'.format(dir_sdk)
-    dir_jar_out_sdk_test    = '{0}/test/android/plugin/libs'.format(dir_root)
+    dir_test_app                = '{0}/test/android/app'.format(dir_root)
+    dir_root_android            = '{0}/plugin/android'.format(dir_root)
+    dir_android_plugin          = '{0}/plugin/android/plugin'.format(dir_root)
+    dir_sdk                     = '{0}/ext/android/sdk/Adjust'.format(dir_root)
+    dir_jar_in_sdk              = '{0}/sdk-core/build/libs'.format(dir_sdk)
+    dir_jar_out_sdk             = '{0}/libs'.format(dir_test_app)
+    dir_jar_in_sdk_test_library = '{0}/test-library/build/libs'.format(dir_sdk)
+    dir_jar_in_sdk_test_options = '{0}/test-options/build/intermediates/aar_main_jar/release'.format(dir_sdk)
+    dir_jar_out_sdk_test        = '{0}/test/android/plugin/libs'.format(dir_root)
 
     ## ------------------------------------------------------------------
     ## Remove current JARs.
@@ -80,14 +81,24 @@ def build_app_test(dir_root):
     copy_file('{0}/adjust-sdk-release.jar'.format(dir_jar_in_sdk), '{0}/adjust-android.jar'.format(dir_jar_out_sdk))
 
     # ------------------------------------------------------------------
-    # Running Gradle tasks: clean testlibrary:adjustTestLibraryJarDebug ...
+    # Running Gradle tasks: clean test-library:adjustTestLibraryJarDebug ...
     debug_green('Running Gradle tasks: clean test-library:adjustTestLibraryJarDebug ...')
     gradle_run([':test-library:adjustTestLibraryJarDebug'])
 
     # ------------------------------------------------------------------
     # Copy Adjust Test Library JAR.
     debug_green('Copy Adjust Test Library JAR ...')
-    copy_file('{0}/test-library-debug.jar'.format(dir_jar_in_sdk_test), '{0}/adjust-test.jar'.format(dir_jar_out_sdk_test))
+    copy_file('{0}/test-library-debug.jar'.format(dir_jar_in_sdk_test_library), '{0}/adjust-test-library.jar'.format(dir_jar_out_sdk_test))
+
+    # ------------------------------------------------------------------
+    # Running Gradle tasks: clean test-options:assembleRelease ...
+    debug_green('Running Gradle tasks: clean test-options:assembleRelease ...')
+    gradle_run([':test-options:assembleRelease'])
+
+    # ------------------------------------------------------------------
+    # Copy Adjust Test Library JAR.
+    debug_green('Copy Adjust Test Library JAR ...')
+    copy_file('{0}/classes.jar'.format(dir_jar_in_sdk_test_options), '{0}/adjust-test-options.jar'.format(dir_jar_out_sdk_test))
 
     ## ------------------------------------------------------------------
     ## Build Adjust Corona Plugin JAR.

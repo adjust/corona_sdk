@@ -3,9 +3,9 @@ local metadata =
 	plugin =
 	{
 		format = 'staticLibrary',
-		staticLibs = { 'plugin_library', },
-		frameworks = {},
-		frameworksOptional = {},
+		staticLibs = { 'plugin_adjust' },
+		frameworks = { 'AdSupport', 'CoreTelephony', 'StoreKit', },
+		frameworksOptional = { 'AppTrackingTransparency', },
 		-- usesSwift = true,
 	},
 }

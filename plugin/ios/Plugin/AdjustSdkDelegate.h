@@ -3,7 +3,7 @@
 //  Adjust SDK
 //
 //  Created by Abdullah Obaied (@obaied) on 11th September 2017.
-//  Copyright (c) 2017-2019 Adjust GmbH. All rights reserved.
+//  Copyright (c) 2017-2021 Adjust GmbH. All rights reserved.
 //
 
 #include <CoronaLua.h>
@@ -15,6 +15,7 @@
 #define ADJ_SESSION_TRACKING_SUCCESS @"adjust_sessionTrackingSuccess"
 #define ADJ_SESSION_TRACKING_FAILURE @"adjust_sessionTrackingFailure"
 #define ADJ_DEFERRED_DEEPLINK @"adjust_deferredDeeplink"
+#define ADJ_CONVERSION_VALUE_UPDATED @"adjust_conversionValueUpdated"
 
 /**
  * @brief Adjust delegate singleton which takes care of bridging between native SDK and Lua callbacks.
@@ -57,6 +58,11 @@
 @property (nonatomic) CoronaLuaRef deferredDeeplinkCallback;
 
 /**
+ * @brief Conversion value updated callback reference.
+ */
+@property (nonatomic) CoronaLuaRef conversionValueUpdatedCallback;
+
+/**
  * @brief Should deferred deep link be opened or not.
  */
 @property (nonatomic) BOOL shouldLaunchDeferredDeeplink;
@@ -70,6 +76,7 @@
  * @param sessionTrackingSuccessCallback    Session success callback reference.
  * @param sessionTrackingFailureCallback    Session failure callback reference.
  * @param deferredDeeplinkCallback          Deferred deep link callback reference.
+ * @param conversionValueUpdatedCallback    Conversion value updated callback reference.
  * @param shouldLaunchDeferredDeeplink      Should deferred deep link be opened or not.
  * @param luaState                          Lua state object.
  *
@@ -81,6 +88,7 @@
                           sessionTrackingSuccessCallback:(CoronaLuaRef)sessionTrackingSuccessCallback
                           sessionTrackingFailureCallback:(CoronaLuaRef)sessionTrackingFailureCallback
                                 deferredDeeplinkCallback:(CoronaLuaRef)deferredDeeplinkCallback
+                          conversionValueUpdatedCallback:(CoronaLuaRef)conversionValueUpdatedCallback
                             shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink
                                              andLuaState:(lua_State *)luaState;
 

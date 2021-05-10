@@ -6,3 +6,7 @@
 	path = ext/android/sdk
 	url = https://github.com/adjust/android_sdk.git
         branch = master
+[submodule "dist_directory"]
+	path = dist_directory
+	url = https://github.com/solar2d/com.adjust-plugin.adjust.git
+	branch = master

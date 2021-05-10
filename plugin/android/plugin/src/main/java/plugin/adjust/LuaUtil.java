@@ -3,7 +3,7 @@
 //  Adjust SDK
 //
 //  Created by Abdullah Obaied (@obaied) on 14th September 2017.
-//  Copyright (c) 2017-2019 Adjust GmbH. All rights reserved.
+//  Copyright (c) 2017-2021 Adjust GmbH. All rights reserved.
 //
 
 package plugin.adjust;
@@ -26,6 +26,9 @@ final public class LuaUtil {
     private static final String ATTRIBUTION_CREATIVE = "creative";
     private static final String ATTRIBUTION_CLICK_LABEL = "clickLabel";
     private static final String ATTRIBUTION_ADID = "adid";
+    private static final String ATTRIBUTION_COST_TYPE = "costType";
+    private static final String ATTRIBUTION_COST_AMOUNT = "costAmount";
+    private static final String ATTRIBUTION_COST_CURRENCY = "costCurrency";
 
     private static final String EVENT_SUCCESS_MESSAGE = "message";
     private static final String EVENT_SUCCESS_TIMESTAMP = "timestamp";
@@ -69,6 +72,9 @@ final public class LuaUtil {
         map.put(ATTRIBUTION_CREATIVE, null != attribution.creative ? attribution.creative : "");
         map.put(ATTRIBUTION_CLICK_LABEL, null != attribution.clickLabel ? attribution.clickLabel : "");
         map.put(ATTRIBUTION_ADID, null != attribution.adid ? attribution.adid : "");
+        map.put(ATTRIBUTION_COST_TYPE, null != attribution.costType ? attribution.costType : "");
+        map.put(ATTRIBUTION_COST_AMOUNT, null != attribution.costAmount ? attribution.costAmount : "");
+        map.put(ATTRIBUTION_COST_CURRENCY, null != attribution.costCurrency ? attribution.costCurrency : "");
         return map;
     }
 

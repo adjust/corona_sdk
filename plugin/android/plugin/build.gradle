@@ -1,17 +1,34 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 30
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 28
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
     }
 }
 
+task extractPluginJar() {
+    group "Corona-dev"
+    dependsOn assemble
+    doLast {
+        copy {
+            from {
+                zipTree("$buildDir/outputs/aar/${project.name}-release.aar").matching {
+                    include 'classes.jar'
+                }.singleFile
+            }
+            into "$buildDir/outputs/"
+            String packageName = new XmlSlurper().parse(file('src/main/AndroidManifest.xml')).@package.text()
+            rename "classes.jar", "${packageName}.jar"
+        }
+    }
+}
+
 dependencies {
     implementation ':Corona@aar'
-    api 'com.adjust.sdk:adjust-android:4.24.0'
+    api 'com.adjust.sdk:adjust-android:4.28.0'
 }
