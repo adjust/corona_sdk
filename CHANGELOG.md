@@ -1,4 +1,4 @@
-### Version 4.29.0 (7th May 2021)
+### Version 4.29.0 (10th May 2021)
 #### Added
 - Added official support for Solar2D.
 - Added support for Apple Search Ads attribution with usage of `AdServices.framework`.
@@ -6,8 +6,8 @@
 - Added improved measurement consent management and third party sharing system.
 - Added wrapper method `updateConversionValue` to `Adjust` API to allow updating `SKAdNetwork` conversion value via SDK API.
 - Added data residency feature. Support for EU and TR data residency region is added. To enable this feature, make sure to pass `"data-residency-eu"` or `"data-residency-tr"` as value of `urlStrategy` key when initialising Adjust SDK.
-- Added `adjustConversionValueUpdated` callback which can be used to get information when Adjust SDK updates conversion value for the user.
-- Added possibility to pass `needsCost` key when initialising Adjust SDK to indicate if cost data is needed in attribution callback (by default cost data will not be part of attribution callback if not enabled with this setter method).
+- Added `setConversionValueUpdatedListener` method to `Adjust` API to allow setting of the callback which can be used to get information when Adjust SDK updates conversion value for the user.
+- Added possibility to pass `needsCost` key when initialising Adjust SDK to indicate if cost data is needed in attribution callback (by default cost data will not be part of attribution callback if not enabled with this setter method). Subsequently added new cost data fields in attribution callback - `costType`, `costAmount` and `costCurrency`.
 - Added support for new ways of preinstall tracking in Android. To enable this feature, make sure to pass `preinstallTrackingEnabled = true` when initialising Adjust SDK.
 - Added support for setting custom preinstall file location in Android. To enable this feature, make sure to pass your custom path as value of `preinstallFilePath` key when initialising Adjust SDK.
 
