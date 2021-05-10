@@ -25,9 +25,10 @@ This is the Adjust™ plugin for Solar2D (ex Corona SDK). You can read more abou
 * [Additional features](#additional-features)
    * [AppTrackingTransparency framework](#att-framework)
       * [App-tracking authorisation wrapper](#ata-wrapper)
-      * [App-tracking authorisation status query](#ata-query)
+      * [Get current authorisation status](#ata-getter)
    * [SKAdNetwork framework](#skadn-framework)
       * [Update SKAdNetwork conversion value](#skadn-value) 
+      * [Conversion value updated callback](#skadn-cv-updated-callback)
    * [Event tracking](#event-tracking)
       * [Revenue tracking](#revenue-tracking)
       * [Revenue deduplication](#revenue-deduplication)
@@ -64,6 +65,11 @@ This is the Adjust™ plugin for Solar2D (ex Corona SDK). You can read more abou
       * [Deeplinking on Android](#deeplinking-android)
       * [Deferred deeplinking scenario](#deeplinking-deferred)
       * [Reattribution via deeplinks](#deeplinking-reattribution)
+   * [Third-party sharing](#third-party-sharing)
+      * [Disable third-party sharing](#disable-third-party-sharing)
+      * [Enable third-party sharing](#enable-third-party-sharing)
+   * [Measurement consent](#measurement-consent)
+   * [[beta] Data residency](#data-residency)
 * [License](#license)
 
 
@@ -110,8 +116,8 @@ You can now add the Adjust SDK to your Corona Enterprise app project. The Adjust
 Inside your Android Studio app project, create a `libs` folder inside of your app folder and add the `plugin.adjust.jar` file to it. After that, please update your app's `build.gradle` file and add the following lines to your `dependencies` section:
 
 ```
-compile 'com.adjust.sdk:adjust-android:4.26.2'
-compile 'com.android.installreferrer:installreferrer:1.0'
+compile 'com.adjust.sdk:adjust-android:4.28.0'
+compile 'com.android.installreferrer:installreferrer:2.2'
 ```
 
 #### <a id="sdk-add-ios"></a>Add the SDK to your iOS project
@@ -221,7 +227,7 @@ In order to correctly attribute an install of your Android app to its source, Ad
 In order to support this in your app, please make sure that you have followed the [Add the SDK to your Android project](#sdk-add-android) chapter properly and that you have following line added to your `build.gradle` file:
 
 ```
-compile 'com.android.installreferrer:installreferrer:1.0'
+compile 'com.android.installreferrer:installreferrer:2.2'
 ```
 
 Also, make sure that you have paid attention to the [Proguard settings](#android-proguard) chapter and that you have added all the rules mentioned in it, especially the one needed for this feature:
@@ -258,11 +264,11 @@ As of v4.23.0, the Adjust SDK supports install tracking on Huawei devices with H
 
 You can add following iOS frameworks to your generated Xcode project to take advantage of additional features:
 
-* `iAd.framework` - in case you are running iAd campaigns
-* `AdSupport.framework` - for reading iOS Advertising Id (IDFA)
-* `CoreTelephony.framework` - for reading MCC and MNC information
-* `StoreKit.framework` - for communication with SKAdNetwork framework
-* `AppTrackingTransparency.framework` - to ask for user's consent to be tracked and obtain status of that consent
+* `iAd.framework` - needed for Apple Search Ads tracking
+* `AdServices.framework` - needed for Apple Search Ads tracking
+* `AdSupport.framework` - needed for reading iOS Advertising Id (IDFA)
+* `StoreKit.framework` - needed for communication with `SKAdNetwork` framework
+* `AppTrackingTransparency.framework` - needed to ask for user's consent to be tracked and obtain status of that consent
 
 ## <a id="additional-features"></a>Additional features
 
@@ -311,16 +317,17 @@ adjust.requestTrackingAuthorizationWithCompletionHandler(function(event)
 end)
 ```
 
-### <a id="ata-query"></a>App-tracking authorisation query
+### <a id="ad-ata-getter"></a>Get current authorisation status
 
 **Note**: This feature exists only in iOS platform.
 
-You can determine authorization tracking status by querying it without performing the request with `Adjust.appTrackingAuthorizationStatus()`. Return would values are same as for the request:
+To get the current app tracking authorization status you can call `appTrackingAuthorizationStatus` method of `Adjust` API that will return one of the following possibilities:
 
-- 0: `ATTrackingManagerAuthorizationStatusNotDetermined`
-- 1: `ATTrackingManagerAuthorizationStatusRestricted`
-- 2: `ATTrackingManagerAuthorizationStatusDenied`
-- 3: `ATTrackingManagerAuthorizationStatusAuthorized`
+* `0`: The user hasn't been asked yet
+* `1`: The user device is restricted
+* `2`: The user denied access to IDFA
+* `3`: The user authorized access to IDFA
+* `-1`: The status is not available
 
 To use this wrapper, you can call it as such:
 
@@ -361,6 +368,28 @@ You can use Adjust SDK wrapper method `updateConversionValue` to update SKAdNetw
 
 ```lua
 adjust.updateConversionValue(6)
+```
+
+### <a id="skadn-cv-updated-callback"></a>Conversion value updated callback
+
+You can register callback to get notified each time when Adjust SDK updates conversion value for the user.
+
+```lua
+local function conversionValueUpdatedListener(event)
+    print("[Adjust]: Update conversion value: " .. event.message)
+end
+
+-- ...
+
+adjust.setConversionValueUpdatedListener(conversionValueUpdatedListener)
+
+-- ...
+
+adjust.create({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE",
+})
 ```
 
 ### <a id="event-tracking"></a>Event tracking
@@ -747,7 +776,8 @@ adjust.create({
     appToken = "{YourAppToken}",
     environment = "SANDBOX",
     logLevel = "VERBOSE",
-    needsCost = true,
+    -- in case you want to get cost data in attribution callback
+    -- needsCost = true,
 })
 ```
 
@@ -958,7 +988,6 @@ adjust.create({
     eventBufferingEnabled = true
 })
 ```
-
 
 ### <a id="gdpr-forget-me"></a>GDPR right to be forgotten
 
@@ -1285,11 +1314,85 @@ end
 
 Having added these calls, if the deeplink that opened your app contains any reattribution parameters, our SDK will pass that information to the backend, which will decide whether the user is going to be reattributed or not. As already mentioned, if a user gets reattributed, an attribution callback (if implemented) will be triggered with the new attribution value, and you will have this information in your app, as well.
 
+## <a id="third-party-sharing"></a>Third-party sharing for specific users
+
+You can notify Adjust when a user disables, enables, and re-enables data sharing with third-party partners.
+
+### <a id="disable-third-party-sharing"></a>Disable third-party sharing for specific users
+
+Call the following method to instruct the Adjust SDK to communicate the user's choice to disable data sharing to the Adjust backend:
+
+```lua
+adjust.trackThirdPartySharing({
+    enabled = false,
+})
+```
+
+Upon receiving this information, Adjust will block the sharing of that specific user's data to partners and the Adjust SDK will continue to work as usual.
+
+### <a id="enable-third-party-sharing">Enable or re-enable third-party sharing for specific users</a>
+
+Call the following method to instruct the Adjust SDK to communicate the user's choice to share data or change data sharing, to the Adjust backend:
+
+```lua
+adjust.trackThirdPartySharing({
+    enabled = true,
+})
+```
+
+Upon receiving this information, Adjust changes sharing the specific user's data to partners. The Adjust SDK will continue to work as expected.
+
+Call the following method to instruct the Adjust SDK to send the granular options to the Adjust backend:
+
+```csharp
+adjust.trackThirdPartySharing({
+    granularOptions = {
+        {
+            partnerName = "PartnerA",
+            key = "foo",
+            value = "bar",
+        },
+    },
+})
+```
+
+### <a id="measurement-consent"></a>Consent measurement for specific users
+
+You can notify Adjust when a user exercises their right to change data sharing with partners for marketing purposes, but they allow data sharing for statistical purposes. 
+
+Call the following method to instruct the Adjust SDK to communicate the user's choice to change data sharing, to the Adjust backend:
+
+```lua
+adjust.trackMeasurementConsent(true);
+```
+
+Upon receiving this information, Adjust changes sharing the specific user's data to partners. The Adjust SDK will continue to work as expected.
+
+### <a id="data-residency"></a>[beta] Data residency
+
+In order to enable data residency feature, make sure to set `urlStrategy` parameter when initialising Adjust SDK with one of the following constants:
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.create({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE",
+    -- for EU data region
+    urlStrategy = "data-residency-eu"
+    -- or TR data region
+    -- urlStrategy = "data-residency-tr"
+})
+```
+
+**Note:** This feature is currently in beta testing phase. If you are interested in getting access to it, please contact your dedicated account manager or write an email to support@adjust.com. Please, do not turn this setting on before making sure with the support team that this feature is enabled for your app because otherwise SDK traffic will get dropped.
+
 ## <a id="license"></a>License
 
 The Adjust SDK is licensed under the MIT License.
 
-Copyright (c) 2012-2019 Adjust GmbH, http://www.adjust.com
+Copyright (c) 2012-2021 Adjust GmbH, http://www.adjust.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
