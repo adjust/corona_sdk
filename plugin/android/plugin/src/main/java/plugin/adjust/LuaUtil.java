@@ -73,7 +73,7 @@ final public class LuaUtil {
         map.put(ATTRIBUTION_CLICK_LABEL, null != attribution.clickLabel ? attribution.clickLabel : "");
         map.put(ATTRIBUTION_ADID, null != attribution.adid ? attribution.adid : "");
         map.put(ATTRIBUTION_COST_TYPE, null != attribution.costType ? attribution.costType : "");
-        map.put(ATTRIBUTION_COST_AMOUNT, null != attribution.costAmount ? attribution.costAmount : "");
+        map.put(ATTRIBUTION_COST_AMOUNT, null != attribution.costAmount && !attribution.costAmount.isNaN() ? attribution.costAmount : "");
         map.put(ATTRIBUTION_COST_CURRENCY, null != attribution.costCurrency ? attribution.costCurrency : "");
         return map;
     }
