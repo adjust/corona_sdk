@@ -1383,6 +1383,8 @@ adjust.create({
     urlStrategy = "data-residency-eu"
     -- or TR data region
     -- urlStrategy = "data-residency-tr"
+    -- or US data region
+    -- urlStrategy = "data-residency-us"
 })
 ```
 
