@@ -2,7 +2,7 @@
 //  LuaLoader.java
 //  Adjust SDK
 //
-//  V4.29.0
+//  V4.29.1
 //  Created by Abdullah Obaied (@obaied) on 14th September 2017.
 //  Copyright (c) 2017-2021 Adjust GmbH. All rights reserved.
 //
@@ -53,7 +53,7 @@ import com.adjust.sdk.OnSessionTrackingSucceededListener;
 @SuppressWarnings("WeakerAccess")
 public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private static final String TAG = "LuaLoader";
-    private static final String SDK_PREFIX = "corona4.29.0";
+    private static final String SDK_PREFIX = "corona4.29.1";
 
     public static final String EVENT_ATTRIBUTION_CHANGED = "adjust_attribution";
     public static final String EVENT_SESSION_TRACKING_SUCCESS = "adjust_sessionTrackingSuccess";
@@ -399,6 +399,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 adjustConfig.setUrlStrategy(AdjustConfig.DATA_RESIDENCY_EU);
             } else if (urlStrategy.equalsIgnoreCase("data-residency-tr")) {
                 adjustConfig.setUrlStrategy(AdjustConfig.DATA_RESIDENCY_TR);
+            } else if (urlStrategy.equalsIgnoreCase("data-residency-us")) {
+                adjustConfig.setUrlStrategy(AdjustConfig.DATA_RESIDENCY_US);
             }
         }
         L.pop(1);
