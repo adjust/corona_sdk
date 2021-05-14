@@ -399,6 +399,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 adjustConfig.setUrlStrategy(AdjustConfig.DATA_RESIDENCY_EU);
             } else if (urlStrategy.equalsIgnoreCase("data-residency-tr")) {
                 adjustConfig.setUrlStrategy(AdjustConfig.DATA_RESIDENCY_TR);
+            } else if (urlStrategy.equalsIgnoreCase("data-residency-us")) {
+                adjustConfig.setUrlStrategy(AdjustConfig.DATA_RESIDENCY_US);
             }
         }
         L.pop(1);

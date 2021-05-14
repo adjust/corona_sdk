@@ -401,6 +401,8 @@ int AdjustPlugin::create(lua_State *L) {
                 [adjustConfig setUrlStrategy:ADJDataResidencyEU];
             } else if ([urlStrategy isEqualToString:@"data-residency-tr"]) {
                 [adjustConfig setUrlStrategy:ADJDataResidencyTR];
+            } else if ([urlStrategy isEqualToString:@"data-residency-us"]) {
+                [adjustConfig setUrlStrategy:ADJDataResidencyUS];
             }
         }
     }
