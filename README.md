@@ -54,7 +54,7 @@ This is the Adjust™ plugin for Solar2D (ex Corona SDK). You can read more abou
       * [Google Play Services advertising identifier](#di-gps-adid)
       * [Amazon advertising identifier](#di-fire-adid)
       * [Adjust device identifier](#di-adid)
-   * [Set \ device ID](#set-external-device-id)
+   * [Set external device ID](#set-external-device-id)
    * [User attribution](#user-attribution)
    * [Push token](#push-token)
    * [Track additional device identifiers](#track-additional-ids)
