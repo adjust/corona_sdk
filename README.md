@@ -70,7 +70,7 @@ This is the Adjust™ plugin for Solar2D (ex Corona SDK). You can read more abou
       * [Disable third-party sharing](#disable-third-party-sharing)
       * [Enable third-party sharing](#enable-third-party-sharing)
    * [Measurement consent](#measurement-consent)
-   * [[beta] Data residency](#data-residency)
+   * [Data residency](#data-residency)
 * [License](#license)
 
 
@@ -1398,7 +1398,7 @@ adjust.trackMeasurementConsent(true);
 
 Upon receiving this information, Adjust changes sharing the specific user's data to partners. The Adjust SDK will continue to work as expected.
 
-### <a id="data-residency"></a>[beta] Data residency
+### <a id="data-residency"></a>Data residency
 
 In order to enable data residency feature, make sure to set `urlStrategy` parameter when initialising Adjust SDK with one of the following constants:
 
@@ -1417,8 +1417,6 @@ adjust.create({
     -- urlStrategy = "data-residency-us"
 })
 ```
-
-**Note:** This feature is currently in beta testing phase. If you are interested in getting access to it, please contact your dedicated account manager or write an email to support@adjust.com. Please, do not turn this setting on before making sure with the support team that this feature is enabled for your app because otherwise SDK traffic will get dropped.
 
 ## <a id="license"></a>License
 
