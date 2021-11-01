@@ -54,6 +54,7 @@ This is the Adjust™ plugin for Solar2D (ex Corona SDK). You can read more abou
       * [Google Play Services advertising identifier](#di-gps-adid)
       * [Amazon advertising identifier](#di-fire-adid)
       * [Adjust device identifier](#di-adid)
+   * [Set external device ID](#set-external-device-id)
    * [User attribution](#user-attribution)
    * [Push token](#push-token)
    * [Track additional device identifiers](#track-additional-ids)
@@ -69,7 +70,7 @@ This is the Adjust™ plugin for Solar2D (ex Corona SDK). You can read more abou
       * [Disable third-party sharing](#disable-third-party-sharing)
       * [Enable third-party sharing](#enable-third-party-sharing)
    * [Measurement consent](#measurement-consent)
-   * [[beta] Data residency](#data-residency)
+   * [Data residency](#data-residency)
 * [License](#license)
 
 
@@ -185,6 +186,16 @@ If you are **not targeting the Google Play Store**, please also add the followin
 
 The Adjust SDK might need the `INTERNET` permission at any point in time. The Adjust SDK needs the `ACCESS_WIFI_STATE` permission in case your app is not targeting the Google Play Store and doesn't use Google Play Services. If you are targeting the Google Play Store and you are using Google Play Services, the Adjust SDK doesn't need the `ACCESS_WIFI_STATE` permission and, if you don't need it anywhere else in your app, you can remove it.
 
+#### <a id="gps-adid-permission"></a>Add permission to gather Google advertising ID
+
+If you are targeting Android 12 and above (API level 31), you need to add the `com.google.android.gms.AD_ID` permission to read the device's advertising ID. Add the following line to your `AndroidManifest.xml` to enable the permission.
+
+```xml
+<uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
+```
+
+For more information, see [Google's `AdvertisingIdClient.Info` documentation](https://developers.google.com/android/reference/com/google/android/gms/ads/identifier/AdvertisingIdClient.Info#public-string-getid).  
+  
 ### <a id="android-gps"></a>Google Play Services
 
 Since August 1, 2014, apps in the Google Play Store must use the [Google advertising ID][google-ad-id] to uniquely identify each device. To allow the Adjust SDK to use the Google advertising ID, you must integrate [Google Play Services][google-play-services].
@@ -345,7 +356,7 @@ end
 
 **Note**: This feature exists only in iOS platform.
 
-If you have implemented the Adjust iOS SDK v4.23.0 or above and your app is running on iOS 14, the communication with SKAdNetwork will be set on by default, although you can choose to turn it off. When set on, Adjust automatically registers for SKAdNetwork attribution when the SDK is initialized. If events are set up in the Adjust dashboard to receive conversion values, the Adjust backend sends the conversion value data to the SDK. The SDK then sets the conversion value. After Adjust receives the SKAdNetwork callback data, it is then displayed in the dashboard.
+If you have implemented the Adjust iOS SDK v4.23.0 or above and your app is running on iOS 14 and above, the communication with SKAdNetwork will be set on by default, although you can choose to turn it off. When set on, Adjust automatically registers for SKAdNetwork attribution when the SDK is initialized. If events are set up in the Adjust dashboard to receive conversion values, the Adjust backend sends the conversion value data to the SDK. The SDK then sets the conversion value. After Adjust receives the SKAdNetwork callback data, it is then displayed in the dashboard.
 
 In case you don't want the Adjust SDK to automatically communicate with SKAdNetwork, you can disable that by setting the following key in configuration map:
 
@@ -1073,6 +1084,10 @@ end)
 ```
 
 ### <a id="di-gps-adid"></a>Google Play Services advertising identifier
+  
+The Google Play Services Advertising Identifier (Google advertising ID) is a unique identifier for a device. Users can opt out of sharing their Google advertising ID by toggling the "Opt out of Ads Personalization" setting on their device. When a user has enabled this setting, the Adjust SDK returns a string of zeros when trying to read the Google advertising ID.
+
+> **Important**: If you are targeting Android 12 and above (API level 31), you need to add the [`com.google.android.gms.AD_ID` permission](#gps-adid-permission) to your app. If you do not add this permission, you will not be able to read the Google advertising ID even if the user has not opted out of sharing their ID.
 
 If you need to obtain the Google advertising ID, you can call the `getGoogleAdId` method of the `adjust` instance. You need to pass a callback to that method in order to obtain the value:
 
@@ -1109,6 +1124,35 @@ end)
 ```
 
 **Note**: Information about the **adid** is only available after an app installation has been tracked by the Adjust backend. From that moment on, the Adjust SDK has information about the device **adid** and you can access it with this method. So, **it is not possible** to access the **adid** value before the SDK has been initialized and installation of your app has been successfully tracked.
+  
+### <a id="set-external-device-id"></a>Set external device ID
+
+> **Note** If you want to use external device IDs, please contact your Adjust representative. They will talk you through the best approach for your use case.
+
+An external device identifier is a custom value that you can assign to a device or user. They can help you to recognize users across sessions and platforms. They can also help you to deduplicate installs by user so that a user isn't counted as multiple new installs.
+
+You can also use an external device ID as a custom identifier for a device. This can be useful if you use these identifiers elsewhere and want to keep continuity.
+
+Check out our [external device identifiers article](https://help.adjust.com/en/article/external-device-identifiers) for more information.
+
+> **Note** This setting requires Adjust SDK v4.20.0 or later.
+
+To set an external device ID, assign the identifier to the `externalDeviceId` property in your `adjust.create` call.
+
+```lua
+adjust.create({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE",
+    externalDeviceId = "{YourExternalDeviceId}"
+})
+```
+
+> **Important**: You need to make sure this ID is **unique to the user or device** depending on your use-case. Using the same ID across different users or devices could lead to duplicated data. Talk to your Adjust representative for more information.
+
+If you want to use the external device ID in your business analytics, you can pass it as a session callback parameter. See the section on [session callback parameters](#session-callback-parameters) for more information.
+
+You can import existing external device IDs into Adjust. This ensures that the backend matches future data to your existing device records. If you want to do this, please contact your Adjust representative.
 
 ### <a id="user-attribution"></a>User attribution
 
@@ -1368,7 +1412,7 @@ adjust.trackMeasurementConsent(true);
 
 Upon receiving this information, Adjust changes sharing the specific user's data to partners. The Adjust SDK will continue to work as expected.
 
-### <a id="data-residency"></a>[beta] Data residency
+### <a id="data-residency"></a>Data residency
 
 In order to enable data residency feature, make sure to set `urlStrategy` parameter when initialising Adjust SDK with one of the following constants:
 
@@ -1387,8 +1431,6 @@ adjust.create({
     -- urlStrategy = "data-residency-us"
 })
 ```
-
-**Note:** This feature is currently in beta testing phase. If you are interested in getting access to it, please contact your dedicated account manager or write an email to support@adjust.com. Please, do not turn this setting on before making sure with the support team that this feature is enabled for your app because otherwise SDK traffic will get dropped.
 
 ## <a id="license"></a>License
 
