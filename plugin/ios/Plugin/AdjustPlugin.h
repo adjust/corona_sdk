@@ -2,7 +2,7 @@
 //  AdjustPlugin.h
 //  Adjust SDK
 //
-//  V4.29.1
+//  V4.29.2
 //  Created by Abdullah Obaied (@obaied) on 11th September 2017.
 //  Copyright (c) 2017-2021 Adjust GmbH. All rights reserved.
 //
