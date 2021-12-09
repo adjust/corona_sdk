@@ -201,3 +201,9 @@ def extract_plugin_jar_from_aar():
     execute_command(['mv', 'temp/classes.jar', 'plugin.adjust.jar'])
     execute_command(['rm', '-rf', 'temp'])
     execute_command(['rm', '-rf', 'plugin-release.aar'])
+
+def extract_test_jar_from_aar():
+    execute_command(['unzip', 'plugin-release.aar', '-d', 'temp'])
+    execute_command(['mv', 'temp/classes.jar', 'test.adjust.jar'])
+    execute_command(['rm', '-rf', 'temp'])
+    execute_command(['rm', '-rf', 'plugin-release.aar'])

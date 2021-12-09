@@ -1,6 +1,16 @@
+### Version 4.29.2 (9th December 2021)
+#### Changed
+- Updated native SDKs to latest versions.
+
+#### Native SDKs
+- [Android@v4.28.8][android_sdk_v4.28.8]
+- [iOS@v4.29.6][ios_sdk_v4.29.6]
+
+---
+
 ### Version 4.29.1 (14th May 2021)
 #### Added
-- [beta] Added data residency support for US region. To enable this feature, make sure to pass `"data-residency-us"` as value of `urlStrategy` key when initialising Adjust SDK.
+- Added data residency support for US region. To enable this feature, make sure to pass `"data-residency-us"` as value of `urlStrategy` key when initialising Adjust SDK.
 
 #### Fixed
 - Fixed attribution callback handling of cost amount parameter.
@@ -191,6 +201,7 @@
 [ios_sdk_v4.28.0]: https://github.com/adjust/ios_sdk/tree/v4.28.0
 [ios_sdk_v4.29.1]: https://github.com/adjust/ios_sdk/tree/v4.29.1
 [ios_sdk_v4.29.2]: https://github.com/adjust/ios_sdk/tree/v4.29.2
+[ios_sdk_v4.29.6]: https://github.com/adjust/ios_sdk/tree/v4.29.6
 
 [android_sdk_v4.12.0]: https://github.com/adjust/android_sdk/tree/v4.12.0
 [android_sdk_v4.12.1]: https://github.com/adjust/android_sdk/tree/v4.12.1
@@ -205,3 +216,4 @@
 [android_sdk_v4.27.0]: https://github.com/adjust/android_sdk/tree/v4.27.0
 [android_sdk_v4.28.0]: https://github.com/adjust/android_sdk/tree/v4.28.0
 [android_sdk_v4.28.1]: https://github.com/adjust/android_sdk/tree/v4.28.1
+[android_sdk_v4.28.8]: https://github.com/adjust/android_sdk/tree/v4.28.8

@@ -41,7 +41,7 @@ else
     protocol = "https"
     port = "8443"
 end
-local baseIp = "192.168.0.22"
+local baseIp = "192.168.86.80"
 local baseUrl = protocol .. "://" .. baseIp .. ":" .. port
 local gdprUrl = protocol .. "://" .. baseIp .. ":" .. port
 local subscriptionUrl = protocol .. "://" .. baseIp .. ":" .. port
@@ -69,7 +69,7 @@ command_executor.setPlatform(platformInfo)
 
 print("[TestApp]: Setting test lib tests....")
 testLib.addTest("Test_Parameters")
---testLib.addTestDirectory("current/session-event-callbacks")
+testLib.addTestDirectory("current/session-event-callbacks")
 
 -- Start Test Session
 -- ------------------------
@@ -91,7 +91,7 @@ widget.newButton({
 })
 
 -- START TEST SESSION AUTIMATICALLY
-adjust.getSdkVersion(function(event)
-    print("[TestApp]: starting test session with sdk version = " .. event.message)
-    testLib.startTestSession(event.message)
-end)
+-- adjust.getSdkVersion(function(event)
+--     print("[TestApp]: starting test session with sdk version = " .. event.message)
+--     testLib.startTestSession(event.message)
+-- end)

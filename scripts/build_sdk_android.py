@@ -7,13 +7,13 @@ def build_plugin(dir_root, dir_dist):
     dir_android_plugin  = '{0}/plugin/android/plugin'.format(dir_root)
 
     ## ------------------------------------------------------------------
-    ## Build Corona plugin JAR library.
+    ## Build Adjust Corona plugin JAR library.
     debug_green('Building Corona plugin JAR library ...')
     change_dir(dir_root_android)
     gradle_assemble_release()
     
     ## ------------------------------------------------------------------
-    ## Copy Corona plugin JAR to dist folder into VERSION subfolder.
+    ## Copy Adjust Corona plugin JAR to dist folder into VERSION subfolder.
     debug_green('Copying Corona plugin JAR library to dist directory ...')
     copy_file('{0}/build/outputs/aar/plugin-release.aar'.format(dir_android_plugin), '{0}/plugin-release.aar'.format(dir_dist))
     change_dir(dir_dist)
@@ -35,14 +35,14 @@ def build_app_example(dir_root):
     clear_dir(dir_jar_out_sdk)
 
     ## ------------------------------------------------------------------
-    ## Build Adjust Corona Plugin JAR.
-    debug_green('Building Adjust Corona Plugin JAR ...')
+    ## Build Adjust Corona plugin JAR.
+    debug_green('Building Adjust Corona plugin JAR ...')
     change_dir(dir_root_android)
     gradle_assemble_release()
 
     ## ------------------------------------------------------------------
-    ## Copy Adjust SDK JAR.
-    debug_green('Copy Adjust Corona Plugin JAR ...')
+    ## Copy Adjust Corona plgin JAR.
+    debug_green('Copy Adjust Corona plugin JAR ...')
     copy_file('{0}/build/outputs/aar/plugin-release.aar'.format(dir_android_plugin), '{0}/plugin-release.aar'.format(dir_jar_out_sdk))
     change_dir(dir_jar_out_sdk)
     extract_plugin_jar_from_aar()
@@ -56,7 +56,9 @@ def build_app_test(dir_root):
     ## Paths.
     dir_test_app                = '{0}/test/android/app'.format(dir_root)
     dir_root_android            = '{0}/plugin/android'.format(dir_root)
+    dir_root_android_test       = '{0}/test/android'.format(dir_root)
     dir_android_plugin          = '{0}/plugin/android/plugin'.format(dir_root)
+    dir_android_test            = '{0}/test/android/plugin'.format(dir_root)
     dir_sdk                     = '{0}/ext/android/sdk/Adjust'.format(dir_root)
     dir_jar_in_sdk              = '{0}/sdk-core/build/libs'.format(dir_sdk)
     dir_jar_out_sdk             = '{0}/libs'.format(dir_test_app)
@@ -69,19 +71,33 @@ def build_app_test(dir_root):
     debug_green('Remove current JARs ...')
     clear_dir(dir_jar_out_sdk)
 
-    ## ------------------------------------------------------------------
-    ## Build Adjust SDK JARs.
-    debug_green('Building Adjust SDK JARs ...')
-    change_dir(dir_sdk)
-    gradle_make_release_jar()
+    # ## ------------------------------------------------------------------
+    # ## Build Adjust SDK JARs.
+    # debug_green('Building Adjust SDK JARs ...')
+    # change_dir(dir_sdk)
+    # gradle_make_release_jar()
     
+    # ## ------------------------------------------------------------------
+    # ## Copy Adjust SDK JAR.
+    # debug_green('Copy Adjust SDK JAR ...')
+    # copy_file('{0}/adjust-sdk-release.jar'.format(dir_jar_in_sdk), '{0}/adjust-android.jar'.format(dir_jar_out_sdk))
+
     ## ------------------------------------------------------------------
-    ## Copy Adjust SDK JAR.
-    debug_green('Copy Adjust SDK JAR ...')
-    copy_file('{0}/adjust-sdk-release.jar'.format(dir_jar_in_sdk), '{0}/adjust-android.jar'.format(dir_jar_out_sdk))
+    ## Build Adjust Corona Plugin JAR.
+    debug_green('Building Adjust Corona Plugin JAR ...')
+    change_dir(dir_root_android)
+    gradle_assemble_release()
+
+    ## ------------------------------------------------------------------
+    ## Copy Adjust Corona plugin JAR.
+    debug_green('Copy Adjust Corona plugin JAR ...')
+    copy_file('{0}/build/outputs/aar/plugin-release.aar'.format(dir_android_plugin), '{0}/plugin-release.aar'.format(dir_jar_out_sdk))
+    change_dir(dir_jar_out_sdk)
+    extract_plugin_jar_from_aar()
 
     # ------------------------------------------------------------------
     # Running Gradle tasks: clean test-library:adjustTestLibraryJarDebug ...
+    change_dir(dir_sdk)
     debug_green('Running Gradle tasks: clean test-library:adjustTestLibraryJarDebug ...')
     gradle_run([':test-library:adjustTestLibraryJarDebug'])
 
@@ -101,17 +117,17 @@ def build_app_test(dir_root):
     copy_file('{0}/classes.jar'.format(dir_jar_in_sdk_test_options), '{0}/adjust-test-options.jar'.format(dir_jar_out_sdk_test))
 
     ## ------------------------------------------------------------------
-    ## Build Adjust Corona Plugin JAR.
-    debug_green('Building Adjust Corona Plugin JAR ...')
-    change_dir(dir_root_android)
+    ## Build Adjust Corona test plugin JAR.
+    debug_green('Building Adjust Corona test plugin JAR ...')
+    change_dir(dir_root_android_test)
     gradle_assemble_release()
 
     ## ------------------------------------------------------------------
-    ## Copy Adjust SDK JAR.
-    debug_green('Copy Adjust Corona Plugin JAR ...')
-    copy_file('{0}/build/outputs/aar/plugin-release.aar'.format(dir_android_plugin), '{0}/plugin-release.aar'.format(dir_jar_out_sdk))
+    ## Copy Adjust Corona test plugin JAR.
+    debug_green('Copy Adjust Corona test plugin JAR ...')
+    copy_file('{0}/build/outputs/aar/plugin-release.aar'.format(dir_android_test), '{0}/plugin-release.aar'.format(dir_jar_out_sdk))
     change_dir(dir_jar_out_sdk)
-    extract_plugin_jar_from_aar()
+    extract_test_jar_from_aar()
 
     ## ------------------------------------------------------------------
     ## Script completed.
