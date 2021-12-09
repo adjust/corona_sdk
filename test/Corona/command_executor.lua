@@ -145,6 +145,7 @@ function CommandExecutor:testOptions()
         end
     end
     
+    local useTestConnectionOptions = false;
     if self.command:containsParameter("teardown") then
         local teardownOptions = self.command.parameters["teardown"]
         for k in pairs(teardownOptions) do
@@ -157,6 +158,7 @@ function CommandExecutor:testOptions()
                 testOptions.extraPath = self.extraPath
                 testOptions.useTestConnectionOptions = true
                 testOptions.tryInstallReferrer = false
+                useTestConnectionOptions = true
             elseif option == "deleteState" then 
                 testOptions.setContext = true
                 testOptions.deleteState = true
@@ -184,6 +186,9 @@ function CommandExecutor:testOptions()
     end
     
     adjust.setTestOptions(testOptions)
+    if useTestConnectionOptions then
+        testLib.setTestConnectionOptions();
+    end
 end
 
 function CommandExecutor:config()

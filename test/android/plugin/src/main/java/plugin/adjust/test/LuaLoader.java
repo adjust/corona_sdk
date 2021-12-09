@@ -29,6 +29,7 @@ import com.naef.jnlua.LuaState;
 import com.naef.jnlua.NamedJavaFunction;
 import com.adjust.test.TestLibrary;
 import com.adjust.test.ICommandJsonListener;
+import com.adjust.test_options.TestConnectionOptions;
 
 /**
  * Implements the Lua interface for a Corona plugin.
@@ -81,6 +82,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 			new StartTestSessionWrapper(),
 			new AddInfoToSendWrapper(),
 			new SendInfoToServerWrapper(),
+			new SetTestConnectionOptionsWrapper(),
 		};
 		String libName = L.toString( 1 );
 		L.register(libName, luaFunctions);
@@ -254,6 +256,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		return 0;
 	}
 
+	private int testLib_setTestConnectionOptions(LuaState L) {
+		TestConnectionOptions.setTestConnectionOptions();
+		return 0;
+	}
+
 	private class InitTestLibraryWrapper implements NamedJavaFunction {
 		@Override
 		public String getName() {
@@ -323,6 +330,18 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		@Override
 		public int invoke(LuaState L) {
 			return testLib_sendInfoToServer(L);
+		}
+	}
+
+	private class SetTestConnectionOptionsWrapper implements NamedJavaFunction {
+		@Override
+		public String getName() {
+			return "setTestConnectionOptions";
+		}
+
+		@Override
+		public int invoke(LuaState L) {
+			return testLib_setTestConnectionOptions(L);
 		}
 	}
 }
