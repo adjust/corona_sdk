@@ -117,7 +117,7 @@ You can now add the Adjust SDK to your Corona Enterprise app project. The Adjust
 Inside your Android Studio app project, create a `libs` folder inside of your app folder and add the `plugin.adjust.jar` file to it. After that, please update your app's `build.gradle` file and add the following lines to your `dependencies` section:
 
 ```
-compile 'com.adjust.sdk:adjust-android:4.28.0'
+compile 'com.adjust.sdk:adjust-android:4.28.8'
 compile 'com.android.installreferrer:installreferrer:2.2'
 ```
 
