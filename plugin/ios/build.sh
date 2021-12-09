@@ -38,6 +38,8 @@ popd > /dev/null
 
 echo "OUTPUT_DIR: $OUTPUT_DIR"
 
+rm -rf "$path/BuiltPlugin" "$path/build"
+
 # Clean
 xcodebuild -project "$path/Plugin.xcodeproj" -configuration $CONFIG clean
 checkError
@@ -110,8 +112,6 @@ build_plugin_structure() {
 		COPYFILE_DISABLE=true tar -czvf ../"$SFNAME" --exclude=".*" *
 	)
 }
-
-rm -r "$path/BuiltPlugin"
 
 
 build_plugin_structure "$OUTPUT_DIR/BuiltPlugin/iphone" iphoneos  " -extract armv7 -extract  arm64 "

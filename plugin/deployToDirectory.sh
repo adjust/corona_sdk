@@ -5,6 +5,7 @@ root="$(cd "$(dirname "$0")"; pwd)"
 
 (
 	cd "$root/../dist_directory"
+	git checkout --force master
 	git pull --quiet --force --tags
 )
 
