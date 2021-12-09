@@ -67,9 +67,9 @@ testLib.initTestLibrary(baseUrl, controlUrl, executeCommand)
 command_executor.setTestLib(testLib)
 command_executor.setPlatform(platformInfo)
 
--- print("[TestApp]: Setting test lib tests....")
--- testLib.addTest("Test_Parameters")
--- testLib.addTestDirectory("current/session-event-callbacks")
+print("[TestApp]: Setting test lib tests....")
+testLib.addTest("Test_Parameters")
+testLib.addTestDirectory("current/session-event-callbacks")
 
 -- Start Test Session
 -- ------------------------

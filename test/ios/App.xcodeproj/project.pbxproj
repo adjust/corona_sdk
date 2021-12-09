@@ -24,11 +24,12 @@
 		9D28CC1A2617E89900AEDF67 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D28CC192617E89900AEDF67 /* AdSupport.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		9D28CC1C2617E8A400AEDF67 /* AdServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D28CC1B2617E8A400AEDF67 /* AdServices.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		9D28CC1E2617E8AB00AEDF67 /* AppTrackingTransparency.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D28CC1D2617E8AB00AEDF67 /* AppTrackingTransparency.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		9D6ABE722762128600B9919D /* libplugin_adjust.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DD299AB21F719360054DA79 /* libplugin_adjust.a */; };
+		9D6ABE742762129C00B9919D /* libplugin_library.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D6ABE732762128600B9919D /* libplugin_library.a */; };
 		9DD2998A21F717060054DA79 /* _CoronaSplashScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 9DD2998621F717060054DA79 /* _CoronaSplashScreen.png */; };
 		9DD2998B21F717060054DA79 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9DD2998721F717060054DA79 /* MainWindow.xib */; };
 		9DD2998C21F717060054DA79 /* CoronaResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 9DD2998821F717060054DA79 /* CoronaResources.bundle */; };
 		9DD2998D21F717060054DA79 /* MainWindow-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9DD2998921F717060054DA79 /* MainWindow-iPad.xib */; };
-		9DD299AC21F719360054DA79 /* libplugin_adjust.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DD299AB21F719360054DA79 /* libplugin_adjust.a */; };
 		A447B610165D72FB009EA762 /* AppCoronaDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = A447B60F165D72FB009EA762 /* AppCoronaDelegate.mm */; };
 		A46885F218068C2200381941 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A484112315114F700074BD57 /* GLKit.framework */; };
 		A46885F418068C2900381941 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A46885F318068C2900381941 /* CoreVideo.framework */; };
@@ -65,7 +66,6 @@
 		C22C1E4B1E981D9000D74196 /* LaunchScreen.storyboardc in Resources */ = {isa = PBXBuildFile; fileRef = C22C1E4A1E981D9000D74196 /* LaunchScreen.storyboardc */; };
 		E640B2F21BFC00B00031FAE9 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E640B2F11BFC00B00031FAE9 /* AssetsLibrary.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		E640B2F41BFC00BA0031FAE9 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E640B2F31BFC00BA0031FAE9 /* Photos.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		F51C66D61EE0D3B20040E4BE /* libplugin_library.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E253E2166DE7C800DCDC2C /* libplugin_library.a */; };
 		F56457D91FA108F500EC8C29 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F56712391F73451B006B502D /* Images.xcassets */; };
 		F5BB41531BC42ACF0033F6FA /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5BB41521BC42ACF0033F6FA /* CoreText.framework */; };
 		F5E548091BE7FF0200091810 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5E548081BE7FF0200091810 /* GameController.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -79,19 +79,13 @@
 			remoteGlobalIDString = A4E253B6166D6FB300DCDC2C;
 			remoteInfo = plugin_library;
 		};
-		A4E253E3166DE7D800DCDC2C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A4E253DA166DE7C800DCDC2C /* Plugin.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = A4E253B5166D6FB300DCDC2C;
-			remoteInfo = plugin_library;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		9D28CC192617E89900AEDF67 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		9D28CC1B2617E8A400AEDF67 /* AdServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdServices.framework; path = System/Library/Frameworks/AdServices.framework; sourceTree = SDKROOT; };
 		9D28CC1D2617E8AB00AEDF67 /* AppTrackingTransparency.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppTrackingTransparency.framework; path = System/Library/Frameworks/AppTrackingTransparency.framework; sourceTree = SDKROOT; };
+		9D6ABE732762128600B9919D /* libplugin_library.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libplugin_library.a; sourceTree = "<group>"; };
 		9DD2998621F717060054DA79 /* _CoronaSplashScreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = _CoronaSplashScreen.png; sourceTree = "<group>"; };
 		9DD2998721F717060054DA79 /* MainWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindow.xib; sourceTree = "<group>"; };
 		9DD2998821F717060054DA79 /* CoronaResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = CoronaResources.bundle; sourceTree = "<group>"; };
@@ -154,8 +148,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9DD299AC21F719360054DA79 /* libplugin_adjust.a in Frameworks */,
-				F51C66D61EE0D3B20040E4BE /* libplugin_library.a in Frameworks */,
 				E640B2F41BFC00BA0031FAE9 /* Photos.framework in Frameworks */,
 				E640B2F21BFC00B00031FAE9 /* AssetsLibrary.framework in Frameworks */,
 				F5BB41531BC42ACF0033F6FA /* CoreText.framework in Frameworks */,
@@ -169,6 +161,7 @@
 				A484117A15128D5D0074BD57 /* AVFoundation.framework in Frameworks */,
 				A484117B15128D5D0074BD57 /* CFNetwork.framework in Frameworks */,
 				9D28CC1A2617E89900AEDF67 /* AdSupport.framework in Frameworks */,
+				9D6ABE742762129C00B9919D /* libplugin_library.a in Frameworks */,
 				9D28CC1C2617E8A400AEDF67 /* AdServices.framework in Frameworks */,
 				A484112215114F700074BD57 /* CoreGraphics.framework in Frameworks */,
 				A484117C15128D5D0074BD57 /* CoreLocation.framework in Frameworks */,
@@ -193,6 +186,7 @@
 				A484118A15128D5D0074BD57 /* SystemConfiguration.framework in Frameworks */,
 				A4E2537F166AE3DC00DCDC2C /* Twitter.framework in Frameworks */,
 				A484111E15114F700074BD57 /* UIKit.framework in Frameworks */,
+				9D6ABE722762128600B9919D /* libplugin_adjust.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -254,6 +248,7 @@
 		A484111C15114F700074BD57 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9D6ABE732762128600B9919D /* libplugin_library.a */,
 				9D28CC1D2617E8AB00AEDF67 /* AppTrackingTransparency.framework */,
 				9D28CC1B2617E8A400AEDF67 /* AdServices.framework */,
 				9D28CC192617E89900AEDF67 /* AdSupport.framework */,
@@ -339,7 +334,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				A4E253E4166DE7D800DCDC2C /* PBXTargetDependency */,
 			);
 			name = App;
 			productName = App;
@@ -521,14 +515,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		A4E253E4166DE7D800DCDC2C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = plugin_library;
-			targetProxy = A4E253E3166DE7D800DCDC2C /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		A484112A15114F700074BD57 /* InfoPlist.strings */ = {
