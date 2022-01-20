@@ -3,7 +3,7 @@
 //  Adjust Test Library Plugin
 //
 //  Created by Srdjan Tubin (@2beens) on August 2018.
-//  Copyright (c) 2018-2019 Adjust GmbH. All rights reserved.
+//  Copyright (c) 2018-2022 Adjust GmbH. All rights reserved.
 //
 
 #ifndef _PluginLibrary_H__
