@@ -2,7 +2,7 @@
 //  LuaLoader.java
 //  Adjust SDK
 //
-//  V4.29.2
+//  V4.29.3
 //  Created by Abdullah Obaied (@obaied) on 14th September 2017.
 //  Copyright (c) 2017-2021 Adjust GmbH. All rights reserved.
 //
@@ -53,7 +53,7 @@ import com.adjust.sdk.OnSessionTrackingSucceededListener;
 @SuppressWarnings("WeakerAccess")
 public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private static final String TAG = "LuaLoader";
-    private static final String SDK_PREFIX = "corona4.29.2";
+    private static final String SDK_PREFIX = "corona4.29.3";
 
     public static final String EVENT_ATTRIBUTION_CHANGED = "adjust_attribution";
     public static final String EVENT_SESSION_TRACKING_SUCCESS = "adjust_sessionTrackingSuccess";
