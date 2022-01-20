@@ -4,7 +4,7 @@
 //
 //  V4.29.3
 //  Created by Abdullah Obaied (@obaied) on 14th September 2017.
-//  Copyright (c) 2017-2021 Adjust GmbH. All rights reserved.
+//  Copyright (c) 2017-2022 Adjust GmbH. All rights reserved.
 //
 
 // This corresponds to the name of the Lua library, e.g. [Lua] require "plugin.library".

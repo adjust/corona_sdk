@@ -3,7 +3,7 @@
 //  Adjust SDK Test
 //
 //  Created by Srdjan Tubin (@2beens) on 14th August 2018.
-//  Copyright (c) 2018 Adjust GmbH. All rights reserved.
+//  Copyright (c) 2018-2022 Adjust GmbH. All rights reserved.
 //
 
 // This corresponds to the name of the Lua library,
