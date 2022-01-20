@@ -1,3 +1,13 @@
+### Version 4.29.3 (21st January 2022)
+#### Changed
+- Updated native SDKs to latest versions.
+
+#### Native SDKs
+- [Android@v4.28.9][android_sdk_v4.28.9]
+- [iOS@v4.29.6][ios_sdk_v4.29.6]
+
+---
+
 ### Version 4.29.2 (9th December 2021)
 #### Changed
 - Updated native SDKs to latest versions.
@@ -217,3 +227,4 @@
 [android_sdk_v4.28.0]: https://github.com/adjust/android_sdk/tree/v4.28.0
 [android_sdk_v4.28.1]: https://github.com/adjust/android_sdk/tree/v4.28.1
 [android_sdk_v4.28.8]: https://github.com/adjust/android_sdk/tree/v4.28.8
+[android_sdk_v4.28.9]: https://github.com/adjust/android_sdk/tree/v4.28.9
