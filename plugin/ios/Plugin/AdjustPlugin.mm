@@ -1131,7 +1131,6 @@ int AdjustPlugin::trackThirdPartySharing(lua_State *L) {
         return 0;
     }
 
-    NSNumber *enabled = nil;
     ADJThirdPartySharing *adjustThirdPartySharing = nil;
 
     // Enabled.
