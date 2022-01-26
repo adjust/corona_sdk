@@ -3,7 +3,7 @@
 //  Adjust SDK
 //
 //  Created by Abdullah Obaied (@obaied) on 11th September 2017.
-//  Copyright (c) 2017-2021 Adjust GmbH. All rights reserved.
+//  Copyright (c) 2017-2022 Adjust GmbH. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -22,7 +22,7 @@
 #define EVENT_GET_SDK_VERSION @"adjust_getSdkVersion"
 #define EVENT_GET_AUTHORIZATION_STATUS @"adjust_requestTrackingAuthorizationWithCompletionHandler"
 
-#define SDK_PREFIX @"corona4.29.2"
+#define SDK_PREFIX @"corona4.29.3"
 
 // ----------------------------------------------------------------------------
 
@@ -307,7 +307,7 @@ int AdjustPlugin::create(lua_State *L) {
                                       allowSuppressLogLevel:(logLevel == ADJLogLevelSuppress)];
 
     // SDK prefix.
-    [adjustConfig setSdkPrefix:@"corona4.29.2"];
+    [adjustConfig setSdkPrefix:@"corona4.29.3"];
 
     // Log level.
     [adjustConfig setLogLevel:logLevel];
@@ -1131,7 +1131,6 @@ int AdjustPlugin::trackThirdPartySharing(lua_State *L) {
         return 0;
     }
 
-    NSNumber *enabled = nil;
     ADJThirdPartySharing *adjustThirdPartySharing = nil;
 
     // Enabled.
