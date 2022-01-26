@@ -1,4 +1,4 @@
-### Version 4.29.3 (21st January 2022)
+### Version 4.29.3 (26th January 2022)
 #### Changed
 - Updated native SDKs to latest versions.
 
