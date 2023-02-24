@@ -253,7 +253,6 @@ int AdjustPlugin::create(lua_State *L) {
     BOOL isDeviceKnown = NO;
     BOOL sendInBackground = NO;
     BOOL eventBufferingEnabled = NO;
-    BOOL allowiAdInfoReading = YES;
     BOOL allowAdServicesInfoReading = YES;
     BOOL allowIdfaReading = YES;
     BOOL handleSkAdNetwork = YES;
@@ -317,14 +316,6 @@ int AdjustPlugin::create(lua_State *L) {
     if (!lua_isnil(L, 2)) {
         eventBufferingEnabled = lua_toboolean(L, 2);
         [adjustConfig setEventBufferingEnabled:eventBufferingEnabled];
-    }
-    lua_pop(L, 1);
-
-    // iAd info reading.
-    lua_getfield(L, 1, "allowiAdInfoReading");
-    if (!lua_isnil(L, 2)) {
-        allowiAdInfoReading = lua_toboolean(L, 2);
-        [adjustConfig setAllowiAdInfoReading:allowiAdInfoReading];
     }
     lua_pop(L, 1);
 
@@ -1303,12 +1294,6 @@ int AdjustPlugin::setTestOptions(lua_State *L) {
     lua_getfield(L, 1, "noBackoffWait");
     if (!lua_isnil(L, 2)) {
         testOptions.noBackoffWait = lua_toboolean(L, 2);
-    }
-    lua_pop(L, 1);
-
-    lua_getfield(L, 1, "iAdFrameworkEnabled");
-    if (!lua_isnil(L, 2)) {
-        testOptions.iAdFrameworkEnabled = lua_toboolean(L, 2);
     }
     lua_pop(L, 1);
 

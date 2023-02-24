@@ -126,15 +126,6 @@ function CommandExecutor:testOptions()
             testOptions.noBackoffWait = false
         end
     end
-    
-    if self.command:containsParameter("iAdFrameworkEnabled") then
-        local iAdFrameworkEnabled = self.command:getFirstParameterValue("iAdFrameworkEnabled")
-        if iAdFrameworkEnabled == "true" then
-            testOptions.iAdFrameworkEnabled = true
-        else
-            testOptions.iAdFrameworkEnabled = false
-        end
-    end
 
     if self.command:containsParameter("adServicesFrameworkEnabled") then
         local adServicesFrameworkEnabled = self.command:getFirstParameterValue("adServicesFrameworkEnabled")
@@ -249,10 +240,6 @@ function CommandExecutor:config()
     
     if self.command:containsParameter("eventBufferingEnabled") then
         adjustConfig.eventBufferingEnabled = (self.command:getFirstParameterValue("eventBufferingEnabled") == "true")
-    end
-
-    if self.command:containsParameter("allowiAdInfoReading") then
-        adjustConfig.allowiAdInfoReading = (self.command:getFirstParameterValue("allowiAdInfoReading") == "true")
     end
 
     if self.command:containsParameter("allowAdServicesInfoReading") then
