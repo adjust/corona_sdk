@@ -77,11 +77,24 @@
 - (BOOL)adjustDeeplinkResponse:(nullable NSURL *)deeplink;
 
 /**
- * @brief Optional delegate method that gets called when Adjust SDK sets conversion value for the user.
+ * @brief Optional SKAdNetwork pre 4.0 style delegate method that gets called when Adjust SDK sets conversion value for the user.
  *
  * @param conversionValue Conversion value used by Adjust SDK to invoke updateConversionValue: API.
  */
 - (void)adjustConversionValueUpdated:(nullable NSNumber *)conversionValue;
+
+/**
+ * @brief Optional SKAdNetwork 4.0 style delegate method that gets called when Adjust SDK sets conversion value for the user.
+ *        You can use this callback even with using pre 4.0 SKAdNetwork.
+ *        In that case you can expect coarseValue and lockWindow values to be nil.
+ *
+ * @param fineValue Conversion value set by Adjust SDK.
+ * @param coarseValue Coarse value set by Adjust SDK.
+ * @param lockWindow Lock window set by Adjust SDK.
+ */
+- (void)adjustConversionValueUpdated:(nullable NSNumber *)fineValue
+                         coarseValue:(nullable NSString *)coarseValue
+                          lockWindow:(nullable NSNumber *)lockWindow;
 
 @end
 
@@ -153,7 +166,7 @@
 /**
  * @brief Enables/disables reading of iAd framework data needed for ASA tracking.
  */
-@property (nonatomic, assign) BOOL allowiAdInfoReading;
+@property (nonatomic, assign) BOOL allowiAdInfoReading DEPRECATED_MSG_ATTRIBUTE("Apple Search Ads attribution with usage of iAd.framework has been sunset by Apple as of February 7th 2023");
 
 /**
  * @brief Enables/disables reading of AdServices framework data needed for attribution.
@@ -215,6 +228,11 @@
 @property (nonatomic, copy, readwrite, nullable) NSString *urlStrategy;
 
 /**
+ * @brief Enables/disables linkMe
+ */
+@property (nonatomic, assign) BOOL linkMeEnabled;
+
+/**
  * @brief Get configuration object for the initialization of the Adjust SDK.
  *
  * @param appToken The App Token of your app. This unique identifier can
@@ -258,9 +276,14 @@
 
 /**
  * @brief Check if adjust configuration object is valid.
- * 
+ *
  * @return Boolean indicating whether adjust config object is valid or not.
  */
 - (BOOL)isValid;
+ 
+/**
+ * @brief Enable COPPA (Children's Online Privacy Protection Act) compliant for the application.
+ */
+@property (nonatomic, assign) BOOL coppaCompliantEnabled;
 
 @end

@@ -2,7 +2,7 @@
 //  Adjust.h
 //  Adjust SDK
 //
-//  V4.29.6
+//  V4.33.4
 //  Created by Christian Wellenbrock (@wellle) on 23rd July 2013.
 //  Copyright (c) 2012-2021 Adjust GmbH. All rights reserved.
 //
@@ -28,7 +28,6 @@
 @property (nonatomic, assign) BOOL teardown;
 @property (nonatomic, assign) BOOL deleteState;
 @property (nonatomic, assign) BOOL noBackoffWait;
-@property (nonatomic, assign) BOOL iAdFrameworkEnabled;
 @property (nonatomic, assign) BOOL adServicesFrameworkEnabled;
 @property (nonatomic, assign) BOOL enableSigning;
 @property (nonatomic, assign) BOOL disableSigning;
@@ -49,12 +48,16 @@ extern NSString * __nonnull const ADJAdRevenueSourceMopub;
 extern NSString * __nonnull const ADJAdRevenueSourceAdMob;
 extern NSString * __nonnull const ADJAdRevenueSourceIronSource;
 extern NSString * __nonnull const ADJAdRevenueSourceAdMost;
+extern NSString * __nonnull const ADJAdRevenueSourceUnity;
+extern NSString * __nonnull const ADJAdRevenueSourceHeliumChartboost;
+extern NSString * __nonnull const ADJAdRevenueSourcePublisher;
 
 /**
  * Constants for country app's URL strategies.
  */
 extern NSString * __nonnull const ADJUrlStrategyIndia;
 extern NSString * __nonnull const ADJUrlStrategyChina;
+extern NSString * __nonnull const ADJUrlStrategyCn;
 extern NSString * __nonnull const ADJDataResidencyEU;
 extern NSString * __nonnull const ADJDataResidencyTR;
 extern NSString * __nonnull const ADJDataResidencyUS;
@@ -305,16 +308,61 @@ extern NSString * __nonnull const ADJDataResidencyUS;
 /**
  * @brief Getter for app tracking authorization status.
  *
- * return Value of app tracking authorization status.
+ * @return Value of app tracking authorization status.
  */
 + (int)appTrackingAuthorizationStatus;
 
 /**
- * @brief Adjust wrapper for updateConversionValue: method.
+ * @brief Adjust wrapper for SKAdNetwork's updateConversionValue: method.
  *
  * @param conversionValue Conversion value you would like SDK to set for given user.
  */
 + (void)updateConversionValue:(NSInteger)conversionValue;
+
+/**
+ * @brief Adjust wrapper for SKAdNetwork's updatePostbackConversionValue:completionHandler: method.
+ *
+ * @param conversionValue Conversion value you would like SDK to set for given user.
+ * @param completion Completion handler you can provide to catch and handle any errors.
+ */
++ (void)updatePostbackConversionValue:(NSInteger)conversionValue
+                    completionHandler:(void (^_Nullable)(NSError *_Nullable error))completion;
+
+/**
+ * @brief Adjust wrapper for SKAdNetwork's updatePostbackConversionValue:coarseValue:completionHandler: method.
+ *
+ * @param fineValue Conversion value you would like SDK to set for given user.
+ * @param coarseValue One of the possible SKAdNetworkCoarseConversionValue values.
+ * @param completion Completion handler you can provide to catch and handle any errors.
+ */
++ (void)updatePostbackConversionValue:(NSInteger)fineValue
+                          coarseValue:(nonnull NSString *)coarseValue
+                    completionHandler:(void (^_Nullable)(NSError *_Nullable error))completion;
+
+/**
+ * @brief Adjust wrapper for SKAdNetwork's updatePostbackConversionValue:coarseValue:lockWindow:completionHandler: method.
+ *
+ * @param fineValue Conversion value you would like SDK to set for given user.
+ * @param coarseValue One of the possible SKAdNetworkCoarseConversionValue values.
+ * @param lockWindow A Boolean value that indicates whether to send the postback before the conversion window ends.
+ * @param completion Completion handler you can provide to catch and handle any errors.
+ */
++ (void)updatePostbackConversionValue:(NSInteger)fineValue
+                          coarseValue:(nonnull NSString *)coarseValue
+                           lockWindow:(BOOL)lockWindow
+                    completionHandler:(void (^_Nullable)(NSError *_Nullable error))completion;
+
+/**
+ * @brief Instruct to Adjust SDK to check current state of att_status.
+ */
++ (void)checkForNewAttStatus;
+
+/**
+ * @brief Get the last deep link which has opened the app.
+ *
+ * @return Last deep link which has opened the app.
+ */
++ (nullable NSURL *)lastDeeplink;
 
 /**
  * @brief Method used for internal testing only. Don't use it in production.
@@ -384,10 +432,26 @@ extern NSString * __nonnull const ADJDataResidencyUS;
 
 - (void)updateConversionValue:(NSInteger)conversionValue;
 
+- (void)updatePostbackConversionValue:(NSInteger)conversionValue
+                    completionHandler:(void (^_Nullable)(NSError *_Nullable error))completion;
+
+- (void)updatePostbackConversionValue:(NSInteger)fineValue
+                          coarseValue:(nonnull NSString *)coarseValue
+                    completionHandler:(void (^_Nullable)(NSError *_Nullable error))completion;
+
+- (void)updatePostbackConversionValue:(NSInteger)fineValue
+                          coarseValue:(nonnull NSString *)coarseValue
+                           lockWindow:(BOOL)lockWindow
+                    completionHandler:(void (^_Nullable)(NSError *_Nullable error))completion;
+
 - (void)trackThirdPartySharing:(nonnull ADJThirdPartySharing *)thirdPartySharing;
 
 - (void)trackMeasurementConsent:(BOOL)enabled;
 
 - (void)trackAdRevenue:(nonnull ADJAdRevenue *)adRevenue;
+
+- (void)checkForNewAttStatus;
+
+- (nullable NSURL *)lastDeeplink;
 
 @end
