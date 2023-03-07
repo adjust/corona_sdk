@@ -127,6 +127,7 @@ adjust.create({
     -- info3 = ddd,
     -- info4 = eee,
     -- coppaCompliant = true,
+    -- linkMeEnabled = true,
 })
 
 adjust.requestTrackingAuthorizationWithCompletionHandler(function(event)
