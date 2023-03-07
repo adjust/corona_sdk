@@ -41,7 +41,7 @@ else
     protocol = "https"
     port = "8443"
 end
-local baseIp = "192.168.86.52"
+local baseIp = "192.168.86.153"
 local baseUrl = protocol .. "://" .. baseIp .. ":" .. port
 local gdprUrl = protocol .. "://" .. baseIp .. ":" .. port
 local subscriptionUrl = protocol .. "://" .. baseIp .. ":" .. port
