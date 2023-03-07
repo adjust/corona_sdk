@@ -258,6 +258,7 @@ int AdjustPlugin::create(lua_State *L) {
     BOOL handleSkAdNetwork = YES;
     BOOL needsCost = NO;
     BOOL shouldLaunchDeferredDeeplink = YES;
+    BOOL coppaCompliant = NO;
     NSString *appToken = nil;
     NSString *userAgent = nil;
     NSString *environment = nil;
@@ -471,6 +472,14 @@ int AdjustPlugin::create(lua_State *L) {
     if (secretId != -1 && info1 != -1 && info2 != -1 && info3 != -1 && info4 != -1) {
         [adjustConfig setAppSecret:secretId info1:info1 info2:info2 info3:info3 info4:info4];
     }
+
+    // COPPA compliance.
+    lua_getfield(L, 1, "coppaCompliant");
+    if (!lua_isnil(L, 2)) {
+        coppaCompliant = lua_toboolean(L, 2);
+        [adjustConfig setCoppaCompliantEnabled:coppaCompliant];
+    }
+    lua_pop(L, 1);
 
     // Callbacks.
     Self *library = ToLibrary(L);
