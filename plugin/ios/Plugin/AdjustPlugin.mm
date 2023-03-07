@@ -261,6 +261,7 @@ int AdjustPlugin::create(lua_State *L) {
     BOOL needsCost = NO;
     BOOL shouldLaunchDeferredDeeplink = YES;
     BOOL coppaCompliant = NO;
+    BOOL linkMeEnabled = NO;
     NSString *appToken = nil;
     NSString *userAgent = nil;
     NSString *environment = nil;
@@ -480,6 +481,14 @@ int AdjustPlugin::create(lua_State *L) {
     if (!lua_isnil(L, 2)) {
         coppaCompliant = lua_toboolean(L, 2);
         [adjustConfig setCoppaCompliantEnabled:coppaCompliant];
+    }
+    lua_pop(L, 1);
+
+    // LinkMe feature.
+    lua_getfield(L, 1, "linkMeEnabled");
+    if (!lua_isnil(L, 2)) {
+        linkMeEnabled = lua_toboolean(L, 2);
+        [adjustConfig setLinkMeEnabled:linkMeEnabled];
     }
     lua_pop(L, 1);
 
