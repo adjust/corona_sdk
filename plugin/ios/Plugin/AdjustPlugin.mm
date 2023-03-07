@@ -86,6 +86,7 @@ public:
     static int setSessionTrackingFailureListener(lua_State *L);
     static int setDeferredDeeplinkListener(lua_State *L);
     static int setConversionValueUpdatedListener(lua_State *L);
+    static int checkForNewAttStatus(lua_State *L);
 
     // Android specific.
     static int getGoogleAdId(lua_State *L);
@@ -198,6 +199,7 @@ AdjustPlugin::Open(lua_State *L) {
         { "updateConversionValue", updateConversionValue },
         { "trackThirdPartySharing", trackThirdPartySharing },
         { "trackMeasurementConsent", trackMeasurementConsent },
+        { "checkForNewAttStatus", checkForNewAttStatus },
         { "getGoogleAdId", getGoogleAdId },
         { "getAmazonAdId", getAmazonAdId },
         { "trackPlayStoreSubscription", trackPlayStoreSubscription },
@@ -1165,6 +1167,12 @@ int AdjustPlugin::trackThirdPartySharing(lua_State *L) {
 int AdjustPlugin::trackMeasurementConsent(lua_State *L) {
     BOOL measurementConsent = lua_toboolean(L, 1);
     [Adjust trackMeasurementConsent:measurementConsent];
+    return 0;
+}
+
+// Public API.
+int AdjustPlugin::checkForNewAttStatus(lua_State *L) {
+    [Adjust checkForNewAttStatus];
     return 0;
 }
 
