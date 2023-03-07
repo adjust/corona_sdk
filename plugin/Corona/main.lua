@@ -152,7 +152,8 @@ local function handleTrackSimpleEvent(event)
         adjust.trackEvent({
             eventToken = "g3mfiw"
         })
-        adjust.updateConversionValue(6)
+        -- adjust.checkForNewAttStatus()
+        -- adjust.updateConversionValue(6)
         -- adjust.trackMeasurementConsent(true)
         -- adjust.trackThirdPartySharing({
         --     enabled = true,
