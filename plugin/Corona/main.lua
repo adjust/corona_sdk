@@ -80,7 +80,16 @@ local function deferredDeeplinkListener(event)
 end
 
 local function conversionValueUpdatedListener(event)
-    print("[Adjust]: Update conversion value: " .. event.message)
+    print("[Adjust]: Pre-SKAN4 conversion value update callback pinged!")
+    if event.message ~= nil then print("[Adjust]: Conversion value: " .. event.message) end
+end
+
+local function skan4ConversionValueUpdatedListener(event)
+    local json_skan4_update = json.decode(event.message)
+    print("[Adjust]: SKAN4 conversion value update callback pinged!")
+    if json_skan4_update.fineValue ~= nil then print("[Adjust]: Conversion value: " .. json_skan4_update.fineValue) end
+    if json_skan4_update.coarseValue ~= nil then print("[Adjust]: Coarse value: " .. json_skan4_update.coarseValue) end
+    if json_skan4_update.lockWindow ~= nil then print("[Adjust]: Lock window: " .. json_skan4_update.lockWindow) end
 end
 
 -- initialize Adjust SDK
@@ -92,6 +101,7 @@ adjust.setSessionTrackingSuccessListener(sessionTrackingSuccessListener)
 adjust.setSessionTrackingFailureListener(sessionTrackingFailureListener)
 adjust.setDeferredDeeplinkListener(deferredDeeplinkListener)
 adjust.setConversionValueUpdatedListener(conversionValueUpdatedListener)
+adjust.setSkan4ConversionValueUpdatedListener(skan4ConversionValueUpdatedListener)
 
 adjust.addSessionCallbackParameter("scp1", "scp1_value1")
 adjust.addSessionCallbackParameter("scp2", "scp2_value2")

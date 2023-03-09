@@ -16,6 +16,7 @@
 #define ADJ_SESSION_TRACKING_FAILURE @"adjust_sessionTrackingFailure"
 #define ADJ_DEFERRED_DEEPLINK @"adjust_deferredDeeplink"
 #define ADJ_CONVERSION_VALUE_UPDATED @"adjust_conversionValueUpdated"
+#define ADJ_SKAN4_CONVERSION_VALUE_UPDATED @"adjust_skan4ConversionValueUpdated"
 
 /**
  * @brief Adjust delegate singleton which takes care of bridging between native SDK and Lua callbacks.
@@ -63,6 +64,11 @@
 @property (nonatomic) CoronaLuaRef conversionValueUpdatedCallback;
 
 /**
+ * @brief Conversion value updated callback (SKAN4) reference.
+ */
+@property (nonatomic) CoronaLuaRef skan4ConversionValueUpdatedCallback;
+
+/**
  * @brief Should deferred deep link be opened or not.
  */
 @property (nonatomic) BOOL shouldLaunchDeferredDeeplink;
@@ -70,15 +76,16 @@
 /**
  * @brief Obtain static instance of AdjustSdkDelegate.
  *
- * @param attributionCallback               Attribution callback reference.
- * @param eventTrackingSuccessCallback      Event success callback reference.
- * @param eventTrackingFailureCallback      Event failure callback reference.
- * @param sessionTrackingSuccessCallback    Session success callback reference.
- * @param sessionTrackingFailureCallback    Session failure callback reference.
- * @param deferredDeeplinkCallback          Deferred deep link callback reference.
- * @param conversionValueUpdatedCallback    Conversion value updated callback reference.
- * @param shouldLaunchDeferredDeeplink      Should deferred deep link be opened or not.
- * @param luaState                          Lua state object.
+ * @param attributionCallback                   Attribution callback reference.
+ * @param eventTrackingSuccessCallback          Event success callback reference.
+ * @param eventTrackingFailureCallback          Event failure callback reference.
+ * @param sessionTrackingSuccessCallback        Session success callback reference.
+ * @param sessionTrackingFailureCallback        Session failure callback reference.
+ * @param deferredDeeplinkCallback              Deferred deep link callback reference.
+ * @param conversionValueUpdatedCallback        Conversion value updated callback reference.
+ * @param skan4conversionValueUpdatedCallback   Conversion value updated callback reference.
+ * @param shouldLaunchDeferredDeeplink          Should deferred deep link be opened or not.
+ * @param luaState                              Lua state object.
  *
  * @returns Static instance of AdjustSdkDelegate.
  */
@@ -89,6 +96,7 @@
                           sessionTrackingFailureCallback:(CoronaLuaRef)sessionTrackingFailureCallback
                                 deferredDeeplinkCallback:(CoronaLuaRef)deferredDeeplinkCallback
                           conversionValueUpdatedCallback:(CoronaLuaRef)conversionValueUpdatedCallback
+                     skan4ConversionValueUpdatedCallback:(CoronaLuaRef)skan4ConversionValueUpdatedCallback
                             shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink
                                              andLuaState:(lua_State *)luaState;
 
