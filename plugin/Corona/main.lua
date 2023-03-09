@@ -163,6 +163,12 @@ local function handleTrackSimpleEvent(event)
         adjust.trackEvent({
             eventToken = "g3mfiw"
         })
+        -- adjust.updateConversionValueWithCallback(6, function(event)
+        --     print("[Adjust]: Update conversion value pre-SKAN4 style error = " .. event.message)
+        -- end)
+        -- adjust.updateConversionValueWithSkan4Callback(6, "low", false, function(event)
+        --     print("[Adjust]: Update conversion value SKAN4 style error = " .. event.message)
+        -- end)
         -- adjust.checkForNewAttStatus()
         -- adjust.updateConversionValue(6)
         -- adjust.trackMeasurementConsent(true)
