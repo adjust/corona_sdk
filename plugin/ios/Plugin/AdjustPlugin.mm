@@ -21,6 +21,7 @@
 #define EVENT_GET_AMAZON_AD_ID @"adjust_getAmazonAdId"
 #define EVENT_GET_SDK_VERSION @"adjust_getSdkVersion"
 #define EVENT_GET_AUTHORIZATION_STATUS @"adjust_requestTrackingAuthorizationWithCompletionHandler"
+#define EVENT_GET_LAST_DEEPLINK @"adjust_getLastDeeplink"
 
 #define SDK_PREFIX @"corona4.33.0"
 
@@ -87,6 +88,7 @@ public:
     static int setDeferredDeeplinkListener(lua_State *L);
     static int setConversionValueUpdatedListener(lua_State *L);
     static int checkForNewAttStatus(lua_State *L);
+    static int getLastDeeplink(lua_State *L);
 
     // Android specific.
     static int getGoogleAdId(lua_State *L);
@@ -200,6 +202,7 @@ AdjustPlugin::Open(lua_State *L) {
         { "trackThirdPartySharing", trackThirdPartySharing },
         { "trackMeasurementConsent", trackMeasurementConsent },
         { "checkForNewAttStatus", checkForNewAttStatus },
+        { "getLastDeeplink", getLastDeeplink },
         { "getGoogleAdId", getGoogleAdId },
         { "getAmazonAdId", getAmazonAdId },
         { "trackPlayStoreSubscription", trackPlayStoreSubscription },
@@ -1182,6 +1185,26 @@ int AdjustPlugin::trackMeasurementConsent(lua_State *L) {
 // Public API.
 int AdjustPlugin::checkForNewAttStatus(lua_State *L) {
     [Adjust checkForNewAttStatus];
+    return 0;
+}
+
+// Public API.
+int AdjustPlugin::getLastDeeplink(lua_State *L) {
+    int listenerIndex = 1;
+    if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
+        CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
+        NSURL *lastDeeplink = [Adjust lastDeeplink];
+        NSString *lastDeeplinkString;
+        if (nil != lastDeeplink) {
+            lastDeeplinkString = [lastDeeplink absoluteString];
+            if (nil == lastDeeplinkString) {
+                lastDeeplinkString = @"";
+            }
+        } else {
+            lastDeeplinkString = @"";
+        }
+        [AdjustSdkDelegate dispatchEvent:EVENT_GET_LAST_DEEPLINK withState:L callback:listener andMessage:lastDeeplinkString];
+    }
     return 0;
 }
 
