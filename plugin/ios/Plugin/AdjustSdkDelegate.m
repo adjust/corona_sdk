@@ -33,6 +33,9 @@ NSString * const KEY_EVENT_TOKEN = @"eventToken";
 NSString * const KEY_JSON_RESPONSE = @"jsonResponse";
 NSString * const KEY_WILL_RETRY = @"willRetry";
 NSString * const KEY_CALLBACK_ID = @"callbackId";
+NSString * const KEY_FINE_VALUE = @"fineValue";
+NSString * const KEY_COARSE_VALUE = @"coarseValue";
+NSString * const KEY_LOCK_WINDOW = @"lockWindow";
 
 #pragma mark - Object lifecycle methods
 
@@ -53,6 +56,7 @@ NSString * const KEY_CALLBACK_ID = @"callbackId";
                           sessionTrackingFailureCallback:(CoronaLuaRef)sessionTrackingFailureCallback
                                 deferredDeeplinkCallback:(CoronaLuaRef)deferredDeeplinkCallback
                           conversionValueUpdatedCallback:(CoronaLuaRef)conversionValueUpdatedCallback
+                     skan4ConversionValueUpdatedCallback:(CoronaLuaRef)skan4ConversionValueUpdatedCallback
                             shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink
                                              andLuaState:(lua_State *)luaState {
     dispatch_once(&onceToken, ^{
@@ -87,6 +91,10 @@ NSString * const KEY_CALLBACK_ID = @"callbackId";
             [defaultInstance swizzleOriginalSelector:@selector(adjustConversionValueUpdated:)
                                         withSelector:@selector(adjustConversionValueUpdatedWannabe:)];
         }
+        if (skan4ConversionValueUpdatedCallback != NULL) {
+            [defaultInstance swizzleOriginalSelector:@selector(adjustConversionValueUpdated:coarseValue:lockWindow:)
+                                        withSelector:@selector(adjustConversionValueUpdatedWannabe:coarseValue:lockWindow:)];
+        }
 
         [defaultInstance setAttributionChangedCallback:attributionCallback];
         [defaultInstance setEventTrackingSuccessCallback:eventTrackingSuccessCallback];
@@ -95,6 +103,7 @@ NSString * const KEY_CALLBACK_ID = @"callbackId";
         [defaultInstance setSessionTrackingFailureCallback:sessionTrackingFailureCallback];
         [defaultInstance setDeferredDeeplinkCallback:deferredDeeplinkCallback];
         [defaultInstance setConversionValueUpdatedCallback:conversionValueUpdatedCallback];
+        [defaultInstance setSkan4ConversionValueUpdatedCallback:skan4ConversionValueUpdatedCallback];
         [defaultInstance setShouldLaunchDeferredDeeplink:shouldLaunchDeferredDeeplink];
         [defaultInstance setLuaState:luaState];
     });
@@ -298,6 +307,35 @@ NSString * const KEY_CALLBACK_ID = @"callbackId";
                            withState:_luaState
                             callback:_conversionValueUpdatedCallback
                           andMessage:strConversionValue];
+}
+
+- (void)adjustConversionValueUpdatedWannabe:(nullable NSNumber *)fineValue
+                                coarseValue:(nullable NSString *)coarseValue
+                                 lockWindow:(nullable NSNumber *)lockWindow {
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    if (fineValue != nil) {
+        [AdjustSdkDelegate addKey:KEY_FINE_VALUE andValue:fineValue toDictionary:dictionary];
+    }
+    if (coarseValue != nil) {
+        [AdjustSdkDelegate addKey:KEY_COARSE_VALUE andValue:coarseValue toDictionary:dictionary];
+    }
+    if (lockWindow != nil) {
+        [AdjustSdkDelegate addKey:KEY_LOCK_WINDOW andValue:lockWindow toDictionary:dictionary];
+    }
+
+    NSError *error;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
+                                                       options:NSJSONWritingPrettyPrinted
+                                                         error:&error];
+    if (!jsonData) {
+        NSLog(@"[Adjust][bridge]: Error while trying to convert SKAN4 conversion value update dictionary to JSON string: %@", error);
+    } else {
+        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        [AdjustSdkDelegate dispatchEvent:ADJ_SKAN4_CONVERSION_VALUE_UPDATED
+                               withState:_luaState
+                                callback:_skan4ConversionValueUpdatedCallback
+                              andMessage:jsonString];
+    }
 }
 
 #pragma mark - Private & helper methods
