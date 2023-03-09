@@ -1170,6 +1170,25 @@ int AdjustPlugin::trackThirdPartySharing(lua_State *L) {
     }
     lua_pop(L, 1);
 
+    // Partner sharing settings.
+    lua_getfield(L, 1, "partnerSharingSettings");
+    if (!lua_isnil(L, 2) && lua_istable(L, 2)) {
+        NSDictionary *dict = CoronaLuaCreateDictionary(L, 2);
+        for (id key in dict) {
+            NSDictionary *partnerSharingSettings = [dict objectForKey:key];
+            // partnerSharingSettings dictionary contains one KVP whose key is for sure partnerName
+            // we need to extract the remaining KVPs and attach them to that partner sharing settings
+            for (id keySetting in partnerSharingSettings) {
+                if (![keySetting isEqualToString:@"partnerName"]) {
+                    [adjustThirdPartySharing addPartnerSharingSetting:partnerSharingSettings[@"partnerName"]
+                                                                  key:keySetting
+                                                                value:[[partnerSharingSettings objectForKey:keySetting] boolValue]];
+                }
+            }
+        }
+    }
+    lua_pop(L, 1);
+
     [Adjust trackThirdPartySharing:adjustThirdPartySharing];
 
     return 0;
