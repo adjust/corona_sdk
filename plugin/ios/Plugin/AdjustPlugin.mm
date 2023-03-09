@@ -22,6 +22,8 @@
 #define EVENT_GET_SDK_VERSION @"adjust_getSdkVersion"
 #define EVENT_GET_AUTHORIZATION_STATUS @"adjust_requestTrackingAuthorizationWithCompletionHandler"
 #define EVENT_GET_LAST_DEEPLINK @"adjust_getLastDeeplink"
+#define EVENT_UPDATE_CONVERSION_VALUE_WITH_CALLBACK @"adjust_updateConversionValueWithCallback"
+#define EVENT_UPDATE_CONVERSION_VALUE_WITH_SKAN4_CALLBACK @"adjust_updateConversionValueWithSkan4Callback"
 
 #define SDK_PREFIX @"corona4.33.0"
 
@@ -92,6 +94,8 @@ public:
     static int setSkan4ConversionValueUpdatedListener(lua_State *L);
     static int checkForNewAttStatus(lua_State *L);
     static int getLastDeeplink(lua_State *L);
+    static int updateConversionValueWithCallback(lua_State *L);
+    static int updateConversionValueWithSkan4Callback(lua_State *L);
 
     // Android specific.
     static int getGoogleAdId(lua_State *L);
@@ -213,6 +217,8 @@ AdjustPlugin::Open(lua_State *L) {
         { "trackMeasurementConsent", trackMeasurementConsent },
         { "checkForNewAttStatus", checkForNewAttStatus },
         { "getLastDeeplink", getLastDeeplink },
+        { "updateConversionValueWithCallback", updateConversionValueWithCallback },
+        { "updateConversionValueWithSkan4Callback", updateConversionValueWithSkan4Callback },
         { "getGoogleAdId", getGoogleAdId },
         { "getAmazonAdId", getAmazonAdId },
         { "trackPlayStoreSubscription", trackPlayStoreSubscription },
@@ -1161,6 +1167,45 @@ int AdjustPlugin::appTrackingAuthorizationStatus(lua_State *L) {
 int AdjustPlugin::updateConversionValue(lua_State *L) {
     NSInteger value = lua_tointeger(L, 1);
     [Adjust updateConversionValue:value];
+    return 0;
+}
+
+// Public API.
+int AdjustPlugin::updateConversionValueWithCallback(lua_State *L) {
+    NSInteger value = lua_tointeger(L, 1);
+    int listenerIndex = 2;
+    if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
+        CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
+        [Adjust updatePostbackConversionValue:value completionHandler:^(NSError * _Nullable error) {
+            [AdjustSdkDelegate dispatchEvent:EVENT_UPDATE_CONVERSION_VALUE_WITH_CALLBACK
+                                   withState:L
+                                    callback:listener
+                                  andMessage:[error localizedDescription]];
+        }];
+    }
+    return 0;
+}
+
+// Public API.
+int AdjustPlugin::updateConversionValueWithSkan4Callback(lua_State *L) {
+    NSInteger conversionValue = lua_tointeger(L, 1);
+    const char* coarseValue = lua_tostring(L, 2);
+    BOOL lockWindow = lua_toboolean(L, 3);
+    int listenerIndex = 4;
+    if (coarseValue != NULL) {
+        if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
+            CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
+            [Adjust updatePostbackConversionValue:conversionValue
+                                      coarseValue:[NSString stringWithUTF8String:coarseValue]
+                                       lockWindow:lockWindow
+                                completionHandler:^(NSError * _Nullable error) {
+                [AdjustSdkDelegate dispatchEvent:EVENT_UPDATE_CONVERSION_VALUE_WITH_SKAN4_CALLBACK
+                                       withState:L
+                                        callback:listener
+                                      andMessage:[error localizedDescription]];
+            }];
+        }
+    }
     return 0;
 }
 
