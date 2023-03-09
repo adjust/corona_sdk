@@ -170,6 +170,13 @@ local function handleTrackSimpleEvent(event)
         --             value = "NFB-value",
         --         },
         --     },
+        --     partnerSharingSettings = {
+        --         {
+        --             partnerName = "facebook",
+        --             install = true,
+        --             sessions = false,
+        --         }
+        --     },
         -- })
         -- adjust.trackAppStoreSubscription({
         --     price = "6.66",
