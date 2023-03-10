@@ -306,6 +306,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         boolean eventBufferingEnabled = false;
         boolean needsCost = false;
         boolean preinstallTrackingEnabled = false;
+        boolean coppaCompliant = false;
         double delayStart = 0.0;
         long secretId = -1L;
         long info1 = -1L;
@@ -476,6 +477,14 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         if (!L.isNil(2)) {
             preinstallTrackingEnabled = L.checkBoolean(2);
             adjustConfig.setPreinstallTrackingEnabled(preinstallTrackingEnabled);
+        }
+        L.pop(1);
+
+        // COPPA compliance.
+        L.getField(1, "coppaCompliant");
+        if (!L.isNil(2)) {
+            coppaCompliant = L.checkBoolean(2);
+            adjustConfig.setCoppaCompliantEnabled(coppaCompliant);
         }
         L.pop(1);
 
