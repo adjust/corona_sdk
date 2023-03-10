@@ -33,6 +33,7 @@ local function attributionListener(event)
     print("[Adjust]: Cost type: " .. json_attribution.costType)
     print("[Adjust]: Cost amount: " .. json_attribution.costAmount)
     print("[Adjust]: Cost currency: " .. json_attribution.costCurrency)
+    print("[Adjust]: FB install referrer: " .. json_attribution.fbInstallReferrer)
 end
 
 local function sessionTrackingSuccessListener(event)
@@ -496,6 +497,7 @@ local function handleGetAttribution(event)
             print("Cost type: " .. json_attribution.costType)
             print("Cost amount: " .. json_attribution.costAmount)
             print("Cost currency: " .. json_attribution.costCurrency)
+            print("FB install referrer: " .. json_attribution.fbInstallReferrer)
         end)
     end
 end
