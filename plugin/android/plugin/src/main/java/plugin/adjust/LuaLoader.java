@@ -45,6 +45,8 @@ import com.adjust.sdk.OnEventTrackingSucceededListener;
 import com.adjust.sdk.OnSessionTrackingFailedListener;
 import com.adjust.sdk.OnSessionTrackingSucceededListener;
 
+import java.util.Map;
+
 /**
  * Implements the Lua interface for a Corona plugin.
  * Only one instance of this class will be created by Corona for the lifetime of the application.
@@ -1223,6 +1225,29 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 L.pop(1);
 
                 adjustThirdPartySharing.addGranularOption(partnerName, key, value);
+                L.pop(1);
+            }
+        }
+        L.pop(1);
+
+        // Partner sharing settings.
+        L.getField(1, "partnerSharingSettings");
+        if (!L.isNil(2) && L.isTable(2)) {
+            int length = L.length(2);
+
+            for (int i = 1; i <= length; i++) {
+                // Push the table to the stack
+                L.rawGet(2, i);
+                Map<String, Object> mapPartnerSharingSettings = L.checkJavaObject(3, Map.class);
+                String partnerName = (String) mapPartnerSharingSettings.get("partnerName");
+                for (Map.Entry<String, Object> entry : mapPartnerSharingSettings.entrySet()) {
+                    if (!entry.getKey().equals("partnerName")) {
+                        adjustThirdPartySharing.addPartnerSharingSetting(
+                                partnerName,
+                                entry.getKey(),
+                                (Boolean) entry.getValue());
+                    }
+                }
                 L.pop(1);
             }
         }
