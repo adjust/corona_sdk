@@ -138,6 +138,7 @@ adjust.create({
     -- info4 = eee,
     -- coppaCompliant = true,
     -- linkMeEnabled = true,
+    -- playStoreKidsApp = true,
 })
 
 adjust.requestTrackingAuthorizationWithCompletionHandler(function(event)

@@ -307,6 +307,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         boolean needsCost = false;
         boolean preinstallTrackingEnabled = false;
         boolean coppaCompliant = false;
+        boolean playStoreKidsApp = false;
         double delayStart = 0.0;
         long secretId = -1L;
         long info1 = -1L;
@@ -485,6 +486,14 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         if (!L.isNil(2)) {
             coppaCompliant = L.checkBoolean(2);
             adjustConfig.setCoppaCompliantEnabled(coppaCompliant);
+        }
+        L.pop(1);
+
+        // Google Play Store kids apps compliance.
+        L.getField(1, "playStoreKidsApp");
+        if (!L.isNil(2)) {
+            playStoreKidsApp = L.checkBoolean(2);
+            adjustConfig.setPlayStoreKidsAppEnabled(playStoreKidsApp);
         }
         L.pop(1);
 
