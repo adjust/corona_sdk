@@ -191,7 +191,7 @@ local function handleTrackSimpleEvent(event)
         --             partnerName = "facebook",
         --             install = true,
         --             sessions = false,
-        --         }
+        --         },
         --     },
         -- })
         -- adjust.trackAppStoreSubscription({
