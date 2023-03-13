@@ -33,6 +33,7 @@ local function attributionListener(event)
     print("[Adjust]: Cost type: " .. json_attribution.costType)
     print("[Adjust]: Cost amount: " .. json_attribution.costAmount)
     print("[Adjust]: Cost currency: " .. json_attribution.costCurrency)
+    print("[Adjust]: FB install referrer: " .. json_attribution.fbInstallReferrer)
 end
 
 local function sessionTrackingSuccessListener(event)
@@ -80,7 +81,16 @@ local function deferredDeeplinkListener(event)
 end
 
 local function conversionValueUpdatedListener(event)
-    print("[Adjust]: Update conversion value: " .. event.message)
+    print("[Adjust]: Pre-SKAN4 conversion value update callback pinged!")
+    if event.message ~= nil then print("[Adjust]: Conversion value: " .. event.message) end
+end
+
+local function skan4ConversionValueUpdatedListener(event)
+    local json_skan4_update = json.decode(event.message)
+    print("[Adjust]: SKAN4 conversion value update callback pinged!")
+    if json_skan4_update.fineValue ~= nil then print("[Adjust]: Conversion value: " .. json_skan4_update.fineValue) end
+    if json_skan4_update.coarseValue ~= nil then print("[Adjust]: Coarse value: " .. json_skan4_update.coarseValue) end
+    if json_skan4_update.lockWindow ~= nil then print("[Adjust]: Lock window: " .. json_skan4_update.lockWindow) end
 end
 
 -- initialize Adjust SDK
@@ -92,6 +102,7 @@ adjust.setSessionTrackingSuccessListener(sessionTrackingSuccessListener)
 adjust.setSessionTrackingFailureListener(sessionTrackingFailureListener)
 adjust.setDeferredDeeplinkListener(deferredDeeplinkListener)
 adjust.setConversionValueUpdatedListener(conversionValueUpdatedListener)
+adjust.setSkan4ConversionValueUpdatedListener(skan4ConversionValueUpdatedListener)
 
 adjust.addSessionCallbackParameter("scp1", "scp1_value1")
 adjust.addSessionCallbackParameter("scp2", "scp2_value2")
@@ -126,6 +137,9 @@ adjust.create({
     -- info2 = ccc,
     -- info3 = ddd,
     -- info4 = eee,
+    -- coppaCompliant = true,
+    -- linkMeEnabled = true,
+    -- playStoreKidsApp = true,
 })
 
 adjust.requestTrackingAuthorizationWithCompletionHandler(function(event)
@@ -151,7 +165,14 @@ local function handleTrackSimpleEvent(event)
         adjust.trackEvent({
             eventToken = "g3mfiw"
         })
-        adjust.updateConversionValue(6)
+        -- adjust.updateConversionValueWithCallback(6, function(event)
+        --     print("[Adjust]: Update conversion value pre-SKAN4 style error = " .. event.message)
+        -- end)
+        -- adjust.updateConversionValueWithSkan4Callback(6, "low", false, function(event)
+        --     print("[Adjust]: Update conversion value SKAN4 style error = " .. event.message)
+        -- end)
+        -- adjust.checkForNewAttStatus()
+        -- adjust.updateConversionValue(6)
         -- adjust.trackMeasurementConsent(true)
         -- adjust.trackThirdPartySharing({
         --     enabled = true,
@@ -165,6 +186,13 @@ local function handleTrackSimpleEvent(event)
         --             partnerName = "NotFacebook",
         --             key = "NFB-key",
         --             value = "NFB-value",
+        --         },
+        --     },
+        --     partnerSharingSettings = {
+        --         {
+        --             partnerName = "facebook",
+        --             install = true,
+        --             sessions = false,
         --         },
         --     },
         -- })
@@ -469,6 +497,7 @@ local function handleGetAttribution(event)
             print("Cost type: " .. json_attribution.costType)
             print("Cost amount: " .. json_attribution.costAmount)
             print("Cost currency: " .. json_attribution.costCurrency)
+            print("FB install referrer: " .. json_attribution.fbInstallReferrer)
         end)
     end
 end

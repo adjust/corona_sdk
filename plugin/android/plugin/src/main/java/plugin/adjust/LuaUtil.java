@@ -29,6 +29,7 @@ final public class LuaUtil {
     private static final String ATTRIBUTION_COST_TYPE = "costType";
     private static final String ATTRIBUTION_COST_AMOUNT = "costAmount";
     private static final String ATTRIBUTION_COST_CURRENCY = "costCurrency";
+    private static final String ATTRIBUTION_FB_INSTALL_REFERRER = "fbInstallReferrer";
 
     private static final String EVENT_SUCCESS_MESSAGE = "message";
     private static final String EVENT_SUCCESS_TIMESTAMP = "timestamp";
@@ -75,6 +76,7 @@ final public class LuaUtil {
         map.put(ATTRIBUTION_COST_TYPE, null != attribution.costType ? attribution.costType : "");
         map.put(ATTRIBUTION_COST_AMOUNT, null != attribution.costAmount && !attribution.costAmount.isNaN() ? attribution.costAmount : "");
         map.put(ATTRIBUTION_COST_CURRENCY, null != attribution.costCurrency ? attribution.costCurrency : "");
+        map.put(ATTRIBUTION_FB_INSTALL_REFERRER, null != attribution.fbInstallReferrer ? attribution.fbInstallReferrer : "");
         return map;
     }
 

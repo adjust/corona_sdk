@@ -21,8 +21,11 @@
 #define EVENT_GET_AMAZON_AD_ID @"adjust_getAmazonAdId"
 #define EVENT_GET_SDK_VERSION @"adjust_getSdkVersion"
 #define EVENT_GET_AUTHORIZATION_STATUS @"adjust_requestTrackingAuthorizationWithCompletionHandler"
+#define EVENT_GET_LAST_DEEPLINK @"adjust_getLastDeeplink"
+#define EVENT_UPDATE_CONVERSION_VALUE_WITH_CALLBACK @"adjust_updateConversionValueWithCallback"
+#define EVENT_UPDATE_CONVERSION_VALUE_WITH_SKAN4_CALLBACK @"adjust_updateConversionValueWithSkan4Callback"
 
-#define SDK_PREFIX @"corona4.29.3"
+#define SDK_PREFIX @"corona4.33.0"
 
 // ----------------------------------------------------------------------------
 
@@ -40,6 +43,7 @@ public:
     void InitializeSessionTrackingFailureListener(CoronaLuaRef listener);
     void InitializeDeferredDeeplinkListener(CoronaLuaRef listener);
     void InitializeConversionValueUpdatedListener(CoronaLuaRef listener);
+    void InitializeSkan4ConversionValueUpdatedListener(CoronaLuaRef listener);
 
     CoronaLuaRef GetAttributionChangedListener() const { return attributionChangedListener; }
     CoronaLuaRef GetEventTrackingSuccessListener() const { return eventTrackingSuccessListener; }
@@ -48,6 +52,7 @@ public:
     CoronaLuaRef GetSessionTrackingFailureListener() const { return sessionTrackingFailureListener; }
     CoronaLuaRef GetDeferredDeeplinkListener() const { return deferredDeeplinkListener; }
     CoronaLuaRef GetConversionValueUpdatedListener() const { return conversionValueUpdatedListener; }
+    CoronaLuaRef GetSkan4ConversionValueUpdatedListener() const { return skan4ConversionValueUpdatedListener; }
 
     static int Open(lua_State *L);
     static Self *ToLibrary(lua_State *L);
@@ -86,6 +91,11 @@ public:
     static int setSessionTrackingFailureListener(lua_State *L);
     static int setDeferredDeeplinkListener(lua_State *L);
     static int setConversionValueUpdatedListener(lua_State *L);
+    static int setSkan4ConversionValueUpdatedListener(lua_State *L);
+    static int checkForNewAttStatus(lua_State *L);
+    static int getLastDeeplink(lua_State *L);
+    static int updateConversionValueWithCallback(lua_State *L);
+    static int updateConversionValueWithSkan4Callback(lua_State *L);
 
     // Android specific.
     static int getGoogleAdId(lua_State *L);
@@ -109,6 +119,7 @@ private:
     CoronaLuaRef sessionTrackingFailureListener;
     CoronaLuaRef deferredDeeplinkListener;
     CoronaLuaRef conversionValueUpdatedListener;
+    CoronaLuaRef skan4ConversionValueUpdatedListener;
 };
 
 // ----------------------------------------------------------------------------
@@ -124,7 +135,8 @@ eventTrackingFailureListener(NULL),
 sessionTrackingSuccessListener(NULL),
 sessionTrackingFailureListener(NULL),
 deferredDeeplinkListener(NULL),
-conversionValueUpdatedListener(NULL) {}
+conversionValueUpdatedListener(NULL),
+skan4ConversionValueUpdatedListener(NULL) {}
 
 
 void AdjustPlugin::InitializeAttributionListener(CoronaLuaRef listener) {
@@ -153,6 +165,10 @@ void AdjustPlugin::InitializeDeferredDeeplinkListener(CoronaLuaRef listener) {
 
 void AdjustPlugin::InitializeConversionValueUpdatedListener(CoronaLuaRef listener) {
     conversionValueUpdatedListener = listener;
+}
+
+void AdjustPlugin::InitializeSkan4ConversionValueUpdatedListener(CoronaLuaRef listener) {
+    skan4ConversionValueUpdatedListener = listener;
 }
 
 int
@@ -186,6 +202,7 @@ AdjustPlugin::Open(lua_State *L) {
         { "setSessionTrackingFailureListener", setSessionTrackingFailureListener },
         { "setDeferredDeeplinkListener", setDeferredDeeplinkListener },
         { "setConversionValueUpdatedListener", setConversionValueUpdatedListener },
+        { "setSkan4ConversionValueUpdatedListener", setSkan4ConversionValueUpdatedListener },
         { "isEnabled", isEnabled },
         { "getIdfa", getIdfa },
         { "getSdkVersion", getSdkVersion },
@@ -198,6 +215,10 @@ AdjustPlugin::Open(lua_State *L) {
         { "updateConversionValue", updateConversionValue },
         { "trackThirdPartySharing", trackThirdPartySharing },
         { "trackMeasurementConsent", trackMeasurementConsent },
+        { "checkForNewAttStatus", checkForNewAttStatus },
+        { "getLastDeeplink", getLastDeeplink },
+        { "updateConversionValueWithCallback", updateConversionValueWithCallback },
+        { "updateConversionValueWithSkan4Callback", updateConversionValueWithSkan4Callback },
         { "getGoogleAdId", getGoogleAdId },
         { "getAmazonAdId", getAmazonAdId },
         { "trackPlayStoreSubscription", trackPlayStoreSubscription },
@@ -227,6 +248,7 @@ int AdjustPlugin::Finalizer(lua_State *L) {
     CoronaLuaDeleteRef(L, library->GetEventTrackingFailureListener());
     CoronaLuaDeleteRef(L, library->GetDeferredDeeplinkListener());
     CoronaLuaDeleteRef(L, library->GetConversionValueUpdatedListener());
+    CoronaLuaDeleteRef(L, library->GetSkan4ConversionValueUpdatedListener());
 
     delete library;
     return 0;
@@ -253,12 +275,13 @@ int AdjustPlugin::create(lua_State *L) {
     BOOL isDeviceKnown = NO;
     BOOL sendInBackground = NO;
     BOOL eventBufferingEnabled = NO;
-    BOOL allowiAdInfoReading = YES;
     BOOL allowAdServicesInfoReading = YES;
     BOOL allowIdfaReading = YES;
     BOOL handleSkAdNetwork = YES;
     BOOL needsCost = NO;
     BOOL shouldLaunchDeferredDeeplink = YES;
+    BOOL coppaCompliant = NO;
+    BOOL linkMeEnabled = NO;
     NSString *appToken = nil;
     NSString *userAgent = nil;
     NSString *environment = nil;
@@ -307,7 +330,7 @@ int AdjustPlugin::create(lua_State *L) {
                                       allowSuppressLogLevel:(logLevel == ADJLogLevelSuppress)];
 
     // SDK prefix.
-    [adjustConfig setSdkPrefix:@"corona4.29.3"];
+    [adjustConfig setSdkPrefix:@"corona4.33.0"];
 
     // Log level.
     [adjustConfig setLogLevel:logLevel];
@@ -317,14 +340,6 @@ int AdjustPlugin::create(lua_State *L) {
     if (!lua_isnil(L, 2)) {
         eventBufferingEnabled = lua_toboolean(L, 2);
         [adjustConfig setEventBufferingEnabled:eventBufferingEnabled];
-    }
-    lua_pop(L, 1);
-
-    // iAd info reading.
-    lua_getfield(L, 1, "allowiAdInfoReading");
-    if (!lua_isnil(L, 2)) {
-        allowiAdInfoReading = lua_toboolean(L, 2);
-        [adjustConfig setAllowiAdInfoReading:allowiAdInfoReading];
     }
     lua_pop(L, 1);
 
@@ -397,6 +412,8 @@ int AdjustPlugin::create(lua_State *L) {
                 [adjustConfig setUrlStrategy:ADJUrlStrategyChina];
             } else if ([urlStrategy isEqualToString:@"india"]) {
                 [adjustConfig setUrlStrategy:ADJUrlStrategyIndia];
+            } else if ([urlStrategy isEqualToString:@"cn"]) {
+                [adjustConfig setUrlStrategy:ADJUrlStrategyCn];
             } else if ([urlStrategy isEqualToString:@"data-residency-eu"]) {
                 [adjustConfig setUrlStrategy:ADJDataResidencyEU];
             } else if ([urlStrategy isEqualToString:@"data-residency-tr"]) {
@@ -481,6 +498,22 @@ int AdjustPlugin::create(lua_State *L) {
         [adjustConfig setAppSecret:secretId info1:info1 info2:info2 info3:info3 info4:info4];
     }
 
+    // COPPA compliance.
+    lua_getfield(L, 1, "coppaCompliant");
+    if (!lua_isnil(L, 2)) {
+        coppaCompliant = lua_toboolean(L, 2);
+        [adjustConfig setCoppaCompliantEnabled:coppaCompliant];
+    }
+    lua_pop(L, 1);
+
+    // LinkMe feature.
+    lua_getfield(L, 1, "linkMeEnabled");
+    if (!lua_isnil(L, 2)) {
+        linkMeEnabled = lua_toboolean(L, 2);
+        [adjustConfig setLinkMeEnabled:linkMeEnabled];
+    }
+    lua_pop(L, 1);
+
     // Callbacks.
     Self *library = ToLibrary(L);
     BOOL isAttributionChangedListenerImplmented = library->GetAttributionChangedListener() != NULL;
@@ -490,6 +523,7 @@ int AdjustPlugin::create(lua_State *L) {
     BOOL isSessionTrackingFailureListenerImplmented = library->GetSessionTrackingFailureListener() != NULL;
     BOOL isDeferredDeeplinkListenerImplemented = library->GetDeferredDeeplinkListener() != NULL;
     BOOL isConversionValueUpdatedListenerImplemented = library->GetConversionValueUpdatedListener() != NULL;
+    BOOL isSkan4ConversionValueUpdatedListenerImplemented = library->GetConversionValueUpdatedListener() != NULL;
 
     if (isAttributionChangedListenerImplmented
         || isEventTrackingSuccessListenerImplmented
@@ -497,7 +531,8 @@ int AdjustPlugin::create(lua_State *L) {
         || isSessionTrackingSuccessListenerImplmented
         || isSessionTrackingFailureListenerImplmented
         || isDeferredDeeplinkListenerImplemented
-        || isConversionValueUpdatedListenerImplemented) {
+        || isConversionValueUpdatedListenerImplemented
+        || isSkan4ConversionValueUpdatedListenerImplemented) {
         [adjustConfig setDelegate:
          [AdjustSdkDelegate getInstanceWithSwizzleOfAttributionChangedCallback:library->GetAttributionChangedListener()
                                                   eventTrackingSuccessCallback:library->GetEventTrackingSuccessListener()
@@ -506,6 +541,7 @@ int AdjustPlugin::create(lua_State *L) {
                                                 sessionTrackingFailureCallback:library->GetSessionTrackingFailureListener()
                                                       deferredDeeplinkCallback:library->GetDeferredDeeplinkListener()
                                                 conversionValueUpdatedCallback:library->GetConversionValueUpdatedListener()
+                                           skan4ConversionValueUpdatedCallback:library->GetSkan4ConversionValueUpdatedListener()
                                                   shouldLaunchDeferredDeeplink:shouldLaunchDeferredDeeplink
                                                                    andLuaState:L]];
     }
@@ -792,6 +828,17 @@ int AdjustPlugin::setConversionValueUpdatedListener(lua_State *L) {
         Self *library = ToLibrary(L);
         CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
         library->InitializeConversionValueUpdatedListener(listener);
+    }
+    return 0;
+}
+
+// Public API.
+int AdjustPlugin::setSkan4ConversionValueUpdatedListener(lua_State *L) {
+    int listenerIndex = 1;
+    if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
+        Self *library = ToLibrary(L);
+        CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
+        library->InitializeSkan4ConversionValueUpdatedListener(listener);
     }
     return 0;
 }
@@ -1126,6 +1173,45 @@ int AdjustPlugin::updateConversionValue(lua_State *L) {
 }
 
 // Public API.
+int AdjustPlugin::updateConversionValueWithCallback(lua_State *L) {
+    NSInteger value = lua_tointeger(L, 1);
+    int listenerIndex = 2;
+    if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
+        CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
+        [Adjust updatePostbackConversionValue:value completionHandler:^(NSError * _Nullable error) {
+            [AdjustSdkDelegate dispatchEvent:EVENT_UPDATE_CONVERSION_VALUE_WITH_CALLBACK
+                                   withState:L
+                                    callback:listener
+                                  andMessage:[error localizedDescription]];
+        }];
+    }
+    return 0;
+}
+
+// Public API.
+int AdjustPlugin::updateConversionValueWithSkan4Callback(lua_State *L) {
+    NSInteger conversionValue = lua_tointeger(L, 1);
+    const char* coarseValue = lua_tostring(L, 2);
+    BOOL lockWindow = lua_toboolean(L, 3);
+    int listenerIndex = 4;
+    if (coarseValue != NULL) {
+        if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
+            CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
+            [Adjust updatePostbackConversionValue:conversionValue
+                                      coarseValue:[NSString stringWithUTF8String:coarseValue]
+                                       lockWindow:lockWindow
+                                completionHandler:^(NSError * _Nullable error) {
+                [AdjustSdkDelegate dispatchEvent:EVENT_UPDATE_CONVERSION_VALUE_WITH_SKAN4_CALLBACK
+                                       withState:L
+                                        callback:listener
+                                      andMessage:[error localizedDescription]];
+            }];
+        }
+    }
+    return 0;
+}
+
+// Public API.
 int AdjustPlugin::trackThirdPartySharing(lua_State *L) {
     if (!lua_istable(L, 1)) {
         return 0;
@@ -1156,6 +1242,25 @@ int AdjustPlugin::trackThirdPartySharing(lua_State *L) {
     }
     lua_pop(L, 1);
 
+    // Partner sharing settings.
+    lua_getfield(L, 1, "partnerSharingSettings");
+    if (!lua_isnil(L, 2) && lua_istable(L, 2)) {
+        NSDictionary *dict = CoronaLuaCreateDictionary(L, 2);
+        for (id key in dict) {
+            NSDictionary *partnerSharingSettings = [dict objectForKey:key];
+            // partnerSharingSettings dictionary contains one KVP whose key is for sure partnerName
+            // we need to extract the remaining KVPs and attach them to that partner sharing settings
+            for (id keySetting in partnerSharingSettings) {
+                if (![keySetting isEqualToString:@"partnerName"]) {
+                    [adjustThirdPartySharing addPartnerSharingSetting:partnerSharingSettings[@"partnerName"]
+                                                                  key:keySetting
+                                                                value:[[partnerSharingSettings objectForKey:keySetting] boolValue]];
+                }
+            }
+        }
+    }
+    lua_pop(L, 1);
+
     [Adjust trackThirdPartySharing:adjustThirdPartySharing];
 
     return 0;
@@ -1165,6 +1270,32 @@ int AdjustPlugin::trackThirdPartySharing(lua_State *L) {
 int AdjustPlugin::trackMeasurementConsent(lua_State *L) {
     BOOL measurementConsent = lua_toboolean(L, 1);
     [Adjust trackMeasurementConsent:measurementConsent];
+    return 0;
+}
+
+// Public API.
+int AdjustPlugin::checkForNewAttStatus(lua_State *L) {
+    [Adjust checkForNewAttStatus];
+    return 0;
+}
+
+// Public API.
+int AdjustPlugin::getLastDeeplink(lua_State *L) {
+    int listenerIndex = 1;
+    if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
+        CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
+        NSURL *lastDeeplink = [Adjust lastDeeplink];
+        NSString *lastDeeplinkString;
+        if (nil != lastDeeplink) {
+            lastDeeplinkString = [lastDeeplink absoluteString];
+            if (nil == lastDeeplinkString) {
+                lastDeeplinkString = @"";
+            }
+        } else {
+            lastDeeplinkString = @"";
+        }
+        [AdjustSdkDelegate dispatchEvent:EVENT_GET_LAST_DEEPLINK withState:L callback:listener andMessage:lastDeeplinkString];
+    }
     return 0;
 }
 
@@ -1303,12 +1434,6 @@ int AdjustPlugin::setTestOptions(lua_State *L) {
     lua_getfield(L, 1, "noBackoffWait");
     if (!lua_isnil(L, 2)) {
         testOptions.noBackoffWait = lua_toboolean(L, 2);
-    }
-    lua_pop(L, 1);
-
-    lua_getfield(L, 1, "iAdFrameworkEnabled");
-    if (!lua_isnil(L, 2)) {
-        testOptions.iAdFrameworkEnabled = lua_toboolean(L, 2);
     }
     lua_pop(L, 1);
 

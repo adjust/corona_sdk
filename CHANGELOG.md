@@ -1,3 +1,23 @@
+### Version 4.33.0 (13th March 2023)
+#### Added
+- Added support for SKAN 4.0.
+- Added partner sharing settings to the third party sharing feature.
+- Added `getLastDeeplink` getter to `Adjust` API to be able to get last tracked deep link by the SDK for iOS platform.
+- Added support for `LinkMe` feature.
+- Added support to get Facebook install referrer information in attribution callback.
+- Added ability to mark your app as COPPA compliant. You can enable this setting by passing `true` as value of `coppaCompliant` key when initializing Adjust SDK.
+- Added ability to mark your Android app as app for the kids in accordance to Google Play Families policies. You can enable this setting by `true` as value of `playStoreKidsApp` key when initializing Adjust SDK.
+- Added `checkForNewAttStatus` method to `Adjust` API to allow iOS apps to instruct to SDK to check if `att_status` might have changed in the meantime.
+
+#### Changed
+- Switched to adding permission `com.google.android.gms.permission.AD_ID` in the Android app's mainfest by default.
+
+#### Native SDKs
+- [Android@v4.33.3][android_sdk_v4.33.3]
+- [iOS@v4.33.4][ios_sdk_v4.33.4]
+
+---
+
 ### Version 4.29.3 (26th January 2022)
 #### Changed
 - Updated native SDKs to latest versions.
@@ -212,6 +232,7 @@
 [ios_sdk_v4.29.1]: https://github.com/adjust/ios_sdk/tree/v4.29.1
 [ios_sdk_v4.29.2]: https://github.com/adjust/ios_sdk/tree/v4.29.2
 [ios_sdk_v4.29.6]: https://github.com/adjust/ios_sdk/tree/v4.29.6
+[ios_sdk_v4.33.4]: https://github.com/adjust/ios_sdk/tree/v4.33.4
 
 [android_sdk_v4.12.0]: https://github.com/adjust/android_sdk/tree/v4.12.0
 [android_sdk_v4.12.1]: https://github.com/adjust/android_sdk/tree/v4.12.1
@@ -228,3 +249,4 @@
 [android_sdk_v4.28.1]: https://github.com/adjust/android_sdk/tree/v4.28.1
 [android_sdk_v4.28.8]: https://github.com/adjust/android_sdk/tree/v4.28.8
 [android_sdk_v4.28.9]: https://github.com/adjust/android_sdk/tree/v4.28.9
+[android_sdk_v4.33.3]: https://github.com/adjust/android_sdk/tree/v4.33.3
