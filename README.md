@@ -26,6 +26,7 @@ This is the Adjust™ plugin for Solar2D (ex Corona SDK). You can read more abou
    * [AppTrackingTransparency framework](#att-framework)
       * [App-tracking authorisation wrapper](#ata-wrapper)
       * [Get current authorisation status](#ata-getter)
+      * [Check for ATT status change](#att-status-change)
    * [SKAdNetwork framework](#skadn-framework)
       * [Update SKAdNetwork conversion value](#skadn-value) 
       * [Conversion value updated callback](#skadn-cv-updated-callback)
@@ -117,7 +118,7 @@ You can now add the Adjust SDK to your Corona Enterprise app project. The Adjust
 Inside your Android Studio app project, create a `libs` folder inside of your app folder and add the `plugin.adjust.jar` file to it. After that, please update your app's `build.gradle` file and add the following lines to your `dependencies` section:
 
 ```
-compile 'com.adjust.sdk:adjust-android:4.28.9'
+compile 'com.adjust.sdk:adjust-android:4.33.3'
 compile 'com.android.installreferrer:installreferrer:2.2'
 ```
 
@@ -194,7 +195,9 @@ If you are targeting Android 12 and above (API level 31), you need to add the `c
 <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
 ```
 
-For more information, see [Google's `AdvertisingIdClient.Info` documentation](https://developers.google.com/android/reference/com/google/android/gms/ads/identifier/AdvertisingIdClient.Info#public-string-getid).  
+For more information, see [Google's `AdvertisingIdClient.Info` documentation](https://developers.google.com/android/reference/com/google/android/gms/ads/identifier/AdvertisingIdClient.Info#public-string-getid).
+
+**Note**: As of SDK v4.33.0, this permission is being automatically added by Adjust SDK, so you don't need to do it on your own.
   
 ### <a id="android-gps"></a>Google Play Services
 
@@ -203,7 +206,7 @@ Since August 1, 2014, apps in the Google Play Store must use the [Google adverti
 Open the `build.gradle` file of your app and find the `dependencies` block. Add the following line:
 
 ```
-compile 'com.google.android.gms:play-services-analytics:11.8.0'
+compile 'com.google.android.gms:play-services-ads-identifier:18.0.1'
 ```
 
 To check whether the analytics part of the Google Play Services library has been successfully added to your app, you should start your app by configuring the SDK to run in `SANDBOX` mode and set the log level to `VERBOSE`. After that, track a session or some events in your app and observe the list of parameters in the verbose logs which are being read once the session or event has been tracked. If you see a parameter called `gps_adid` in there, you have successfully added the analytics part of the Google Play Services library to your app and our SDK is reading the necessary information from it.
@@ -275,7 +278,6 @@ As of v4.23.0, the Adjust SDK supports install tracking on Huawei devices with H
 
 You can add following iOS frameworks to your generated Xcode project to take advantage of additional features:
 
-* `iAd.framework` - needed for Apple Search Ads tracking
 * `AdServices.framework` - needed for Apple Search Ads tracking
 * `AdSupport.framework` - needed for reading iOS Advertising Id (IDFA)
 * `StoreKit.framework` - needed for communication with `SKAdNetwork` framework
@@ -350,6 +352,14 @@ elseif status == "1" then print("[Adjust]: ATTrackingManagerAuthorizationStatusR
 elseif status == "2" then print("[Adjust]: ATTrackingManagerAuthorizationStatusDenied")
 elseif status == "3" then print("[Adjust]: ATTrackingManagerAuthorizationStatusAuthorized")
 end
+```
+
+### <a id="att-status-change"></a>Check for ATT status change
+
+In cases where you are not using [Adjust app-tracking authorization wrapper](#ad-ata-wrapper), Adjust SDK will not be able to know immediately upon answering the dialog what is the new value of app-tracking status. In situations like this, if you would want Adjust SDK to read the new app-tracking status value and communicate it to our backend, make sure to make a call to this method:
+
+```lua
+adjust.checkForNewAttStatus();
 ```
 
 ### <a id="skadn-framework"></a>SKAdNetwork framework
@@ -775,6 +785,7 @@ local function attributionListener(event)
     print("Cost Type: " .. json_attribution.costType)
     print("Cost Amount: " .. json_attribution.costAmount)
     print("Cost Currency: " .. json_attribution.costCurrency)
+    print("FB install referrer: " .. json_attribution.fbInstallReferrer)
 end
 
 -- ...
@@ -794,18 +805,18 @@ adjust.create({
 
 Within the listener function you have access to the `attribution` parameters. Here is a quick summary of their properties:
 
-- `trackerToken`    the tracker token of the current attribution
-- `trackerName`     the tracker name of the current attribution
-- `network`         the network grouping level of the current attribution
-- `campaign`        the campaign grouping level of the current attribution
-- `adgroup`         the ad group grouping level of the current attribution
-- `creative`        the creative grouping level of the current attribution
-- `clickLabel`      the click label of the current attribution
-- `adid`            the Adjust device identifier
-- `costType`        the cost type, use `needsCost` to request this value
-- `costAmount`      the price, use `needsCost` to request this value
-- `costCurrency`    the currency used, use `needsCost` to request this value
-
+- `trackerToken`        the tracker token of the current attribution
+- `trackerName`         the tracker name of the current attribution
+- `network`             the network grouping level of the current attribution
+- `campaign`            the campaign grouping level of the current attribution
+- `adgroup`             the ad group grouping level of the current attribution
+- `creative`            the creative grouping level of the current attribution
+- `clickLabel`          the click label of the current attribution
+- `adid`                the Adjust device identifier
+- `costType`            the cost type, use `needsCost` to request this value
+- `costAmount`          the price, use `needsCost` to request this value
+- `costCurrency`        the currency used, use `needsCost` to request this value
+- `fbInstallReferrer`   the Facebook install referrer information
 
 Please make sure to consider our [applicable attribution data policies][attribution-data].
 
