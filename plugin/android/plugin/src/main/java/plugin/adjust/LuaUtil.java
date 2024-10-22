@@ -25,7 +25,6 @@ final public class LuaUtil {
     private static final String ATTRIBUTION_ADGROUP = "adgroup";
     private static final String ATTRIBUTION_CREATIVE = "creative";
     private static final String ATTRIBUTION_CLICK_LABEL = "clickLabel";
-    private static final String ATTRIBUTION_ADID = "adid";
     private static final String ATTRIBUTION_COST_TYPE = "costType";
     private static final String ATTRIBUTION_COST_AMOUNT = "costAmount";
     private static final String ATTRIBUTION_COST_CURRENCY = "costCurrency";
@@ -72,7 +71,6 @@ final public class LuaUtil {
         map.put(ATTRIBUTION_ADGROUP, null != attribution.adgroup ? attribution.adgroup : "");
         map.put(ATTRIBUTION_CREATIVE, null != attribution.creative ? attribution.creative : "");
         map.put(ATTRIBUTION_CLICK_LABEL, null != attribution.clickLabel ? attribution.clickLabel : "");
-        map.put(ATTRIBUTION_ADID, null != attribution.adid ? attribution.adid : "");
         map.put(ATTRIBUTION_COST_TYPE, null != attribution.costType ? attribution.costType : "");
         map.put(ATTRIBUTION_COST_AMOUNT, null != attribution.costAmount && !attribution.costAmount.isNaN() ? attribution.costAmount : "");
         map.put(ATTRIBUTION_COST_CURRENCY, null != attribution.costCurrency ? attribution.costCurrency : "");

@@ -102,7 +102,7 @@ adjust.setSessionTrackingSuccessListener(sessionTrackingSuccessListener)
 adjust.setSessionTrackingFailureListener(sessionTrackingFailureListener)
 adjust.setDeferredDeeplinkListener(deferredDeeplinkListener)
 adjust.setConversionValueUpdatedListener(conversionValueUpdatedListener)
-adjust.setSkan4ConversionValueUpdatedListener(skan4ConversionValueUpdatedListener)
+-- adjust.setSkan4ConversionValueUpdatedListener(skan4ConversionValueUpdatedListener)
 
 adjust.addSessionCallbackParameter("scp1", "scp1_value1")
 adjust.addSessionCallbackParameter("scp2", "scp2_value2")
@@ -343,10 +343,8 @@ widget.newButton({
 
 -- Enable offline mode
 -- ------------------------
-local function handleEnableOfflineMode(event)
-    if ("ended" == event.phase) then
-        adjust.setOfflineMode(true)
-    end
+local function handleEnableOfflineMode()
+    adjust.switchToOfflineMode()
 end
 
 widget.newButton({
