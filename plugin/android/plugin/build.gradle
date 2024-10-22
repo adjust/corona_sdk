@@ -4,11 +4,10 @@ android {
     compileSdkVersion 33
 
     defaultConfig {
-        minSdkVersion 15
+        minSdkVersion 21
         targetSdkVersion 33
-        versionCode 1
-        versionName "1.0"
     }
+    namespace = "com.adjust.example"
 }
 
 task extractPluginJar() {
@@ -31,4 +30,6 @@ task extractPluginJar() {
 dependencies {
     implementation ':Corona@aar'
     api 'com.adjust.sdk:adjust-android:5.0.1'
+    implementation "androidx.activity:activity:1.6.0-alpha05"
+
 }
