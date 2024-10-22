@@ -357,9 +357,7 @@ widget.newButton({
 -- Disable offline mode
 -- ------------------------
 local function handleDisableOfflineMode(event)
-    if ("ended" == event.phase) then
-        adjust.setOfflineMode(false)
-    end
+    adjust.switchBackToOnlineMode(false)
 end
 
 widget.newButton({
@@ -372,10 +370,8 @@ widget.newButton({
 
 -- Enable SDK
 -- ------------------------
-local function handleToggleEnabled(event)
-    if ("ended" == event.phase) then
-        adjust.setEnabled(true)
-    end
+local function handleEnableSdk(event)
+    adjust.enable()
 end
 
 widget.newButton({
@@ -383,23 +379,21 @@ widget.newButton({
     top = 40 + (6 * 30),
     id = "button6",
     label = "Enable SDK",
-    onEvent = handleToggleEnabled
+    onEvent = handleEnableSdk
 })
 
 -- Disable SDK
 -- ------------------------
-local function handleToggleEnabled(event)
-    if ("ended" == event.phase) then
-        adjust.setEnabled(false)
-    end
+local function handleDisableSdk(event)
+    adjust.disable()
 end
 
 widget.newButton({
     left = display.contentCenterX - 85,
     top = 40 + (7 * 30),
     id = "button7",
-    label = "Disnable SDK",
-    onEvent = handleToggleEnabled
+    label = "Disable SDK",
+    onEvent = handleDisableSdk
 })
 
 -- is Enabled
@@ -490,7 +484,6 @@ local function handleGetAttribution(event)
             print("Creative: " .. json_attribution.creative)
             print("Adgroup: " .. json_attribution.adgroup)
             print("Click label: " .. json_attribution.clickLabel)
-            print("ADID: " .. json_attribution.adid)
             print("Cost type: " .. json_attribution.costType)
             print("Cost amount: " .. json_attribution.costAmount)
             print("Cost currency: " .. json_attribution.costCurrency)
