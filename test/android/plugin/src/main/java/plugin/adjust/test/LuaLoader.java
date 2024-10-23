@@ -201,7 +201,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 			}
 		});
 
-		this.testLibrary = new TestLibrary(baseUrl, controlUrl, coronaCommandJsonListener);
+		this.testLibrary = new TestLibrary(baseUrl, controlUrl, CoronaEnvironment.getCoronaActivity(), coronaCommandJsonListener);
 		Log.d(TAG, "Test library initialisation finished.");
 		return 0;
 	}

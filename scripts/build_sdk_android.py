@@ -62,8 +62,8 @@ def build_app_test(dir_root):
     dir_sdk                     = '{0}/ext/android/sdk/Adjust'.format(dir_root)
     dir_jar_in_sdk              = '{0}/sdk-core/build/libs'.format(dir_sdk)
     dir_jar_out_sdk             = '{0}/libs'.format(dir_test_app)
-    dir_jar_in_sdk_test_library = '{0}/test-library/build/libs'.format(dir_sdk)
-    dir_jar_in_sdk_test_options = '{0}/test-options/build/intermediates/aar_main_jar/release'.format(dir_sdk)
+    dir_jar_in_sdk_test_library = '{0}/tests/test-library/build/libs'.format(dir_sdk)
+    dir_jar_in_sdk_test_options = '{0}/tests/test-options/build/intermediates/aar_main_jar/debug'.format(dir_sdk)
     dir_jar_out_sdk_test        = '{0}/test/android/plugin/libs'.format(dir_root)
 
     ## ------------------------------------------------------------------
@@ -96,10 +96,10 @@ def build_app_test(dir_root):
     extract_plugin_jar_from_aar()
 
     # ------------------------------------------------------------------
-    # Running Gradle tasks: clean test-library:adjustTestLibraryJarDebug ...
+    # Running Gradle tasks: clean :tests:test-library:adjustTestLibraryJarDebug ...
     change_dir(dir_sdk)
-    debug_green('Running Gradle tasks: clean test-library:adjustTestLibraryJarDebug ...')
-    gradle_run([':test-library:adjustTestLibraryJarDebug'])
+    debug_green('Running Gradle tasks clean :tests:test-library:adjustTestLibraryJarDebug ...')
+    gradle_run([':tests:test-library:adjustTestLibraryJarDebug'])
 
     # ------------------------------------------------------------------
     # Copy Adjust Test Library JAR.
@@ -107,9 +107,9 @@ def build_app_test(dir_root):
     copy_file('{0}/test-library-debug.jar'.format(dir_jar_in_sdk_test_library), '{0}/adjust-test-library.jar'.format(dir_jar_out_sdk_test))
 
     # ------------------------------------------------------------------
-    # Running Gradle tasks: clean test-options:assembleRelease ...
-    debug_green('Running Gradle tasks: clean test-options:assembleRelease ...')
-    gradle_run([':test-options:assembleRelease'])
+    # Running Gradle tasks: clean :tests:test-options:assembleDebug ...
+    debug_green('Running Gradle tasks: clean :tests:test-options:assembleDebug ...')
+    gradle_run([':tests:test-options:assembleDebug'])
 
     # ------------------------------------------------------------------
     # Copy Adjust Test Library JAR.

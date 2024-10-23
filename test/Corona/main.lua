@@ -16,7 +16,7 @@ local function onSystemEvent(event)
     if event.type == "applicationOpen" and event.url then
         print("[TestApp]: applicationOpen event. url = " .. event.url)
         -- Capture app event opened from deep link
-        adjust.appWillOpenUrl(event.url)
+        -- adjust.appWillOpenUrl(event.url)
     end
 end
 
@@ -25,7 +25,7 @@ Runtime:addEventListener("system", onSystemEvent)
 local launchArgs = ...
 if launchArgs and launchArgs.url then
     print("[TestApp]: launchArgs.url = (" .. launchArgs.url .. ")")
-    adjust.appWillOpenUrl(launchArgs.url)
+    -- adjust.appWillOpenUrl(launchArgs.url)
 end
 
 -- Setting up assets
@@ -41,7 +41,7 @@ else
     protocol = "https"
     port = "8443"
 end
-local baseIp = "192.168.86.153"
+local baseIp = "192.168.86.130"
 local baseUrl = protocol .. "://" .. baseIp .. ":" .. port
 local gdprUrl = protocol .. "://" .. baseIp .. ":" .. port
 local subscriptionUrl = protocol .. "://" .. baseIp .. ":" .. port
