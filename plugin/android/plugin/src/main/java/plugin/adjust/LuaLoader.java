@@ -26,6 +26,9 @@ import com.naef.jnlua.JavaFunction;
 import com.naef.jnlua.LuaState;
 import com.naef.jnlua.NamedJavaFunction;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -278,7 +281,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         String processName = null;
         String defaultTracker = null;
         String externalDeviceId = null;
-        String urlStrategy = null;
+        List<String> domains = new ArrayList<>();
+        boolean useSubdomains = false;
+        boolean isDataResidency = false;
         String preinstallFilePath = null;
         boolean readImei = false;
         boolean isDeviceKnown = false;
@@ -373,9 +378,41 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         L.pop(1);
 
         // URL strategy.
-        // TODO url strategy impl
-//        L.getField(1, "urlStrategy");
-//        if (!L.isNil(2)) {
+        L.getField(1, "domains");
+        if (!L.isNil(2)) {
+            if (L.isTable(2)) {
+                int length = L.length(2);
+                for (int i = 1; i <= length; i++) {
+                    L.rawGet(2,i);
+                    // Push the table to the stack
+                    if (!L.isNil(3)) {
+                        String dom = L.checkString(3);
+                        domains.add(dom);
+                    }
+                    L.pop(1);
+                }
+            }
+        }
+        L. pop(1);
+
+        // Is Data Residency.
+        L.getField(1, "isDataResidency");
+        if (!L.isNil(2)) {
+            isDataResidency = L.checkBoolean(2);
+        }
+        L. pop(1);
+
+        // us Sub domain.
+        L.getField(1, "useSubdomains");
+        if (!L.isNil(2)) {
+            useSubdomains = L.checkBoolean(2);
+        }
+        L. pop(1);
+
+        if (!domains.isEmpty()){
+            adjustConfig.setUrlStrategy(domains,useSubdomains,isDataResidency);
+        }
+
 //            urlStrategy = L.checkString(2);
 //            if (urlStrategy.equalsIgnoreCase("china")) {
 //                adjustConfig.setUrlStrategy(AdjustConfig.URL_STRATEGY_CHINA);
