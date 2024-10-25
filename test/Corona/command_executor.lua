@@ -65,13 +65,13 @@ function CommandExecutor:executeCommand(command)
     elseif method == "openDeeplink" then self:openDeeplink()
     elseif method == "sendReferrer" then self:sendReferrer()
     elseif method == "gdprForgetMe" then self:gdprForgetMe()
-    elseif method == "trackAdRevenue" then self:trackAdRevenue()
     elseif method == "disableThirdPartySharing" then self:disableThirdPartySharing()
     elseif method == "trackSubscription" then self:trackSubscription()
-    elseif method == "trackAdRevenueV2" then self:trackAdRevenueV2()
+    elseif method == "trackAdRevenue" then self:trackAdRevenue()
     elseif method == "thirdPartySharing" then self:trackThirdPartySharing()
     elseif method == "measurementConsent" then self:trackMeasurementConsent()
-        
+    elseif method == "attributionGetter" then self:attributionGetter()
+
     else print("CommandExecutor: unknown method name: " .. method)
     end
 end
@@ -340,17 +340,17 @@ end
 function attributionListener(event)
     print("[CommandExecutor]: Attribution received!")
     local json_attribution = json.decode(event.message)
-    testLib.addInfoToSend("trackerToken", json_attribution.trackerToken)
-    testLib.addInfoToSend("trackerName", json_attribution.trackerName)
+    testLib.addInfoToSend("tracker_token", json_attribution.trackerToken)
+    testLib.addInfoToSend("tracker_name", json_attribution.trackerName)
     testLib.addInfoToSend("network", json_attribution.network)
     testLib.addInfoToSend("campaign", json_attribution.campaign)
     testLib.addInfoToSend("adgroup", json_attribution.adgroup)
     testLib.addInfoToSend("creative", json_attribution.creative)
-    testLib.addInfoToSend("clickLabel", json_attribution.clickLabel)
-    testLib.addInfoToSend("adid", json_attribution.adid)
-    testLib.addInfoToSend("costType", json_attribution.costType)
-    testLib.addInfoToSend("costAmount", json_attribution.costAmount)
-    testLib.addInfoToSend("costCurrency", json_attribution.costCurrency)
+    testLib.addInfoToSend("click_label", json_attribution.clickLabel)
+    testLib.addInfoToSend("cost_type", json_attribution.costType)
+    testLib.addInfoToSend("cost_amount", json_attribution.costAmount)
+    testLib.addInfoToSend("cost_currency", json_attribution.costCurrency)
+    testLib.addInfoToSend("fb_install_referrer", json_attribution.fbInstallReferrer)
     testLib.sendInfoToServer(localBasePath)
 end
 
@@ -614,12 +614,6 @@ function CommandExecutor:disableThirdPartySharing()
     adjust.disableThirdPartySharing()
 end
 
-function CommandExecutor:trackAdRevenue()
-    local source = self.command:getFirstParameterValue("adRevenueSource")
-    local payload = self.command:getFirstParameterValue("adRevenueJsonString")
-    adjust.trackAdRevenue(source, payload)
-end
-
 function CommandExecutor:trackSubscription()
     if platformInfo == "ios" then
         local price = self.command:getFirstParameterValue("revenue")
@@ -742,7 +736,50 @@ function CommandExecutor:trackMeasurementConsent()
     adjust.trackMeasurementConsent(measurementConsent)
 end
 
-function CommandExecutor:trackAdRevenueV2()
+function CommandExecutor:attributionGetter()
+    adjust.getAttribution(function(event)
+        local json_attribution = json.decode(event.message)
+        local map = {}
+        if json_attribution.trackerToken ~= nil then
+            map["tracker_token"] = json_attribution.trackerToken
+        end
+        if json_attribution.network ~= nil then
+            map["network"]=  json_attribution.network
+        end
+        if json_attribution.campaign ~= nil then
+            map["campaign"]=  json_attribution.campaign
+        end
+        if json_attribution.adgroup ~= nil then
+            map["adgroup"]=  json_attribution.adgroup
+        end
+        if json_attribution.creative ~= nil then
+            map["creative"]=  json_attribution.creative
+        end
+        if json_attribution.clickLabel ~= nil then
+            map["click_label"]=  json_attribution.clickLabel
+        end
+        if json_attribution.costType ~= nil then
+            map["cost_type"]=  json_attribution.costType
+        end
+        if json_attribution.costAmount ~= nil then
+            map["cost_amount"]=  json_attribution.costAmount
+        end
+        if json_attribution.costCurrency ~= nil then
+            map["cost_currency"]=  json_attribution.costCurrency
+        end
+        if json_attribution.fbInstallReferrer ~= nil then
+            map["fb_install_referrer"]= json_attribution.fbInstallReferrer
+        end
+        local mapString = json.encode(map)
+        print("mapString = ")
+        print(mapString)
+        testLib.addInfoToSend("jsonResponse",json.encode(json_attribution.jsonResponse))
+        testLib.sendInfoToServer(localBasePath);
+    end);
+
+end
+
+function CommandExecutor:trackAdRevenue()
     local source = nil;
     if self.command:containsParameter("adRevenueSource") then
         source = self.command:getFirstParameterValue("adRevenueSource");

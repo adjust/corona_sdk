@@ -6,8 +6,7 @@
     -->
     <application android:label="Corona App"
     	android:name="CoronaApplication"
-        tools:replace="android:name"
-    	/>
+        tools:replace="android:name" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />

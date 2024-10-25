@@ -674,11 +674,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 L.rawGet(2, i);
 
                 L.getField(3, "key");
-                String key = L.checkString(4);
+                String key = !L.isNil(4)? L.checkString(4) : null;
                 L.pop(1);
 
                 L.getField(3, "value");
-                String value = L.checkString(4);
+                String value =!L.isNil(4)? L.checkString(4) : null;
                 L.pop(1);
 
                 event.addCallbackParameter(key, value);
@@ -697,11 +697,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 L.rawGet(2, i);
 
                 L.getField(3, "key");
-                String key = L.checkString(4);
+                String key = !L.isNil(4)? L.checkString(4) : null;
                 L.pop(1);
 
                 L.getField(3, "value");
-                String value = L.checkString(4);
+                String value = !L.isNil(4)? L.checkString(4) : null;
                 L.pop(1);
 
                 event.addPartnerParameter(key, value);
@@ -796,11 +796,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 L.rawGet(2, i);
 
                 L.getField(3, "key");
-                String key = L.checkString(4);
+                String key = !L.isNil(4)? L.checkString(4) : null;
                 L.pop(1);
 
                 L.getField(3, "value");
-                String value = L.checkString(4);
+                String value = !L.isNil(4)? L.checkString(4) : null;
                 L.pop(1);
 
                 subscription.addCallbackParameter(key, value);
@@ -819,11 +819,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 L.rawGet(2, i);
 
                 L.getField(3, "key");
-                String key = L.checkString(4);
+                String key = !L.isNil(4)? L.checkString(4) : null;
                 L.pop(1);
 
                 L.getField(3, "value");
-                String value = L.checkString(4);
+                String value = !L.isNil(4)? L.checkString(4) : null;
                 L.pop(1);
 
                 subscription.addPartnerParameter(key, value);
@@ -1140,11 +1140,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 L.rawGet(2, i);
 
                 L.getField(3, "key");
-                String key = L.checkString(4);
+                String key = !L.isNil(4)? L.checkString(4) : null;
                 L.pop(1);
 
                 L.getField(3, "value");
-                String value = L.checkString(4);
+                String value = !L.isNil(4)? L.checkString(4) : null;
                 L.pop(1);
 
                 adjustAdRevenue.addCallbackParameter(key, value);
@@ -1163,11 +1163,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 L.rawGet(2, i);
 
                 L.getField(3, "key");
-                String key = L.checkString(4);
+                String key = !L.isNil(4)? L.checkString(4) : null;
                 L.pop(1);
 
                 L.getField(3, "value");
-                String value = L.checkString(4);
+                String value = !L.isNil(4)? L.checkString(4) : null;
                 L.pop(1);
 
                 adjustAdRevenue.addPartnerParameter(key, value);
@@ -1213,11 +1213,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 L.pop(1);
 
                 L.getField(3, "key");
-                String key = L.checkString(4);
+                String key = !L.isNil(4)? L.checkString(4) : null;
                 L.pop(1);
 
                 L.getField(3, "value");
-                String value = L.checkString(4);
+                String value = !L.isNil(4)? L.checkString(4) : null;
                 L.pop(1);
 
                 adjustThirdPartySharing.addGranularOption(partnerName, key, value);
