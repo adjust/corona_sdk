@@ -12,23 +12,26 @@ CommandExecutor = {
     baseUrl = "",
     gdprUrl = "",
     subscriptionUrl = "",
+    purchaseVerificationUrl = "",
     extraPath = "",
     basePath = "",
     gdprPath = "",
     subscriptionPath = "",
+    purchaseVerificationPath = "",
     extraPath = "",
     savedEvents = {},
     savedConfigs = {},
     command = nil
 }
 
-function CommandExecutor:new (o, baseUrl, gdprUrl, subscriptionUrl)
+function CommandExecutor:new (o, overwriteUrl)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
-    self.baseUrl = baseUrl
-    self.gdprUrl = gdprUrl
-    self.subscriptionUrl = subscriptionUrl
+    self.baseUrl = overwriteUrl
+    self.gdprUrl = overwriteUrl
+    self.subscriptionUrl = overwriteUrl
+    self.purchaseVerificationUrl = overwriteUrl
     return o
 end
 
@@ -83,11 +86,13 @@ function CommandExecutor:testOptions()
     testOptions.baseUrl = self.baseUrl
     testOptions.gdprUrl = self.gdprUrl
     testOptions.subscriptionUrl = self.subscriptionUrl
+    testOptions.purchaseVerificationUrl = self.purchaseVerificationUrl
     
     if self.command:containsParameter("basePath") then
         self.basePath = self.command:getFirstParameterValue("basePath")
         self.gdprPath = self.command:getFirstParameterValue("basePath")
         self.subscriptionPath = self.command:getFirstParameterValue("basePath")
+        self.purchaseVerificationPath = self.command:getFirstParameterValue("basePath")
         self.extraPath = self.command:getFirstParameterValue("basePath")
     end
     
@@ -148,6 +153,7 @@ function CommandExecutor:testOptions()
                 testOptions.basePath = self.basePath
                 testOptions.gdprPath = self.gdprPath
                 testOptions.subscriptionPath = self.subscriptionPath
+                testOptions.purchaseVerificationPath = self.purchaseVerificationPath
                 testOptions.extraPath = self.extraPath
                 testOptions.useTestConnectionOptions = true
                 testOptions.tryInstallReferrer = false
@@ -166,6 +172,7 @@ function CommandExecutor:testOptions()
                 testOptions.basePath = nil
                 testOptions.gdprPath = nil
                 testOptions.subscriptionPath = nil
+                testOptions.purchaseVerificationPath = nil
                 testOptions.extraPath = nil
                 testOptions.useTestConnectionOptions = false
             elseif option == "test" then 
@@ -747,9 +754,13 @@ function CommandExecutor:verifyPurchase()
         purchaseToken,
         function(result)
             local json_verificationResult = json.decode(result.message)
+            print(json_verificationResult)
             testLib.addInfoToSend("verification_status", json_verificationResult.verificationStatus);
+            print("[UGI]: " .. json_verificationResult.verificationStatus)
             testLib.addInfoToSend("code", tostring(json_verificationResult.code));
+            print("[UGI]: " .. json_verificationResult.code)
             testLib.addInfoToSend("message", json_verificationResult.message);
+            print("[UGI]: " .. json_verificationResult.message)
             testLib.sendInfoToServer(localBasePath)
         end
     )

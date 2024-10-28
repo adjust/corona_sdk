@@ -1490,6 +1490,12 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
+        L.getField(1, "purchaseVerificationUrl");
+        if (!L.isNil(2)) {
+            adjustTestOptions.purchaseVerificationUrl = L.checkString(2);
+        }
+        L.pop(1);
+
         L.getField(1, "basePath");
         if (!L.isNil(2)) {
             adjustTestOptions.basePath = L.checkString(2);
@@ -1505,6 +1511,12 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         L.getField(1, "subscriptionPath");
         if (!L.isNil(2)) {
             adjustTestOptions.subscriptionPath = L.checkString(2);
+        }
+        L.pop(1);
+
+        L.getField(1, "purchaseVerificationPath");
+        if (!L.isNil(2)) {
+            adjustTestOptions.purchaseVerificationPath = L.checkString(2);
         }
         L.pop(1);
 

@@ -41,13 +41,11 @@ else
     protocol = "https"
     port = "8443"
 end
-local baseIp = "192.168.8.125"
-local baseUrl = protocol .. "://" .. baseIp .. ":" .. port
-local gdprUrl = protocol .. "://" .. baseIp .. ":" .. port
-local subscriptionUrl = protocol .. "://" .. baseIp .. ":" .. port
+local baseIp = "192.168.86.132"
+local overwriteUrl = protocol .. "://" .. baseIp .. ":" .. port
 local controlUrl = "ws://" .. baseIp .. ":1987";
-print("[TestApp]: Using BaseUrl: [" .. baseUrl .. "]--")
-local commandExecutor = command_executor.CommandExecutor:new(nil, baseUrl, gdprUrl, subscriptionUrl)
+print("[TestApp]: Using BaseUrl: [" .. overwriteUrl .. "]--")
+local commandExecutor = command_executor.CommandExecutor:new(nil, overwriteUrl)
 
 local function executeCommand(event)
     local rawCommand = json.decode(event.message)
@@ -63,7 +61,7 @@ local function executeCommand(event)
 end
 
 print("[TestApp]: Create and init test lib....")
-testLib.initTestLibrary(baseUrl, controlUrl, executeCommand)
+testLib.initTestLibrary(overwriteUrl, controlUrl, executeCommand)
 command_executor.setTestLib(testLib)
 command_executor.setPlatform(platformInfo)
 
