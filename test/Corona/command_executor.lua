@@ -54,23 +54,25 @@ function CommandExecutor:executeCommand(command)
     elseif method == "setEnabled" then self:setEnabled()
     elseif method == "setReferrer" then self:setReferrer()
     elseif method == "setOfflineMode" then self:setOfflineMode()
-    elseif method == "sendFirstPackages" then self:sendFirstPackages()
-    elseif method == "addSessionCallbackParameter" then self:addSessionCallbackParameter()
-    elseif method == "addSessionPartnerParameter" then self:addSessionPartnerParameter()
-    elseif method == "removeSessionCallbackParameter" then self:removeSessionCallbackParameter()
-    elseif method == "removeSessionPartnerParameter" then self:removeSessionPartnerParameter()
-    elseif method == "resetSessionCallbackParameters" then self:resetSessionCallbackParameters()
-    elseif method == "resetSessionPartnerParameters" then self:resetSessionPartnerParameters()    
+    elseif method == "addGlobalCallbackParameter" then self:addGlobalCallbackParameter()
+    elseif method == "addGlobalPartnerParameter" then self:addGlobalPartnerParameter()
+    elseif method == "removeGlobalCallbackParameter" then self:removeGlobalCallbackParameter()
+    elseif method == "removeGlobalPartnerParameter" then self:removeGlobalPartnerParameter()
+    elseif method == "removeGlobalCallbackParameters" then self:removeGlobalCallbackParameters()
+    elseif method == "removeGlobalPartnerParameters" then self:removeGlobalPartnerParameters()
     elseif method == "setPushToken" then self:setPushToken()
     elseif method == "openDeeplink" then self:openDeeplink()
     elseif method == "sendReferrer" then self:sendReferrer()
     elseif method == "gdprForgetMe" then self:gdprForgetMe()
-    elseif method == "disableThirdPartySharing" then self:disableThirdPartySharing()
     elseif method == "trackSubscription" then self:trackSubscription()
     elseif method == "trackAdRevenue" then self:trackAdRevenue()
-    elseif method == "thirdPartySharing" then self:trackThirdPartySharing()
+    elseif method == "thirdPartySharing" then self:thirdPartySharing()
     elseif method == "measurementConsent" then self:trackMeasurementConsent()
+    elseif method == "verifyPurchase" then self:verifyPurchase()
+    elseif method == "verifyTrack" then self:verifyTrack()
+    elseif method == "processDeeplink" then self:processDeeplink()
     elseif method == "attributionGetter" then self:attributionGetter()
+    elseif method == "getLastDeeplink" then self:getLastDeeplink()
 
     else print("CommandExecutor: unknown method name: " .. method)
     end
@@ -541,54 +543,54 @@ function CommandExecutor:sendFirstPackages()
     adjust.sendFirstPackages()
 end
 
-function CommandExecutor:addSessionCallbackParameter()
+function CommandExecutor:addGlobalCallbackParameter()
     if self.command:containsParameter("KeyValue") then
         local keyValuePairs = self.command.parameters["KeyValue"]
         for i=1, #keyValuePairs, 2 do
             local key = keyValuePairs[i]
             local value = keyValuePairs[i + 1]
-            adjust.addSessionCallbackParameter(key, value)
+            adjust.addGlobalCallbackParameter(key, value)
         end
     end
 end
 
-function CommandExecutor:addSessionPartnerParameter()
+function CommandExecutor:addGlobalPartnerParameter()
     if self.command:containsParameter("KeyValue") then
         local keyValuePairs = self.command.parameters["KeyValue"]
         for i=1, #keyValuePairs, 2 do
             local key = keyValuePairs[i]
             local value = keyValuePairs[i + 1]
-            adjust.addSessionPartnerParameter(key, value)
+            adjust.addGlobalPartnerParameter(key, value)
         end
     end
 end
 
-function CommandExecutor:removeSessionCallbackParameter()
+function CommandExecutor:removeGlobalCallbackParameter()
     if self.command:containsParameter("key") then
         local keys = self.command.parameters["key"]
         for i=1, #keys, 1 do
             local key = keys[i]
-            adjust.removeSessionCallbackParameter(key)
+            adjust.removeGlobalCallbackParameter(key)
         end
     end
 end
 
-function CommandExecutor:removeSessionPartnerParameter()
+function CommandExecutor:removeGlobalPartnerParameter()
     if self.command:containsParameter("key") then
         local keys = self.command.parameters["key"]
         for i=1, #keys, 1 do
             local key = keys[i]
-            adjust.removeSessionPartnerParameter(key)
+            adjust.removeGlobalPartnerParameter(key)
         end
     end
 end
 
-function CommandExecutor:resetSessionCallbackParameters()
-    adjust.resetSessionCallbackParameters()
+function CommandExecutor:removeGlobalCallbackParameters()
+    adjust.removeGlobalCallbackParameters()
 end
 
-function CommandExecutor:resetSessionPartnerParameters()
-    adjust.resetSessionPartnerParameters()
+function CommandExecutor:removeGlobalPartnerParameters()
+    adjust.removeGlobalPartnerParameters()
 end
 
 function CommandExecutor:setPushToken()
@@ -610,10 +612,6 @@ function CommandExecutor:gdprForgetMe()
     adjust.gdprForgetMe()
 end
 
-function CommandExecutor:disableThirdPartySharing()
-    adjust.disableThirdPartySharing()
-end
-
 function CommandExecutor:trackSubscription()
     if platformInfo == "ios" then
         local price = self.command:getFirstParameterValue("revenue")
@@ -622,7 +620,7 @@ function CommandExecutor:trackSubscription()
         local receipt = self.command:getFirstParameterValue("receipt")
         local transactionDate = self.command:getFirstParameterValue("transactionDate")
         local salesRegion = self.command:getFirstParameterValue("salesRegion")
-        
+
         local subscription = {}
         subscription.price = price
         subscription.currency = currency
@@ -636,22 +634,22 @@ function CommandExecutor:trackSubscription()
             subscription.callbackParameters = {}
             local k = 1
             for i=1, #callbackParams, 2 do
-                subscription.callbackParameters[k] = { 
-                    key = callbackParams[i], 
-                    value = callbackParams[i + 1] 
+                subscription.callbackParameters[k] = {
+                    key = callbackParams[i],
+                    value = callbackParams[i + 1]
                 }
                 k = k + 1
             end
         end
-        
+
         if self.command:containsParameter("partnerParams") then
             local partnerParams = self.command.parameters["partnerParams"]
             subscription.partnerParameters = {}
             local k = 1
             for i=1, #partnerParams, 2 do
-                subscription.partnerParameters[k] = { 
-                    key = partnerParams[i], 
-                    value = partnerParams[i + 1] 
+                subscription.partnerParameters[k] = {
+                    key = partnerParams[i],
+                    value = partnerParams[i + 1]
                 }
                 k = k + 1
             end
@@ -681,22 +679,22 @@ function CommandExecutor:trackSubscription()
             subscription.callbackParameters = {}
             local k = 1
             for i=1, #callbackParams, 2 do
-                subscription.callbackParameters[k] = { 
-                    key = callbackParams[i], 
-                    value = callbackParams[i + 1] 
+                subscription.callbackParameters[k] = {
+                    key = callbackParams[i],
+                    value = callbackParams[i + 1]
                 }
                 k = k + 1
             end
         end
-        
+
         if self.command:containsParameter("partnerParams") then
             local partnerParams = self.command.parameters["partnerParams"]
             subscription.partnerParameters = {}
             local k = 1
             for i=1, #partnerParams, 2 do
-                subscription.partnerParameters[k] = { 
-                    key = partnerParams[i], 
-                    value = partnerParams[i + 1] 
+                subscription.partnerParameters[k] = {
+                    key = partnerParams[i],
+                    value = partnerParams[i + 1]
                 }
                 k = k + 1
             end
@@ -706,7 +704,7 @@ function CommandExecutor:trackSubscription()
     end
 end
 
-function CommandExecutor:trackThirdPartySharing()
+function CommandExecutor:thirdPartySharing()
     local enabled = nil;
     if self.command:containsParameter("isEnabled") then
         enabled = (self.command:getFirstParameterValue("isEnabled") == "true");
@@ -721,8 +719,8 @@ function CommandExecutor:trackThirdPartySharing()
         for i=1, #granularOptions, 3 do
             thirdPartySharing.granularOptions[k] = {
                 partnerName = granularOptions[i],
-                key = granularOptions[i + 1], 
-                value = granularOptions[i + 2] 
+                key = granularOptions[i + 1],
+                value = granularOptions[i + 2]
             }
             k = k + 1
         end
@@ -736,12 +734,49 @@ function CommandExecutor:trackMeasurementConsent()
     adjust.trackMeasurementConsent(measurementConsent)
 end
 
+function CommandExecutor:verifyPurchase()
+    print("mahdi")
+    local sku = self.command:getFirstParameterValue("productId")
+    print(sku)
+    local purchaseToken = self.command:getFirstParameterValue("purchaseToken")
+    print(purchaseToken)
+    local localBasePath = self.basePath
+    print(localBasePath)
+    adjust.verifyPlayStorePurchase(
+        sku,
+        purchaseToken,
+        function(result)
+            local json_verificationResult = json.decode(result.message)
+            testLib.addInfoToSend("verification_status", json_verificationResult.verificationStatus);
+            testLib.addInfoToSend("code", tostring(json_verificationResult.code));
+            testLib.addInfoToSend("message", json_verificationResult.message);
+            testLib.sendInfoToServer(localBasePath)
+        end
+    )
+
+end
+
+function CommandExecutor:verifyTrack()
+
+end
+
+function CommandExecutor:getLastDeeplink()
+
+end
+
+function CommandExecutor:processDeeplink()
+
+end
+
 function CommandExecutor:attributionGetter()
     adjust.getAttribution(function(event)
         local json_attribution = json.decode(event.message)
         local map = {}
         if json_attribution.trackerToken ~= nil then
             map["tracker_token"] = json_attribution.trackerToken
+        end
+        if json_attribution.trackerName ~= nil then
+            map["tracker_name"] = json_attribution.trackerName
         end
         if json_attribution.network ~= nil then
             map["network"]=  json_attribution.network
@@ -762,7 +797,7 @@ function CommandExecutor:attributionGetter()
             map["cost_type"]=  json_attribution.costType
         end
         if json_attribution.costAmount ~= nil then
-            map["cost_amount"]=  json_attribution.costAmount
+            map["cost_amount"]=  tostring(json_attribution.costAmount)
         end
         if json_attribution.costCurrency ~= nil then
             map["cost_currency"]=  json_attribution.costCurrency
@@ -770,11 +805,9 @@ function CommandExecutor:attributionGetter()
         if json_attribution.fbInstallReferrer ~= nil then
             map["fb_install_referrer"]= json_attribution.fbInstallReferrer
         end
-        local mapString = json.encode(map)
-        print("mapString = ")
-        print(mapString)
-        testLib.addInfoToSend("jsonResponse",json.encode(json_attribution.jsonResponse))
-        testLib.sendInfoToServer(localBasePath);
+        local mapJson = json.encode(map)
+        testLib.setInfoToSend(mapJson)
+        testLib.sendInfoToServer(self.basePath);
     end);
 
 end
@@ -815,22 +848,22 @@ function CommandExecutor:trackAdRevenue()
         adRevenue.callbackParameters = {}
         local k = 1
         for i=1, #callbackParams, 2 do
-            adRevenue.callbackParameters[k] = { 
-                key = callbackParams[i], 
-                value = callbackParams[i + 1] 
+            adRevenue.callbackParameters[k] = {
+                key = callbackParams[i],
+                value = callbackParams[i + 1]
             }
             k = k + 1
         end
     end
-    
+
     if self.command:containsParameter("partnerParams") then
         local partnerParams = self.command.parameters["partnerParams"]
         adRevenue.partnerParameters = {}
         local k = 1
         for i=1, #partnerParams, 2 do
-            adRevenue.partnerParameters[k] = { 
-                key = partnerParams[i], 
-                value = partnerParams[i + 1] 
+            adRevenue.partnerParameters[k] = {
+                key = partnerParams[i],
+                value = partnerParams[i + 1]
             }
             k = k + 1
         end
@@ -838,7 +871,7 @@ function CommandExecutor:trackAdRevenue()
 
     adjust.trackAdRevenue(adRevenue)
 end
-   
+
 function CommandExecutor:clearSavedConfigsAndEvents()
     for k in pairs(self.savedConfigs) do
         self.savedConfigs[k] = nil

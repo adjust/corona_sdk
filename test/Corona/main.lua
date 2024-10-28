@@ -41,7 +41,7 @@ else
     protocol = "https"
     port = "8443"
 end
-local baseIp = "192.168.2.32"
+local baseIp = "192.168.8.125"
 local baseUrl = protocol .. "://" .. baseIp .. ":" .. port
 local gdprUrl = protocol .. "://" .. baseIp .. ":" .. port
 local subscriptionUrl = protocol .. "://" .. baseIp .. ":" .. port
@@ -68,7 +68,7 @@ command_executor.setTestLib(testLib)
 command_executor.setPlatform(platformInfo)
 
 print("[TestApp]: Setting test lib tests....")
- testLib.addTest("Test_AttributionGetter_after_install")
+ testLib.addTest("Test_PurchaseVerification_android_after_install")
 -- testLib.addTestDirectory("current/session-event-callbacks")
 
 -- Start Test Session

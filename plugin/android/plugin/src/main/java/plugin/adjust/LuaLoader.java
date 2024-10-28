@@ -15,19 +15,13 @@ package plugin.adjust;
 import android.net.Uri;
 import android.util.Log;
 import com.adjust.sdk.*;
-import org.json.JSONObject;
-import com.ansca.corona.CoronaEnvironment;
-import com.ansca.corona.CoronaLua;
-import com.ansca.corona.CoronaRuntime;
-import com.ansca.corona.CoronaRuntimeListener;
-import com.ansca.corona.CoronaRuntimeTask;
-import com.ansca.corona.CoronaRuntimeTaskDispatcher;
+import com.ansca.corona.*;
 import com.naef.jnlua.JavaFunction;
 import com.naef.jnlua.LuaState;
 import com.naef.jnlua.NamedJavaFunction;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +44,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     public static final String EVENT_IS_ADJUST_ENABLED = "adjust_isEnabled";
     public static final String EVENT_GET_IDFA = "adjust_getIdfa";
     public static final String EVENT_GET_ATTRIBUTION = "adjust_getAttribution";
+    public static final String EVENT_VERIFY_PLAY_STORE_PURCHASE = "adjust_verifyPlayStorePurchase";
     public static final String EVENT_GET_ADID = "adjust_getAdid";
     public static final String EVENT_GET_SDK_VERSION = "adjust_getSdkVersion";
     public static final String EVENT_GET_GOOGLE_AD_ID = "adjust_getGoogleAdId";
@@ -107,6 +102,10 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 new CreateWrapper(),
                 new TrackEventWrapper(),
                 new TrackPlayStoreSubscriptionWrapper(),
+                new VerifyPlayStorePurchaseWrapper(),
+//                new VerifyAndTrackPlayStorePurchaseWrapper(),
+//                new ProcessAndResolveDeeplinkWrapper(),
+                new GetLastDeeplinkWrapper(),
                 new EnableWrapper(),
                 new DisableWrapper(),
                 new IsEnabledWrapper(),
@@ -836,6 +835,64 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
+    private int adjust_verifyPlayStorePurchase(final LuaState L){
+
+        Log.d(TAG,"adjust_verifyPlayStorePurchase");
+
+
+        String sku = L.checkString(1);
+        String purchaseToken = L.checkString(2);
+        Log.d(TAG,sku);
+        Log.d(TAG,purchaseToken);
+
+
+        // Hardcoded listener index for ADJUST.
+        int listenerIndex = 3;
+        int listener = CoronaLua.REFNIL;
+        AdjustPlayStorePurchase purchase = new AdjustPlayStorePurchase(sku, purchaseToken);
+        // Assign and dispatch event immediately.
+        if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
+            listener = CoronaLua.newRef(L, listenerIndex);
+            int finalListener = listener;
+            Adjust.verifyPlayStorePurchase(purchase,new OnPurchaseVerificationFinishedListener() {
+                @Override
+                public void onVerificationFinished(AdjustPurchaseVerificationResult adjustPurchaseVerificationResult) {
+                    try {
+                        dispatchEvent(finalListener, EVENT_VERIFY_PLAY_STORE_PURCHASE, new JSONObject(LuaUtil.purchaseVerificationToMap(adjustPurchaseVerificationResult)).toString());
+                    } catch (Exception err) {
+                        Log.e(TAG, "adjust_getAttribution: Given attribution string is not valid JSON string");
+                        dispatchEvent(finalListener, EVENT_VERIFY_PLAY_STORE_PURCHASE, new JSONObject().toString());
+                    }
+                }
+
+            });
+
+        }
+
+        return 0;
+    }
+
+    private int adjust_getLastDeeplink(final LuaState L){
+        int listenerIndex = 1;
+        int listener = CoronaLua.REFNIL;
+        if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
+            listener = CoronaLua.newRef(L, listenerIndex);
+            int finalListener = listener;
+            Adjust.getLastDeeplink(CoronaEnvironment.getApplicationContext(), new OnLastDeeplinkReadListener() {
+                @Override
+                public void onLastDeeplinkRead(Uri deeplink) {
+                    try {
+                        dispatchEvent(finalListener, "last_deeplink", deeplink.toString());
+                    } catch (Exception err) {
+                        Log.e(TAG, "adjust_getAttribution: Given attribution string is not valid JSON string");
+                        dispatchEvent(finalListener, "last_deeplink", new JSONObject().toString());
+                    }
+                }
+            });
+        }
+        return 0;
+    }
+
     // Public API.
     private int adjust_enable() {
         Adjust.enable();
@@ -1537,6 +1594,28 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         @Override
         public int invoke(LuaState L) {
             return adjust_trackPlayStoreSubscription(L);
+        }
+    }
+    private class VerifyPlayStorePurchaseWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "verifyPlayStorePurchase";
+        }
+
+        @Override
+        public int invoke(LuaState L) {
+            return adjust_verifyPlayStorePurchase(L);
+        }
+    }
+    private class GetLastDeeplinkWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "getLastDeeplink";
+        }
+
+        @Override
+        public int invoke(LuaState L) {
+            return adjust_getLastDeeplink(L);
         }
     }
 

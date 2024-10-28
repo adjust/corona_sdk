@@ -30,6 +30,7 @@ import com.naef.jnlua.NamedJavaFunction;
 import com.adjust.test.TestLibrary;
 import com.adjust.test.ICommandJsonListener;
 import com.adjust.test_options.TestConnectionOptions;
+import com.google.gson.Gson;
 
 /**
  * Implements the Lua interface for a Corona plugin.
@@ -81,6 +82,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 			new AddTestDirectoryWrapper(),
 			new StartTestSessionWrapper(),
 			new AddInfoToSendWrapper(),
+			new SetInfoToSendWrapper(),
 			new SendInfoToServerWrapper(),
 			new SetTestConnectionOptionsWrapper(),
 		};
@@ -249,6 +251,14 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		this.testLibrary.addInfoToSend(key, value);
 		return 0;
 	}
+	private int testLib_setInfoToSend(LuaState L) {
+		Gson gson = new Gson();
+		String jsonString = L.checkString(1);
+		Map map = gson.fromJson(jsonString, Map.class);
+		Log.d(TAG, map.toString());
+		this.testLibrary.setInfoToSend(map);
+		return 0;
+	}
 
 	private int testLib_sendInfoToServer(LuaState L) {
 		String basePath = L.checkString(1);
@@ -318,6 +328,18 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		@Override
 		public int invoke(LuaState L) {
 			return testLib_addInfoToSend(L);
+		}
+	}
+
+	private class SetInfoToSendWrapper implements NamedJavaFunction {
+		@Override
+		public String getName() {
+			return "setInfoToSend";
+		}
+
+		@Override
+		public int invoke(LuaState L) {
+			return testLib_setInfoToSend(L);
 		}
 	}
 

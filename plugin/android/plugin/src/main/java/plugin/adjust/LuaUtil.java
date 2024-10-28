@@ -11,11 +11,8 @@ package plugin.adjust;
 import android.net.Uri;
 import java.util.Map;
 import java.util.HashMap;
-import com.adjust.sdk.AdjustAttribution;
-import com.adjust.sdk.AdjustEventFailure;
-import com.adjust.sdk.AdjustEventSuccess;
-import com.adjust.sdk.AdjustSessionFailure;
-import com.adjust.sdk.AdjustSessionSuccess;
+
+import com.adjust.sdk.*;
 
 final public class LuaUtil {
     private static final String ATTRIBUTION_TRACKER_TOKEN = "trackerToken";
@@ -57,6 +54,23 @@ final public class LuaUtil {
     private static final String SESSION_FAILED_JSON_RESPONSE = "jsonResponse";
 
     private static final String DEEPLINK_URI = "uri";
+
+
+    private static final String PV_VERIFICATION_STATUS = "verificationStatus";
+    private static final String PV_CODE = "code";
+    private static final String PV_MESSAGE = "message";
+
+
+    public static Map purchaseVerificationToMap(AdjustPurchaseVerificationResult purchaseVerificationResult){
+        Map map = new HashMap();
+        if (null == purchaseVerificationResult) {
+            return map;
+        }
+        map.put(PV_VERIFICATION_STATUS, null != purchaseVerificationResult.getVerificationStatus() ? purchaseVerificationResult.getVerificationStatus() : "");
+        map.put(PV_CODE, String.valueOf(purchaseVerificationResult.getCode()));
+        map.put(PV_MESSAGE, null != purchaseVerificationResult.getMessage() ? purchaseVerificationResult.getMessage() : "");
+        return map;
+    }
 
     public static Map attributionToMap(AdjustAttribution attribution) {
         Map map = new HashMap();
