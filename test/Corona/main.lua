@@ -41,7 +41,7 @@ else
     protocol = "https"
     port = "8443"
 end
-local baseIp = "192.168.86.132"
+local baseIp = "192.168.2.32"
 local overwriteUrl = protocol .. "://" .. baseIp .. ":" .. port
 local controlUrl = "ws://" .. baseIp .. ":1987";
 print("[TestApp]: Using BaseUrl: [" .. overwriteUrl .. "]--")
@@ -66,8 +66,13 @@ command_executor.setTestLib(testLib)
 command_executor.setPlatform(platformInfo)
 
 print("[TestApp]: Setting test lib tests....")
- testLib.addTest("Test_PurchaseVerification_android_after_install")
--- testLib.addTestDirectory("current/session-event-callbacks")
+ --testLib.addTest("Test_Event_token_malformed")
+ --testLib.addTest("Test_Lifecycle_StartsForeground")
+ --testLib.addTest("Test_VerifyTrack_delayed")
+ --testLib.addTest("Test_VerifyTrack_multiple_events")
+
+
+ --testLib.addTestDirectory("current/session-event-callbacks")
 
 -- Start Test Session
 -- ------------------------

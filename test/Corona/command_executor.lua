@@ -87,7 +87,7 @@ function CommandExecutor:testOptions()
     testOptions.gdprUrl = self.gdprUrl
     testOptions.subscriptionUrl = self.subscriptionUrl
     testOptions.purchaseVerificationUrl = self.purchaseVerificationUrl
-    
+
     if self.command:containsParameter("basePath") then
         self.basePath = self.command:getFirstParameterValue("basePath")
         self.gdprPath = self.command:getFirstParameterValue("basePath")
@@ -95,27 +95,27 @@ function CommandExecutor:testOptions()
         self.purchaseVerificationPath = self.command:getFirstParameterValue("basePath")
         self.extraPath = self.command:getFirstParameterValue("basePath")
     end
-    
+
     if self.command:containsParameter("timerInterval") then
         local timerInterval = tonumber(self.command:getFirstParameterValue("timerInterval"))
         testOptions.timerIntervalInMilliseconds = timerInterval
     end
-    
+
     if self.command:containsParameter("timerStart") then
         local timerStart = tonumber(self.command:getFirstParameterValue("timerStart"))
         testOptions.timerStartInMilliseconds = timerStart
     end
-    
+
     if self.command:containsParameter("sessionInterval") then
         local sessionInterval = tonumber(self.command:getFirstParameterValue("sessionInterval"))
         testOptions.sessionIntervalInMilliseconds = sessionInterval
     end
-    
+
     if self.command:containsParameter("subsessionInterval") then
         local subsessionInterval = tonumber(self.command:getFirstParameterValue("subsessionInterval"))
         testOptions.subsessionIntervalInMilliseconds = subsessionInterval
     end
-    
+
     if self.command:containsParameter("tryInstallReferrer") then
         local tryInstallReferrer = self.command:getFirstParameterValue("tryInstallReferrer")
         if tryInstallReferrer == "true" then
@@ -124,7 +124,7 @@ function CommandExecutor:testOptions()
             testOptions.tryInstallReferrer = false
         end
     end
-    
+
     if self.command:containsParameter("noBackoffWait") then
         local noBackoffWait = self.command:getFirstParameterValue("noBackoffWait")
         if noBackoffWait == "true" then
@@ -133,6 +133,27 @@ function CommandExecutor:testOptions()
             testOptions.noBackoffWait = false
         end
     end
+
+    if self.command:containsParameter("doNotIgnoreSystemLifecycleBootstrap") then
+        local doNotIgnoreSystemLifecycleBootstrap = self.command:getFirstParameterValue("doNotIgnoreSystemLifecycleBootstrap")
+        if doNotIgnoreSystemLifecycleBootstrap == "true" then
+            print("testoption ignoreSystemLifecycleBootstrap = false")
+            testOptions.ignoreSystemLifecycleBootstrap = false
+        end
+    end
+
+
+    --if (command.containsParameter("doNotIgnoreSystemLifecycleBootstrap")) {
+    --    String doNotIgnoreSystemLifecycleBootstrapString =
+    --    command.getFirstParameterValue("doNotIgnoreSystemLifecycleBootstrap");
+    --    Boolean doNotIgnoreSystemLifecycleBootstrap =
+    --    Util.strictParseStringToBoolean(doNotIgnoreSystemLifecycleBootstrapString);
+    --if (doNotIgnoreSystemLifecycleBootstrap != null
+    --&& doNotIgnoreSystemLifecycleBootstrap.booleanValue())
+    --{
+    --testOptions.ignoreSystemLifecycleBootstrap = false;
+    --}
+    --}
 
     if self.command:containsParameter("adServicesFrameworkEnabled") then
         local adServicesFrameworkEnabled = self.command:getFirstParameterValue("adServicesFrameworkEnabled")
@@ -266,6 +287,33 @@ function CommandExecutor:config()
     if self.command:containsParameter("userAgent") then
         adjustConfig.userAgent = self.command:getFirstParameterValue("userAgent")
     end
+
+
+    if self.command:containsParameter("coppaCompliant") then
+        adjustConfig.coppaCompliant = (self.command:getFirstParameterValue("coppaCompliant") == "true")
+    end
+
+
+    if self.command:containsParameter("playStoreKids") then
+        adjustConfig.playStoreKids = (self.command:getFirstParameterValue("playStoreKids") == "true")
+    end
+
+
+    --[[if (command.containsParameter("coppaCompliant")) {
+    --            String coppaCompliantS = command.getFirstParameterValue("coppaCompliant");
+    --            boolean coppaCompliant = "true".equals(coppaCompliantS);
+    --            if (coppaCompliant) {
+    --                adjustConfig.enableCoppaCompliance();
+    --            }
+    --        }
+    --
+    --        if (command.containsParameter("playStoreKids")) {
+    --            String playStoreKidsS = command.getFirstParameterValue("playStoreKids");
+    --            boolean playStoreKids = "true".equals(playStoreKidsS);
+    --            if (playStoreKids) {
+    --                adjustConfig.enablePlayStoreKidsCompliance();
+    --            }
+    --        }]]
     
     -- first, clear all callback
     adjust.setDeferredDeeplinkListener(deferredDeeplinkListenerEmpty)
@@ -503,8 +551,21 @@ function CommandExecutor:event()
     end
     
     if self.command:containsParameter("orderId") then
-        adjustEvent.transactionId = self.command:getFirstParameterValue("orderId")
+        adjustEvent.orderId = self.command:getFirstParameterValue("orderId")
     end
+
+    if self.command:containsParameter("deduplicationId") then
+        adjustEvent.deduplicationId = self.command:getFirstParameterValue("deduplicationId")
+    end
+
+    if self.command:containsParameter("productId") then
+        adjustEvent.productId = self.command:getFirstParameterValue("productId")
+    end
+
+    if self.command:containsParameter("purchaseToken") then
+        adjustEvent.purchaseToken = self.command:getFirstParameterValue("purchaseToken")
+    end
+
 end
 
 function CommandExecutor:trackEvent()
@@ -533,7 +594,11 @@ end
 
 function CommandExecutor:setEnabled()
     local enabled = (self.command:getFirstParameterValue("enabled") == "true")
-    adjust.setEnabled(enabled)
+    if enabled then
+        adjust.enable()
+    else
+        adjust.disable()
+    end
 end
 
 function CommandExecutor:setReferrer()
@@ -543,7 +608,11 @@ end
 
 function CommandExecutor:setOfflineMode()
     local enabled = (self.command:getFirstParameterValue("enabled") == "true")
-    adjust.setOfflineMode(enabled)
+    if enabled then
+        adjust.switchToOfflineMode()
+    else
+        adjust.switchBackToOnlineMode()
+    end
 end
 
 function CommandExecutor:sendFirstPackages()
@@ -606,8 +675,10 @@ function CommandExecutor:setPushToken()
 end
 
 function CommandExecutor:openDeeplink()
+    print("open deeplink called")
     local deeplink = self.command:getFirstParameterValue("deeplink")
-    adjust.appWillOpenUrl(deeplink)
+    print(deeplink)
+    adjust.processDeeplink(deeplink)
 end
 
 function CommandExecutor:sendReferrer()
@@ -733,6 +804,20 @@ function CommandExecutor:thirdPartySharing()
         end
     end
 
+    if self.command:containsParameter("partnerSharingSettings") then
+        local partnerSharingSettings = self.command.parameters["partnerSharingSettings"]
+        thirdPartySharing.partnerSharingSettings = {}
+        local k = 1
+        for i=1, #partnerSharingSettings, 3 do
+            thirdPartySharing.partnerSharingSettings[k] = {
+                partnerName = partnerSharingSettings[i],
+                key = partnerSharingSettings[i + 1],
+                value = partnerSharingSettings[i + 2]
+            }
+            k = k + 1
+        end
+    end
+
     adjust.trackThirdPartySharing(thirdPartySharing)
 end
 
@@ -742,25 +827,17 @@ function CommandExecutor:trackMeasurementConsent()
 end
 
 function CommandExecutor:verifyPurchase()
-    print("mahdi")
     local sku = self.command:getFirstParameterValue("productId")
-    print(sku)
     local purchaseToken = self.command:getFirstParameterValue("purchaseToken")
-    print(purchaseToken)
     local localBasePath = self.basePath
-    print(localBasePath)
     adjust.verifyPlayStorePurchase(
         sku,
         purchaseToken,
         function(result)
             local json_verificationResult = json.decode(result.message)
-            print(json_verificationResult)
             testLib.addInfoToSend("verification_status", json_verificationResult.verificationStatus);
-            print("[UGI]: " .. json_verificationResult.verificationStatus)
             testLib.addInfoToSend("code", tostring(json_verificationResult.code));
-            print("[UGI]: " .. json_verificationResult.code)
             testLib.addInfoToSend("message", json_verificationResult.message);
-            print("[UGI]: " .. json_verificationResult.message)
             testLib.sendInfoToServer(localBasePath)
         end
     )
@@ -769,14 +846,50 @@ end
 
 function CommandExecutor:verifyTrack()
 
+    self:event()
+
+    local eventNumber = 0
+    local localBasePath = self.basePath
+    if self.command:containsParameter("eventName") then
+        local eventName = self.command:getFirstParameterValue("eventName")
+        local eventNumberStr = string.sub(eventName, string.len(eventName) - 1)
+        eventNumber = tonumber(eventNumberStr)
+    end
+
+    local myAdjustEvent = self.savedEvents[eventNumber]
+    myAdjustEvent.listener = function(result)
+        print("result got")
+        local json_verificationResult = json.decode(result.message)
+        testLib.addInfoToSend("verification_status", json_verificationResult.verificationStatus);
+        testLib.addInfoToSend("code", tostring(json_verificationResult.code));
+        testLib.addInfoToSend("message", json_verificationResult.message);
+        testLib.sendInfoToServer(localBasePath)
+    end
+
+    adjust.verifyAndTrackPlayStorePurchase(myAdjustEvent)
+
+    self.savedEvents[eventNumber] = nil
 end
 
 function CommandExecutor:getLastDeeplink()
-
+    print("get last deep link called")
+    local localBasePath = self.basePath
+    adjust.getLastDeeplink(function(lastDeeplink)
+            testLib.addInfoToSend("last_deeplink", lastDeeplink.message);
+            testLib.sendInfoToServer(localBasePath)
+        end
+    )
+    print("get last deep link finished")
 end
 
 function CommandExecutor:processDeeplink()
+    local deeplink = self.command:getFirstParameterValue("deeplink")
+    local localBasePath = self.basePath
 
+    adjust.processAndResolveDeeplink(deeplink,function(resolvedLink)
+        testLib.addInfoToSend("resolved_link", resolvedLink.message);
+        testLib.sendInfoToServer(localBasePath)
+    end)
 end
 
 function CommandExecutor:attributionGetter()

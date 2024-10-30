@@ -45,6 +45,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     public static final String EVENT_GET_IDFA = "adjust_getIdfa";
     public static final String EVENT_GET_ATTRIBUTION = "adjust_getAttribution";
     public static final String EVENT_VERIFY_PLAY_STORE_PURCHASE = "adjust_verifyPlayStorePurchase";
+    public static final String EVENT_VERIFY_AND_TRACK_PLAY_STORE_PURCHASE = "adjust_verifyAndTrackPlayStorePurchase";
     public static final String EVENT_GET_ADID = "adjust_getAdid";
     public static final String EVENT_GET_SDK_VERSION = "adjust_getSdkVersion";
     public static final String EVENT_GET_GOOGLE_AD_ID = "adjust_getGoogleAdId";
@@ -103,8 +104,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 new TrackEventWrapper(),
                 new TrackPlayStoreSubscriptionWrapper(),
                 new VerifyPlayStorePurchaseWrapper(),
-//                new VerifyAndTrackPlayStorePurchaseWrapper(),
-//                new ProcessAndResolveDeeplinkWrapper(),
+                new VerifyAndTrackPlayStorePurchaseWrapper(),
+                new ProcessAndResolveDeeplinkWrapper(),
                 new GetLastDeeplinkWrapper(),
                 new EnableWrapper(),
                 new DisableWrapper(),
@@ -193,7 +194,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
      */
     @Override
     public void onSuspended(CoronaRuntime runtime) {
-        Adjust.onPause();
     }
 
     /**
@@ -204,7 +204,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
      */
     @Override
     public void onResumed(CoronaRuntime runtime) {
-        Adjust.onResume();
     }
 
     /**
@@ -485,7 +484,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         L.pop(1);
 
         // Google Play Store kids apps compliance.
-        L.getField(1, "playStoreKidsApp");
+        L.getField(1, "playStoreKids");
         if (!L.isNil(2)) {
             playStoreKidsApp = L.checkBoolean(2);
             if (playStoreKidsApp)
@@ -604,7 +603,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
 
         Adjust.initSdk(adjustConfig);
-        Adjust.onResume();
         return 0;
     }
 
@@ -620,6 +618,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         String currency = null;
         String eventToken = null;
         String callbackId = null;
+        String deduplicationId = null;
+        String productId = null;
+        String purchaseToken = null;
 
         // Event token.
         L.getField(1, "eventToken");
@@ -648,10 +649,34 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
 
         // Order ID.
-        L.getField(1, "transactionId");
+        L.getField(1, "orderId");
         if (!L.isNil(2)) {
             orderId = L.checkString(2);
             event.setOrderId(orderId);
+        }
+        L.pop(1);
+
+        // deduplication ID.
+        L.getField(1, "deduplicationId");
+        if (!L.isNil(2)) {
+            deduplicationId = L.checkString(2);
+            event.setDeduplicationId(deduplicationId);
+        }
+        L.pop(1);
+
+        // purchaseToken ID.
+        L.getField(1, "purchaseToken");
+        if (!L.isNil(2)) {
+            purchaseToken = L.checkString(2);
+            event.setPurchaseToken(purchaseToken);
+        }
+        L.pop(1);
+
+        // product ID.
+        L.getField(1, "productId");
+        if (!L.isNil(2)) {
+            productId = L.checkString(2);
+            event.setProductId(productId);
         }
         L.pop(1);
 
@@ -836,10 +861,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     }
 
     private int adjust_verifyPlayStorePurchase(final LuaState L){
-
-        Log.d(TAG,"adjust_verifyPlayStorePurchase");
-
-
         String sku = L.checkString(1);
         String purchaseToken = L.checkString(2);
         Log.d(TAG,sku);
@@ -871,6 +892,169 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         return 0;
     }
+    private int adjust_verifyAndTrackPlayStorePurchase(final LuaState L){
+
+        if (!L.isTable(1)) {
+            Log.e(TAG, "adjust_verifyAndTrackPlayStorePurchase: adjust_verifyAndTrackPlayStorePurchase() must be supplied with a table");
+            return 0;
+        }
+
+        double revenue = -1.0;
+        String orderId = null;
+        String currency = null;
+        String eventToken = null;
+        String callbackId = null;
+        String deduplicationId = null;
+        String productId = null;
+        String purchaseToken = null;
+
+//        L.rawGet(1);
+
+        // Event token.
+        L.getField(1, "eventToken");
+        eventToken = !L.isNil(2)? L.checkString(2) : null;
+        L.pop(1);
+
+        Log.d(TAG, "eventToken = " + eventToken);
+
+        final AdjustEvent event = new AdjustEvent(eventToken);
+
+        // Revenue.
+        L.getField(1, "revenue");
+        if (!L.isNil(2)) {
+            revenue = !L.isNil(2)? L.checkNumber(2) : 0;
+        }
+        L.pop(1);
+
+        // Currency.
+        L.getField(1, "currency");
+        if (!L.isNil(2)) {
+            currency = !L.isNil(2)? L.checkString(2) : null;
+        }
+        L.pop(1);
+
+        // Set revenue and currency.
+        if (currency != null && revenue != -1.0) {
+            event.setRevenue(revenue, currency);
+        }
+
+        // Order ID.
+        L.getField(1, "orderId");
+        if (!L.isNil(2)) {
+            orderId = !L.isNil(2)? L.checkString(2) : null;
+            event.setOrderId(orderId);
+        }
+        L.pop(1);
+
+        // deduplication ID.
+        L.getField(1, "deduplicationId");
+        if (!L.isNil(2)) {
+            deduplicationId = !L.isNil(2)? L.checkString(2) : null;
+            event.setDeduplicationId(deduplicationId);
+        }
+        L.pop(1);
+
+        // purchaseToken ID.
+        L.getField(1, "purchaseToken");
+        if (!L.isNil(2)) {
+            purchaseToken = !L.isNil(2)? L.checkString(2) : null;
+            event.setPurchaseToken(purchaseToken);
+        }
+        L.pop(1);
+
+        // product ID.
+        L.getField(1, "productId");
+        if (!L.isNil(2)) {
+            productId = !L.isNil(2)? L.checkString(2) : null;
+            event.setProductId(productId);
+        }
+        L.pop(1);
+
+        // Callback ID.
+        L.getField(1, "callbackId");
+        if (!L.isNil(2)) {
+            callbackId = !L.isNil(2)? L.checkString(2) : null;
+            event.setCallbackId(callbackId);
+        }
+        L.pop(1);
+
+        // Callback parameters.
+        L.getField(1, "callbackParameters");
+        if (!L.isNil(2) && L.isTable(2)) {
+            int length = L.length(2);
+
+            for (int i = 1; i <= length; i++) {
+                // Push the table to the stack
+                L.rawGet(2, i);
+
+                L.getField(3, "key");
+                String key = !L.isNil(4)? L.checkString(4) : null;
+                L.pop(1);
+
+                L.getField(3, "value");
+                String value =!L.isNil(4)? L.checkString(4) : null;
+                L.pop(1);
+
+                event.addCallbackParameter(key, value);
+                L.pop(1);
+            }
+        }
+        L.pop(1);
+
+        // Partner parameters.
+        L.getField(1, "partnerParameters");
+        if (!L.isNil(2) && L.isTable(2)) {
+            int length = L.length(2);
+
+            for (int i = 1; i <= length; i++) {
+                // Push the table to the stack
+                L.rawGet(2, i);
+
+                L.getField(3, "key");
+                String key = !L.isNil(4)? L.checkString(4) : null;
+                L.pop(1);
+
+                L.getField(3, "value");
+                String value = !L.isNil(4)? L.checkString(4) : null;
+                L.pop(1);
+
+                event.addPartnerParameter(key, value);
+                L.pop(1);
+            }
+        }
+        L.pop(1);
+
+        // Callback ID.
+        L.getField(1, "listener");
+        // Hardcoded listener index for ADJUST.
+        int listenerIndex = 2;
+        int listener = CoronaLua.REFNIL;
+        // Assign and dispatch event immediately.
+        if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
+            Log.d(TAG,"listener is found");
+            listener = CoronaLua.newRef(L, listenerIndex);
+            int finalListener = listener;
+            Adjust.verifyAndTrackPlayStorePurchase(event,new OnPurchaseVerificationFinishedListener() {
+                @Override
+                public void onVerificationFinished(AdjustPurchaseVerificationResult adjustPurchaseVerificationResult) {
+                    Log.d(TAG,"listener is called");
+                    try {
+                        dispatchEvent(finalListener, EVENT_VERIFY_AND_TRACK_PLAY_STORE_PURCHASE, new JSONObject(LuaUtil.purchaseVerificationToMap(adjustPurchaseVerificationResult)).toString());
+                    } catch (Exception err) {
+                        Log.e(TAG, "adjust_verifyAndTrackPlayStorePurchase: Given result string is not valid JSON string");
+                        dispatchEvent(finalListener, EVENT_VERIFY_AND_TRACK_PLAY_STORE_PURCHASE, new JSONObject().toString());
+                    }
+                }
+
+            });
+
+        }else {
+            Log.d(TAG,event.toString());
+        }
+
+        return 0;
+    }
+
 
     private int adjust_getLastDeeplink(final LuaState L){
         int listenerIndex = 1;
@@ -881,13 +1065,31 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             Adjust.getLastDeeplink(CoronaEnvironment.getApplicationContext(), new OnLastDeeplinkReadListener() {
                 @Override
                 public void onLastDeeplinkRead(Uri deeplink) {
-                    try {
-                        dispatchEvent(finalListener, "last_deeplink", deeplink.toString());
-                    } catch (Exception err) {
-                        Log.e(TAG, "adjust_getAttribution: Given attribution string is not valid JSON string");
-                        dispatchEvent(finalListener, "last_deeplink", new JSONObject().toString());
+                    if (deeplink != null) {
+                        Log.d(TAG,deeplink.toString());
+                        dispatchEvent(finalListener, "last_deeplink",deeplink.toString());
+                    }else {
+                        dispatchEvent(finalListener, "last_deeplink","");
                     }
                 }
+            });
+        }
+        return 0;
+    }
+
+    private int adjust_processAndResolveDeeplink(final LuaState L){
+        String deeplink = L.checkString(1,"deeplink");
+        int listenerIndex = 2;
+        int listener = CoronaLua.REFNIL;
+        if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
+            listener = CoronaLua.newRef(L, listenerIndex);
+            int finalListener = listener;
+            Adjust.processAndResolveDeeplink(new AdjustDeeplink(Uri.parse(deeplink)),CoronaEnvironment.getApplicationContext(), new OnDeeplinkResolvedListener() {
+                @Override
+                public void onDeeplinkResolved(String resolvedDeeplink) {
+                    dispatchEvent(finalListener, "process_resolve_deeplink", resolvedDeeplink);
+                }
+
             });
         }
         return 0;
@@ -1266,7 +1468,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 L.rawGet(2, i);
 
                 L.getField(3, "partnerName");
-                String partnerName = L.checkString(4);
+                String partnerName = !L.isNil(4)? L.checkString(4) : null;
                 L.pop(1);
 
                 L.getField(3, "key");
@@ -1283,7 +1485,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
-        // Partner sharing settings.
+        // Granular options.
         L.getField(1, "partnerSharingSettings");
         if (!L.isNil(2) && L.isTable(2)) {
             int length = L.length(2);
@@ -1291,20 +1493,50 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             for (int i = 1; i <= length; i++) {
                 // Push the table to the stack
                 L.rawGet(2, i);
-                Map<String, Object> mapPartnerSharingSettings = L.checkJavaObject(3, Map.class);
-                String partnerName = (String) mapPartnerSharingSettings.get("partnerName");
-                for (Map.Entry<String, Object> entry : mapPartnerSharingSettings.entrySet()) {
-                    if (!entry.getKey().equals("partnerName")) {
-                        adjustThirdPartySharing.addPartnerSharingSetting(
-                                partnerName,
-                                entry.getKey(),
-                                (Boolean) entry.getValue());
-                    }
-                }
+
+                L.getField(3, "partnerName");
+                String partnerName = !L.isNil(4)? L.checkString(4) : null;
+                L.pop(1);
+
+                L.getField(3, "key");
+                String key = !L.isNil(4)? L.checkString(4) : null;
+                L.pop(1);
+
+                L.getField(3, "key");
+                String value = !L.isNil(4)? L.checkString(4) : null;
+                L.pop(1);
+
+                adjustThirdPartySharing.addPartnerSharingSetting(
+                        partnerName,
+                        key,
+                        value == "true");
                 L.pop(1);
             }
         }
         L.pop(1);
+
+//        // Partner sharing settings.
+//        L.getField(1, "partnerSharingSettings");
+//        if (!L.isNil(2) && L.isTable(2)) {
+//            int length = L.length(2);
+//
+//            for (int i = 1; i <= length; i++) {
+//                // Push the table to the stack
+//                L.rawGet(2, i);
+//                Map<String, Object> mapPartnerSharingSettings = L.checkJavaObject(3, Map.class);
+//                String partnerName = (String) mapPartnerSharingSettings.get("partnerName");
+//                for (Map.Entry<String, Object> entry : mapPartnerSharingSettings.entrySet()) {
+//                    if (!entry.getKey().equals("partnerName")) {
+//                        adjustThirdPartySharing.addPartnerSharingSetting(
+//                                partnerName,
+//                                entry.getKey(),
+//                                entry.getValue() == "true");
+//                    }
+//                }
+//                L.pop(1);
+//            }
+//        }
+//        L.pop(1);
 
         Adjust.trackThirdPartySharing(adjustThirdPartySharing);
         return 0;
@@ -1619,6 +1851,19 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             return adjust_verifyPlayStorePurchase(L);
         }
     }
+    private class VerifyAndTrackPlayStorePurchaseWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "verifyAndTrackPlayStorePurchase";
+        }
+
+        @Override
+        public int invoke(LuaState L) {
+            return adjust_verifyAndTrackPlayStorePurchase(L);
+        }
+    }
+
+
     private class GetLastDeeplinkWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -1628,6 +1873,18 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         @Override
         public int invoke(LuaState L) {
             return adjust_getLastDeeplink(L);
+        }
+    }
+
+    private class ProcessAndResolveDeeplinkWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "processAndResolveDeeplink";
+        }
+
+        @Override
+        public int invoke(LuaState L) {
+            return adjust_processAndResolveDeeplink(L);
         }
     }
 
@@ -1717,7 +1974,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private class AppProcessDeeplinkWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
-            return "appWillOpenUrl";
+            return "processDeeplink";
         }
 
         @Override
