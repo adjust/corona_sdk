@@ -181,10 +181,10 @@ if (configureCoronaPlugins == "YES") {
 //</editor-fold>
 
 android {
-    compileSdkVersion(33)
+    compileSdkVersion(29)
     defaultConfig {
         applicationId = coronaAppPackage
-        targetSdkVersion(33)
+        targetSdkVersion(29)
         minSdkVersion(coronaMinSdkVersion)
         versionCode = coronaVersionCode
         versionName = coronaVersionName

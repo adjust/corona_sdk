@@ -6,14 +6,16 @@ def build_plugin(dir_root, dir_dist):
     dir_submodule        = '{0}/ext/ios'.format(dir_root)
     dir_plugin           = '{0}/plugin/ios'.format(dir_root)
     dir_plugin_output    = '{0}/build/Release-iphoneos'.format(dir_plugin)
-    dir_static_framework = '{0}/sdk/Frameworks/Static/AdjustSdk.framework'.format(dir_submodule)
+    # dir_static_framework = '{0}/sdk/Frameworks/Static/AdjustSdk.framework'.format(dir_submodule)
+    dir_static_framework = '{0}/sdk/sdk_distribution/frameworks-static/AdjustSdk-iOS-Static/AdjustSdk.framework'.format(dir_submodule)
     dir_output           = '{0}/plugin/ios/Plugin'.format(dir_root)
 
     ## ------------------------------------------------------------------
     ## Generate static library and public header files needed for Plugin Xcode project.
     debug_green('Building AdjustSdk.framework as Relese target ...')
     change_dir('{0}/sdk'.format(dir_submodule))
-    xcode_build('AdjustStatic')
+    # xcode_build('AdjustStatic')
+    execute_command(['./scripts/build_frameworks.sh', '-fs', '-ios'])
     
     ## ------------------------------------------------------------------
     ## Copy static library from generated framework to output directory.
@@ -44,13 +46,15 @@ def build_app_example(dir_root):
     dir_plugin_output    = '{0}/build/Release-iphoneos'.format(dir_plugin)
     dir_ios_app          = '{0}/plugin/ios'.format(dir_root)
     dir_output           = '{0}/Plugin'.format(dir_ios_app)
-    dir_static_framework = '{0}/Frameworks/Static/AdjustSdk.framework'.format(dir_adjust_sdk)
+    # dir_static_framework = '{0}/Frameworks/Static/AdjustSdk.framework'.format(dir_adjust_sdk)
+    dir_static_framework = '{0}/sdk_distribution/frameworks-static/AdjustSdk-iOS-Static/AdjustSdk.framework'.format(dir_adjust_sdk)
 
     ## ------------------------------------------------------------------
     ## Generate static library and public header files.
     debug_green('Building AdjustSdk.framework as Relese target ...')
     change_dir(dir_adjust_sdk)
-    xcode_build('AdjustStatic')
+    # xcode_build('AdjustStatic')
+    execute_command(['./scripts/build_frameworks.sh', '-fs', '-ios'])
 
     ## ------------------------------------------------------------------
     ## Copy static library from generated framework to output directory.
@@ -80,24 +84,27 @@ def build_app_example(dir_root):
 def build_app_test(dir_root):
     ## ------------------------------------------------------------------
     ## paths
-    dir_adjust_sdk          = '{0}/ext/ios/sdk'.format(dir_root)
-    dir_adjust_sdk_test     = '{0}/ext/ios/sdk/AdjustTests/AdjustTestLibrary'.format(dir_root)
-    dir_plugin              = '{0}/plugin/ios'.format(dir_root)
-    dir_plugin_test         = '{0}/test/ios'.format(dir_root)
-    dir_plugin_output       = '{0}/build/Release-iphoneos'.format(dir_plugin)
-    dir_plugin_output_test  = '{0}/build/Release-iphoneos'.format(dir_plugin_test)
-    dir_ios_app_test        = '{0}/test/ios'.format(dir_root)
-    dir_output              = '{0}/plugin/ios/Plugin'.format(dir_root)
-    dir_output_test         = '{0}/test/ios/Plugin'.format(dir_root)
-    dir_static_framework    = '{0}/frameworks/static/AdjustSdk.framework'.format(dir_adjust_sdk)
-    dir_static_framework_test_lib       = '{0}/build/Debug-iphoneos'.format(dir_adjust_sdk_test)
-    dir_static_framework_test_headers   = '{0}/build/Debug-iphoneos/Static/AdjustTestLibrary.framework'.format(dir_adjust_sdk_test)
+    dir_adjust_sdk              = '{0}/ext/ios/sdk'.format(dir_root)
+    dir_adjust_sdk_test         = '{0}/ext/ios/sdk/AdjustTests/AdjustTestLibrary'.format(dir_root)
+    dir_plugin                  = '{0}/plugin/ios'.format(dir_root)
+    dir_plugin_test             = '{0}/test/ios'.format(dir_root)
+    dir_plugin_output           = '{0}/build/Release-iphoneos'.format(dir_plugin)
+    dir_plugin_output_test      = '{0}/build/Release-iphoneos'.format(dir_plugin_test)
+    dir_ios_app_test            = '{0}/test/ios'.format(dir_root)
+    dir_output                  = '{0}/plugin/ios/Plugin'.format(dir_root)
+    dir_output_test             = '{0}/test/ios/Plugin'.format(dir_root)
+    # dir_static_framework      = '{0}/frameworks/static/AdjustSdk.framework'.format(dir_adjust_sdk)
+    dir_static_framework        = '{0}/sdk_distribution/frameworks-static/AdjustSdk-iOS-Static/AdjustSdk.framework'.format(dir_adjust_sdk)
+    # dir_static_framework_test_lib       = '{0}/build/Debug-iphoneos'.format(dir_adjust_sdk_test)
+    # dir_static_framework_test_headers   = '{0}/build/Debug-iphoneos/Static/AdjustTestLibrary.framework'.format(dir_adjust_sdk_test)
+    dir_static_framework_test   = '{0}/sdk_distribution/test-static-framework/AdjustTestLibrary.framework'.format(dir_adjust_sdk)
 
     ## ------------------------------------------------------------------
     ## Generate static library and public header files.
     debug_green('Building AdjustSdk.framework as Release target ...')
     change_dir(dir_adjust_sdk)
-    xcode_build('AdjustStatic')
+    # xcode_build('AdjustStatic')
+    execute_command(['./scripts/build_frameworks.sh', '-fs', '-ios'])
 
     ## ------------------------------------------------------------------
     ## Copy static library from generated framework to output directory.
@@ -122,18 +129,20 @@ def build_app_test(dir_root):
 
     ## Generate static test library and public header files.
     debug_green('Building AdjustTestLibrary.framework as Debug target ...')
-    change_dir(dir_adjust_sdk_test)
-    xcode_build('AdjustTestLibrary', 'Debug')
+    # change_dir(dir_adjust_sdk_test)
+    change_dir(dir_adjust_sdk)
+    # xcode_build('AdjustTestLibraryStatic', 'Debug')
+    execute_command(['./scripts/build_frameworks.sh', '-fs', '-ios', '-test'])
 
     ## ------------------------------------------------------------------
     ## Copy static test library from generated framework to output directory.
     debug_green('Copying static test library from generated framework to output directory ...')
-    copy_file(dir_static_framework_test_lib + '/libAdjustTestLibrary.a', dir_output_test + '/AdjustTestLibrary.a')
+    copy_file(dir_static_framework_test + '/AdjustTestLibrary', dir_output_test + '/AdjustTestLibrary.a')
 
     ## ------------------------------------------------------------------
     ## Copy public headers from generated framework to output directory.
     debug_green('Copying static test library from generated framework to output directory ...')
-    copy_files('*', dir_static_framework_test_headers + '/Versions/A/Headers/', dir_output_test)
+    copy_files('*', dir_static_framework_test + '/Versions/A/Headers/', dir_output_test)
 
     ## ------------------------------------------------------------------
     ## Build static test library of Corona SDK for iOS (libplugin_library.a).
