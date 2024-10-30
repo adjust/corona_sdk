@@ -66,10 +66,8 @@ command_executor.setTestLib(testLib)
 command_executor.setPlatform(platformInfo)
 
 print("[TestApp]: Setting test lib tests....")
- --testLib.addTest("Test_Event_token_malformed")
+ --testLib.addTest("Test_Event_deduplication")
  --testLib.addTest("Test_Lifecycle_StartsForeground")
- --testLib.addTest("Test_VerifyTrack_delayed")
- --testLib.addTest("Test_VerifyTrack_multiple_events")
 
 
  --testLib.addTestDirectory("current/session-event-callbacks")

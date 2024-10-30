@@ -493,7 +493,7 @@ function CommandExecutor:start()
    
     local adjustConfig = self.savedConfigs[configNumber]
     print("[CommandExecutor]: Sending adjust config to adjust.create: " .. json.encode(adjustConfig))
-    adjust.create(adjustConfig)
+    adjust.initSdk(adjustConfig)
     
     self.savedConfigs[configNumber] = nil
 end

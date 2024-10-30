@@ -23,7 +23,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Implements the Lua interface for a Corona plugin.
@@ -93,14 +92,14 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
      *
      * @param L Reference to the Lua state that the require() function was called from.
      * @return Returns the number of values that the require() function will return.
-     *
+     * <p>
      * Expected to return 1, the library that the require() function is loading.
      */
     @Override
     public int invoke(LuaState L) {
         // Register this plugin into Lua with the following functions.
-        NamedJavaFunction[] luaFunctions = new NamedJavaFunction[] {
-                new CreateWrapper(),
+        NamedJavaFunction[] luaFunctions = new NamedJavaFunction[]{
+                new InitSdkWrapper(),
                 new TrackEventWrapper(),
                 new TrackPlayStoreSubscriptionWrapper(),
                 new VerifyPlayStorePurchaseWrapper(),
@@ -266,7 +265,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     }
 
     // Public API.
-    private int adjust_create(final LuaState L) {
+    private int adjust_initSdk(final LuaState L) {
         if (!L.isTable(1)) {
             Log.e(TAG, "adjust_create: adjust_create() must be supplied with a table");
             return 0;
@@ -381,7 +380,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             if (L.isTable(2)) {
                 int length = L.length(2);
                 for (int i = 1; i <= length; i++) {
-                    L.rawGet(2,i);
+                    L.rawGet(2, i);
                     // Push the table to the stack
                     if (!L.isNil(3)) {
                         String dom = L.checkString(3);
@@ -391,24 +390,24 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 }
             }
         }
-        L. pop(1);
+        L.pop(1);
 
         // Is Data Residency.
         L.getField(1, "isDataResidency");
         if (!L.isNil(2)) {
             isDataResidency = L.checkBoolean(2);
         }
-        L. pop(1);
+        L.pop(1);
 
         // us Sub domain.
         L.getField(1, "useSubdomains");
         if (!L.isNil(2)) {
             useSubdomains = L.checkBoolean(2);
         }
-        L. pop(1);
+        L.pop(1);
 
-        if (!domains.isEmpty()){
-            adjustConfig.setUrlStrategy(domains,useSubdomains,isDataResidency);
+        if (!domains.isEmpty()) {
+            adjustConfig.setUrlStrategy(domains, useSubdomains, isDataResidency);
         }
 
 //            urlStrategy = L.checkString(2);
@@ -452,7 +451,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             this.shouldLaunchDeeplink = L.checkBoolean(2);
         }
         L.pop(1);
-
 
 
         // Needs cost.
@@ -499,9 +497,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 public void onAttributionChanged(AdjustAttribution adjustAttribution) {
                     try {
                         dispatchEvent(
-                            LuaLoader.this.attributionChangedListener,
-                            EVENT_ATTRIBUTION_CHANGED,
-                            new JSONObject(LuaUtil.attributionToMap(adjustAttribution)).toString());
+                                LuaLoader.this.attributionChangedListener,
+                                EVENT_ATTRIBUTION_CHANGED,
+                                new JSONObject(LuaUtil.attributionToMap(adjustAttribution)).toString());
                     } catch (Exception err) {
                         Log.e(TAG, "adjust_create: Given attribution string is not valid JSON string");
                         dispatchEvent(LuaLoader.this.attributionChangedListener, EVENT_ATTRIBUTION_CHANGED, new JSONObject().toString());
@@ -590,9 +588,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 public boolean launchReceivedDeeplink(Uri uri) {
                     try {
                         dispatchEvent(
-                            LuaLoader.this.deferredDeeplinkListener,
-                            EVENT_DEFERRED_DEEPLINK,
-                            new JSONObject(LuaUtil.deferredDeeplinkToMap(uri)).toString());
+                                LuaLoader.this.deferredDeeplinkListener,
+                                EVENT_DEFERRED_DEEPLINK,
+                                new JSONObject(LuaUtil.deferredDeeplinkToMap(uri)).toString());
                     } catch (Exception err) {
                         Log.e(TAG, "adjust_create: Given deferred deep link string is not valid JSON string");
                         dispatchEvent(LuaLoader.this.deferredDeeplinkListener, EVENT_DEFERRED_DEEPLINK, new JSONObject().toString());
@@ -624,23 +622,20 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         // Event token.
         L.getField(1, "eventToken");
-        eventToken = L.checkString(2);
+        eventToken = !L.isNil(2) ? L.checkString(2) : null;
         L.pop(1);
 
         final AdjustEvent event = new AdjustEvent(eventToken);
 
         // Revenue.
         L.getField(1, "revenue");
-        if (!L.isNil(2)) {
-            revenue = L.checkNumber(2);
-        }
+        revenue = !L.isNil(2) ? L.checkNumber(2) : -1;
         L.pop(1);
 
         // Currency.
         L.getField(1, "currency");
-        if (!L.isNil(2)) {
-            currency = L.checkString(2);
-        }
+        currency = !L.isNil(2) ? L.checkString(2) : null;
+
         L.pop(1);
 
         // Set revenue and currency.
@@ -650,42 +645,35 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         // Order ID.
         L.getField(1, "orderId");
-        if (!L.isNil(2)) {
-            orderId = L.checkString(2);
-            event.setOrderId(orderId);
-        }
+        orderId = !L.isNil(2) ? L.checkString(2) : null;
+        event.setOrderId(orderId);
+
         L.pop(1);
 
         // deduplication ID.
         L.getField(1, "deduplicationId");
-        if (!L.isNil(2)) {
-            deduplicationId = L.checkString(2);
-            event.setDeduplicationId(deduplicationId);
-        }
+        deduplicationId = !L.isNil(2) ? L.checkString(2) : null;
+        event.setDeduplicationId(deduplicationId);
         L.pop(1);
 
         // purchaseToken ID.
         L.getField(1, "purchaseToken");
-        if (!L.isNil(2)) {
-            purchaseToken = L.checkString(2);
-            event.setPurchaseToken(purchaseToken);
-        }
+        purchaseToken = !L.isNil(2) ? L.checkString(2) : null;
+        event.setPurchaseToken(purchaseToken);
+
         L.pop(1);
 
         // product ID.
         L.getField(1, "productId");
-        if (!L.isNil(2)) {
-            productId = L.checkString(2);
-            event.setProductId(productId);
-        }
+        productId = !L.isNil(2) ? L.checkString(2) : null;
+        event.setProductId(productId);
+
         L.pop(1);
 
         // Callback ID.
         L.getField(1, "callbackId");
-        if (!L.isNil(2)) {
-            callbackId = L.checkString(2);
-            event.setCallbackId(callbackId);
-        }
+        callbackId = !L.isNil(2) ? L.checkString(2) : null;
+        event.setCallbackId(callbackId);
         L.pop(1);
 
         // Callback parameters.
@@ -698,11 +686,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 L.rawGet(2, i);
 
                 L.getField(3, "key");
-                String key = !L.isNil(4)? L.checkString(4) : null;
+                String key = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
                 L.getField(3, "value");
-                String value =!L.isNil(4)? L.checkString(4) : null;
+                String value = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
                 event.addCallbackParameter(key, value);
@@ -721,11 +709,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 L.rawGet(2, i);
 
                 L.getField(3, "key");
-                String key = !L.isNil(4)? L.checkString(4) : null;
+                String key = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
                 L.getField(3, "value");
-                String value = !L.isNil(4)? L.checkString(4) : null;
+                String value = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
                 event.addPartnerParameter(key, value);
@@ -755,7 +743,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         // Price.
         L.getField(1, "price");
         if (!L.isNil(2)) {
-            price = (long)L.checkNumber(2);
+            price = (long) L.checkNumber(2);
         }
         L.pop(1);
 
@@ -805,7 +793,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         // Purchase time.
         L.getField(1, "purchaseTime");
         if (!L.isNil(2)) {
-            long lPurchaseTime = (long)L.checkNumber(2);
+            long lPurchaseTime = (long) L.checkNumber(2);
             subscription.setPurchaseTime(lPurchaseTime);
         }
         L.pop(1);
@@ -820,11 +808,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 L.rawGet(2, i);
 
                 L.getField(3, "key");
-                String key = !L.isNil(4)? L.checkString(4) : null;
+                String key = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
                 L.getField(3, "value");
-                String value = !L.isNil(4)? L.checkString(4) : null;
+                String value = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
                 subscription.addCallbackParameter(key, value);
@@ -843,11 +831,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 L.rawGet(2, i);
 
                 L.getField(3, "key");
-                String key = !L.isNil(4)? L.checkString(4) : null;
+                String key = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
                 L.getField(3, "value");
-                String value = !L.isNil(4)? L.checkString(4) : null;
+                String value = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
                 subscription.addPartnerParameter(key, value);
@@ -860,11 +848,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
-    private int adjust_verifyPlayStorePurchase(final LuaState L){
+    private int adjust_verifyPlayStorePurchase(final LuaState L) {
         String sku = L.checkString(1);
         String purchaseToken = L.checkString(2);
-        Log.d(TAG,sku);
-        Log.d(TAG,purchaseToken);
+        Log.d(TAG, sku);
+        Log.d(TAG, purchaseToken);
 
 
         // Hardcoded listener index for ADJUST.
@@ -875,7 +863,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
             listener = CoronaLua.newRef(L, listenerIndex);
             int finalListener = listener;
-            Adjust.verifyPlayStorePurchase(purchase,new OnPurchaseVerificationFinishedListener() {
+            Adjust.verifyPlayStorePurchase(purchase, new OnPurchaseVerificationFinishedListener() {
                 @Override
                 public void onVerificationFinished(AdjustPurchaseVerificationResult adjustPurchaseVerificationResult) {
                     try {
@@ -892,7 +880,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         return 0;
     }
-    private int adjust_verifyAndTrackPlayStorePurchase(final LuaState L){
+
+    private int adjust_verifyAndTrackPlayStorePurchase(final LuaState L) {
 
         if (!L.isTable(1)) {
             Log.e(TAG, "adjust_verifyAndTrackPlayStorePurchase: adjust_verifyAndTrackPlayStorePurchase() must be supplied with a table");
@@ -912,25 +901,20 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         // Event token.
         L.getField(1, "eventToken");
-        eventToken = !L.isNil(2)? L.checkString(2) : null;
+        eventToken = !L.isNil(2) ? L.checkString(2) : null;
         L.pop(1);
-
-        Log.d(TAG, "eventToken = " + eventToken);
 
         final AdjustEvent event = new AdjustEvent(eventToken);
 
         // Revenue.
         L.getField(1, "revenue");
-        if (!L.isNil(2)) {
-            revenue = !L.isNil(2)? L.checkNumber(2) : 0;
-        }
+        revenue = !L.isNil(2) ? L.checkNumber(2) : -1;
         L.pop(1);
 
         // Currency.
         L.getField(1, "currency");
-        if (!L.isNil(2)) {
-            currency = !L.isNil(2)? L.checkString(2) : null;
-        }
+        currency = !L.isNil(2) ? L.checkString(2) : null;
+
         L.pop(1);
 
         // Set revenue and currency.
@@ -940,42 +924,35 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         // Order ID.
         L.getField(1, "orderId");
-        if (!L.isNil(2)) {
-            orderId = !L.isNil(2)? L.checkString(2) : null;
-            event.setOrderId(orderId);
-        }
+        orderId = !L.isNil(2) ? L.checkString(2) : null;
+        event.setOrderId(orderId);
+
         L.pop(1);
 
         // deduplication ID.
         L.getField(1, "deduplicationId");
-        if (!L.isNil(2)) {
-            deduplicationId = !L.isNil(2)? L.checkString(2) : null;
-            event.setDeduplicationId(deduplicationId);
-        }
+        deduplicationId = !L.isNil(2) ? L.checkString(2) : null;
+        event.setDeduplicationId(deduplicationId);
         L.pop(1);
 
         // purchaseToken ID.
         L.getField(1, "purchaseToken");
-        if (!L.isNil(2)) {
-            purchaseToken = !L.isNil(2)? L.checkString(2) : null;
-            event.setPurchaseToken(purchaseToken);
-        }
+        purchaseToken = !L.isNil(2) ? L.checkString(2) : null;
+        event.setPurchaseToken(purchaseToken);
+
         L.pop(1);
 
         // product ID.
         L.getField(1, "productId");
-        if (!L.isNil(2)) {
-            productId = !L.isNil(2)? L.checkString(2) : null;
-            event.setProductId(productId);
-        }
+        productId = !L.isNil(2) ? L.checkString(2) : null;
+        event.setProductId(productId);
+
         L.pop(1);
 
         // Callback ID.
         L.getField(1, "callbackId");
-        if (!L.isNil(2)) {
-            callbackId = !L.isNil(2)? L.checkString(2) : null;
-            event.setCallbackId(callbackId);
-        }
+        callbackId = !L.isNil(2) ? L.checkString(2) : null;
+        event.setCallbackId(callbackId);
         L.pop(1);
 
         // Callback parameters.
@@ -988,11 +965,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 L.rawGet(2, i);
 
                 L.getField(3, "key");
-                String key = !L.isNil(4)? L.checkString(4) : null;
+                String key = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
                 L.getField(3, "value");
-                String value =!L.isNil(4)? L.checkString(4) : null;
+                String value = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
                 event.addCallbackParameter(key, value);
@@ -1011,11 +988,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 L.rawGet(2, i);
 
                 L.getField(3, "key");
-                String key = !L.isNil(4)? L.checkString(4) : null;
+                String key = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
                 L.getField(3, "value");
-                String value = !L.isNil(4)? L.checkString(4) : null;
+                String value = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
                 event.addPartnerParameter(key, value);
@@ -1031,13 +1008,13 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         int listener = CoronaLua.REFNIL;
         // Assign and dispatch event immediately.
         if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
-            Log.d(TAG,"listener is found");
+            Log.d(TAG, "listener is found");
             listener = CoronaLua.newRef(L, listenerIndex);
             int finalListener = listener;
-            Adjust.verifyAndTrackPlayStorePurchase(event,new OnPurchaseVerificationFinishedListener() {
+            Adjust.verifyAndTrackPlayStorePurchase(event, new OnPurchaseVerificationFinishedListener() {
                 @Override
                 public void onVerificationFinished(AdjustPurchaseVerificationResult adjustPurchaseVerificationResult) {
-                    Log.d(TAG,"listener is called");
+                    Log.d(TAG, "listener is called");
                     try {
                         dispatchEvent(finalListener, EVENT_VERIFY_AND_TRACK_PLAY_STORE_PURCHASE, new JSONObject(LuaUtil.purchaseVerificationToMap(adjustPurchaseVerificationResult)).toString());
                     } catch (Exception err) {
@@ -1048,15 +1025,15 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
             });
 
-        }else {
-            Log.d(TAG,event.toString());
+        } else {
+            Log.d(TAG, event.toString());
         }
 
         return 0;
     }
 
 
-    private int adjust_getLastDeeplink(final LuaState L){
+    private int adjust_getLastDeeplink(final LuaState L) {
         int listenerIndex = 1;
         int listener = CoronaLua.REFNIL;
         if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
@@ -1066,10 +1043,10 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 @Override
                 public void onLastDeeplinkRead(Uri deeplink) {
                     if (deeplink != null) {
-                        Log.d(TAG,deeplink.toString());
-                        dispatchEvent(finalListener, "last_deeplink",deeplink.toString());
-                    }else {
-                        dispatchEvent(finalListener, "last_deeplink","");
+                        Log.d(TAG, deeplink.toString());
+                        dispatchEvent(finalListener, "last_deeplink", deeplink.toString());
+                    } else {
+                        dispatchEvent(finalListener, "last_deeplink", "");
                     }
                 }
             });
@@ -1077,14 +1054,14 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
-    private int adjust_processAndResolveDeeplink(final LuaState L){
-        String deeplink = L.checkString(1,"deeplink");
+    private int adjust_processAndResolveDeeplink(final LuaState L) {
+        String deeplink = L.checkString(1, "deeplink");
         int listenerIndex = 2;
         int listener = CoronaLua.REFNIL;
         if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
             listener = CoronaLua.newRef(L, listenerIndex);
             int finalListener = listener;
-            Adjust.processAndResolveDeeplink(new AdjustDeeplink(Uri.parse(deeplink)),CoronaEnvironment.getApplicationContext(), new OnDeeplinkResolvedListener() {
+            Adjust.processAndResolveDeeplink(new AdjustDeeplink(Uri.parse(deeplink)), CoronaEnvironment.getApplicationContext(), new OnDeeplinkResolvedListener() {
                 @Override
                 public void onDeeplinkResolved(String resolvedDeeplink) {
                     dispatchEvent(finalListener, "process_resolve_deeplink", resolvedDeeplink);
@@ -1100,6 +1077,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         Adjust.enable();
         return 0;
     }
+
     // Public API.
     private int adjust_disable() {
         Adjust.disable();
@@ -1399,11 +1377,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 L.rawGet(2, i);
 
                 L.getField(3, "key");
-                String key = !L.isNil(4)? L.checkString(4) : null;
+                String key = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
                 L.getField(3, "value");
-                String value = !L.isNil(4)? L.checkString(4) : null;
+                String value = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
                 adjustAdRevenue.addCallbackParameter(key, value);
@@ -1422,11 +1400,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 L.rawGet(2, i);
 
                 L.getField(3, "key");
-                String key = !L.isNil(4)? L.checkString(4) : null;
+                String key = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
                 L.getField(3, "value");
-                String value = !L.isNil(4)? L.checkString(4) : null;
+                String value = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
                 adjustAdRevenue.addPartnerParameter(key, value);
@@ -1468,15 +1446,15 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 L.rawGet(2, i);
 
                 L.getField(3, "partnerName");
-                String partnerName = !L.isNil(4)? L.checkString(4) : null;
+                String partnerName = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
                 L.getField(3, "key");
-                String key = !L.isNil(4)? L.checkString(4) : null;
+                String key = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
                 L.getField(3, "value");
-                String value = !L.isNil(4)? L.checkString(4) : null;
+                String value = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
                 adjustThirdPartySharing.addGranularOption(partnerName, key, value);
@@ -1495,15 +1473,15 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 L.rawGet(2, i);
 
                 L.getField(3, "partnerName");
-                String partnerName = !L.isNil(4)? L.checkString(4) : null;
+                String partnerName = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
                 L.getField(3, "key");
-                String key = !L.isNil(4)? L.checkString(4) : null;
+                String key = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
                 L.getField(3, "key");
-                String value = !L.isNil(4)? L.checkString(4) : null;
+                String value = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
                 adjustThirdPartySharing.addPartnerSharingSetting(
@@ -1761,25 +1739,25 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
         L.getField(1, "timerIntervalInMilliseconds");
         if (!L.isNil(2)) {
-            adjustTestOptions.timerIntervalInMilliseconds = (long)L.checkNumber(2);
+            adjustTestOptions.timerIntervalInMilliseconds = (long) L.checkNumber(2);
         }
         L.pop(1);
 
         L.getField(1, "timerStartInMilliseconds");
         if (!L.isNil(2)) {
-            adjustTestOptions.timerStartInMilliseconds = (long)L.checkNumber(2);
+            adjustTestOptions.timerStartInMilliseconds = (long) L.checkNumber(2);
         }
         L.pop(1);
 
         L.getField(1, "sessionIntervalInMilliseconds");
         if (!L.isNil(2)) {
-            adjustTestOptions.sessionIntervalInMilliseconds = (long)L.checkNumber(2);
+            adjustTestOptions.sessionIntervalInMilliseconds = (long) L.checkNumber(2);
         }
         L.pop(1);
 
         L.getField(1, "subsessionIntervalInMilliseconds");
         if (!L.isNil(2)) {
-            adjustTestOptions.subsessionIntervalInMilliseconds = (long)L.checkNumber(2);
+            adjustTestOptions.subsessionIntervalInMilliseconds = (long) L.checkNumber(2);
         }
         L.pop(1);
 
@@ -1801,19 +1779,25 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
+        L.getField(1, "ignoreSystemLifecycleBootstrap");
+        if (!L.isNil(2)) {
+            adjustTestOptions.ignoreSystemLifecycleBootstrap = L.checkBoolean(2);
+        }
+        L.pop(1);
+
         Adjust.setTestOptions(adjustTestOptions);
         return 0;
     }
 
-    private class CreateWrapper implements NamedJavaFunction {
+    private class InitSdkWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
-            return "create";
+            return "initSdk";
         }
 
         @Override
         public int invoke(LuaState L) {
-            return adjust_create(L);
+            return adjust_initSdk(L);
         }
     }
 
@@ -1840,6 +1824,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             return adjust_trackPlayStoreSubscription(L);
         }
     }
+
     private class VerifyPlayStorePurchaseWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -1851,6 +1836,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             return adjust_verifyPlayStorePurchase(L);
         }
     }
+
     private class VerifyAndTrackPlayStorePurchaseWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -1947,6 +1933,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             return adjust_switchToOfflineMode();
         }
     }
+
     private class SwitchBackToOnlineModeWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -2277,6 +2264,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         public String getName() {
             return "appTrackingAuthorizationStatus";
         }
+
         @Override
         public int invoke(LuaState luaState) {
             luaState.pushInteger(0);
@@ -2301,6 +2289,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         public String getName() {
             return "updateConversionValue";
         }
+
         @Override
         public int invoke(LuaState luaState) {
             return 0;
@@ -2312,6 +2301,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         public String getName() {
             return "updateConversionValueWithCallback";
         }
+
         @Override
         public int invoke(LuaState luaState) {
             return 0;
@@ -2323,6 +2313,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         public String getName() {
             return "updateConversionValueWithSkan4Callback";
         }
+
         @Override
         public int invoke(LuaState luaState) {
             return 0;
