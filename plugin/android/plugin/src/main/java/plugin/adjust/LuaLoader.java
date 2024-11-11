@@ -267,7 +267,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     // Public API.
     private int adjust_initSdk(final LuaState L) {
         if (!L.isTable(1)) {
-            Log.e(TAG, "adjust_create: adjust_create() must be supplied with a table");
+            Log.e(TAG, "adjust_initSdk: adjust_initSdk() must be supplied with a table");
             return 0;
         }
 

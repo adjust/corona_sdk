@@ -8,6 +8,11 @@
 
 #import <objc/runtime.h>
 #import "AdjustSdkDelegate.h"
+#import "ADJAttribution.h"
+#import "ADJSessionSuccess.h"
+#import "ADJSessionFailure.h"
+#import "ADJEventSuccess.h"
+#import "ADJEventFailure.h"
 
 static dispatch_once_t onceToken;
 static AdjustSdkDelegate *defaultInstance = nil;
@@ -154,7 +159,6 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
     [AdjustSdkDelegate addKey:KEY_CREATIVE andValue:attribution.creative toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_ADGROUP andValue:attribution.adgroup toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_CLICK_LABEL andValue:attribution.clickLabel toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_ADID andValue:attribution.adid toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_COST_TYPE andValue:attribution.costType toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_COST_AMOUNT andValue:attribution.costAmount toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_COST_CURRENCY andValue:attribution.costCurrency toDictionary:dictionary];
@@ -181,7 +185,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
 
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     [AdjustSdkDelegate addKey:KEY_MESSAGE andValue:sessionSuccessResponseData.message toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:sessionSuccessResponseData.timeStamp toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:sessionSuccessResponseData.timestamp toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_ADID andValue:sessionSuccessResponseData.adid toDictionary:dictionary];
     if (sessionSuccessResponseData.jsonResponse != nil) {
         [dictionary setObject:sessionSuccessResponseData.jsonResponse forKey:KEY_JSON_RESPONSE];
@@ -209,7 +213,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
 
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     [AdjustSdkDelegate addKey:KEY_MESSAGE andValue:sessionFailureResponseData.message toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:sessionFailureResponseData.timeStamp toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:sessionFailureResponseData.timestamp toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_ADID andValue:sessionFailureResponseData.adid toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_WILL_RETRY andValue:(sessionFailureResponseData.willRetry ? @"true" : @"false") toDictionary:dictionary];
     if (sessionFailureResponseData.jsonResponse != nil) {
@@ -238,7 +242,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
 
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     [AdjustSdkDelegate addKey:KEY_MESSAGE andValue:eventSuccessResponseData.message toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:eventSuccessResponseData.timeStamp toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:eventSuccessResponseData.timestamp toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_ADID andValue:eventSuccessResponseData.adid toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_EVENT_TOKEN andValue:eventSuccessResponseData.eventToken toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_CALLBACK_ID andValue:eventSuccessResponseData.callbackId toDictionary:dictionary];
@@ -268,7 +272,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
 
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     [AdjustSdkDelegate addKey:KEY_MESSAGE andValue:eventFailureResponseData.message toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:eventFailureResponseData.timeStamp toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:eventFailureResponseData.timestamp toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_ADID andValue:eventFailureResponseData.adid toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_EVENT_TOKEN andValue:eventFailureResponseData.eventToken toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_CALLBACK_ID andValue:eventFailureResponseData.callbackId toDictionary:dictionary];

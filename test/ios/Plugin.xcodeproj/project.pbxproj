@@ -25,20 +25,19 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		52DCB89B2281BAC2005A3092 /* ATLControlSignal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATLControlSignal.h; path = Plugin/ATLControlSignal.h; sourceTree = "<group>"; };
-		52DCB89C2281BAC2005A3092 /* ATLConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATLConstants.h; path = Plugin/ATLConstants.h; sourceTree = "<group>"; };
-		52DCB89D2281BAC2005A3092 /* ATLControlWebSocketClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATLControlWebSocketClient.h; path = Plugin/ATLControlWebSocketClient.h; sourceTree = "<group>"; };
-		52DCB89E2281BAC3005A3092 /* ATLUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATLUtil.h; path = Plugin/ATLUtil.h; sourceTree = "<group>"; };
-		52DCB89F2281BAC3005A3092 /* ATLTestInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATLTestInfo.h; path = Plugin/ATLTestInfo.h; sourceTree = "<group>"; };
-		52DCB8A02281BAC3005A3092 /* ATLUtilNetworking.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATLUtilNetworking.h; path = Plugin/ATLUtilNetworking.h; sourceTree = "<group>"; };
-		52DCB8A12281BAC3005A3092 /* ATLTestLibrary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ATLTestLibrary.h; path = Plugin/ATLTestLibrary.h; sourceTree = "<group>"; };
-		9DD2999921F717390054DA79 /* ATLBlockingQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ATLBlockingQueue.h; path = Plugin/ATLBlockingQueue.h; sourceTree = "<group>"; };
 		9DD299A021F717430054DA79 /* PluginLibrary.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PluginLibrary.mm; path = Plugin/PluginLibrary.mm; sourceTree = "<group>"; };
 		9DD299A121F717430054DA79 /* TestLibCommandExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestLibCommandExecutor.h; path = Plugin/TestLibCommandExecutor.h; sourceTree = "<group>"; };
 		9DD299A221F717430054DA79 /* TestLibCommandExecutor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestLibCommandExecutor.mm; path = Plugin/TestLibCommandExecutor.mm; sourceTree = "<group>"; };
 		9DD299A321F717430054DA79 /* PluginLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PluginLibrary.h; path = Plugin/PluginLibrary.h; sourceTree = "<group>"; };
 		9DD299A721F7182A0054DA79 /* AdjustTestLibrary.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = AdjustTestLibrary.a; path = Plugin/AdjustTestLibrary.a; sourceTree = "<group>"; };
 		A4E253B6166D6FB300DCDC2C /* libplugin_library.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libplugin_library.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		E43958D52CDE783000E90B1F /* ATLBlockingQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ATLBlockingQueue.h; sourceTree = "<group>"; };
+		E43958D62CDE783000E90B1F /* ATLConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ATLConstants.h; sourceTree = "<group>"; };
+		E43958D72CDE783000E90B1F /* ATLControlSignal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ATLControlSignal.h; sourceTree = "<group>"; };
+		E43958D82CDE783000E90B1F /* ATLControlWebSocketClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ATLControlWebSocketClient.h; sourceTree = "<group>"; };
+		E43958D92CDE783000E90B1F /* ATLNetworking.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ATLNetworking.h; sourceTree = "<group>"; };
+		E43958DA2CDE783000E90B1F /* ATLTestLibrary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ATLTestLibrary.h; sourceTree = "<group>"; };
+		E43958DB2CDE783000E90B1F /* ATLUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ATLUtil.h; sourceTree = "<group>"; };
 		F572F81A1EE0705B001BC814 /* CoronaNative.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CoronaNative.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -57,14 +56,13 @@
 		9DD2998F21F7171A0054DA79 /* TestLibrary */ = {
 			isa = PBXGroup;
 			children = (
-				9DD2999921F717390054DA79 /* ATLBlockingQueue.h */,
-				52DCB89C2281BAC2005A3092 /* ATLConstants.h */,
-				52DCB89B2281BAC2005A3092 /* ATLControlSignal.h */,
-				52DCB89D2281BAC2005A3092 /* ATLControlWebSocketClient.h */,
-				52DCB89F2281BAC3005A3092 /* ATLTestInfo.h */,
-				52DCB8A12281BAC3005A3092 /* ATLTestLibrary.h */,
-				52DCB89E2281BAC3005A3092 /* ATLUtil.h */,
-				52DCB8A02281BAC3005A3092 /* ATLUtilNetworking.h */,
+				E43958D52CDE783000E90B1F /* ATLBlockingQueue.h */,
+				E43958D62CDE783000E90B1F /* ATLConstants.h */,
+				E43958D72CDE783000E90B1F /* ATLControlSignal.h */,
+				E43958D82CDE783000E90B1F /* ATLControlWebSocketClient.h */,
+				E43958D92CDE783000E90B1F /* ATLNetworking.h */,
+				E43958DA2CDE783000E90B1F /* ATLTestLibrary.h */,
+				E43958DB2CDE783000E90B1F /* ATLUtil.h */,
 			);
 			name = TestLibrary;
 			sourceTree = "<group>";
@@ -175,7 +173,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# echo \"CORONA_ROOT: ${CORONA_ROOT}\"\nif [ ! -d \"${CORONA_ROOT}\" ]\nthen\n    echo \"error: Corona Native has not been setup.  Run 'Native/SetupCoronaNative.app' in your Corona install to set it up\" >&2\n\n    exit 1\nelse\n    echo \"Building with Corona Native from $(readlink \"${CORONA_ROOT}\")\"\nfi";
+			shellScript = "# echo \"CORONA_ROOT: ${CORONA_ROOT}\"\nif [ ! -d \"${CORONA_ROOT}\" ]\nthen\n    echo \"error: Corona Native has not been setup.  Run 'Native/SetupCoronaNative.app' in your Corona install to set it up\" >&2\n\n    exit 1\nelse\n    echo \"Building with Corona Native from $(readlink \"${CORONA_ROOT}\")\"\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -197,6 +195,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F572F81A1EE0705B001BC814 /* CoronaNative.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
@@ -239,9 +238,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -250,6 +250,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F572F81A1EE0705B001BC814 /* CoronaNative.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
@@ -284,9 +285,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};

@@ -1,9 +1,9 @@
-local testLib = require "plugin.adjust.test"
-local adjust = require "plugin.adjust"
-local widget = require "widget"
-local json = require "json"
-local command = require "command"
-local command_executor = require "command_executor"
+local testLib = require ("plugin.adjust.test") 
+local adjust = require ("plugin.adjust")
+local widget = require ("widget")
+local json = require ("json")
+local command = require ("command")
+local command_executor = require ("command_executor")
 
 print("------------------------------------------------------------")
 local platformInfo = system.getInfo("platform")
@@ -41,7 +41,7 @@ else
     protocol = "https"
     port = "8443"
 end
-local baseIp = "192.168.2.32"
+local baseIp = "192.168.8.30"
 local overwriteUrl = protocol .. "://" .. baseIp .. ":" .. port
 local controlUrl = "ws://" .. baseIp .. ":1987";
 print("[TestApp]: Using BaseUrl: [" .. overwriteUrl .. "]--")
@@ -76,6 +76,7 @@ print("[TestApp]: Setting test lib tests....")
 -- ------------------------
 local function handleStartTestSession(event)
     if ("ended" == event.phase) then
+        print("start test")
         adjust.getSdkVersion(function(event)
             print("[TestApp]: starting test session with sdk version = " .. event.message)
             testLib.startTestSession(event.message)

@@ -8,6 +8,7 @@
 
 #include <CoronaLua.h>
 #import "Adjust.h"
+#import "ADJConfig.h"
 
 #define ADJ_ATTRIBUTION_CHANGED @"adjust_attributionChanged"
 #define ADJ_EVENT_TRACKING_SUCCESS @"adjust_eventTrackingSuccess"

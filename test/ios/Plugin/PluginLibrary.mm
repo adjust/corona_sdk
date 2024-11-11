@@ -42,6 +42,7 @@ int PluginLibrary::Open(lua_State *L) {
         { "startTestSession", startTestSession },
         { "addInfoToSend", addInfoToSend },
         { "sendInfoToServer", sendInfoToServer },
+        { "setTestConnectionOptions",  },
         
         { NULL, NULL }
     };
@@ -67,6 +68,7 @@ PluginLibrary * PluginLibrary::ToLibrary(lua_State *L) {
     Self *library = (Self *)CoronaLuaToUserdata(L, lua_upvalueindex(1));
     return library;
 }
+
 
 int PluginLibrary::initTestLibrary(lua_State *L) {
     NSLog(@"[TestLibrary][bridge]: Init test library started...");
@@ -112,7 +114,9 @@ int PluginLibrary::addTestDirectory(lua_State *L) {
 int PluginLibrary::startTestSession(lua_State *L) {
     Self *library = ToLibrary(L);
     const char *clientSdk = lua_tostring(L, 1);
+    NSLog(@"%@", [NSString stringWithUTF8String: clientSdk]);
     [library->testLibrary startTestSession:[NSString stringWithUTF8String:clientSdk]];
+//    [library->testLibrary startTestSession:[NSString stringWithUTF8String:clientSdk]];
     return 0;
 }
 

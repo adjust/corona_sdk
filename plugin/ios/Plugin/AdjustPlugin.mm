@@ -12,6 +12,11 @@
 #import "Adjust.h"
 #import "AdjustPlugin.h"
 #import "AdjustSdkDelegate.h"
+#import "ADJLogger.h"
+#import "ADJSubscription.h"
+#import "ADJAttribution.h"
+
+
 
 #define EVENT_IS_ENABLED @"adjust_isEnabled"
 #define EVENT_GET_IDFA @"adjust_getIdfa"
@@ -25,7 +30,7 @@
 #define EVENT_UPDATE_CONVERSION_VALUE_WITH_CALLBACK @"adjust_updateConversionValueWithCallback"
 #define EVENT_UPDATE_CONVERSION_VALUE_WITH_SKAN4_CALLBACK @"adjust_updateConversionValueWithSkan4Callback"
 
-#define SDK_PREFIX @"corona4.33.0"
+#define SDK_PREFIX @"corona5.0.0"
 
 // ----------------------------------------------------------------------------
 
@@ -57,18 +62,18 @@ public:
     static int Open(lua_State *L);
     static Self *ToLibrary(lua_State *L);
 
-    static int create(lua_State *L);
+    static int initSdk(lua_State *L);
     static int trackEvent(lua_State *L);
     static int setEnabled(lua_State *L);
     static int setPushToken(lua_State *L);
     static int appWillOpenUrl(lua_State *L);
     static int sendFirstPackages(lua_State *L);
-    static int addSessionCallbackParameter(lua_State *L);
-    static int addSessionPartnerParameter(lua_State *L);
-    static int removeSessionCallbackParameter(lua_State *L);
-    static int removeSessionPartnerParameter(lua_State *L);
-    static int resetSessionCallbackParameters(lua_State *L);
-    static int resetSessionPartnerParameters(lua_State *L);
+    static int addGlobalCallbackParameter(lua_State *L);
+    static int addGlobalPartnerParameter(lua_State *L);
+    static int removeGlobalCallbackParameter(lua_State *L);
+    static int removeGlobalPartnerParameter(lua_State *L);
+    static int removeGlobalCallbackParameters(lua_State *L);
+    static int removeGlobalPartnerParameters(lua_State *L);
     static int setOfflineMode(lua_State *L);
     static int isEnabled(lua_State *L);
     static int getIdfa(lua_State *L);
@@ -180,7 +185,7 @@ AdjustPlugin::Open(lua_State *L) {
 
     // Functions in library
     const luaL_Reg kVTable[] = {
-        { "create", create },
+        { "initSdk", initSdk },
         { "trackEvent", trackEvent },
         { "setEnabled", setEnabled },
         { "setPushToken", setPushToken },
@@ -188,12 +193,12 @@ AdjustPlugin::Open(lua_State *L) {
         { "sendFirstPackages", sendFirstPackages },
         { "trackAdRevenue", trackAdRevenue },
         { "trackAppStoreSubscription", trackAppStoreSubscription },
-        { "addSessionCallbackParameter", addSessionCallbackParameter },
-        { "addSessionPartnerParameter", addSessionPartnerParameter },
-        { "removeSessionCallbackParameter", removeSessionCallbackParameter },
-        { "removeSessionPartnerParameter", removeSessionPartnerParameter },
-        { "resetSessionCallbackParameters", resetSessionCallbackParameters },
-        { "resetSessionPartnerParameters", resetSessionPartnerParameters },
+        { "addGlobalCallbackParameter", addGlobalCallbackParameter },
+        { "addGlobalPartnerParameter", addGlobalPartnerParameter },
+        { "removeGlobalCallbackParameter", removeGlobalCallbackParameter },
+        { "removeGlobalPartnerParameter", removeGlobalPartnerParameter },
+        { "removeGlobalCallbackParameters", removeGlobalCallbackParameters },
+        { "removeGlobalPartnerParameters", removeGlobalPartnerParameters },
         { "setOfflineMode", setOfflineMode },
         { "setAttributionListener", setAttributionListener },
         { "setEventTrackingSuccessListener", setEventTrackingSuccessListener },
@@ -261,10 +266,12 @@ AdjustPlugin * AdjustPlugin::ToLibrary(lua_State *L) {
 }
 
 // Public API.
-int AdjustPlugin::create(lua_State *L) {
+int AdjustPlugin::initSdk(lua_State *L) {
     if (!lua_istable(L, 1)) {
         return 0;
     }
+
+    NSLog(@"init SDK called");
 
     double delayStart = 0.0;
     NSUInteger secretId = -1;
@@ -289,6 +296,8 @@ int AdjustPlugin::create(lua_State *L) {
     NSString *externalDeviceId = nil;
     NSString *urlStrategy = nil;
     ADJLogLevel logLevel = ADJLogLevelInfo;
+    
+    
 
     // Log level.
     lua_getfield(L, 1, "logLevel");
@@ -325,29 +334,24 @@ int AdjustPlugin::create(lua_State *L) {
     }
     lua_pop(L, 1);
 
-    ADJConfig *adjustConfig = [ADJConfig configWithAppToken:appToken
-                                                environment:environment
-                                      allowSuppressLogLevel:(logLevel == ADJLogLevelSuppress)];
+    ADJConfig *adjustConfig = [[ADJConfig alloc] initWithAppToken:appToken
+                                                      environment:environment
+                                                 suppressLogLevel:YES];
 
     // SDK prefix.
-    [adjustConfig setSdkPrefix:@"corona4.33.0"];
+    [adjustConfig setSdkPrefix:@"corona5.0.0"];
 
     // Log level.
     [adjustConfig setLogLevel:logLevel];
 
-    // Event buffering.
-    lua_getfield(L, 1, "eventBufferingEnabled");
-    if (!lua_isnil(L, 2)) {
-        eventBufferingEnabled = lua_toboolean(L, 2);
-        [adjustConfig setEventBufferingEnabled:eventBufferingEnabled];
-    }
-    lua_pop(L, 1);
 
     // AdServices info reading.
     lua_getfield(L, 1, "allowAdServicesInfoReading");
     if (!lua_isnil(L, 2)) {
         allowAdServicesInfoReading = lua_toboolean(L, 2);
-        [adjustConfig setAllowAdServicesInfoReading:allowAdServicesInfoReading];
+        if (allowAdServicesInfoReading == NO) {
+            [adjustConfig disableAdServices];
+        }
     }
     lua_pop(L, 1);
 
@@ -355,7 +359,9 @@ int AdjustPlugin::create(lua_State *L) {
     lua_getfield(L, 1, "allowIdfaReading");
     if (!lua_isnil(L, 2)) {
         allowIdfaReading = lua_toboolean(L, 2);
-        [adjustConfig setAllowIdfaReading:allowIdfaReading];
+        if (allowIdfaReading == NO) {
+            [adjustConfig disableIdfaReading];
+        }
     }
     lua_pop(L, 1);
 
@@ -364,18 +370,18 @@ int AdjustPlugin::create(lua_State *L) {
     if (!lua_isnil(L, 2)) {
         handleSkAdNetwork = lua_toboolean(L, 2);
         if (handleSkAdNetwork == NO) {
-            [adjustConfig deactivateSKAdNetworkHandling];
+            [adjustConfig disableSkanAttribution];
         }
     }
     lua_pop(L, 1);
     
-    // Cost data in attribution callback.
-    lua_getfield(L, 1, "needsCost");
-    if (!lua_isnil(L, 2)) {
-        needsCost = lua_toboolean(L, 2);
-        [adjustConfig setNeedsCost:needsCost];
-    }
-    lua_pop(L, 1);
+//    // Cost data in attribution callback.
+//    lua_getfield(L, 1, "needsCost");
+//    if (!lua_isnil(L, 2)) {
+//        needsCost = lua_toboolean(L, 2);
+//        [adjustConfig setNeedsCost:needsCost];
+//    }
+//    lua_pop(L, 1);
 
 
     // Default tracker.
@@ -400,47 +406,49 @@ int AdjustPlugin::create(lua_State *L) {
     }
     lua_pop(L, 1);
 
-    // URL strategy.
-    lua_getfield(L, 1, "urlStrategy");
-    if (!lua_isnil(L, 2)) {
-        const char *cstrUrlStrategy = lua_tostring(L, 2);
-        if (cstrUrlStrategy != NULL) {
-            urlStrategy = [NSString stringWithUTF8String:cstrUrlStrategy];
-        }
-        if (urlStrategy != nil) {
-            if ([urlStrategy isEqualToString:@"china"]) {
-                [adjustConfig setUrlStrategy:ADJUrlStrategyChina];
-            } else if ([urlStrategy isEqualToString:@"india"]) {
-                [adjustConfig setUrlStrategy:ADJUrlStrategyIndia];
-            } else if ([urlStrategy isEqualToString:@"cn"]) {
-                [adjustConfig setUrlStrategy:ADJUrlStrategyCn];
-            } else if ([urlStrategy isEqualToString:@"data-residency-eu"]) {
-                [adjustConfig setUrlStrategy:ADJDataResidencyEU];
-            } else if ([urlStrategy isEqualToString:@"data-residency-tr"]) {
-                [adjustConfig setUrlStrategy:ADJDataResidencyTR];
-            } else if ([urlStrategy isEqualToString:@"data-residency-us"]) {
-                [adjustConfig setUrlStrategy:ADJDataResidencyUS];
-            }
-        }
-    }
-    lua_pop(L, 1);
+//    // URL strategy.
+//    lua_getfield(L, 1, "urlStrategy");
+//    if (!lua_isnil(L, 2)) {
+//        const char *cstrUrlStrategy = lua_tostring(L, 2);
+//        if (cstrUrlStrategy != NULL) {
+//            urlStrategy = [NSString stringWithUTF8String:cstrUrlStrategy];
+//        }
+//        if (urlStrategy != nil) {
+//            if ([urlStrategy isEqualToString:@"china"]) {
+//                [adjustConfig setUrlStrategy:ADJUrlStrategyChina];
+//            } else if ([urlStrategy isEqualToString:@"india"]) {
+//                [adjustConfig setUrlStrategy:ADJUrlStrategyIndia];
+//            } else if ([urlStrategy isEqualToString:@"cn"]) {
+//                [adjustConfig setUrlStrategy:ADJUrlStrategyCn];
+//            } else if ([urlStrategy isEqualToString:@"data-residency-eu"]) {
+//                [adjustConfig setUrlStrategy:ADJDataResidencyEU];
+//            } else if ([urlStrategy isEqualToString:@"data-residency-tr"]) {
+//                [adjustConfig setUrlStrategy:ADJDataResidencyTR];
+//            } else if ([urlStrategy isEqualToString:@"data-residency-us"]) {
+//                [adjustConfig setUrlStrategy:ADJDataResidencyUS];
+//            }
+//        }
+//    }
+//    lua_pop(L, 1);
 
-    // User agent.
-    lua_getfield(L, 1, "userAgent");
-    if (!lua_isnil(L, 2)) {
-        const char *cstrUserAgent = lua_tostring(L, 2);
-        if (cstrUserAgent != NULL) {
-            userAgent = [NSString stringWithUTF8String:cstrUserAgent];
-        }
-        [adjustConfig setUserAgent:userAgent];
-    }
-    lua_pop(L, 1);
+//    // User agent.
+//    lua_getfield(L, 1, "userAgent");
+//    if (!lua_isnil(L, 2)) {
+//        const char *cstrUserAgent = lua_tostring(L, 2);
+//        if (cstrUserAgent != NULL) {
+//            userAgent = [NSString stringWithUTF8String:cstrUserAgent];
+//        }
+//        [adjustConfig setUserAgent:userAgent];
+//    }
+//    lua_pop(L, 1);
 
     // Send in background.
     lua_getfield(L, 1, "sendInBackground");
     if (!lua_isnil(L, 2)) {
         sendInBackground = lua_toboolean(L, 2);
-        [adjustConfig setSendInBackground:sendInBackground];
+        if (sendInBackground == YES) {
+            [adjustConfig enableSendingInBackground];
+        }
     }
     lua_pop(L, 1);
 
@@ -451,58 +459,30 @@ int AdjustPlugin::create(lua_State *L) {
     }
     lua_pop(L, 1);
 
-    // Delay start.
-    lua_getfield(L, 1, "delayStart");
-    if (!lua_isnil(L, 2)) {
-        delayStart = lua_tonumber(L, 2);
-        [adjustConfig setDelayStart:delayStart];
-    }
-    lua_pop(L, 1);
+//    // Delay start.
+//    lua_getfield(L, 1, "delayStart");
+//    if (!lua_isnil(L, 2)) {
+//        delayStart = lua_tonumber(L, 2);
+//        [adjustConfig setDelayStart:delayStart];
+//    }
+//    lua_pop(L, 1);
 
-    // Device known.
-    lua_getfield(L, 1, "isDeviceKnown");
-    if (!lua_isnil(L, 2)) {
-        isDeviceKnown = lua_toboolean(L, 2);
-        [adjustConfig setIsDeviceKnown:isDeviceKnown];
-    }
-    lua_pop(L, 1);
+//    // Device known.
+//    lua_getfield(L, 1, "isDeviceKnown");
+//    if (!lua_isnil(L, 2)) {
+//        isDeviceKnown = lua_toboolean(L, 2);
+//        [adjustConfig setIsDeviceKnown:isDeviceKnown];
+//    }
+//    lua_pop(L, 1);
 
-    // App secret.
-    lua_getfield(L, 1, "secretId");
-    if (!lua_isnil(L, 2)) {
-        secretId = lua_tointeger(L, 2);
-    }
-    lua_pop(L, 1);
-    lua_getfield(L, 1, "info1");
-    if (!lua_isnil(L, 2)) {
-        info1 = lua_tointeger(L, 2);
-    }
-    lua_pop(L, 1);
-    lua_getfield(L, 1, "info2");
-    if (!lua_isnil(L, 2)) {
-        info2 = lua_tointeger(L, 2);
-    }
-    lua_pop(L, 1);
-    lua_getfield(L, 1, "info3");
-    if (!lua_isnil(L, 2)) {
-        info3 = lua_tointeger(L, 2);
-    }
-    lua_pop(L, 1);
-    lua_getfield(L, 1, "info4");
-    if (!lua_isnil(L, 2)) {
-        info4 = lua_tointeger(L, 2);
-    }
-    lua_pop(L, 1);
-
-    if (secretId != -1 && info1 != -1 && info2 != -1 && info3 != -1 && info4 != -1) {
-        [adjustConfig setAppSecret:secretId info1:info1 info2:info2 info3:info3 info4:info4];
-    }
 
     // COPPA compliance.
     lua_getfield(L, 1, "coppaCompliant");
     if (!lua_isnil(L, 2)) {
         coppaCompliant = lua_toboolean(L, 2);
-        [adjustConfig setCoppaCompliantEnabled:coppaCompliant];
+        if (coppaCompliant == YES) {
+            [adjustConfig enableCoppaCompliance];
+        }
     }
     lua_pop(L, 1);
 
@@ -510,7 +490,9 @@ int AdjustPlugin::create(lua_State *L) {
     lua_getfield(L, 1, "linkMeEnabled");
     if (!lua_isnil(L, 2)) {
         linkMeEnabled = lua_toboolean(L, 2);
-        [adjustConfig setLinkMeEnabled:linkMeEnabled];
+        if (linkMeEnabled) {
+            [adjustConfig enableLinkMe];
+        }
     }
     lua_pop(L, 1);
 
@@ -546,8 +528,8 @@ int AdjustPlugin::create(lua_State *L) {
                                                                    andLuaState:L]];
     }
 
-    [Adjust appDidLaunch:adjustConfig];
-    [Adjust trackSubsessionStart];
+    [Adjust initSdk:adjustConfig];
+    NSLog(@"sdk init finished");
     return 0;
 }
 
@@ -690,68 +672,68 @@ int AdjustPlugin::trackAppStoreSubscription(lua_State *L) {
     lua_pop(L, 1);
 
     // Receipt.
-    lua_getfield(L, 1, "receipt");
-    if (!lua_isnil(L, 2)) {
-        const char *cstrReceipt = lua_tostring(L, 2);
-        if (cstrReceipt != NULL) {
-            receipt = [NSString stringWithUTF8String:cstrReceipt];
-            receiptValue = [receipt dataUsingEncoding:NSUTF8StringEncoding];
-        }
-    }
-    lua_pop(L, 1);
-
-    ADJSubscription *subscription = [[ADJSubscription alloc] initWithPrice:priceValue
-                                                                  currency:currency
-                                                             transactionId:transactionId
-                                                                andReceipt:receiptValue];
-
-    // Transaction date.
-    lua_getfield(L, 1, "transactionDate");
-    if (!lua_isnil(L, 2)) {
-        const char *cstrTransactionDate = lua_tostring(L, 2);
-        if (cstrTransactionDate != NULL) {
-            NSString *transactionDate = [NSString stringWithUTF8String:cstrTransactionDate];
-            NSTimeInterval transactionDateInterval = [transactionDate doubleValue];
-            NSDate *oTransactionDate = [NSDate dateWithTimeIntervalSince1970:transactionDateInterval];
-            [subscription setTransactionDate:oTransactionDate];
-        }
-    }
-    lua_pop(L, 1);
-
-    // Sales region.
-    lua_getfield(L, 1, "salesRegion");
-    if (!lua_isnil(L, 2)) {
-        const char *cstrSalesRegion = lua_tostring(L, 2);
-        if (cstrSalesRegion != NULL) {
-            NSString *salesRegion = [NSString stringWithUTF8String:cstrSalesRegion];
-            [subscription setSalesRegion:salesRegion];
-        }
-    }
-    lua_pop(L, 1);
-
-    // Callback parameters.
-    lua_getfield(L, 1, "callbackParameters");
-    if (!lua_isnil(L, 2) && lua_istable(L, 2)) {
-        NSDictionary *dict = CoronaLuaCreateDictionary(L, 2);
-        for (id key in dict) {
-            NSDictionary *callbackParams = [dict objectForKey:key];
-            [subscription addCallbackParameter:callbackParams[@"key"] value:callbackParams[@"value"]];
-        }
-    }
-    lua_pop(L, 1);
-
-    // Partner parameters.
-    lua_getfield(L, 1, "partnerParameters");
-    if (!lua_isnil(L, 2) && lua_istable(L, 2)) {
-        NSDictionary *dict = CoronaLuaCreateDictionary(L, 2);
-        for(id key in dict) {
-            NSDictionary *partnerParams = [dict objectForKey:key];
-            [subscription addPartnerParameter:partnerParams[@"key"] value:partnerParams[@"value"]];
-        }
-    }
-    lua_pop(L, 1);
-
-    [Adjust trackSubscription:subscription];
+//    lua_getfield(L, 1, "receipt");
+//    if (!lua_isnil(L, 2)) {
+//        const char *cstrReceipt = lua_tostring(L, 2);
+//        if (cstrReceipt != NULL) {
+//            receipt = [NSString stringWithUTF8String:cstrReceipt];
+//            receiptValue = [receipt dataUsingEncoding:NSUTF8StringEncoding];
+//        }
+//    }
+//    lua_pop(L, 1);
+//
+//    ADJSubscription *subscription = [[ADJSubscription alloc] initWithPrice:priceValue
+//                                                                  currency:currency
+//                                                             transactionId:transactionId
+//                                                                andReceipt:receiptValue];
+//
+//    // Transaction date.
+//    lua_getfield(L, 1, "transactionDate");
+//    if (!lua_isnil(L, 2)) {
+//        const char *cstrTransactionDate = lua_tostring(L, 2);
+//        if (cstrTransactionDate != NULL) {
+//            NSString *transactionDate = [NSString stringWithUTF8String:cstrTransactionDate];
+//            NSTimeInterval transactionDateInterval = [transactionDate doubleValue];
+//            NSDate *oTransactionDate = [NSDate dateWithTimeIntervalSince1970:transactionDateInterval];
+//            [subscription setTransactionDate:oTransactionDate];
+//        }
+//    }
+//    lua_pop(L, 1);
+//
+//    // Sales region.
+//    lua_getfield(L, 1, "salesRegion");
+//    if (!lua_isnil(L, 2)) {
+//        const char *cstrSalesRegion = lua_tostring(L, 2);
+//        if (cstrSalesRegion != NULL) {
+//            NSString *salesRegion = [NSString stringWithUTF8String:cstrSalesRegion];
+//            [subscription setSalesRegion:salesRegion];
+//        }
+//    }
+//    lua_pop(L, 1);
+//
+//    // Callback parameters.
+//    lua_getfield(L, 1, "callbackParameters");
+//    if (!lua_isnil(L, 2) && lua_istable(L, 2)) {
+//        NSDictionary *dict = CoronaLuaCreateDictionary(L, 2);
+//        for (id key in dict) {
+//            NSDictionary *callbackParams = [dict objectForKey:key];
+//            [subscription addCallbackParameter:callbackParams[@"key"] value:callbackParams[@"value"]];
+//        }
+//    }
+//    lua_pop(L, 1);
+//
+//    // Partner parameters.
+//    lua_getfield(L, 1, "partnerParameters");
+//    if (!lua_isnil(L, 2) && lua_istable(L, 2)) {
+//        NSDictionary *dict = CoronaLuaCreateDictionary(L, 2);
+//        for(id key in dict) {
+//            NSDictionary *partnerParams = [dict objectForKey:key];
+//            [subscription addPartnerParameter:partnerParams[@"key"] value:partnerParams[@"value"]];
+//        }
+//    }
+//    lua_pop(L, 1);
+//
+//    [Adjust trackSubscription:subscription];
     return 0;
 }
 
@@ -846,7 +828,7 @@ int AdjustPlugin::setSkan4ConversionValueUpdatedListener(lua_State *L) {
 // Public API.
 int AdjustPlugin::setEnabled(lua_State *L) {
     BOOL enabled = lua_toboolean(L, 1);
-    [Adjust setEnabled:enabled];
+//    [Adjust setEnabled:enabled];
     return 0;
 }
 
@@ -855,7 +837,7 @@ int AdjustPlugin::setPushToken(lua_State *L) {
     const char *cstrPushToken = lua_tostring(L, 1);
     if (cstrPushToken != NULL) {
         NSString *pushToken =[NSString stringWithUTF8String:cstrPushToken];
-        [Adjust setPushToken:pushToken];
+//        [Adjust setPushToken:pushToken];
     }
     return 0;
 }
@@ -988,52 +970,52 @@ int AdjustPlugin::trackAdRevenue(lua_State *L) {
 }
 
 // Public API.
-int AdjustPlugin::addSessionCallbackParameter(lua_State *L) {
+int AdjustPlugin::addGlobalCallbackParameter(lua_State *L) {
     const char *key = lua_tostring(L, 1);
     const char *value = lua_tostring(L, 2);
     if (key != NULL && value != NULL) {
-        [Adjust addSessionCallbackParameter:[NSString stringWithUTF8String:key] value:[NSString stringWithUTF8String:value]];
+        [Adjust addGlobalCallbackParameter:[NSString stringWithUTF8String:value] forKey:[NSString stringWithUTF8String:key]];
     }
     return 0;
 }
 
 // Public API.
-int AdjustPlugin::addSessionPartnerParameter(lua_State *L) {
+int AdjustPlugin::addGlobalPartnerParameter(lua_State *L) {
     const char *key = lua_tostring(L, 1);
     const char *value = lua_tostring(L, 2);
     if (key != NULL && value != NULL) {
-        [Adjust addSessionPartnerParameter:[NSString stringWithUTF8String:key] value:[NSString stringWithUTF8String:value]];
+        [Adjust addGlobalPartnerParameter:[NSString stringWithUTF8String:value] forKey:[NSString stringWithUTF8String:key]];
     }
     return 0;
 }
 
 // Public API.
-int AdjustPlugin::removeSessionCallbackParameter(lua_State *L) {
+int AdjustPlugin::removeGlobalCallbackParameter(lua_State *L) {
     const char *key = lua_tostring(L, 1);
     if (key != NULL) {
-        [Adjust removeSessionCallbackParameter:[NSString stringWithUTF8String:key]];
+        [Adjust removeGlobalCallbackParameterForKey:[NSString stringWithUTF8String:key]];
     }
     return 0;
 }
 
 // Public API.
-int AdjustPlugin::removeSessionPartnerParameter(lua_State *L) {
+int AdjustPlugin::removeGlobalPartnerParameter(lua_State *L) {
     const char *key = lua_tostring(L, 1);
     if (key != NULL) {
-        [Adjust removeSessionPartnerParameter:[NSString stringWithUTF8String:key]];
+        [Adjust removeGlobalPartnerParameterForKey:[NSString stringWithUTF8String:key]];
     }
     return 0;
 }
 
 // Public API.
-int AdjustPlugin::resetSessionCallbackParameters(lua_State *L) {
-    [Adjust resetSessionCallbackParameters];
+int AdjustPlugin::removeGlobalCallbackParameters(lua_State *L) {
+    [Adjust removeGlobalCallbackParameters];
     return 0;
 }
 
 // Public API.
-int AdjustPlugin::resetSessionPartnerParameters(lua_State *L) {
-    [Adjust resetSessionPartnerParameters];
+int AdjustPlugin::removeGlobalPartnerParameters(lua_State *L) {
+    [Adjust removeGlobalPartnerParameters];
     return 0;
 }
 
@@ -1075,11 +1057,12 @@ int AdjustPlugin::getSdkVersion(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
         CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
-        NSString *sdkVersion = [Adjust sdkVersion];
-        if (sdkVersion == nil) {
-            sdkVersion = @"";
-        }
-        [AdjustSdkDelegate dispatchEvent:EVENT_GET_SDK_VERSION withState:L callback:listener andMessage:[NSString stringWithFormat:@"%@@%@", SDK_PREFIX, sdkVersion]];
+        [Adjust sdkVersionWithCompletionHandler:^(NSString * _Nullable sdkVersion) {
+            if (sdkVersion == nil) {
+                sdkVersion = @"";
+            }
+            [AdjustSdkDelegate dispatchEvent:EVENT_GET_SDK_VERSION withState:L callback:listener andMessage:[NSString stringWithFormat:@"%@@%@", SDK_PREFIX, sdkVersion]];
+        }];
     }
     return 0;
 }
@@ -1099,7 +1082,6 @@ int AdjustPlugin::getAttribution(lua_State *L) {
             [AdjustSdkDelegate addKey:@"creative" andValue:attribution.creative toDictionary:dictionary];
             [AdjustSdkDelegate addKey:@"adgroup" andValue:attribution.adgroup toDictionary:dictionary];
             [AdjustSdkDelegate addKey:@"clickLabel" andValue:attribution.clickLabel toDictionary:dictionary];
-            [AdjustSdkDelegate addKey:@"adid" andValue:attribution.adid toDictionary:dictionary];
             [AdjustSdkDelegate addKey:@"costType" andValue:attribution.costType toDictionary:dictionary];
             [AdjustSdkDelegate addKey:@"costAmount" andValue:attribution.costAmount toDictionary:dictionary];
             [AdjustSdkDelegate addKey:@"costCurrency" andValue:attribution.costCurrency toDictionary:dictionary];
@@ -1349,101 +1331,155 @@ int AdjustPlugin::onPause(lua_State *L) {
 
 // For testing purposes only.
 int AdjustPlugin::setTestOptions(lua_State *L) {
-    AdjustTestOptions *testOptions = [[AdjustTestOptions alloc] init];
-    
-    lua_getfield(L, 1, "baseUrl");
-    if (!lua_isnil(L, 2)) {
-        const char *baseUrl = lua_tostring(L, 2);
-        if (baseUrl != NULL) {
-            testOptions.baseUrl = [NSString stringWithUTF8String:baseUrl];
-        }
-    }
-    lua_pop(L, 1);
-    
-    lua_getfield(L, 1, "gdprUrl");
-    if (!lua_isnil(L, 2)) {
-        const char *gdprUrl = lua_tostring(L, 2);
-        if (gdprUrl != NULL) {
-            testOptions.gdprUrl = [NSString stringWithUTF8String:gdprUrl];
-        }
-    }
-    lua_pop(L, 1);
-
-    lua_getfield(L, 1, "subscriptionUrl");
-    if (!lua_isnil(L, 2)) {
-        const char *subscriptionUrl = lua_tostring(L, 2);
-        if (subscriptionUrl != NULL) {
-            testOptions.subscriptionUrl = [NSString stringWithUTF8String:subscriptionUrl];
-        }
-    }
-    lua_pop(L, 1);
-    
-    lua_getfield(L, 1, "extraPath");
-    if (!lua_isnil(L, 2)) {
-        const char *extraPath = lua_tostring(L, 2);
-        if (extraPath != NULL) {
-            testOptions.extraPath = [NSString stringWithUTF8String:extraPath];
-        }
-    }
-    lua_pop(L, 1);
-    
-    lua_getfield(L, 1, "timerIntervalInMilliseconds");
-    if (!lua_isnil(L, 2)) {
-        NSUInteger timerIntervalInMilliseconds = lua_tointeger(L, 2);
-        testOptions.timerIntervalInMilliseconds = [NSNumber numberWithInteger:timerIntervalInMilliseconds];
-    }
-    lua_pop(L, 1);
-    
-    lua_getfield(L, 1, "timerStartInMilliseconds");
-    if (!lua_isnil(L, 2)) {
-        NSUInteger timerStartInMilliseconds = lua_tointeger(L, 2);
-        testOptions.timerStartInMilliseconds = [NSNumber numberWithInteger:timerStartInMilliseconds];
-    }
-    lua_pop(L, 1);
-    
-    lua_getfield(L, 1, "sessionIntervalInMilliseconds");
-    if (!lua_isnil(L, 2)) {
-        NSUInteger sessionIntervalInMilliseconds = lua_tointeger(L, 2);
-        testOptions.sessionIntervalInMilliseconds = [NSNumber numberWithInteger:sessionIntervalInMilliseconds];
-    }
-    lua_pop(L, 1);
-    
-    lua_getfield(L, 1, "subsessionIntervalInMilliseconds");
-    if (!lua_isnil(L, 2)) {
-        NSUInteger subsessionIntervalInMilliseconds = lua_tointeger(L, 2);
-        testOptions.subsessionIntervalInMilliseconds = [NSNumber numberWithInteger:subsessionIntervalInMilliseconds];
-    }
-    lua_pop(L, 1);
-    
-    lua_getfield(L, 1, "teardown");
-    if (!lua_isnil(L, 2)) {
-        testOptions.teardown = lua_toboolean(L, 2);
-        if(testOptions.teardown) {
-            NSLog(@"[Adjust][bridge]: AdjustSdkDelegate callbacks teardown.");
-            [AdjustSdkDelegate teardown];
-        }
-    }
-    lua_pop(L, 1);
-    
-    lua_getfield(L, 1, "deleteState");
-    if (!lua_isnil(L, 2)) {
-        testOptions.deleteState = lua_toboolean(L, 2);
-    }
-    lua_pop(L, 1);
-    
-    lua_getfield(L, 1, "noBackoffWait");
-    if (!lua_isnil(L, 2)) {
-        testOptions.noBackoffWait = lua_toboolean(L, 2);
-    }
-    lua_pop(L, 1);
-
-    lua_getfield(L, 1, "adServicesFrameworkEnabled");
-    if (!lua_isnil(L, 2)) {
-        testOptions.adServicesFrameworkEnabled = lua_toboolean(L, 2);
-    }
-    lua_pop(L, 1);
-
-    [Adjust setTestOptions:testOptions];
+//    NSMutableDictionary *testOptions = [[NSMutableDictionary alloc] init];
+//
+//    if (call.arguments[@"urlOverwrite"] != nil) {
+//        [testOptions setObject:call.arguments[@"urlOverwrite"] forKey:@"testUrlOverwrite"];
+//    }
+//    if (call.arguments[@"extraPath"] != nil) {
+//        [testOptions setObject:call.arguments[@"extraPath"] forKey:@"extraPath"];
+//    }
+//    if (call.arguments[@"basePath"] != nil) {
+//        [testOptions setObject:call.arguments[@"basePath"] forKey:@"basePath"];
+//    }
+//    if (call.arguments[@"timerIntervalInMilliseconds"] != nil) {
+//        [testOptions setObject:call.arguments[@"timerIntervalInMilliseconds"] forKey:@"timerIntervalInMilliseconds"];
+//    }
+//    if (call.arguments[@"timerStartInMilliseconds"] != nil) {
+//        [testOptions setObject:call.arguments[@"timerStartInMilliseconds"] forKey:@"timerStartInMilliseconds"];
+//    }
+//    if (call.arguments[@"sessionIntervalInMilliseconds"] != nil) {
+//        [testOptions setObject:call.arguments[@"sessionIntervalInMilliseconds"] forKey:@"sessionIntervalInMilliseconds"];
+//    }
+//    if (call.arguments[@"subsessionIntervalInMilliseconds"] != nil) {
+//        [testOptions setObject:call.arguments[@"subsessionIntervalInMilliseconds"] forKey:@"subsessionIntervalInMilliseconds"];
+//    }
+//    if (call.arguments[@"teardown"] != nil) {
+//        [testOptions setObject:call.arguments[@"teardown"] forKey:@"teardown"];
+//        if ([testOptions[@"teardown"] isEqualToString:@"true"] == YES) {
+//            [AdjustSdkDelegate teardown];
+//        }
+//    }
+//    if (call.arguments[@"resetSdk"] != nil) {
+//        [testOptions setObject:call.arguments[@"resetSdk"] forKey:@"resetSdk"];
+//    }
+//    if (call.arguments[@"deleteState"] != nil) {
+//        [testOptions setObject:call.arguments[@"deleteState"] forKey:@"deleteState"];
+//    }
+//    if (call.arguments[@"resetTest"] != nil) {
+//        [testOptions setObject:call.arguments[@"resetTest"] forKey:@"resetTest"];
+//    }
+//    if (call.arguments[@"noBackoffWait"] != nil) {
+//        [testOptions setObject:call.arguments[@"noBackoffWait"] forKey:@"noBackoffWait"];
+//    }
+//    if (call.arguments[@"adServicesFrameworkEnabled"] != nil) {
+//        [testOptions setObject:call.arguments[@"adServicesFrameworkEnabled"] forKey:@"adServicesFrameworkEnabled"];
+//    }
+//    if (call.arguments[@"attStatus"] != nil) {
+//        [testOptions setObject:call.arguments[@"attStatus"] forKey:@"attStatusInt"];
+//    }
+//    if (call.arguments[@"idfa"] != nil) {
+//        [testOptions setObject:call.arguments[@"idfa"] forKey:@"idfa"];
+//    }
+//
+//    [Adjust setTestOptions:testOptions];
+//    
+//    
+//    AdjustTestOptions *testOptions = [[AdjustTestOptions alloc] init];
+//    
+//    lua_getfield(L, 1, "baseUrl");
+//    if (!lua_isnil(L, 2)) {
+//        const char *baseUrl = lua_tostring(L, 2);
+//        if (baseUrl != NULL) {
+//            testOptions.baseUrl = [NSString stringWithUTF8String:baseUrl];
+//        }
+//    }
+//    lua_pop(L, 1);
+//    
+//    lua_getfield(L, 1, "gdprUrl");
+//    if (!lua_isnil(L, 2)) {
+//        const char *gdprUrl = lua_tostring(L, 2);
+//        if (gdprUrl != NULL) {
+//            testOptions.gdprUrl = [NSString stringWithUTF8String:gdprUrl];
+//        }
+//    }
+//    lua_pop(L, 1);
+//
+//    lua_getfield(L, 1, "subscriptionUrl");
+//    if (!lua_isnil(L, 2)) {
+//        const char *subscriptionUrl = lua_tostring(L, 2);
+//        if (subscriptionUrl != NULL) {
+//            testOptions.subscriptionUrl = [NSString stringWithUTF8String:subscriptionUrl];
+//        }
+//    }
+//    lua_pop(L, 1);
+//    
+//    lua_getfield(L, 1, "extraPath");
+//    if (!lua_isnil(L, 2)) {
+//        const char *extraPath = lua_tostring(L, 2);
+//        if (extraPath != NULL) {
+//            testOptions.extraPath = [NSString stringWithUTF8String:extraPath];
+//        }
+//    }
+//    lua_pop(L, 1);
+//    
+//    lua_getfield(L, 1, "timerIntervalInMilliseconds");
+//    if (!lua_isnil(L, 2)) {
+//        NSUInteger timerIntervalInMilliseconds = lua_tointeger(L, 2);
+//        testOptions.timerIntervalInMilliseconds = [NSNumber numberWithInteger:timerIntervalInMilliseconds];
+//    }
+//    lua_pop(L, 1);
+//    
+//    lua_getfield(L, 1, "timerStartInMilliseconds");
+//    if (!lua_isnil(L, 2)) {
+//        NSUInteger timerStartInMilliseconds = lua_tointeger(L, 2);
+//        testOptions.timerStartInMilliseconds = [NSNumber numberWithInteger:timerStartInMilliseconds];
+//    }
+//    lua_pop(L, 1);
+//    
+//    lua_getfield(L, 1, "sessionIntervalInMilliseconds");
+//    if (!lua_isnil(L, 2)) {
+//        NSUInteger sessionIntervalInMilliseconds = lua_tointeger(L, 2);
+//        testOptions.sessionIntervalInMilliseconds = [NSNumber numberWithInteger:sessionIntervalInMilliseconds];
+//    }
+//    lua_pop(L, 1);
+//    
+//    lua_getfield(L, 1, "subsessionIntervalInMilliseconds");
+//    if (!lua_isnil(L, 2)) {
+//        NSUInteger subsessionIntervalInMilliseconds = lua_tointeger(L, 2);
+//        testOptions.subsessionIntervalInMilliseconds = [NSNumber numberWithInteger:subsessionIntervalInMilliseconds];
+//    }
+//    lua_pop(L, 1);
+//    
+//    lua_getfield(L, 1, "teardown");
+//    if (!lua_isnil(L, 2)) {
+//        testOptions.teardown = lua_toboolean(L, 2);
+//        if(testOptions.teardown) {
+//            NSLog(@"[Adjust][bridge]: AdjustSdkDelegate callbacks teardown.");
+//            [AdjustSdkDelegate teardown];
+//        }
+//    }
+//    lua_pop(L, 1);
+//    
+//    lua_getfield(L, 1, "deleteState");
+//    if (!lua_isnil(L, 2)) {
+//        testOptions.deleteState = lua_toboolean(L, 2);
+//    }
+//    lua_pop(L, 1);
+//    
+//    lua_getfield(L, 1, "noBackoffWait");
+//    if (!lua_isnil(L, 2)) {
+//        testOptions.noBackoffWait = lua_toboolean(L, 2);
+//    }
+//    lua_pop(L, 1);
+//
+//    lua_getfield(L, 1, "adServicesFrameworkEnabled");
+//    if (!lua_isnil(L, 2)) {
+//        testOptions.adServicesFrameworkEnabled = lua_toboolean(L, 2);
+//    }
+//    lua_pop(L, 1);
+//
+//    [Adjust setTestOptions:testOptions];
     return 0;
 }
 

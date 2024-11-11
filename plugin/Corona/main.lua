@@ -16,7 +16,7 @@ Runtime:addEventListener("system", onSystemEvent)
 local launchArgs = ...
 if launchArgs and launchArgs.url then
     print("[Adjust]: launchArgs.url = (" .. launchArgs.url)
-    adjust.appWillOpenUrl(launchArgs.url)
+    adjust.processDeeplink(launchArgs.url)
 end
 
 -- set up listeners
@@ -115,7 +115,7 @@ adjust.addGlobalPartnerParameter("spp3", "spp3_value3")
 adjust.removeGlobalPartnerParameter("spp1")
 adjust.removeGlobalPartnerParameters()
 
-adjust.create({
+adjust.initSdk({
     appToken = "2fm9gkqubvpc",
     environment = "SANDBOX",
     logLevel = "VERBOSE",
@@ -155,7 +155,7 @@ end)
 
 -- setting up assets
 -- ------------------------
-display.setDefault("background", 1, 1, 1)
+display.setDefault("background", 229,255,204)
 
 -- Track Revenue Event
 -- ------------------------

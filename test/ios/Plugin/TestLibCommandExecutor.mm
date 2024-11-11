@@ -19,14 +19,17 @@
 - (id)initWithPluginLibrary:(PluginLibrary *)pluginLibrary {
     self = [super init];
     if (self == nil) {
+        NSLog(@"plugin library is null");
         return nil;
     }
 
     self.pluginLibrary = pluginLibrary;
+    NSLog(@"Plugi libarary is not NULL");
     return self;
 }
 
 - (void)executeCommandRawJson:(NSString *)json {
+    NSLog(@"%@", json);
     self.pluginLibrary->dispachExecuteCommand(json);
 }
 
