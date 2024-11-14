@@ -42,7 +42,7 @@ int PluginLibrary::Open(lua_State *L) {
         { "startTestSession", startTestSession },
         { "addInfoToSend", addInfoToSend },
         { "sendInfoToServer", sendInfoToServer },
-        { "setTestConnectionOptions",  },
+        { "setTestConnectionOptions", NULL },
         
         { NULL, NULL }
     };

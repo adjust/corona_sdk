@@ -27,9 +27,6 @@
 		9DB9CA9D250658800020508F /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A484117515128D5D0074BD57 /* StoreKit.framework */; };
 		9DB9CA9F2506588E0020508F /* AppTrackingTransparency.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DB9CA9E2506588E0020508F /* AppTrackingTransparency.framework */; };
 		9DD299B421F725350054DA79 /* _CoronaSplashScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 9DD299B021F725350054DA79 /* _CoronaSplashScreen.png */; };
-		9DD299B521F725350054DA79 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9DD299B121F725350054DA79 /* MainWindow.xib */; };
-		9DD299B621F725350054DA79 /* CoronaResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 9DD299B221F725350054DA79 /* CoronaResources.bundle */; };
-		9DD299B721F725350054DA79 /* MainWindow-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9DD299B321F725350054DA79 /* MainWindow-iPad.xib */; };
 		A447B610165D72FB009EA762 /* AppCoronaDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = A447B60F165D72FB009EA762 /* AppCoronaDelegate.mm */; };
 		A46885F218068C2200381941 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A484112315114F700074BD57 /* GLKit.framework */; };
 		A46885F418068C2900381941 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A46885F318068C2900381941 /* CoreVideo.framework */; };
@@ -63,6 +60,10 @@
 		A4C2449C1683FA5300C395D1 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4C244991683FA5300C395D1 /* Social.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		A4E2537F166AE3DC00DCDC2C /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E2537E166AE3DC00DCDC2C /* Twitter.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		C22C1E4B1E981D9000D74196 /* LaunchScreen.storyboardc in Resources */ = {isa = PBXBuildFile; fileRef = C22C1E4A1E981D9000D74196 /* LaunchScreen.storyboardc */; };
+		E4692A722CE4E844002BF432 /* AdjustSigSdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4692A712CE4E829002BF432 /* AdjustSigSdk.a */; };
+		E4692A7B2CE4F2EB002BF432 /* MainWindow-iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = E4692A792CE4F2EB002BF432 /* MainWindow-iPad.xib */; };
+		E4692A7C2CE4F2EB002BF432 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = E4692A7A2CE4F2EB002BF432 /* MainWindow.xib */; };
+		E4692A7D2CE4F34F002BF432 /* CoronaResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 9DD299B221F725350054DA79 /* CoronaResources.bundle */; };
 		E640B2F21BFC00B00031FAE9 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E640B2F11BFC00B00031FAE9 /* AssetsLibrary.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		E640B2F41BFC00BA0031FAE9 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E640B2F31BFC00BA0031FAE9 /* Photos.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		F51C66D61EE0D3B20040E4BE /* libplugin_adjust.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E253E2166DE7C800DCDC2C /* libplugin_adjust.a */; };
@@ -138,6 +139,9 @@
 		A4E253DA166DE7C800DCDC2C /* Plugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Plugin.xcodeproj; sourceTree = "<group>"; };
 		C22C1E4A1E981D9000D74196 /* LaunchScreen.storyboardc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.storyboardc; name = LaunchScreen.storyboardc; path = ../Corona/LaunchScreen.storyboardc; sourceTree = "<group>"; };
 		C277D3B51EBB9F8E00966BA1 /* _CoronaSplashScreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = _CoronaSplashScreen.png; sourceTree = "<group>"; };
+		E4692A712CE4E829002BF432 /* AdjustSigSdk.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = AdjustSigSdk.a; path = ../../test/ios/AdjustSigSdk.a; sourceTree = "<group>"; };
+		E4692A792CE4F2EB002BF432 /* MainWindow-iPad.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "MainWindow-iPad.xib"; path = "../Corona/MainWindow-iPad.xib"; sourceTree = "<group>"; };
+		E4692A7A2CE4F2EB002BF432 /* MainWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = MainWindow.xib; path = ../Corona/MainWindow.xib; sourceTree = "<group>"; };
 		E640B2F11BFC00B00031FAE9 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		E640B2F31BFC00BA0031FAE9 /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		F54A40BD1EE07F9100AF417D /* build.settings */ = {isa = PBXFileReference; lastKnownFileType = text; name = build.settings; path = ../Corona/build.settings; sourceTree = "<group>"; };
@@ -167,6 +171,7 @@
 				A484117815128D5D0074BD57 /* AddressBookUI.framework in Frameworks */,
 				A484117915128D5D0074BD57 /* AudioToolbox.framework in Frameworks */,
 				A484117A15128D5D0074BD57 /* AVFoundation.framework in Frameworks */,
+				E4692A722CE4E844002BF432 /* AdjustSigSdk.a in Frameworks */,
 				A484117B15128D5D0074BD57 /* CFNetwork.framework in Frameworks */,
 				A484112215114F700074BD57 /* CoreGraphics.framework in Frameworks */,
 				A484117C15128D5D0074BD57 /* CoreLocation.framework in Frameworks */,
@@ -234,6 +239,8 @@
 		A484110E15114F700074BD57 = {
 			isa = PBXGroup;
 			children = (
+				E4692A7A2CE4F2EB002BF432 /* MainWindow.xib */,
+				E4692A792CE4F2EB002BF432 /* MainWindow-iPad.xib */,
 				A4E253DA166DE7C800DCDC2C /* Plugin.xcodeproj */,
 				A484112715114F700074BD57 /* App */,
 				A447B823166856C7009EA762 /* Corona */,
@@ -254,6 +261,7 @@
 		A484111C15114F700074BD57 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E4692A712CE4E829002BF432 /* AdjustSigSdk.a */,
 				9D48258026453C5F00E9227D /* AdServices.framework */,
 				9DB9CA9E2506588E0020508F /* AppTrackingTransparency.framework */,
 				9D673C81242ADA63000EC752 /* iAd.framework */,
@@ -404,13 +412,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E4692A7D2CE4F34F002BF432 /* CoronaResources.bundle in Resources */,
+				E4692A7B2CE4F2EB002BF432 /* MainWindow-iPad.xib in Resources */,
+				E4692A7C2CE4F2EB002BF432 /* MainWindow.xib in Resources */,
 				A484112C15114F700074BD57 /* InfoPlist.strings in Resources */,
 				F56457D91FA108F500EC8C29 /* Images.xcassets in Resources */,
-				9DD299B521F725350054DA79 /* MainWindow.xib in Resources */,
-				9DD299B721F725350054DA79 /* MainWindow-iPad.xib in Resources */,
 				C22C1E4B1E981D9000D74196 /* LaunchScreen.storyboardc in Resources */,
 				9DD299B421F725350054DA79 /* _CoronaSplashScreen.png in Resources */,
-				9DD299B621F725350054DA79 /* CoronaResources.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -649,6 +657,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F55829801ED23E1200E5808C /* CoronaApp.xcconfig */;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = "$(inherited)\n$(PROJECT_DIR)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				DEVELOPMENT_TEAM = QGUGW9AUMK;
@@ -668,6 +677,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F55829801ED23E1200E5808C /* CoronaApp.xcconfig */;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = "$(inherited)\n$(PROJECT_DIR)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				DEVELOPMENT_TEAM = QGUGW9AUMK;

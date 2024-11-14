@@ -467,7 +467,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Ensures that next attempt to build actually rebuilds the executable so it can be (re)app_sign(ed)\necho \"Updating modification time of $PROJECT_DIR/main.mm to trigger relink of $BUILT_PRODUCTS_DIR/$EXECUTABLE_PATH\"\necho \"We need to do this b/c app_sign can only sign an unsigned executable.\"\ntouch \"$PROJECT_DIR/main.mm\"";
+			shellScript = "# Ensures that next attempt to build actually rebuilds the executable so it can be (re)app_sign(ed)\necho \"Updating modification time of $PROJECT_DIR/main.mm to trigger relink of $BUILT_PRODUCTS_DIR/$EXECUTABLE_PATH\"\necho \"We need to do this b/c app_sign can only sign an unsigned executable.\"\ntouch \"$PROJECT_DIR/main.mm\"\n";
 			showEnvVarsInLog = 0;
 		};
 		C28A3B451EE9F8FD00F08609 /* Corona Native */ = {

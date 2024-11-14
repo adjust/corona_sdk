@@ -88,18 +88,18 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
             [defaultInstance swizzleOriginalSelector:@selector(adjustSessionTrackingFailed:)
                                         withSelector:@selector(adjustSessionTrackingFailedWannabe:)];
         }
-        if (deferredDeeplinkCallback != NULL) {
-            [defaultInstance swizzleOriginalSelector:@selector(adjustDeeplinkResponse:)
-                                        withSelector:@selector(adjustDeeplinkResponseWannabe:)];
-        }
-        if (conversionValueUpdatedCallback != NULL) {
-            [defaultInstance swizzleOriginalSelector:@selector(adjustConversionValueUpdated:)
-                                        withSelector:@selector(adjustConversionValueUpdatedWannabe:)];
-        }
-        if (skan4ConversionValueUpdatedCallback != NULL) {
-            [defaultInstance swizzleOriginalSelector:@selector(adjustConversionValueUpdated:coarseValue:lockWindow:)
-                                        withSelector:@selector(adjustConversionValueUpdatedWannabe:coarseValue:lockWindow:)];
-        }
+//        if (deferredDeeplinkCallback != NULL) {
+//            [defaultInstance swizzleOriginalSelector:@selector(adjustDeeplinkResponse:)
+//                                        withSelector:@selector(adjustDeeplinkResponseWannabe:)];
+//        }
+//        if (conversionValueUpdatedCallback != NULL) {
+//            [defaultInstance swizzleOriginalSelector:@selector(adjustConversionValueUpdated:)
+//                                        withSelector:@selector(adjustConversionValueUpdatedWannabe:)];
+//        }
+//        if (skan4ConversionValueUpdatedCallback != NULL) {
+//            [defaultInstance swizzleOriginalSelector:@selector(adjustConversionValueUpdated:coarseValue:lockWindow:)
+//                                        withSelector:@selector(adjustConversionValueUpdatedWannabe:coarseValue:lockWindow:)];
+//        }
 
         [defaultInstance setAttributionChangedCallback:attributionCallback];
         [defaultInstance setEventTrackingSuccessCallback:eventTrackingSuccessCallback];
@@ -125,13 +125,20 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
             withState:(lua_State *)luaState
              callback:(CoronaLuaRef)callback
            andMessage:(NSString *)message {
-    // Create event and add message to it.
-    CoronaLuaNewEvent(luaState, [eventName UTF8String]);
-    lua_pushstring(luaState, [message UTF8String]);
-    lua_setfield(luaState, -2, "message");
+    @try {
+        CoronaLuaNewEvent(luaState, [eventName UTF8String]);
+        lua_pushstring(luaState, [message UTF8String]);
+        lua_setfield(luaState, -2, "message");
 
-    // Dispatch event to library's listener
-    CoronaLuaDispatchEvent(luaState, callback, 0);
+        // Dispatch event to library's listener
+        CoronaLuaDispatchEvent(luaState, callback, 0);
+    } @catch (NSException *exception) {
+        NSLog(@"exception: %@", exception);
+    } @finally {
+        NSLog(@"event dispatched");
+    }
+    // Create event and add message to it.
+    
 }
 
 + (void)addKey:(NSString *)key

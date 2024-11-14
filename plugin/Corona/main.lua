@@ -7,7 +7,7 @@ local function onSystemEvent(event)
     if event.type == "applicationOpen" and event.url then
         print("[Adjust]: applicationOpen event. url = " .. event.url)
         -- Capture app event opened from deep link
-        adjust.appWillOpenUrl(event.url)
+         adjust.processDeeplink(event.url)
     end
 end
 
@@ -32,7 +32,7 @@ local function attributionListener(event)
     print("[Adjust]: Cost type: " .. json_attribution.costType)
     print("[Adjust]: Cost amount: " .. json_attribution.costAmount)
     print("[Adjust]: Cost currency: " .. json_attribution.costCurrency)
-    print("[Adjust]: FB install referrer: " .. json_attribution.fbInstallReferrer)
+    -- print("[Adjust]: FB install referrer: " .. json_attribution.fbInstallReferrer)
 end
 
 local function sessionTrackingSuccessListener(event)
@@ -93,27 +93,27 @@ local function skan4ConversionValueUpdatedListener(event)
 end
 
 -- initialize Adjust SDK
-
-adjust.setAttributionListener(attributionListener)
-adjust.setEventTrackingSuccessListener(eventTrackingSuccessListener)
-adjust.setEventTrackingFailureListener(eventTrackingFailureListener)
-adjust.setSessionTrackingSuccessListener(sessionTrackingSuccessListener)
-adjust.setSessionTrackingFailureListener(sessionTrackingFailureListener)
-adjust.setDeferredDeeplinkListener(deferredDeeplinkListener)
-adjust.setConversionValueUpdatedListener(conversionValueUpdatedListener)
--- adjust.setSkan4ConversionValueUpdatedListener(skan4ConversionValueUpdatedListener)
-
-adjust.addGlobalCallbackParameter("scp1", "scp1_value1")
-adjust.addGlobalCallbackParameter("scp2", "scp2_value2")
-adjust.addGlobalCallbackParameter("scp3", "scp3_value3")
-adjust.removeGlobalCallbackParameter("scp2")
-adjust.removeGlobalCallbackParameters()
-
-adjust.addGlobalPartnerParameter("spp1", "spp1_value1")
-adjust.addGlobalPartnerParameter("spp2", "spp2_value2")
-adjust.addGlobalPartnerParameter("spp3", "spp3_value3")
-adjust.removeGlobalPartnerParameter("spp1")
-adjust.removeGlobalPartnerParameters()
+--
+--adjust.setAttributionListener(attributionListener)
+--adjust.setEventTrackingSuccessListener(eventTrackingSuccessListener)
+--adjust.setEventTrackingFailureListener(eventTrackingFailureListener)
+--adjust.setSessionTrackingSuccessListener(sessionTrackingSuccessListener)
+--adjust.setSessionTrackingFailureListener(sessionTrackingFailureListener)
+--adjust.setDeferredDeeplinkListener(deferredDeeplinkListener)
+--adjust.setConversionValueUpdatedListener(conversionValueUpdatedListener)
+---- adjust.setSkan4ConversionValueUpdatedListener(skan4ConversionValueUpdatedListener)
+--
+--adjust.addGlobalCallbackParameter("scp1", "scp1_value1")
+--adjust.addGlobalCallbackParameter("scp2", "scp2_value2")
+--adjust.addGlobalCallbackParameter("scp3", "scp3_value3")
+--adjust.removeGlobalCallbackParameter("scp2")
+--adjust.removeGlobalCallbackParameters()
+--
+--adjust.addGlobalPartnerParameter("spp1", "spp1_value1")
+--adjust.addGlobalPartnerParameter("spp2", "spp2_value2")
+--adjust.addGlobalPartnerParameter("spp3", "spp3_value3")
+--adjust.removeGlobalPartnerParameter("spp1")
+--adjust.removeGlobalPartnerParameters()
 
 adjust.initSdk({
     appToken = "2fm9gkqubvpc",
@@ -131,24 +131,19 @@ adjust.initSdk({
     -- defaultTracker = "abc123",
     -- userAgent = "Random User Agent 6.6"
     -- readMobileEquipmentIdentity = true
-    -- secretId = aaa,
-    -- info1 = bbb,
-    -- info2 = ccc,
-    -- info3 = ddd,
-    -- info4 = eee,
     -- coppaCompliant = true,
     -- linkMeEnabled = true,
     -- playStoreKidsApp = true,
 })
 
-adjust.requestTrackingAuthorizationWithCompletionHandler(function(event)
-    print("[Adjust]: Authorization status = " .. event.message)
-    if     event.message == "0" then print("[Adjust]: ATTrackingManagerAuthorizationStatusNotDetermined")
-    elseif event.message == "1" then print("[Adjust]: ATTrackingManagerAuthorizationStatusRestricted")
-    elseif event.message == "2" then print("[Adjust]: ATTrackingManagerAuthorizationStatusDenied")
-    elseif event.message == "3" then print("[Adjust]: ATTrackingManagerAuthorizationStatusAuthorized")
-    end
-end)
+--adjust.requestTrackingAuthorizationWithCompletionHandler(function(event)
+--    print("[Adjust]: Authorization status = " .. event.message)
+--    if     event.message == "0" then print("[Adjust]: ATTrackingManagerAuthorizationStatusNotDetermined")
+--    elseif event.message == "1" then print("[Adjust]: ATTrackingManagerAuthorizationStatusRestricted")
+--    elseif event.message == "2" then print("[Adjust]: ATTrackingManagerAuthorizationStatusDenied")
+--    elseif event.message == "3" then print("[Adjust]: ATTrackingManagerAuthorizationStatusAuthorized")
+--    end
+--end)
 
 -- adjust.setPushToken("{YourPushToken}")
 -- adjust.sendFirstPackages()
@@ -161,6 +156,7 @@ display.setDefault("background", 229,255,204)
 -- ------------------------
 local function handleTrackSimpleEvent(event)
     if ("ended" == event.phase) then
+        print("event called")
         adjust.trackEvent({
             eventToken = "g3mfiw"
         })
@@ -342,8 +338,10 @@ widget.newButton({
 
 -- Enable offline mode
 -- ------------------------
-local function handleEnableOfflineMode()
-    adjust.switchToOfflineMode()
+local function handleEnableOfflineMode(event)
+    if ("ended" == event.phase) then
+        adjust.switchToOfflineMode()
+    end
 end
 
 widget.newButton({
@@ -357,7 +355,9 @@ widget.newButton({
 -- Disable offline mode
 -- ------------------------
 local function handleDisableOfflineMode(event)
-    adjust.switchBackToOnlineMode(false)
+    if ("ended" == event.phase) then
+        adjust.switchBackToOnlineMode(false)
+    end
 end
 
 widget.newButton({
@@ -371,7 +371,9 @@ widget.newButton({
 -- Enable SDK
 -- ------------------------
 local function handleEnableSdk(event)
-    adjust.enable()
+    if ("ended" == event.phase) then
+        adjust.enable()
+    end
 end
 
 widget.newButton({
@@ -385,7 +387,9 @@ widget.newButton({
 -- Disable SDK
 -- ------------------------
 local function handleDisableSdk(event)
-    adjust.disable()
+    if ("ended" == event.phase) then
+        adjust.disable()
+    end
 end
 
 widget.newButton({
