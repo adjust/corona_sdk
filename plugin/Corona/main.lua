@@ -32,7 +32,7 @@ local function attributionListener(event)
     print("[Adjust]: Cost type: " .. json_attribution.costType)
     print("[Adjust]: Cost amount: " .. json_attribution.costAmount)
     print("[Adjust]: Cost currency: " .. json_attribution.costCurrency)
-    -- print("[Adjust]: FB install referrer: " .. json_attribution.fbInstallReferrer)
+    print("[Adjust]: FB install referrer: " .. json_attribution.fbInstallReferrer)
 end
 
 local function sessionTrackingSuccessListener(event)
@@ -94,7 +94,7 @@ end
 
 -- initialize Adjust SDK
 --
---adjust.setAttributionListener(attributionListener)
+adjust.setAttributionListener(attributionListener)
 --adjust.setEventTrackingSuccessListener(eventTrackingSuccessListener)
 --adjust.setEventTrackingFailureListener(eventTrackingFailureListener)
 --adjust.setSessionTrackingSuccessListener(sessionTrackingSuccessListener)

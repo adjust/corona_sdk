@@ -32,6 +32,7 @@ NSString * const KEY_ADID = @"adid";
 NSString * const KEY_COST_TYPE = @"costType";
 NSString * const KEY_COST_AMOUNT = @"costAmount";
 NSString * const KEY_COST_CURRENCY = @"costCurrency";
+NSString * const KEY_FB_INSTALL_REFERRER = @"fbInstallReferrer";
 NSString * const KEY_MESSAGE = @"message";
 NSString * const KEY_TIMESTAMP = @"timestamp";
 NSString * const KEY_EVENT_TOKEN = @"eventToken";
@@ -169,6 +170,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
     [AdjustSdkDelegate addKey:KEY_COST_TYPE andValue:attribution.costType toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_COST_AMOUNT andValue:attribution.costAmount toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_COST_CURRENCY andValue:attribution.costCurrency toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:KEY_FB_INSTALL_REFERRER andValue:nil toDictionary:dictionary];
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
