@@ -107,10 +107,10 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
         [defaultInstance setEventTrackingFailureCallback:eventTrackingFailureCallback];
         [defaultInstance setSessionTrackingSuccessCallback:sessionTrackingSuccessCallback];
         [defaultInstance setSessionTrackingFailureCallback:sessionTrackingFailureCallback];
-        [defaultInstance setDeferredDeeplinkCallback:deferredDeeplinkCallback];
-        [defaultInstance setConversionValueUpdatedCallback:conversionValueUpdatedCallback];
-        [defaultInstance setSkan4ConversionValueUpdatedCallback:skan4ConversionValueUpdatedCallback];
-        [defaultInstance setShouldLaunchDeferredDeeplink:shouldLaunchDeferredDeeplink];
+//        [defaultInstance setDeferredDeeplinkCallback:deferredDeeplinkCallback];
+//        [defaultInstance setConversionValueUpdatedCallback:conversionValueUpdatedCallback];
+//        [defaultInstance setSkan4ConversionValueUpdatedCallback:skan4ConversionValueUpdatedCallback];
+//        [defaultInstance setShouldLaunchDeferredDeeplink:shouldLaunchDeferredDeeplink];
         [defaultInstance setLuaState:luaState];
     });
 

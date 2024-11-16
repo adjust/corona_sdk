@@ -113,10 +113,8 @@ int PluginLibrary::addTestDirectory(lua_State *L) {
 
 int PluginLibrary::startTestSession(lua_State *L) {
     Self *library = ToLibrary(L);
-    const char *clientSdk = lua_tostring(L, 1);
-    NSLog(@"%@", [NSString stringWithUTF8String: clientSdk]);
+    const char *clientSdk = lua_tostring(L, 1);    
     [library->testLibrary startTestSession:[NSString stringWithUTF8String:clientSdk]];
-//    [library->testLibrary startTestSession:[NSString stringWithUTF8String:clientSdk]];
     return 0;
 }
 

@@ -1124,7 +1124,7 @@ int AdjustPlugin::getAttribution(lua_State *L) {
                 [AdjustSdkDelegate addKey:@"adgroup" andValue:attribution.adgroup toDictionary:dictionary];
                 [AdjustSdkDelegate addKey:@"clickLabel" andValue:attribution.clickLabel toDictionary:dictionary];
                 [AdjustSdkDelegate addKey:@"costType" andValue:attribution.costType toDictionary:dictionary];
-                [AdjustSdkDelegate addKey:@"costAmount" andValue:attribution.costAmount toDictionary:dictionary];
+                [AdjustSdkDelegate addKey:@"costAmount" andValue:[attribution.costAmount stringValue] toDictionary:dictionary];
                 [AdjustSdkDelegate addKey:@"costCurrency" andValue:attribution.costCurrency toDictionary:dictionary];
                 [AdjustSdkDelegate addKey:@"fbInstallReferrer" andValue:nil toDictionary:dictionary];
                 NSError *error;
@@ -1151,11 +1151,12 @@ int AdjustPlugin::getAdid(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
         CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
-        NSString *adid = [Adjust adid];
-        if (nil == adid) {
-            adid = @"";
-        }
-        [AdjustSdkDelegate dispatchEvent:EVENT_GET_ADID withState:L callback:listener andMessage:adid];
+        [Adjust adidWithCompletionHandler:^(NSString * _Nullable adid) {
+            if (nil == adid) {
+                adid = @"";
+            }
+            [AdjustSdkDelegate dispatchEvent:EVENT_GET_ADID withState:L callback:listener andMessage:adid];
+        }];
     }
     return 0;
 }
@@ -1168,7 +1169,7 @@ int AdjustPlugin::gdprForgetMe(lua_State *L) {
 
 // Public API.
 int AdjustPlugin::disableThirdPartySharing(lua_State *L) {
-    [Adjust disableThirdPartySharing];
+//    [Adjust disableThirdPartySharing];
     return 0;
 }
 

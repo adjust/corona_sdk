@@ -46,7 +46,7 @@ end
 function CommandExecutor:executeCommand(command)
     self.command = command
     local method = command.methodName
-    
+
     if method == "testOptions" then self:testOptions()
     elseif method == "config" then self:config()
     elseif method == "start" then self:start()
@@ -87,6 +87,7 @@ function CommandExecutor:testOptions()
     testOptions.gdprUrl = self.gdprUrl
     testOptions.subscriptionUrl = self.subscriptionUrl
     testOptions.purchaseVerificationUrl = self.purchaseVerificationUrl
+    testOptions.urlOverwrite = self.baseUrl
 
     if self.command:containsParameter("basePath") then
         self.basePath = self.command:getFirstParameterValue("basePath")
@@ -142,19 +143,6 @@ function CommandExecutor:testOptions()
         end
     end
 
-
-    --if (command.containsParameter("doNotIgnoreSystemLifecycleBootstrap")) {
-    --    String doNotIgnoreSystemLifecycleBootstrapString =
-    --    command.getFirstParameterValue("doNotIgnoreSystemLifecycleBootstrap");
-    --    Boolean doNotIgnoreSystemLifecycleBootstrap =
-    --    Util.strictParseStringToBoolean(doNotIgnoreSystemLifecycleBootstrapString);
-    --if (doNotIgnoreSystemLifecycleBootstrap != null
-    --&& doNotIgnoreSystemLifecycleBootstrap.booleanValue())
-    --{
-    --testOptions.ignoreSystemLifecycleBootstrap = false;
-    --}
-    --}
-
     if self.command:containsParameter("adServicesFrameworkEnabled") then
         local adServicesFrameworkEnabled = self.command:getFirstParameterValue("adServicesFrameworkEnabled")
         if adServicesFrameworkEnabled == "true" then
@@ -163,13 +151,15 @@ function CommandExecutor:testOptions()
             testOptions.adServicesFrameworkEnabled = false
         end
     end
-    
+
     local useTestConnectionOptions = false;
     if self.command:containsParameter("teardown") then
+        print("tearDown called")
         local teardownOptions = self.command.parameters["teardown"]
         for k in pairs(teardownOptions) do
             local option = teardownOptions[k]
             if option == "resetSdk" then
+                print("resetSDK called")
                 testOptions.teardown = true
                 testOptions.basePath = self.basePath
                 testOptions.gdprPath = self.gdprPath
@@ -179,16 +169,19 @@ function CommandExecutor:testOptions()
                 testOptions.useTestConnectionOptions = true
                 testOptions.tryInstallReferrer = false
                 useTestConnectionOptions = true
-            elseif option == "deleteState" then 
+            elseif option == "deleteState" then
+                print("deleteState called")
                 testOptions.setContext = true
                 testOptions.deleteState = true
-            elseif option == "resetTest" then 
+            elseif option == "resetTest" then
+
+                print("resetTest called")
                 self:clearSavedConfigsAndEvents()
                 testOptions.timerIntervalInMilliseconds = -1
                 testOptions.timerStartInMilliseconds = -1
                 testOptions.sessionIntervalInMilliseconds = -1
                 testOptions.subsessionIntervalInMilliseconds = -1
-            elseif option == "sdk" then 
+            elseif option == "sdk" then
                 testOptions.teardown = true
                 testOptions.basePath = nil
                 testOptions.gdprPath = nil
@@ -196,7 +189,7 @@ function CommandExecutor:testOptions()
                 testOptions.purchaseVerificationPath = nil
                 testOptions.extraPath = nil
                 testOptions.useTestConnectionOptions = false
-            elseif option == "test" then 
+            elseif option == "test" then
                 self:clearSavedConfigsAndEvents()
                 testOptions.timerIntervalInMilliseconds = -1
                 testOptions.timerStartInMilliseconds = -1
@@ -205,10 +198,12 @@ function CommandExecutor:testOptions()
             end
         end
     end
-    
+
     adjust.setTestOptions(testOptions)
     if useTestConnectionOptions then
-        testLib.setTestConnectionOptions();
+        if platformInfo == "android" then
+            testLib.setTestConnectionOptions();
+        end
     end
 end
 
@@ -219,7 +214,7 @@ function CommandExecutor:config()
         local configNumberStr = string.sub(configName, string.len(configName) - 1)
         configNumber = tonumber(configNumberStr)
     end
-    
+
     local adjustConfig = {}
     if self.savedConfigs[configNumber] ~= nil then
         adjustConfig = self.savedConfigs[configNumber]
@@ -227,18 +222,18 @@ function CommandExecutor:config()
         adjustConfig.environment = self.command:getFirstParameterValue("environment")
         adjustConfig.appToken = self.command:getFirstParameterValue("appToken")
         adjustConfig.logLevel = "VERBOSE"
-        
+
         self.savedConfigs[configNumber] = adjustConfig
     end
-    
+
     if self.command:containsParameter("logLevel") then
         adjustConfig.logLevel = self.command:getFirstParameterValue("logLevel")
     end
-    
+
     if self.command:containsParameter("sdkPrefix") then
         -- not needed
     end
-    
+
     if self.command:containsParameter("defaultTracker") then
         adjustConfig.defaultTracker = self.command:getFirstParameterValue("defaultTracker")
     end
@@ -246,7 +241,7 @@ function CommandExecutor:config()
     if self.command:containsParameter("externalDeviceId") then
         adjustConfig.externalDeviceId = self.command:getFirstParameterValue("externalDeviceId")
     end
-    
+
     if self.command:containsParameter("appSecret") then
         local appSecretArray = self.command.parameters["appSecret"]
         adjustConfig.secretId = tonumber(appSecretArray[1])
@@ -255,11 +250,11 @@ function CommandExecutor:config()
         adjustConfig.info3 = tonumber(appSecretArray[4])
         adjustConfig.info4 = tonumber(appSecretArray[5])
     end
-    
+
     if self.command:containsParameter("delayStart") then
         adjustConfig.delayStart = tonumber(self.command:getFirstParameterValue("delayStart"))
     end
-    
+
     if self.command:containsParameter("deviceKnown") then
         adjustConfig.isDeviceKnown = (self.command:getFirstParameterValue("deviceKnown") == "true")
     end
@@ -267,7 +262,7 @@ function CommandExecutor:config()
     if self.command:containsParameter("needsCost") then
         adjustConfig.needsCost = (self.command:getFirstParameterValue("needsCost") == "true")
     end
-    
+
     if self.command:containsParameter("eventBufferingEnabled") then
         adjustConfig.eventBufferingEnabled = (self.command:getFirstParameterValue("eventBufferingEnabled") == "true")
     end
@@ -279,11 +274,11 @@ function CommandExecutor:config()
     if self.command:containsParameter("allowIdfaReading") then
         adjustConfig.allowIdfaReading = (self.command:getFirstParameterValue("allowIdfaReading") == "true")
     end
-    
+
     if self.command:containsParameter("sendInBackground") then
         adjustConfig.sendInBackground = (self.command:getFirstParameterValue("sendInBackground") == "true")
     end
-    
+
     if self.command:containsParameter("userAgent") then
         adjustConfig.userAgent = self.command:getFirstParameterValue("userAgent")
     end
@@ -314,7 +309,7 @@ function CommandExecutor:config()
     --                adjustConfig.enablePlayStoreKidsCompliance();
     --            }
     --        }]]
-    
+
     -- first, clear all callback
     adjust.setDeferredDeeplinkListener(deferredDeeplinkListenerEmpty)
     adjust.setAttributionListener(attributionListenerEmpty)
@@ -322,38 +317,38 @@ function CommandExecutor:config()
     adjust.setSessionTrackingFailureListener(sessionTrackingFailureListenerEmpty)
     adjust.setEventTrackingSuccessListener(eventTrackingSuccessListenerEmpty)
     adjust.setEventTrackingFailureListener(eventTrackingFailureListenerEmpty)
-    
+
     if self.command:containsParameter("deferredDeeplinkCallback") then
         localBasePath = self.basePath
         adjustConfig.shouldLaunchDeeplink = (self.command:getFirstParameterValue("deferredDeeplinkCallback") == "true")
         print("[CommandExecutor]: Setting deferred deeplink callback... adjustConfig.shouldLaunchDeeplink=" .. tostring(adjustConfig.shouldLaunchDeeplink))
         adjust.setDeferredDeeplinkListener(deferredDeeplinkListener)
     end
-    
+
     if self.command:containsParameter("attributionCallbackSendAll") then
         localBasePath = self.basePath
         print("[CommandExecutor]: Setting attribution callback... lbp=" .. localBasePath)
         adjust.setAttributionListener(attributionListener)
     end
-    
+
     if self.command:containsParameter("sessionCallbackSendSuccess") then
         localBasePath = self.basePath
         print("[CommandExecutor]: Setting session send success callback... local-base-path=" .. localBasePath)
         adjust.setSessionTrackingSuccessListener(sessionTrackingSuccessListener)
     end
-    
+
     if self.command:containsParameter("sessionCallbackSendFailure") then
         localBasePath = self.basePath
         print("[CommandExecutor]: Setting session send failure callback... local-base-path=" .. localBasePath)
         adjust.setSessionTrackingFailureListener(sessionTrackingFailureListener)
     end
-    
+
     if self.command:containsParameter("eventCallbackSendSuccess") then
         localBasePath = self.basePath
         print("[CommandExecutor]: Setting event tracking success callback... local-base-path=" .. localBasePath)
         adjust.setEventTrackingSuccessListener(eventTrackingSuccessListener)
     end
-    
+
     if self.command:containsParameter("eventCallbackSendFailure") then
         localBasePath = self.basePath
         print("[CommandExecutor]: Setting event tracking failed callback... local-base-path=" .. localBasePath)
@@ -376,19 +371,19 @@ end
 
 function deferredDeeplinkListener(event)
     print("[CommandExecutor]: Deferred deeplink received!")
-    
+
     if event == nil then
         print("[CommandExecutor]: Deeplink response, uri = nil")
         return false
     end
-    
+
     local deeplink
     if platform == "ios" then
         deeplink = event.message
     else
         deeplink = json.decode(event.message).uri
     end
-    
+
     print("[CommandExecutor]: deferred deeplink: " .. deeplink)
     testLib.addInfoToSend("deeplink", deeplink)
     testLib.sendInfoToServer(localBasePath)
@@ -407,7 +402,9 @@ function attributionListener(event)
     testLib.addInfoToSend("cost_type", json_attribution.costType)
     testLib.addInfoToSend("cost_amount", json_attribution.costAmount)
     testLib.addInfoToSend("cost_currency", json_attribution.costCurrency)
-    testLib.addInfoToSend("fb_install_referrer", json_attribution.fbInstallReferrer)
+    if json_attribution.fbInstallReferrer ~= nil and json_attribution.fbInstallReferrer ~= "" then
+        testLib.addInfoToSend("fb_install_referrer", json_attribution.fbInstallReferrer)
+    end
     testLib.sendInfoToServer(localBasePath)
 end
 
@@ -483,18 +480,17 @@ end
 
 function CommandExecutor:start()
     self:config()
-    
+
     local configNumber = 0
     if self.command:containsParameter("configName") then
         local configName = self.command:getFirstParameterValue("configName")
         local configNumberStr = string.sub(configName, string.len(configName) - 1)
         configNumber = tonumber(configNumberStr)
     end
-   
+
     local adjustConfig = self.savedConfigs[configNumber]
     print("[CommandExecutor]: Sending adjust config to adjust.create: " .. json.encode(adjustConfig))
     adjust.initSdk(adjustConfig)
-    
     self.savedConfigs[configNumber] = nil
 end
 
@@ -505,7 +501,7 @@ function CommandExecutor:event()
         local eventNumberStr = string.sub(eventName, string.len(eventName) - 1)
         eventNumber = tonumber(eventNumberStr)
     end
-    
+
     local adjustEvent = {}
     if self.savedEvents[eventNumber] ~= nil then
         adjustEvent = self.savedEvents[eventNumber]
@@ -513,7 +509,7 @@ function CommandExecutor:event()
         adjustEvent.eventToken = self.command:getFirstParameterValue("eventToken")
         self.savedEvents[eventNumber] = adjustEvent
     end
-    
+
     if self.command:containsParameter("revenue") then
         local revenueParams = self.command.parameters["revenue"]
         adjustEvent.currency = revenueParams[1]
@@ -523,33 +519,33 @@ function CommandExecutor:event()
     if self.command:containsParameter("callbackId") then
         adjustEvent.callbackId = self.command:getFirstParameterValue("callbackId")
     end
-    
+
     if self.command:containsParameter("callbackParams") then
         local callbackParams = self.command.parameters["callbackParams"]
         adjustEvent.callbackParameters = {}
         local k = 1
         for i=1, #callbackParams, 2 do
-            adjustEvent.callbackParameters[k] = { 
-                key = callbackParams[i], 
-                value = callbackParams[i + 1] 
+            adjustEvent.callbackParameters[k] = {
+                key = callbackParams[i],
+                value = callbackParams[i + 1]
             }
             k = k + 1
         end
     end
-    
+
     if self.command:containsParameter("partnerParams") then
         local partnerParams = self.command.parameters["partnerParams"]
         adjustEvent.partnerParameters = {}
         local k = 1
         for i=1, #partnerParams, 2 do
-            adjustEvent.partnerParameters[k] = { 
-                key = partnerParams[i], 
-                value = partnerParams[i + 1] 
+            adjustEvent.partnerParameters[k] = {
+                key = partnerParams[i],
+                value = partnerParams[i + 1]
             }
             k = k + 1
         end
     end
-    
+
     if self.command:containsParameter("orderId") then
         adjustEvent.orderId = self.command:getFirstParameterValue("orderId")
     end
@@ -570,7 +566,7 @@ end
 
 function CommandExecutor:trackEvent()
     self:event()
-    
+
     local eventNumber = 0
     if self.command:containsParameter("eventName") then
         local eventName = self.command:getFirstParameterValue("eventName")
@@ -580,7 +576,6 @@ function CommandExecutor:trackEvent()
     
     local adjustEvent = self.savedEvents[eventNumber]
     adjust.trackEvent(adjustEvent)
-    
     self.savedEvents[eventNumber] = nil
 end
 
@@ -926,11 +921,16 @@ function CommandExecutor:attributionGetter()
         if json_attribution.costCurrency ~= nil then
             map["cost_currency"]=  json_attribution.costCurrency
         end
-        if json_attribution.fbInstallReferrer ~= nil then
+        if json_attribution.fbInstallReferrer ~= nil and json_attribution.fbInstallReferrer ~="" then
             map["fb_install_referrer"]= json_attribution.fbInstallReferrer
         end
-        local mapJson = json.encode(map)
-        testLib.setInfoToSend(mapJson)
+
+        for key,value in next,map,nil do
+            if key ~= nil and value ~= nil then
+                testLib.addInfoToSend(key,value)
+            end
+        end
+
         testLib.sendInfoToServer(self.basePath);
     end);
 
