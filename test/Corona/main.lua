@@ -41,7 +41,7 @@ else
     protocol = "https"
     port = "8443"
 end
-local baseIp = "192.168.8.160"
+local baseIp = "192.168.8.219"
 local overwriteUrl = protocol .. "://" .. baseIp .. ":" .. port
 local controlUrl = "ws://" .. baseIp .. ":1987";
 print("[TestApp]: Using BaseUrl: [" .. overwriteUrl .. "]--")
@@ -66,14 +66,53 @@ command_executor.setTestLib(testLib)
 command_executor.setPlatform(platformInfo)
 
 print("[TestApp]: Setting test lib tests....")
-testLib.addTest("Test_AttributionGetter_after_install")
- --testLib.addTest("Test_Lifecycle_StartsForeground")
+
+testLib.addTestDirectory("deeplink-getter")
 
 
- --testLib.addTestDirectory("current/session-event-callbacks")
+
+--testLib.addTestDirectory("global-parameters")
+--testLib.addTestDirectory("ad-revenue")
+--testLib.addTestDirectory("tracking-domain")
+--testLib.addTestDirectory("disable-enable")
+--testLib.addTestDirectory("subscription")
+--testLib.addTestDirectory("link-shortener")
+--testLib.addTestDirectory("parameters")
+--testLib.addTestDirectory("coppa")
+--testLib.addTestDirectory("attribution-initiated-by")
+--testLib.addTestDirectory("push-token")
+--testLib.addTestDirectory("deeplink-getter")
+--testLib.addTestDirectory("retry-in")
+--testLib.addTestDirectory("attribution-getter")
+--testLib.addTestDirectory("session-count")
+--testLib.addTestDirectory("default-tracker")
+--testLib.addTestDirectory("error-responses")
+--testLib.addTestDirectory("third-party-sharing")
+--testLib.addTestDirectory("pasteboard")
+--testLib.addTestDirectory("event-tracking")
+--testLib.addTestDirectory("measurement-consent")
+--testLib.addTestDirectory("session-callbacks")
+--testLib.addTestDirectory("init-malformed")
+--testLib.addTestDirectory("sdk-prefix")
+--testLib.addTestDirectory("continue-in")
+--testLib.addTestDirectory("queue-size")
+--testLib.addTestDirectory("purchase-verification")
+--testLib.addTestDirectory("deeplink")
+--testLib.addTestDirectory("google-kids")
+--testLib.addTestDirectory("send-in-background")
+--testLib.addTestDirectory("offline-mode")
+--testLib.addTestDirectory("verify-track")
+--testLib.addTestDirectory("skan")
+--testLib.addTestDirectory("gdpr")
+--testLib.addTestDirectory("deeplink-deferred")
+--testLib.addTestDirectory("lifecycle")
+--testLib.addTestDirectory("ad-services")
+--testLib.addTestDirectory("external-device-id")
+--testLib.addTestDirectory("attribution-callback")
+--testLib.addTestDirectory("event-callbacks")
+
 
 testLib.startTestSession("corona5.0.0@ios5.0.1")
-
 
 -- Start Test Session
 -- ------------------------

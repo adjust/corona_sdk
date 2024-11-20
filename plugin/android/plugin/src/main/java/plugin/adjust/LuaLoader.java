@@ -49,6 +49,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     public static final String EVENT_GET_SDK_VERSION = "adjust_getSdkVersion";
     public static final String EVENT_GET_GOOGLE_AD_ID = "adjust_getGoogleAdId";
     public static final String EVENT_GET_AMAZON_AD_ID = "adjust_getAmazonAdId";
+    public static final String EVENT_GET_LAST_DEEPLINK = "adjust_getLastDeeplink";
     public static final String EVENT_GET_AUTHORIZATION_STATUS = "adjust_requestTrackingAuthorizationWithCompletionHandler";
 
     private int attributionChangedListener;
@@ -57,8 +58,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private int sessionTrackingSuccessListener;
     private int sessionTrackingFailureListener;
     private int deferredDeeplinkListener;
-    private int conversionValueUpdatedListener;
-    private int skan4ConversionValueUpdatedListener;
+    private int updateSkanListener;
     private boolean shouldLaunchDeeplink = true;
 
     /**
@@ -75,8 +75,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         eventTrackingFailureListener = CoronaLua.REFNIL;
         sessionTrackingSuccessListener = CoronaLua.REFNIL;
         sessionTrackingFailureListener = CoronaLua.REFNIL;
-        conversionValueUpdatedListener = CoronaLua.REFNIL;
-        skan4ConversionValueUpdatedListener = CoronaLua.REFNIL;
+        updateSkanListener = CoronaLua.REFNIL;
         deferredDeeplinkListener = CoronaLua.REFNIL;
 
         // Set up this plugin to listen for Corona runtime events to be received by methods
@@ -140,8 +139,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 new AppTrackingAuthorizationStatusWrapper(),
                 new TrackAppStoreSubscriptionWrapper(),
                 new RequestTrackingAuthorizationWithCompletionHandlerWrapper(),
-                new SetConversionValueUpdatedListenerWrapper(),
-                new SetSkan4ConversionValueUpdatedListenerWrapper(),
+                new SetUpdateSkanListenerWrapper(),
                 new CheckForNewAttStatus(),
                 new UpdateConversionValueWrapper(),
                 new UpdateConversionValueWithCallbackWrapper(),
@@ -223,8 +221,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         CoronaLua.deleteRef(runtime.getLuaState(), eventTrackingSuccessListener);
         CoronaLua.deleteRef(runtime.getLuaState(), eventTrackingFailureListener);
         CoronaLua.deleteRef(runtime.getLuaState(), deferredDeeplinkListener);
-        CoronaLua.deleteRef(runtime.getLuaState(), conversionValueUpdatedListener);
-        CoronaLua.deleteRef(runtime.getLuaState(), skan4ConversionValueUpdatedListener);
+        CoronaLua.deleteRef(runtime.getLuaState(), updateSkanListener);
 
         attributionChangedListener = CoronaLua.REFNIL;
         eventTrackingSuccessListener = CoronaLua.REFNIL;
@@ -232,8 +229,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         sessionTrackingSuccessListener = CoronaLua.REFNIL;
         sessionTrackingFailureListener = CoronaLua.REFNIL;
         deferredDeeplinkListener = CoronaLua.REFNIL;
-        conversionValueUpdatedListener = CoronaLua.REFNIL;
-        skan4ConversionValueUpdatedListener = CoronaLua.REFNIL;
+        updateSkanListener = CoronaLua.REFNIL;
     }
 
     private void dispatchEvent(final int listener, final String name, final String message) {
@@ -286,7 +282,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         boolean isDeviceKnown = false;
         boolean sendInBackground = false;
         boolean isLogLevelSuppress = false;
-        boolean needsCost = false;
+        boolean isCostDataInAttributionEnabled = false;
         boolean preinstallTrackingEnabled = false;
         boolean coppaCompliant = false;
         boolean playStoreKidsApp = false;
@@ -454,10 +450,10 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 
         // Needs cost.
-        L.getField(1, "needsCost");
+        L.getField(1, "isCostDataInAttributionEnabled");
         if (!L.isNil(2)) {
-            needsCost = L.toBoolean(2);
-            if (needsCost)
+            isCostDataInAttributionEnabled = L.toBoolean(2);
+            if (isCostDataInAttributionEnabled)
                 adjustConfig.enableCostDataInAttribution();
         }
         L.pop(1);
@@ -851,9 +847,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private int adjust_verifyPlayStorePurchase(final LuaState L) {
         String sku = L.checkString(1);
         String purchaseToken = L.checkString(2);
-        Log.d(TAG, sku);
-        Log.d(TAG, purchaseToken);
-
 
         // Hardcoded listener index for ADJUST.
         int listenerIndex = 3;
@@ -896,8 +889,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         String deduplicationId = null;
         String productId = null;
         String purchaseToken = null;
-
-//        L.rawGet(1);
 
         // Event token.
         L.getField(1, "eventToken");
@@ -1001,7 +992,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
-        // Callback ID.
+        // Listener.
         L.getField(1, "listener");
         // Hardcoded listener index for ADJUST.
         int listenerIndex = 2;
@@ -1022,11 +1013,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                         dispatchEvent(finalListener, EVENT_VERIFY_AND_TRACK_PLAY_STORE_PURCHASE, new JSONObject().toString());
                     }
                 }
-
             });
 
-        } else {
-            Log.d(TAG, event.toString());
         }
 
         return 0;
@@ -1044,9 +1032,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 public void onLastDeeplinkRead(Uri deeplink) {
                     if (deeplink != null) {
                         Log.d(TAG, deeplink.toString());
-                        dispatchEvent(finalListener, "last_deeplink", deeplink.toString());
+                        dispatchEvent(finalListener, EVENT_GET_LAST_DEEPLINK, deeplink.toString());
                     } else {
-                        dispatchEvent(finalListener, "last_deeplink", "");
+                        dispatchEvent(finalListener, EVENT_GET_LAST_DEEPLINK, "");
                     }
                 }
             });
@@ -1623,23 +1611,13 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
-    // iOS platform.
+    // ios platform.
     // Public API.
-    private int adjust_setConversionValueUpdatedListener(LuaState L) {
+    private int adjust_setUpdateSkanListener(LuaState L) {
         // Hardcoded listener index for ADJUST.
         int listenerIndex = 1;
         if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
-            this.conversionValueUpdatedListener = CoronaLua.newRef(L, listenerIndex);
-        }
-        return 0;
-    }
-
-    // Public API.
-    private int adjust_setSkan4ConversionValueUpdatedListener(LuaState L) {
-        // Hardcoded listener index for ADJUST.
-        int listenerIndex = 1;
-        if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
-            this.skan4ConversionValueUpdatedListener = CoronaLua.newRef(L, listenerIndex);
+            this.updateSkanListener = CoronaLua.newRef(L, listenerIndex);
         }
         return 0;
     }
@@ -2223,27 +2201,15 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    private class SetConversionValueUpdatedListenerWrapper implements NamedJavaFunction {
+    private class SetUpdateSkanListenerWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
-            return "setConversionValueUpdatedListener";
+            return "setUpdateSkanListener";
         }
 
         @Override
         public int invoke(LuaState L) {
-            return adjust_setConversionValueUpdatedListener(L);
-        }
-    }
-
-    private class SetSkan4ConversionValueUpdatedListenerWrapper implements NamedJavaFunction {
-        @Override
-        public String getName() {
-            return "setSkan4ConversionValueUpdatedListener";
-        }
-
-        @Override
-        public int invoke(LuaState L) {
-            return adjust_setSkan4ConversionValueUpdatedListener(L);
+            return adjust_setUpdateSkanListener(L);
         }
     }
 

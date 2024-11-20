@@ -61,8 +61,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
                           sessionTrackingSuccessCallback:(CoronaLuaRef)sessionTrackingSuccessCallback
                           sessionTrackingFailureCallback:(CoronaLuaRef)sessionTrackingFailureCallback
                                 deferredDeeplinkCallback:(CoronaLuaRef)deferredDeeplinkCallback
-                          conversionValueUpdatedCallback:(CoronaLuaRef)conversionValueUpdatedCallback
-                     skan4ConversionValueUpdatedCallback:(CoronaLuaRef)skan4ConversionValueUpdatedCallback
+                                      updateSkanCallback:(CoronaLuaRef)updateSkanCallback
                             shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink
                                              andLuaState:(lua_State *)luaState {
     dispatch_once(&onceToken, ^{
@@ -89,28 +88,23 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
             [defaultInstance swizzleOriginalSelector:@selector(adjustSessionTrackingFailed:)
                                         withSelector:@selector(adjustSessionTrackingFailedWannabe:)];
         }
-//        if (deferredDeeplinkCallback != NULL) {
-//            [defaultInstance swizzleOriginalSelector:@selector(adjustDeeplinkResponse:)
-//                                        withSelector:@selector(adjustDeeplinkResponseWannabe:)];
-//        }
-//        if (conversionValueUpdatedCallback != NULL) {
-//            [defaultInstance swizzleOriginalSelector:@selector(adjustConversionValueUpdated:)
-//                                        withSelector:@selector(adjustConversionValueUpdatedWannabe:)];
-//        }
-//        if (skan4ConversionValueUpdatedCallback != NULL) {
-//            [defaultInstance swizzleOriginalSelector:@selector(adjustConversionValueUpdated:coarseValue:lockWindow:)
-//                                        withSelector:@selector(adjustConversionValueUpdatedWannabe:coarseValue:lockWindow:)];
-//        }
+        if (deferredDeeplinkCallback != NULL) {
+            [defaultInstance swizzleOriginalSelector:@selector(adjustDeferredDeeplinkReceived:)
+                                        withSelector:@selector(adjustDeferredDeeplinkReceivedWannabe:)];
+        }
+        if (updateSkanCallback != NULL) {
+            [defaultInstance swizzleOriginalSelector:@selector(adjustSkanUpdatedWithConversionData:)
+                                        withSelector:@selector(adjustSkanUpdatedWithConversionDataWannabe:)];
+        }
 
         [defaultInstance setAttributionChangedCallback:attributionCallback];
         [defaultInstance setEventTrackingSuccessCallback:eventTrackingSuccessCallback];
         [defaultInstance setEventTrackingFailureCallback:eventTrackingFailureCallback];
         [defaultInstance setSessionTrackingSuccessCallback:sessionTrackingSuccessCallback];
         [defaultInstance setSessionTrackingFailureCallback:sessionTrackingFailureCallback];
-//        [defaultInstance setDeferredDeeplinkCallback:deferredDeeplinkCallback];
-//        [defaultInstance setConversionValueUpdatedCallback:conversionValueUpdatedCallback];
-//        [defaultInstance setSkan4ConversionValueUpdatedCallback:skan4ConversionValueUpdatedCallback];
-//        [defaultInstance setShouldLaunchDeferredDeeplink:shouldLaunchDeferredDeeplink];
+        [defaultInstance setDeferredDeeplinkCallback:deferredDeeplinkCallback];
+        [defaultInstance setUpdateSkanCallback:updateSkanCallback];
+        [defaultInstance setShouldLaunchDeferredDeeplink:shouldLaunchDeferredDeeplink];
         [defaultInstance setLuaState:luaState];
     });
 
@@ -305,7 +299,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
     }
 }
 
-- (BOOL)adjustDeeplinkResponseWannabe:(NSURL *)deeplink {
+- (BOOL)adjustDeferredDeeplinkReceivedWannabe:(NSURL *)deeplink {
     NSString *strDeeplink = [deeplink absoluteString];
     [AdjustSdkDelegate dispatchEvent:ADJ_DEFERRED_DEEPLINK
                            withState:_luaState
@@ -314,42 +308,28 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
     return _shouldLaunchDeferredDeeplink;
 }
 
-- (void)adjustConversionValueUpdatedWannabe:(NSNumber *)conversionValue {
-    NSString *strConversionValue = [conversionValue stringValue];
-    [AdjustSdkDelegate dispatchEvent:ADJ_CONVERSION_VALUE_UPDATED
-                           withState:_luaState
-                            callback:_conversionValueUpdatedCallback
-                          andMessage:strConversionValue];
-}
-
-- (void)adjustConversionValueUpdatedWannabe:(nullable NSNumber *)fineValue
-                                coarseValue:(nullable NSString *)coarseValue
-                                 lockWindow:(nullable NSNumber *)lockWindow {
+- (void)adjustSkanUpdatedWithConversionDataWannabe:(NSDictionary<NSString *,NSString *> *)data {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-    if (fineValue != nil) {
-        [AdjustSdkDelegate addKey:KEY_FINE_VALUE andValue:fineValue toDictionary:dictionary];
-    }
-    if (coarseValue != nil) {
-        [AdjustSdkDelegate addKey:KEY_COARSE_VALUE andValue:coarseValue toDictionary:dictionary];
-    }
-    if (lockWindow != nil) {
-        [AdjustSdkDelegate addKey:KEY_LOCK_WINDOW andValue:lockWindow toDictionary:dictionary];
-    }
+    [AdjustSdkDelegate addKey:@"conversionValue" andValue:data[@"conversion_value"] toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:@"coarseValue" andValue:data[@"coarse_value"] toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:@"lockWindow" andValue:data[@"lock_window"] toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:@"error" andValue:data[@"error"] toDictionary:dictionary];
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
                                                        options:NSJSONWritingPrettyPrinted
                                                          error:&error];
     if (!jsonData) {
-        NSLog(@"[Adjust][bridge]: Error while trying to convert SKAN4 conversion value update dictionary to JSON string: %@", error);
+        NSLog(@"[Adjust][bridge]: Error while trying to update skan dictionary to JSON string: %@", error);
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        [AdjustSdkDelegate dispatchEvent:ADJ_SKAN4_CONVERSION_VALUE_UPDATED
+        [AdjustSdkDelegate dispatchEvent:ADJ_UPDATE_SKAN
                                withState:_luaState
-                                callback:_skan4ConversionValueUpdatedCallback
+                                callback:_updateSkanCallback
                               andMessage:jsonString];
     }
 }
+
 
 #pragma mark - Private & helper methods
 
