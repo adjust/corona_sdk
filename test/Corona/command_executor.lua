@@ -950,15 +950,13 @@ function CommandExecutor:verifyTrack()
 end
 
 function CommandExecutor:getLastDeeplink()
-    print("get last deep link called")
     local localBasePath = self.basePath
     adjust.getLastDeeplink(function(lastDeeplink)
         if lastDeeplink.message ~=nil and lastDeeplink.message ~= "" then
-            testLib.addInfoToSend("last_deeplink", lastDeeplink.message);
+            testLib.addInfoToSend("last_deeplink", tostring(lastDeeplink.message));
         end
         testLib.sendInfoToServer(localBasePath)
     end)
-    print("get last deep link finished")
 end
 
 function CommandExecutor:processDeeplink()
@@ -966,7 +964,7 @@ function CommandExecutor:processDeeplink()
     local localBasePath = self.basePath
 
     adjust.processAndResolveDeeplink(deeplink,function(resolvedLink)
-        testLib.addInfoToSend("resolved_link", resolvedLink.message);
+        testLib.addInfoToSend("resolved_link", tostring(resolvedLink.message));
         testLib.sendInfoToServer(localBasePath)
     end)
 end

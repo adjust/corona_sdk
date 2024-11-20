@@ -67,10 +67,7 @@ command_executor.setPlatform(platformInfo)
 
 print("[TestApp]: Setting test lib tests....")
 
-testLib.addTestDirectory("deeplink-getter")
-
-
-
+--testLib.addTestDirectory("deeplink-getter")
 --testLib.addTestDirectory("global-parameters")
 --testLib.addTestDirectory("ad-revenue")
 --testLib.addTestDirectory("tracking-domain")
