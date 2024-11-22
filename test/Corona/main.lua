@@ -67,6 +67,8 @@ command_executor.setPlatform(platformInfo)
 
 print("[TestApp]: Setting test lib tests....")
 
+testLib.addTest("Test_GdprForgetMe_inbetween_multiple_events")
+
 --testLib.addTestDirectory("deeplink-getter")
 --testLib.addTestDirectory("global-parameters")
 --testLib.addTestDirectory("ad-revenue")
@@ -109,7 +111,7 @@ print("[TestApp]: Setting test lib tests....")
 --testLib.addTestDirectory("event-callbacks")
 
 
-testLib.startTestSession("corona5.0.0@ios5.0.1")
+--testLib.startTestSession("corona5.0.0@ios5.0.1")
 
 -- Start Test Session
 -- ------------------------

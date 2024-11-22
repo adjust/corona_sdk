@@ -95,25 +95,23 @@ end
 -- initialize Adjust SDK
 --
 adjust.setAttributionListener(attributionListener)
---adjust.setEventTrackingSuccessListener(eventTrackingSuccessListener)
---adjust.setEventTrackingFailureListener(eventTrackingFailureListener)
---adjust.setSessionTrackingSuccessListener(sessionTrackingSuccessListener)
---adjust.setSessionTrackingFailureListener(sessionTrackingFailureListener)
---adjust.setDeferredDeeplinkListener(deferredDeeplinkListener)
---adjust.setConversionValueUpdatedListener(conversionValueUpdatedListener)
----- adjust.setSkan4ConversionValueUpdatedListener(skan4ConversionValueUpdatedListener)
---
---adjust.addGlobalCallbackParameter("scp1", "scp1_value1")
---adjust.addGlobalCallbackParameter("scp2", "scp2_value2")
---adjust.addGlobalCallbackParameter("scp3", "scp3_value3")
---adjust.removeGlobalCallbackParameter("scp2")
---adjust.removeGlobalCallbackParameters()
---
---adjust.addGlobalPartnerParameter("spp1", "spp1_value1")
---adjust.addGlobalPartnerParameter("spp2", "spp2_value2")
---adjust.addGlobalPartnerParameter("spp3", "spp3_value3")
---adjust.removeGlobalPartnerParameter("spp1")
---adjust.removeGlobalPartnerParameters()
+adjust.setEventTrackingSuccessListener(eventTrackingSuccessListener)
+adjust.setEventTrackingFailureListener(eventTrackingFailureListener)
+adjust.setSessionTrackingSuccessListener(sessionTrackingSuccessListener)
+adjust.setSessionTrackingFailureListener(sessionTrackingFailureListener)
+adjust.setDeferredDeeplinkListener(deferredDeeplinkListener)
+
+adjust.addGlobalCallbackParameter("scp1", "scp1_value1")
+adjust.addGlobalCallbackParameter("scp2", "scp2_value2")
+adjust.addGlobalCallbackParameter("scp3", "scp3_value3")
+adjust.removeGlobalCallbackParameter("scp2")
+adjust.removeGlobalCallbackParameters()
+
+adjust.addGlobalPartnerParameter("spp1", "spp1_value1")
+adjust.addGlobalPartnerParameter("spp2", "spp2_value2")
+adjust.addGlobalPartnerParameter("spp3", "spp3_value3")
+adjust.removeGlobalPartnerParameter("spp1")
+adjust.removeGlobalPartnerParameters()
 
 adjust.initSdk({
     appToken = "2fm9gkqubvpc",
@@ -122,15 +120,13 @@ adjust.initSdk({
     -- don't use any of the fields below if your are not sure what is their purpose
     -- please check https://github.com/adjust/corona_sdk/blob/master/README.md first
     -- handleSkAdNetwork = false,
-    -- urlStrategy = "india",
+    -- domains = {"adjust.com","adjust.cn"},
     -- shouldLaunchDeeplink = false,
     -- eventBufferingEnabled = true,
     -- delayStart = 6.0,
     -- isDeviceKnown = true,
     -- sendInBackground = true,
     -- defaultTracker = "abc123",
-    -- userAgent = "Random User Agent 6.6"
-    -- readMobileEquipmentIdentity = true
     -- coppaCompliant = true,
     -- linkMeEnabled = true,
     -- playStoreKidsApp = true,

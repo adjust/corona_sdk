@@ -100,49 +100,52 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         NamedJavaFunction[] luaFunctions = new NamedJavaFunction[]{
                 new InitSdkWrapper(),
                 new TrackEventWrapper(),
-                new TrackPlayStoreSubscriptionWrapper(),
-                new VerifyPlayStorePurchaseWrapper(),
-                new VerifyAndTrackPlayStorePurchaseWrapper(),
-                new ProcessAndResolveDeeplinkWrapper(),
-                new GetLastDeeplinkWrapper(),
                 new EnableWrapper(),
                 new DisableWrapper(),
-                new IsEnabledWrapper(),
-                new SetReferrerWrapper(),
-                new SwitchToOfflineModeWrapper(),
-                new SwitchBackToOnlineModeWrapper(),
                 new SetPushTokenWrapper(),
                 new AppProcessDeeplinkWrapper(),
+                new ProcessAndResolveDeeplinkWrapper(),
+                new TrackAdRevenueWrapper(),
                 new AddGlobalCallbackParameterWrapper(),
                 new AddGlobalPartnerParameterWrapper(),
                 new RemoveGlobalCallbackParameterWrapper(),
                 new RemoveGlobalPartnerParameterWrapper(),
                 new RemoveGlobalCallbackParametersWrapper(),
                 new RemoveGlobalPartnerParametersWrapper(),
-                new GetSdkVersionWrapper(),
-                new GetAttributionWrapper(),
+                new SwitchToOfflineModeWrapper(),
+                new SwitchBackToOnlineModeWrapper(),
                 new SetAttributionListenerWrapper(),
                 new SetEventTrackingSuccessListenerWrapper(),
                 new SetEventTrackingFailureListenerWrapper(),
                 new SetSessionTrackingSuccessListenerWrapper(),
                 new SetSessionTrackingFailureListenerWrapper(),
                 new SetDeferredDeeplinkListenerWrapper(),
+                new IsEnabledWrapper(),
+                new GetSdkVersionWrapper(),
+                new GetAttributionWrapper(),
                 new GetAdidWrapper(),
-                new GetGoogleAdIdWrapper(),
-                new GetAmazonAdIdWrapper(),
                 new GdprForgetMeWrapper(),
-                new TrackAdRevenueWrapper(),
+                new GetLastDeeplinkWrapper(),
                 new TrackThirdPartySharingWrapper(),
                 new TrackMeasurementConsentWrapper(),
+                // Android only.
+                new TrackPlayStoreSubscriptionWrapper(),
+                new VerifyPlayStorePurchaseWrapper(),
+                new VerifyAndTrackPlayStorePurchaseWrapper(),
+                new GetGoogleAdIdWrapper(),
+                new GetAmazonAdIdWrapper(),
+                new SetReferrerWrapper(),
                 // iOS only.
                 new GetIdfaWrapper(),
                 new AppTrackingAuthorizationStatusWrapper(),
-                new TrackAppStoreSubscriptionWrapper(),
                 new RequestTrackingAuthorizationWithCompletionHandlerWrapper(),
                 new SetUpdateSkanListenerWrapper(),
                 new CheckForNewAttStatus(),
                 new UpdateConversionValueWrapper(),
                 new UpdateConversionValueWithCallbackWrapper(),
+                new TrackAppStoreSubscriptionWrapper(),
+                new VerifyAppStorePurchaseWrapper(),
+                new VerifyAndTrackAppStorePurchaseWrapper(),
                 new UpdateConversionValueWithSkan4CallbackWrapper(),
                 // Testing.
                 new SetTestOptionsWrapper(),
@@ -1611,6 +1614,18 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
+    // iOS platform.
+    // Public API.
+    private int adjust_verifyAppStorePurchase(LuaState L) {
+        return 0;
+    }
+
+    // iOS platform.
+    // Public API.
+    private int adjust_verifyAndTrackAppStorePurchase(LuaState L) {
+        return 0;
+    }
+
     // ios platform.
     // Public API.
     private int adjust_setUpdateSkanListener(LuaState L) {
@@ -2307,6 +2322,30 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         @Override
         public int invoke(LuaState L) {
             return adjust_trackAppStoreSubscription(L);
+        }
+    }
+
+    private class VerifyAppStorePurchaseWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "verifyAppStorePurchase";
+        }
+
+        @Override
+        public int invoke(LuaState L) {
+            return adjust_verifyAppStorePurchase(L);
+        }
+    }
+
+    private class VerifyAndTrackAppStorePurchaseWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "verifyAndTrackAppStorePurchase";
+        }
+
+        @Override
+        public int invoke(LuaState L) {
+            return adjust_verifyAndTrackAppStorePurchase(L);
         }
     }
 

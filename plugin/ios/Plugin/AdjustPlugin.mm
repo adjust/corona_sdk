@@ -70,7 +70,6 @@ public:
     static int setPushToken(lua_State *L);
     static int processDeeplink(lua_State *L);
     static int processAndResolveDeeplink(lua_State *L);
-    static int sendFirstPackages(lua_State *L);
     static int addGlobalCallbackParameter(lua_State *L);
     static int addGlobalPartnerParameter(lua_State *L);
     static int removeGlobalCallbackParameter(lua_State *L);
@@ -109,7 +108,10 @@ public:
     // Android specific.
     static int getGoogleAdId(lua_State *L);
     static int getAmazonAdId(lua_State *L);
+    static int setReferrer(lua_State *L);
     static int trackPlayStoreSubscription(lua_State *L);
+    static int verifyPlayStorePurchase(lua_State *L);
+    static int verifyAndTrackPlayStorePurchase(lua_State *L);
 
     // For testing purposes only.
     static int setTestOptions(lua_State *L);
@@ -190,9 +192,7 @@ AdjustPlugin::Open(lua_State *L) {
         { "setPushToken", setPushToken },
         { "processDeeplink", processDeeplink},
         { "processAndResolveDeeplink", processAndResolveDeeplink},
-        { "sendFirstPackages", sendFirstPackages },
         { "trackAdRevenue", trackAdRevenue },
-        { "trackAppStoreSubscription", trackAppStoreSubscription },
         { "addGlobalCallbackParameter", addGlobalCallbackParameter },
         { "addGlobalPartnerParameter", addGlobalPartnerParameter },
         { "removeGlobalCallbackParameter", removeGlobalCallbackParameter },
@@ -207,31 +207,34 @@ AdjustPlugin::Open(lua_State *L) {
         { "setSessionTrackingSuccessListener", setSessionTrackingSuccessListener },
         { "setSessionTrackingFailureListener", setSessionTrackingFailureListener },
         { "setDeferredDeeplinkListener", setDeferredDeeplinkListener },
-        { "setUpdateSkanListener", setUpdateSkanListener },
         { "isEnabled", isEnabled },
-        { "getIdfa", getIdfa },
         { "getSdkVersion", getSdkVersion },
         { "getAttribution", getAttribution },
         { "getAdid", getAdid },
         { "gdprForgetMe", gdprForgetMe },
-        { "requestTrackingAuthorizationWithCompletionHandler", requestTrackingAuthorizationWithCompletionHandler },
-        { "appTrackingAuthorizationStatus", appTrackingAuthorizationStatus },
-        { "updateConversionValue", updateConversionValue },
+        { "getLastDeeplink", getLastDeeplink },
         { "trackThirdPartySharing", trackThirdPartySharing },
         { "trackMeasurementConsent", trackMeasurementConsent },
-        { "checkForNewAttStatus", checkForNewAttStatus },
-        { "getLastDeeplink", getLastDeeplink },
-        { "updateConversionValueWithCallback", updateConversionValueWithCallback },
-        { "updateConversionValueWithSkan4Callback", updateConversionValueWithSkan4Callback },
-        { "verifyAppStorePurchase", verifyAppStorePurchase },
-        { "verifyAndTrackAppStorePurchase", verifyAndTrackAppStorePurchase },
+        { "trackPlayStoreSubscription", trackPlayStoreSubscription }, // Android Only.
+        { "verifyPlayStorePurchase", verifyPlayStorePurchase },
+        { "verifyAndTrackPlayStorePurchase", verifyAndTrackPlayStorePurchase },
         { "getGoogleAdId", getGoogleAdId },
         { "getAmazonAdId", getAmazonAdId },
-        { "trackPlayStoreSubscription", trackPlayStoreSubscription },
-        { "onResume", onResume },
+        { "setReferrer", setReferrer },
+        { "getIdfa", getIdfa }, // IOS only.
+        { "appTrackingAuthorizationStatus", appTrackingAuthorizationStatus },
+        { "requestTrackingAuthorizationWithCompletionHandler", requestTrackingAuthorizationWithCompletionHandler },
+        { "setUpdateSkanListener", setUpdateSkanListener },
+        { "checkForNewAttStatus", checkForNewAttStatus },
+        { "updateConversionValue", updateConversionValue },
+        { "updateConversionValueWithCallback", updateConversionValueWithCallback },
+        { "trackAppStoreSubscription", trackAppStoreSubscription },
+        { "verifyAppStorePurchase", verifyAppStorePurchase },
+        { "verifyAndTrackAppStorePurchase", verifyAndTrackAppStorePurchase },
+        { "updateConversionValueWithSkan4Callback", updateConversionValueWithSkan4Callback },
+        { "onResume", onResume }, // Test only.
         { "onPause", onPause },
         { "setTestOptions", setTestOptions },
-
         { NULL, NULL }
     };
 
@@ -270,33 +273,27 @@ int AdjustPlugin::initSdk(lua_State *L) {
     if (!lua_istable(L, 1)) {
         return 0;
     }
-
-    NSLog(@"init SDK called");
-
-    double delayStart = 0.0;
-    NSUInteger secretId = -1;
-    NSUInteger info1 = -1;
-    NSUInteger info2 = -1;
-    NSUInteger info3 = -1;
-    NSUInteger info4 = -1;
-    BOOL isDeviceKnown = NO;
-    BOOL sendInBackground = NO;
-    BOOL eventBufferingEnabled = NO;
-    BOOL allowAdServicesInfoReading = YES;
-    BOOL allowIdfaReading = YES;
-    BOOL allowSkAdNetworkHandling = YES;
-    BOOL isCostDataInAttributionEnabled = NO;
-    BOOL shouldLaunchDeferredDeeplink = YES;
-    NSUInteger attConsentWaitingSeconds = -1;
-    BOOL coppaCompliant = NO;
-    BOOL linkMeEnabled = NO;
+    
     NSString *appToken = nil;
-    NSString *userAgent = nil;
     NSString *environment = nil;
+    BOOL isSendingInBackgroundEnabled = NO;
+    BOOL isAdServicesEnabled = YES;
+    BOOL isIdfaReadingEnabled = YES;
+    BOOL isIdfvReadingEnabled = YES;
+    BOOL isSkanAttributionEnabled = YES;
+    BOOL isCostDataInAttributionEnabled = NO;
+    BOOL linkMeEnabled = NO;
+    BOOL isDeviceIdsReadingOnceEnabled = NO;
+    NSArray *domainsArray = nil;
+    BOOL useSubdomains = NO;
+    BOOL isDataResidency = NO;
+    BOOL coppaCompliant = NO;
+    ADJLogLevel logLevel = ADJLogLevelInfo;
     NSString *defaultTracker = nil;
     NSString *externalDeviceId = nil;
-    NSString *urlStrategy = nil;
-    ADJLogLevel logLevel = ADJLogLevelInfo;
+    NSUInteger attConsentWaitingSeconds = -1;
+    NSInteger eventDeduplicationIdsMaxSize = 0;
+    BOOL shouldLaunchDeferredDeeplink = YES;
     
     
 
@@ -349,8 +346,8 @@ int AdjustPlugin::initSdk(lua_State *L) {
     // AdServices info reading.
     lua_getfield(L, 1, "allowAdServicesInfoReading");
     if (!lua_isnil(L, 2)) {
-        allowAdServicesInfoReading = lua_toboolean(L, 2);
-        if (allowAdServicesInfoReading == NO) {
+        isAdServicesEnabled = lua_toboolean(L, 2);
+        if (isAdServicesEnabled == NO) {
             [adjustConfig disableAdServices];
         }
     }
@@ -359,9 +356,19 @@ int AdjustPlugin::initSdk(lua_State *L) {
     // IDFA reading.
     lua_getfield(L, 1, "allowIdfaReading");
     if (!lua_isnil(L, 2)) {
-        allowIdfaReading = lua_toboolean(L, 2);
-        if (allowIdfaReading == NO) {
+        isIdfaReadingEnabled = lua_toboolean(L, 2);
+        if (isIdfaReadingEnabled == NO) {
             [adjustConfig disableIdfaReading];
+        }
+    }
+    lua_pop(L, 1);
+
+    // IDFV reading.
+    lua_getfield(L, 1, "allowIdfvReading");
+    if (!lua_isnil(L, 2)) {
+        isIdfvReadingEnabled = lua_toboolean(L, 2);
+        if (isIdfvReadingEnabled == NO) {
+            [adjustConfig disableIdfvReading];
         }
     }
     lua_pop(L, 1);
@@ -369,8 +376,8 @@ int AdjustPlugin::initSdk(lua_State *L) {
     // SKAdNetwork handling.
     lua_getfield(L, 1, "allowSkAdNetworkHandling");
     if (!lua_isnil(L, 2)) {
-        allowSkAdNetworkHandling = lua_toboolean(L, 2);
-        if (allowSkAdNetworkHandling == NO) {
+        isSkanAttributionEnabled = lua_toboolean(L, 2);
+        if (isSkanAttributionEnabled == NO) {
             [adjustConfig disableSkanAttribution];
         }
     }
@@ -408,38 +415,38 @@ int AdjustPlugin::initSdk(lua_State *L) {
         [adjustConfig setExternalDeviceId:externalDeviceId];
     }
     lua_pop(L, 1);
+    
+    // URL strategy.
+    lua_getfield(L, 1, "domains");
+    if (!lua_isnil(L, 2) && lua_istable(L, 2)) {
+        NSDictionary *dict = CoronaLuaCreateDictionary(L, 2);
+        domainsArray = [dict allValues];
+    }
+    lua_pop(L, 1);
+    
+    // Is Data Residency.
+    lua_getfield(L, 1, "isDataResidency");
+    if (!lua_isnil(L, 2)) {
+        isDataResidency = lua_toboolean(L, 2);
+    }
+    lua_pop(L, 1);
+    
+    // UseSubdomains.
+    lua_getfield(L, 1, "useSubdomains");
+    if (!lua_isnil(L, 2)) {
+        useSubdomains = lua_toboolean(L, 2);
+    }
+    lua_pop(L, 1);
 
-//    // URL strategy.
-//    lua_getfield(L, 1, "urlStrategy");
-//    if (!lua_isnil(L, 2)) {
-//        const char *cstrUrlStrategy = lua_tostring(L, 2);
-//        if (cstrUrlStrategy != NULL) {
-//            urlStrategy = [NSString stringWithUTF8String:cstrUrlStrategy];
-//        }
-//        if (urlStrategy != nil) {
-//            if ([urlStrategy isEqualToString:@"china"]) {
-//                [adjustConfig setUrlStrategy:ADJUrlStrategyChina];
-//            } else if ([urlStrategy isEqualToString:@"india"]) {
-//                [adjustConfig setUrlStrategy:ADJUrlStrategyIndia];
-//            } else if ([urlStrategy isEqualToString:@"cn"]) {
-//                [adjustConfig setUrlStrategy:ADJUrlStrategyCn];
-//            } else if ([urlStrategy isEqualToString:@"data-residency-eu"]) {
-//                [adjustConfig setUrlStrategy:ADJDataResidencyEU];
-//            } else if ([urlStrategy isEqualToString:@"data-residency-tr"]) {
-//                [adjustConfig setUrlStrategy:ADJDataResidencyTR];
-//            } else if ([urlStrategy isEqualToString:@"data-residency-us"]) {
-//                [adjustConfig setUrlStrategy:ADJDataResidencyUS];
-//            }
-//        }
-//    }
-//    lua_pop(L, 1);
-
+    if ([domainsArray count] > 0){
+        [adjustConfig setUrlStrategy:domainsArray useSubdomains:useSubdomains isDataResidency:isDataResidency];
+    }
 
     // Send in background.
     lua_getfield(L, 1, "sendInBackground");
     if (!lua_isnil(L, 2)) {
-        sendInBackground = lua_toboolean(L, 2);
-        if (sendInBackground == YES) {
+        isSendingInBackgroundEnabled = lua_toboolean(L, 2);
+        if (isSendingInBackgroundEnabled == YES) {
             [adjustConfig enableSendingInBackground];
         }
     }
@@ -457,6 +464,14 @@ int AdjustPlugin::initSdk(lua_State *L) {
     if (!lua_isnil(L, 2)) {
         attConsentWaitingSeconds = lua_tonumber(L, 2);
         [adjustConfig setAttConsentWaitingInterval:attConsentWaitingSeconds];
+    }
+    lua_pop(L, 1);
+
+    // Consent Waiting Time.
+    lua_getfield(L, 1, "eventDeduplicationIdsMaxSize");
+    if (!lua_isnil(L, 2)) {
+        eventDeduplicationIdsMaxSize = lua_tointeger(L, 2);
+        [adjustConfig setEventDeduplicationIdsMaxSize:eventDeduplicationIdsMaxSize];
     }
     lua_pop(L, 1);
 
@@ -483,8 +498,18 @@ int AdjustPlugin::initSdk(lua_State *L) {
     lua_getfield(L, 1, "linkMeEnabled");
     if (!lua_isnil(L, 2)) {
         linkMeEnabled = lua_toboolean(L, 2);
-        if (linkMeEnabled) {
+        if (linkMeEnabled == YES) {
             [adjustConfig enableLinkMe];
+        }
+    }
+    lua_pop(L, 1);
+
+    // Device Ids read once.
+    lua_getfield(L, 1, "isDeviceIdsReadingOnceEnabled");
+    if (!lua_isnil(L, 2)) {
+        isDeviceIdsReadingOnceEnabled = lua_toboolean(L, 2);
+        if (isDeviceIdsReadingOnceEnabled == YES) {
+            [adjustConfig enableDeviceIdsReadingOnce];
         }
     }
     lua_pop(L, 1);
@@ -895,12 +920,6 @@ int AdjustPlugin::processAndResolveDeeplink(lua_State *L){
                 }];
         }
     }
-}
-
-// Public API.
-int AdjustPlugin::sendFirstPackages(lua_State *L) {
-//    [Adjust sendFirstPackages];
-    return 0;
 }
 
 // Public API.
@@ -1545,6 +1564,21 @@ int AdjustPlugin::getAmazonAdId(lua_State *L) {
 // Android specific.
 // Public API.
 int AdjustPlugin::trackPlayStoreSubscription(lua_State *L) {
+    return 0;
+}
+
+// Public API.
+int AdjustPlugin::setReferrer(lua_State *L) {
+    return 0;
+}
+
+// Public API.
+int AdjustPlugin::verifyPlayStorePurchase(lua_State *L) {
+    return 0;
+}
+
+// Public API.
+int AdjustPlugin::verifyAndTrackPlayStorePurchase(lua_State *L) {
     return 0;
 }
 
