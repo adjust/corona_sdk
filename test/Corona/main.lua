@@ -68,6 +68,7 @@ command_executor.setPlatform(platformInfo)
 print("[TestApp]: Setting test lib tests....")
 
 --testLib.addTest("Test_GdprForgetMe_inbetween_multiple_events")
+--testLib.addTest("Test_GdprForgetMe_web_info")
 
 --testLib.addTestDirectory("deeplink-getter")
 --testLib.addTestDirectory("global-parameters")
@@ -89,7 +90,7 @@ print("[TestApp]: Setting test lib tests....")
 --testLib.addTestDirectory("pasteboard")
 --testLib.addTestDirectory("event-tracking")
 --testLib.addTestDirectory("measurement-consent")
-testLib.addTestDirectory("session-callbacks")
+--testLib.addTestDirectory("session-callbacks")
 --testLib.addTestDirectory("init-malformed")
 --testLib.addTestDirectory("sdk-prefix")
 --testLib.addTestDirectory("continue-in")
@@ -110,7 +111,7 @@ testLib.addTestDirectory("session-callbacks")
 --testLib.addTestDirectory("event-callbacks")
 
 
-testLib.startTestSession("corona5.0.0@ios5.0.1")
+--testLib.startTestSession("corona5.0.0@ios5.0.1")
 
 -- Start Test Session
 -- ------------------------
