@@ -284,7 +284,7 @@ function CommandExecutor:config()
     end
 
     if self.command:containsParameter("allowSkAdNetworkHandling") then
-        adjustConfig.allowSkAdNetworkHandling = (self.command:getFirstParameterValue("allowSkAdNetworkHandling") == "true")
+        adjustConfig.isSkanAttributionEnabled = (self.command:getFirstParameterValue("allowSkAdNetworkHandling") == "true")
     end
 
     if self.command:containsParameter("isSkanAttributionEnabled") then
@@ -300,7 +300,7 @@ function CommandExecutor:config()
     end
 
     if self.command:containsParameter("sendInBackground") then
-        adjustConfig.sendInBackground = (self.command:getFirstParameterValue("sendInBackground") == "true")
+        adjustConfig.isSendingInBackgroundEnabled = (self.command:getFirstParameterValue("sendInBackground") == "true")
     end
 
     if self.command:containsParameter("userAgent") then

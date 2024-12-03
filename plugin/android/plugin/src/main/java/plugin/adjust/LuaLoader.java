@@ -409,7 +409,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         L.pop(1);
 
         // Background tracking.
-        L.getField(1, "sendInBackground");
+        L.getField(1, "isSendingInBackgroundEnabled");
         if (!L.isNil(2)) {
             isSendingInBackgroundEnabled = L.checkBoolean(2);
             if (isSendingInBackgroundEnabled)

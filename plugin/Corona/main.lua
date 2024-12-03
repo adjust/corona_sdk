@@ -121,7 +121,7 @@ adjust.initSdk({
     -- please check https://github.com/adjust/corona_sdk/blob/master/README.md first
     -- processName = "processName",
     -- defaultTracker = "defaultTracker",
-    -- sendInBackground = true,
+    -- isSendingInBackgroundEnabled = true,
     -- externalDeviceId = "externalDeviceId",
     -- isCostDataInAttributionEnabled = true,
     -- isDeviceIdsReadingOnceEnabled = true,
@@ -144,7 +144,7 @@ adjust.initSdk({
     -- attConsentWaitingSeconds = 10,
 })
 
---adjust.requestTrackingAuthorizationWithCompletionHandler(function(event)
+--adjust.requestAppTrackingAuthorization(function(event)
 --    print("[Adjust]: Authorization status = " .. event.message)
 --    if     event.message == "0" then print("[Adjust]: ATTrackingManagerAuthorizationStatusNotDetermined")
 --    elseif event.message == "1" then print("[Adjust]: ATTrackingManagerAuthorizationStatusRestricted")
@@ -167,14 +167,10 @@ local function handleTrackSimpleEvent(event)
         adjust.trackEvent({
             eventToken = "g3mfiw"
         })
-        -- adjust.updateConversionValueWithCallback(6, function(event)
-        --     print("[Adjust]: Update conversion value pre-SKAN4 style error = " .. event.message)
-        -- end)
-        -- adjust.updateConversionValueWithSkan4Callback(6, "low", false, function(event)
+        -- adjust.updateSkanConversionValue(6, "low", false, function(event)
         --     print("[Adjust]: Update conversion value SKAN4 style error = " .. event.message)
         -- end)
         -- adjust.checkForNewAttStatus()
-        -- adjust.updateConversionValue(6)
         -- adjust.trackMeasurementConsent(true)
         -- adjust.trackThirdPartySharing({
         --     enabled = true,
@@ -202,7 +198,6 @@ local function handleTrackSimpleEvent(event)
         --     price = "6.66",
         --     currency = "CAD",
         --     transactionId = "random-transaction-id",
-        --     receipt = "random-receipt",
         --     transactionDate = "1234567890",
         --     salesRegion = "CA",
         --     callbackParameters = {
@@ -445,7 +440,7 @@ widget.newButton({
 
 -- Get Google Adid
 -- ------------------------
-local function handleGetAdid(event)
+local function handleGetGoogleAdid(event)
     if ("ended" == event.phase) then
         adjust.getGoogleAdId(function(event)
             print("[Adjust]: googleAdId = " .. event.message)
@@ -461,7 +456,7 @@ widget.newButton({
     top = 40 + (10 * 30),
     id = "button10",
     label = "Get Google Adid",
-    onEvent = handleGetAdid
+    onEvent = handleGetGoogleAdid
 })
 
 -- Get Idfa

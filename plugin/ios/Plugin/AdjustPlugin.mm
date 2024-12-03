@@ -438,7 +438,7 @@ int AdjustPlugin::initSdk(lua_State *L) {
     }
 
     // Send in background.
-    lua_getfield(L, 1, "sendInBackground");
+    lua_getfield(L, 1, "isSendingInBackgroundEnabled");
     if (!lua_isnil(L, 2)) {
         isSendingInBackgroundEnabled = lua_toboolean(L, 2);
         if (isSendingInBackgroundEnabled == YES) {
