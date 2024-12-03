@@ -669,10 +669,8 @@ int AdjustPlugin::trackAppStoreSubscription(lua_State *L) {
     NSString *price = nil;
     NSString *currency = nil;
     NSString *transactionId = nil;
-    NSString *receipt = nil;
 
     NSDecimalNumber *priceValue = nil;
-    NSData *receiptValue = nil;
 
     // Price.
     lua_getfield(L, 1, "price");
@@ -701,17 +699,6 @@ int AdjustPlugin::trackAppStoreSubscription(lua_State *L) {
         const char *cstrTransactionId = lua_tostring(L, 2);
         if (cstrTransactionId != NULL) {
             transactionId = [NSString stringWithUTF8String:cstrTransactionId];
-        }
-    }
-    lua_pop(L, 1);
-
-    // Receipt.
-    lua_getfield(L, 1, "receipt");
-    if (!lua_isnil(L, 2)) {
-        const char *cstrReceipt = lua_tostring(L, 2);
-        if (cstrReceipt != NULL) {
-            receipt = [NSString stringWithUTF8String:cstrReceipt];
-            receiptValue = [receipt dataUsingEncoding:NSUTF8StringEncoding];
         }
     }
     lua_pop(L, 1);
