@@ -41,7 +41,7 @@ else
     protocol = "https"
     port = "8443"
 end
-local baseIp = "192.168.8.14"
+local baseIp = "192.168.8.16"
 local overwriteUrl = protocol .. "://" .. baseIp .. ":" .. port
 local controlUrl = "ws://" .. baseIp .. ":1987";
 print("[TestApp]: Using BaseUrl: [" .. overwriteUrl .. "]--")

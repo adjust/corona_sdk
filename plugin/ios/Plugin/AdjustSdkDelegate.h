@@ -11,10 +11,10 @@
 #import "ADJConfig.h"
 
 #define ADJ_ATTRIBUTION_CHANGED @"adjust_attributionChanged"
-#define ADJ_EVENT_TRACKING_SUCCESS @"adjust_eventTrackingSuccess"
-#define ADJ_EVENT_TRACKING_FAILURE @"adjust_eventTrackingFailure"
-#define ADJ_SESSION_TRACKING_SUCCESS @"adjust_sessionTrackingSuccess"
-#define ADJ_SESSION_TRACKING_FAILURE @"adjust_sessionTrackingFailure"
+#define ADJ_EVENT_TRACKING_SUCCESS @"adjust_eventSuccess"
+#define ADJ_EVENT_TRACKING_FAILURE @"adjust_eventFailure"
+#define ADJ_SESSION_TRACKING_SUCCESS @"adjust_sessionSuccess"
+#define ADJ_SESSION_TRACKING_FAILURE @"adjust_sessionFailure"
 #define ADJ_DEFERRED_DEEPLINK @"adjust_deferredDeeplink"
 #define ADJ_UPDATE_SKAN @"adjust_updateSkan"
 
@@ -36,22 +36,22 @@
 /**
  * @brief Event success callback reference.
  */
-@property (nonatomic) CoronaLuaRef eventTrackingSuccessCallback;
+@property (nonatomic) CoronaLuaRef eventSuccessCallback;
 
 /**
  * @brief Event failure callback reference.
  */
-@property (nonatomic) CoronaLuaRef eventTrackingFailureCallback;
+@property (nonatomic) CoronaLuaRef eventFailureCallback;
 
 /**
  * @brief Session success callback reference.
  */
-@property (nonatomic) CoronaLuaRef sessionTrackingSuccessCallback;
+@property (nonatomic) CoronaLuaRef sessionSuccessCallback;
 
 /**
  * @brief Session failure callback reference.
  */
-@property (nonatomic) CoronaLuaRef sessionTrackingFailureCallback;
+@property (nonatomic) CoronaLuaRef sessionFailureCallback;
 
 /**
  * @brief Deferred deep link callback reference.
@@ -71,10 +71,10 @@
  * @brief Obtain static instance of AdjustSdkDelegate.
  *
  * @param attributionCallback                   Attribution callback reference.
- * @param eventTrackingSuccessCallback          Event success callback reference.
- * @param eventTrackingFailureCallback          Event failure callback reference.
- * @param sessionTrackingSuccessCallback        Session success callback reference.
- * @param sessionTrackingFailureCallback        Session failure callback reference.
+ * @param eventSuccessCallback          Event success callback reference.
+ * @param eventFailureCallback          Event failure callback reference.
+ * @param sessionSuccessCallback        Session success callback reference.
+ * @param sessionFailureCallback        Session failure callback reference.
  * @param deferredDeeplinkCallback              Deferred deep link callback reference.
  * @param updateSkanCallback              skan update callback reference.
  * @param conversionValueUpdatedCallback        Conversion value updated callback reference.
@@ -85,10 +85,10 @@
  * @returns Static instance of AdjustSdkDelegate.
  */
 + (id)getInstanceWithSwizzleOfAttributionChangedCallback:(CoronaLuaRef)attributionCallback
-                            eventTrackingSuccessCallback:(CoronaLuaRef)eventTrackingSuccessCallback
-                            eventTrackingFailureCallback:(CoronaLuaRef)eventTrackingFailureCallback
-                          sessionTrackingSuccessCallback:(CoronaLuaRef)sessionTrackingSuccessCallback
-                          sessionTrackingFailureCallback:(CoronaLuaRef)sessionTrackingFailureCallback
+                            eventSuccessCallback:(CoronaLuaRef)eventSuccessCallback
+                            eventFailureCallback:(CoronaLuaRef)eventFailureCallback
+                          sessionSuccessCallback:(CoronaLuaRef)sessionSuccessCallback
+                          sessionFailureCallback:(CoronaLuaRef)sessionFailureCallback
                                 deferredDeeplinkCallback:(CoronaLuaRef)deferredDeeplinkCallback
                                       updateSkanCallback:(CoronaLuaRef)updateSkanCallback
                             shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink

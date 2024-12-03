@@ -44,18 +44,18 @@ public:
     static const char kEvent[];
 
     void InitializeAttributionListener(CoronaLuaRef listener);
-    void InitializeEventTrackingSuccessListener(CoronaLuaRef listener);
-    void InitializeEventTrackingFailureListener(CoronaLuaRef listener);
-    void InitializeSessionTrackingSuccessListener(CoronaLuaRef listener);
-    void InitializeSessionTrackingFailureListener(CoronaLuaRef listener);
+    void InitializeEventSuccessListener(CoronaLuaRef listener);
+    void InitializeEventFailureListener(CoronaLuaRef listener);
+    void InitializeSessionSuccessListener(CoronaLuaRef listener);
+    void InitializeSessionFailureListener(CoronaLuaRef listener);
     void InitializeDeferredDeeplinkListener(CoronaLuaRef listener);
     void InitializeUpdateSkanListener(CoronaLuaRef listener);
 
     CoronaLuaRef GetAttributionChangedListener() const { return attributionChangedListener; }
-    CoronaLuaRef GetEventTrackingSuccessListener() const { return eventTrackingSuccessListener; }
-    CoronaLuaRef GetEventTrackingFailureListener() const { return eventTrackingFailureListener; }
-    CoronaLuaRef GetSessionTrackingSuccessListener() const { return sessionTrackingSuccessListener; }
-    CoronaLuaRef GetSessionTrackingFailureListener() const { return sessionTrackingFailureListener; }
+    CoronaLuaRef GetEventSuccessListener() const { return eventSuccessListener; }
+    CoronaLuaRef GetEventFailureListener() const { return eventFailureListener; }
+    CoronaLuaRef GetSessionSuccessListener() const { return sessionSuccessListener; }
+    CoronaLuaRef GetSessionFailureListener() const { return sessionFailureListener; }
     CoronaLuaRef GetDeferredDeeplinkListener() const { return deferredDeeplinkListener; }
     CoronaLuaRef GetUpdateSkanListener() const { return updateSkanListener; }
 
@@ -91,10 +91,10 @@ public:
     static int trackThirdPartySharing(lua_State *L);
     static int trackMeasurementConsent(lua_State *L);
     static int setAttributionListener(lua_State *L);
-    static int setEventTrackingSuccessListener(lua_State *L);
-    static int setEventTrackingFailureListener(lua_State *L);
-    static int setSessionTrackingSuccessListener(lua_State *L);
-    static int setSessionTrackingFailureListener(lua_State *L);
+    static int setEventSuccessListener(lua_State *L);
+    static int setEventFailureListener(lua_State *L);
+    static int setSessionSuccessListener(lua_State *L);
+    static int setSessionFailureListener(lua_State *L);
     static int setDeferredDeeplinkListener(lua_State *L);
     static int setUpdateSkanListener(lua_State *L);
     static int checkForNewAttStatus(lua_State *L);
@@ -121,10 +121,10 @@ protected:
 
 private:
     CoronaLuaRef attributionChangedListener;
-    CoronaLuaRef eventTrackingSuccessListener;
-    CoronaLuaRef eventTrackingFailureListener;
-    CoronaLuaRef sessionTrackingSuccessListener;
-    CoronaLuaRef sessionTrackingFailureListener;
+    CoronaLuaRef eventSuccessListener;
+    CoronaLuaRef eventFailureListener;
+    CoronaLuaRef sessionSuccessListener;
+    CoronaLuaRef sessionFailureListener;
     CoronaLuaRef deferredDeeplinkListener;
     CoronaLuaRef updateSkanListener;
 };
@@ -137,10 +137,10 @@ const char AdjustPlugin::kName[] = "plugin.adjust";
 
 AdjustPlugin::AdjustPlugin()
 : attributionChangedListener(NULL),
-eventTrackingSuccessListener(NULL),
-eventTrackingFailureListener(NULL),
-sessionTrackingSuccessListener(NULL),
-sessionTrackingFailureListener(NULL),
+eventSuccessListener(NULL),
+eventFailureListener(NULL),
+sessionSuccessListener(NULL),
+sessionFailureListener(NULL),
 deferredDeeplinkListener(NULL),
 updateSkanListener(NULL){}
 
@@ -149,20 +149,20 @@ void AdjustPlugin::InitializeAttributionListener(CoronaLuaRef listener) {
     attributionChangedListener = listener;
 }
 
-void AdjustPlugin::InitializeEventTrackingSuccessListener(CoronaLuaRef listener) {
-    eventTrackingSuccessListener = listener;
+void AdjustPlugin::InitializeEventSuccessListener(CoronaLuaRef listener) {
+    eventSuccessListener = listener;
 }
 
-void AdjustPlugin::InitializeEventTrackingFailureListener(CoronaLuaRef listener) {
-    eventTrackingFailureListener = listener;
+void AdjustPlugin::InitializeEventFailureListener(CoronaLuaRef listener) {
+    eventFailureListener = listener;
 }
 
-void AdjustPlugin::InitializeSessionTrackingSuccessListener(CoronaLuaRef listener) {
-    sessionTrackingSuccessListener = listener;
+void AdjustPlugin::InitializeSessionSuccessListener(CoronaLuaRef listener) {
+    sessionSuccessListener = listener;
 }
 
-void AdjustPlugin::InitializeSessionTrackingFailureListener(CoronaLuaRef listener) {
-    sessionTrackingFailureListener = listener;
+void AdjustPlugin::InitializeSessionFailureListener(CoronaLuaRef listener) {
+    sessionFailureListener = listener;
 }
 
 void AdjustPlugin::InitializeDeferredDeeplinkListener(CoronaLuaRef listener) {
@@ -199,10 +199,10 @@ AdjustPlugin::Open(lua_State *L) {
         { "switchToOfflineMode", switchToOfflineMode },
         { "switchBackToOnlineMode", switchBackToOnlineMode },
         { "setAttributionListener", setAttributionListener },
-        { "setEventTrackingSuccessListener", setEventTrackingSuccessListener },
-        { "setEventTrackingFailureListener", setEventTrackingFailureListener },
-        { "setSessionTrackingSuccessListener", setSessionTrackingSuccessListener },
-        { "setSessionTrackingFailureListener", setSessionTrackingFailureListener },
+        { "setEventSuccessCallback", setEventSuccessListener },
+        { "setEventFailureListener", setEventFailureListener },
+        { "setSessionSuccessListener", setSessionSuccessListener },
+        { "setSessionFailureListener", setSessionFailureListener },
         { "setDeferredDeeplinkListener", setDeferredDeeplinkListener },
         { "isEnabled", isEnabled },
         { "getSdkVersion", getSdkVersion },
@@ -246,10 +246,10 @@ AdjustPlugin::Open(lua_State *L) {
 int AdjustPlugin::Finalizer(lua_State *L) {
     Self *library = (Self *)CoronaLuaToUserdata(L, 1);
     CoronaLuaDeleteRef(L, library->GetAttributionChangedListener());
-    CoronaLuaDeleteRef(L, library->GetSessionTrackingSuccessListener());
-    CoronaLuaDeleteRef(L, library->GetSessionTrackingFailureListener());
-    CoronaLuaDeleteRef(L, library->GetEventTrackingSuccessListener());
-    CoronaLuaDeleteRef(L, library->GetEventTrackingFailureListener());
+    CoronaLuaDeleteRef(L, library->GetSessionSuccessListener());
+    CoronaLuaDeleteRef(L, library->GetSessionFailureListener());
+    CoronaLuaDeleteRef(L, library->GetEventSuccessListener());
+    CoronaLuaDeleteRef(L, library->GetEventFailureListener());
     CoronaLuaDeleteRef(L, library->GetDeferredDeeplinkListener());
     CoronaLuaDeleteRef(L, library->GetUpdateSkanListener());
 
@@ -512,26 +512,26 @@ int AdjustPlugin::initSdk(lua_State *L) {
     // Callbacks.
     Self *library = ToLibrary(L);
     BOOL isAttributionChangedListenerImplmented = library->GetAttributionChangedListener() != NULL;
-    BOOL isEventTrackingSuccessListenerImplmented = library->GetEventTrackingSuccessListener() != NULL;
-    BOOL isEventTrackingFailureListenerImplmented = library->GetEventTrackingFailureListener() != NULL;
-    BOOL isSessionTrackingSuccessListenerImplmented = library->GetSessionTrackingSuccessListener() != NULL;
-    BOOL isSessionTrackingFailureListenerImplmented = library->GetSessionTrackingFailureListener() != NULL;
+    BOOL isEventSuccessListenerImplmented = library->GetEventSuccessListener() != NULL;
+    BOOL isEventFailureListenerImplmented = library->GetEventFailureListener() != NULL;
+    BOOL isSessionSuccessListenerImplmented = library->GetSessionSuccessListener() != NULL;
+    BOOL isSessionFailureListenerImplmented = library->GetSessionFailureListener() != NULL;
     BOOL isDeferredDeeplinkListenerImplemented = library->GetDeferredDeeplinkListener() != NULL;
     BOOL isUpdateSkanListenerImplemented = library->GetUpdateSkanListener() != NULL;
 
     if (isAttributionChangedListenerImplmented
-        || isEventTrackingSuccessListenerImplmented
-        || isEventTrackingFailureListenerImplmented
-        || isSessionTrackingSuccessListenerImplmented
-        || isSessionTrackingFailureListenerImplmented
+        || isEventSuccessListenerImplmented
+        || isEventFailureListenerImplmented
+        || isSessionSuccessListenerImplmented
+        || isSessionFailureListenerImplmented
         || isDeferredDeeplinkListenerImplemented
         || isUpdateSkanListenerImplemented) {
         [adjustConfig setDelegate:
          [AdjustSdkDelegate getInstanceWithSwizzleOfAttributionChangedCallback:library->GetAttributionChangedListener()
-                                                  eventTrackingSuccessCallback:library->GetEventTrackingSuccessListener()
-                                                  eventTrackingFailureCallback:library->GetEventTrackingFailureListener()
-                                                sessionTrackingSuccessCallback:library->GetSessionTrackingSuccessListener()
-                                                sessionTrackingFailureCallback:library->GetSessionTrackingFailureListener()
+                                                  eventSuccessCallback:library->GetEventSuccessListener()
+                                                  eventFailureCallback:library->GetEventFailureListener()
+                                                sessionSuccessCallback:library->GetSessionSuccessListener()
+                                                sessionFailureCallback:library->GetSessionFailureListener()
                                                       deferredDeeplinkCallback:library->GetDeferredDeeplinkListener()
                                                             updateSkanCallback:library->GetUpdateSkanListener()
                                                   shouldLaunchDeferredDeeplink:shouldLaunchDeferredDeeplink
@@ -769,45 +769,45 @@ int AdjustPlugin::setAttributionListener(lua_State *L) {
 }
 
 // Public API.
-int AdjustPlugin::setEventTrackingSuccessListener(lua_State *L) {
+int AdjustPlugin::setEventSuccessListener(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
         Self *library = ToLibrary(L);
         CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
-        library->InitializeEventTrackingSuccessListener(listener);
+        library->InitializeEventSuccessListener(listener);
     }
     return 0;
 }
 
 // Public API.
-int AdjustPlugin::setEventTrackingFailureListener(lua_State *L) {
+int AdjustPlugin::setEventFailureListener(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
         Self *library = ToLibrary(L);
         CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
-        library->InitializeEventTrackingFailureListener(listener);
+        library->InitializeEventFailureListener(listener);
     }
     return 0;
 }
 
 // Public API.
-int AdjustPlugin::setSessionTrackingSuccessListener(lua_State *L) {
+int AdjustPlugin::setSessionSuccessListener(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
         Self *library = ToLibrary(L);
         CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
-        library->InitializeSessionTrackingSuccessListener(listener);
+        library->InitializeSessionSuccessListener(listener);
     }
     return 0;
 }
 
 // Public API.
-int AdjustPlugin::setSessionTrackingFailureListener(lua_State *L) {
+int AdjustPlugin::setSessionFailureListener(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
         Self *library = ToLibrary(L);
         CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
-        library->InitializeSessionTrackingFailureListener(listener);
+        library->InitializeSessionFailureListener(listener);
     }
     return 0;
 }

@@ -56,10 +56,10 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
 #pragma mark - Public methods
 
 + (id)getInstanceWithSwizzleOfAttributionChangedCallback:(CoronaLuaRef)attributionCallback
-                            eventTrackingSuccessCallback:(CoronaLuaRef)eventTrackingSuccessCallback
-                            eventTrackingFailureCallback:(CoronaLuaRef)eventTrackingFailureCallback
-                          sessionTrackingSuccessCallback:(CoronaLuaRef)sessionTrackingSuccessCallback
-                          sessionTrackingFailureCallback:(CoronaLuaRef)sessionTrackingFailureCallback
+                            eventSuccessCallback:(CoronaLuaRef)eventSuccessCallback
+                            eventFailureCallback:(CoronaLuaRef)eventFailureCallback
+                          sessionSuccessCallback:(CoronaLuaRef)sessionSuccessCallback
+                          sessionFailureCallback:(CoronaLuaRef)sessionFailureCallback
                                 deferredDeeplinkCallback:(CoronaLuaRef)deferredDeeplinkCallback
                                       updateSkanCallback:(CoronaLuaRef)updateSkanCallback
                             shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink
@@ -72,21 +72,21 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
             [defaultInstance swizzleOriginalSelector:@selector(adjustAttributionChanged:)
                                         withSelector:@selector(adjustAttributionChangedWannabe:)];
         }
-        if (eventTrackingSuccessCallback != NULL) {
-            [defaultInstance swizzleOriginalSelector:@selector(adjustEventTrackingSucceeded:)
-                                        withSelector:@selector(adjustEventTrackingSucceededWannabe:)];
+        if (eventSuccessCallback != NULL) {
+            [defaultInstance swizzleOriginalSelector:@selector(adjustEventSucceeded:)
+                                        withSelector:@selector(adjustEventSucceededWannabe:)];
         }
-        if (eventTrackingFailureCallback != NULL) {
-            [defaultInstance swizzleOriginalSelector:@selector(adjustEventTrackingFailed:)
-                                        withSelector:@selector(adjustEventTrackingFailedWannabe:)];
+        if (eventFailureCallback != NULL) {
+            [defaultInstance swizzleOriginalSelector:@selector(adjustEventFailed:)
+                                        withSelector:@selector(adjustEventFailedWannabe:)];
         }
-        if (sessionTrackingSuccessCallback != NULL) {
-            [defaultInstance swizzleOriginalSelector:@selector(adjustSessionTrackingSucceeded:)
-                                        withSelector:@selector(adjustSessionTrackingSucceededWannabe:)];
+        if (sessionSuccessCallback != NULL) {
+            [defaultInstance swizzleOriginalSelector:@selector(adjustSessionSucceeded:)
+                                        withSelector:@selector(adjustSessionSucceededWannabe:)];
         }
-        if (sessionTrackingFailureCallback != NULL) {
-            [defaultInstance swizzleOriginalSelector:@selector(adjustSessionTrackingFailed:)
-                                        withSelector:@selector(adjustSessionTrackingFailedWannabe:)];
+        if (sessionFailureCallback != NULL) {
+            [defaultInstance swizzleOriginalSelector:@selector(adjustSessionFailed:)
+                                        withSelector:@selector(adjustSessionFailedWannabe:)];
         }
         if (deferredDeeplinkCallback != NULL) {
             [defaultInstance swizzleOriginalSelector:@selector(adjustDeferredDeeplinkReceived:)
@@ -98,10 +98,10 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
         }
 
         [defaultInstance setAttributionChangedCallback:attributionCallback];
-        [defaultInstance setEventTrackingSuccessCallback:eventTrackingSuccessCallback];
-        [defaultInstance setEventTrackingFailureCallback:eventTrackingFailureCallback];
-        [defaultInstance setSessionTrackingSuccessCallback:sessionTrackingSuccessCallback];
-        [defaultInstance setSessionTrackingFailureCallback:sessionTrackingFailureCallback];
+        [defaultInstance setEventSuccessCallback:eventSuccessCallback];
+        [defaultInstance setEventFailureCallback:eventFailureCallback];
+        [defaultInstance setSessionSuccessCallback:sessionSuccessCallback];
+        [defaultInstance setSessionFailureCallback:sessionFailureCallback];
         [defaultInstance setDeferredDeeplinkCallback:deferredDeeplinkCallback];
         [defaultInstance setUpdateSkanCallback:updateSkanCallback];
         [defaultInstance setShouldLaunchDeferredDeeplink:shouldLaunchDeferredDeeplink];
@@ -181,7 +181,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
     }
 }
 
-- (void)adjustSessionTrackingSucceededWannabe:(ADJSessionSuccess *)sessionSuccessResponseData {
+- (void)adjustSessionSucceededWannabe:(ADJSessionSuccess *)sessionSuccessResponseData {
     if (nil == sessionSuccessResponseData) {
         return;
     }
@@ -204,12 +204,12 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         [AdjustSdkDelegate dispatchEvent:ADJ_SESSION_TRACKING_SUCCESS
                                withState:_luaState
-                                callback:_sessionTrackingSuccessCallback
+                                callback:_sessionSuccessCallback
                               andMessage:jsonString];
     }
 }
 
-- (void)adjustSessionTrackingFailedWannabe:(ADJSessionFailure *)sessionFailureResponseData {
+- (void)adjustSessionFailedWannabe:(ADJSessionFailure *)sessionFailureResponseData {
     if (nil == sessionFailureResponseData) {
         return;
     }
@@ -233,12 +233,12 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         [AdjustSdkDelegate dispatchEvent:ADJ_SESSION_TRACKING_FAILURE
                                withState:_luaState
-                                callback:_sessionTrackingFailureCallback
+                                callback:_sessionFailureCallback
                               andMessage:jsonString];
     }
 }
 
-- (void)adjustEventTrackingSucceededWannabe:(ADJEventSuccess *)eventSuccessResponseData {
+- (void)adjustEventSucceededWannabe:(ADJEventSuccess *)eventSuccessResponseData {
     if (nil == eventSuccessResponseData) {
         return;
     }
@@ -263,12 +263,12 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         [AdjustSdkDelegate dispatchEvent:ADJ_EVENT_TRACKING_SUCCESS
                                withState:_luaState
-                                callback:_eventTrackingSuccessCallback
+                                callback:_eventSuccessCallback
                               andMessage:jsonString];
     }
 }
 
-- (void)adjustEventTrackingFailedWannabe:(ADJEventFailure *)eventFailureResponseData {
+- (void)adjustEventFailedWannabe:(ADJEventFailure *)eventFailureResponseData {
     if (nil == eventFailureResponseData) {
         return;
     }
@@ -294,7 +294,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         [AdjustSdkDelegate dispatchEvent:ADJ_EVENT_TRACKING_FAILURE
                                withState:_luaState
-                                callback:_eventTrackingFailureCallback
+                                callback:_eventFailureCallback
                               andMessage:jsonString];
     }
 }

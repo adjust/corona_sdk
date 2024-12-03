@@ -53,10 +53,10 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     public static final String EVENT_GET_AUTHORIZATION_STATUS = "adjust_requestAppTrackingAuthorization";
 
     private int attributionChangedListener;
-    private int eventTrackingSuccessListener;
-    private int eventTrackingFailureListener;
-    private int sessionTrackingSuccessListener;
-    private int sessionTrackingFailureListener;
+    private int eventSuccessListener;
+    private int eventFailureListener;
+    private int sessionSuccessListener;
+    private int sessionFailureListener;
     private int deferredDeeplinkListener;
     private int updateSkanListener;
     private boolean shouldLaunchDeeplink = true;
@@ -71,10 +71,10 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     public LuaLoader() {
         // Initialize listeners to REFNIL
         attributionChangedListener = CoronaLua.REFNIL;
-        eventTrackingSuccessListener = CoronaLua.REFNIL;
-        eventTrackingFailureListener = CoronaLua.REFNIL;
-        sessionTrackingSuccessListener = CoronaLua.REFNIL;
-        sessionTrackingFailureListener = CoronaLua.REFNIL;
+        eventSuccessListener = CoronaLua.REFNIL;
+        eventFailureListener = CoronaLua.REFNIL;
+        sessionSuccessListener = CoronaLua.REFNIL;
+        sessionFailureListener = CoronaLua.REFNIL;
         updateSkanListener = CoronaLua.REFNIL;
         deferredDeeplinkListener = CoronaLua.REFNIL;
 
@@ -115,10 +115,10 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 new SwitchToOfflineModeWrapper(),
                 new SwitchBackToOnlineModeWrapper(),
                 new SetAttributionListenerWrapper(),
-                new SetEventTrackingSuccessListenerWrapper(),
-                new SetEventTrackingFailureListenerWrapper(),
-                new SetSessionTrackingSuccessListenerWrapper(),
-                new SetSessionTrackingFailureListenerWrapper(),
+                new SetEventSuccessListenerWrapper(),
+                new SetEventFailureListenerWrapper(),
+                new SetSessionSuccessListenerWrapper(),
+                new SetSessionFailureListenerWrapper(),
                 new SetDeferredDeeplinkListenerWrapper(),
                 new IsEnabledWrapper(),
                 new GetSdkVersionWrapper(),
@@ -217,18 +217,18 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     public void onExiting(CoronaRuntime runtime) {
         // Remove the Lua listener reference.
         CoronaLua.deleteRef(runtime.getLuaState(), attributionChangedListener);
-        CoronaLua.deleteRef(runtime.getLuaState(), sessionTrackingSuccessListener);
-        CoronaLua.deleteRef(runtime.getLuaState(), sessionTrackingFailureListener);
-        CoronaLua.deleteRef(runtime.getLuaState(), eventTrackingSuccessListener);
-        CoronaLua.deleteRef(runtime.getLuaState(), eventTrackingFailureListener);
+        CoronaLua.deleteRef(runtime.getLuaState(), sessionSuccessListener);
+        CoronaLua.deleteRef(runtime.getLuaState(), sessionFailureListener);
+        CoronaLua.deleteRef(runtime.getLuaState(), eventSuccessListener);
+        CoronaLua.deleteRef(runtime.getLuaState(), eventFailureListener);
         CoronaLua.deleteRef(runtime.getLuaState(), deferredDeeplinkListener);
         CoronaLua.deleteRef(runtime.getLuaState(), updateSkanListener);
 
         attributionChangedListener = CoronaLua.REFNIL;
-        eventTrackingSuccessListener = CoronaLua.REFNIL;
-        eventTrackingFailureListener = CoronaLua.REFNIL;
-        sessionTrackingSuccessListener = CoronaLua.REFNIL;
-        sessionTrackingFailureListener = CoronaLua.REFNIL;
+        eventSuccessListener = CoronaLua.REFNIL;
+        eventFailureListener = CoronaLua.REFNIL;
+        sessionSuccessListener = CoronaLua.REFNIL;
+        sessionFailureListener = CoronaLua.REFNIL;
         deferredDeeplinkListener = CoronaLua.REFNIL;
         updateSkanListener = CoronaLua.REFNIL;
     }
@@ -497,73 +497,73 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
 
         // Event tracking success callback.
-        if (this.eventTrackingSuccessListener != CoronaLua.REFNIL) {
+        if (this.eventSuccessListener != CoronaLua.REFNIL) {
             adjustConfig.setOnEventTrackingSucceededListener(new OnEventTrackingSucceededListener() {
 
                 @Override
                 public void onEventTrackingSucceeded(AdjustEventSuccess adjustEventSuccess) {
                     try {
                         dispatchEvent(
-                                LuaLoader.this.eventTrackingSuccessListener,
+                                LuaLoader.this.eventSuccessListener,
                                 EVENT_EVENT_TRACKING_SUCCESS,
                                 new JSONObject(LuaUtil.eventSuccessToMap(adjustEventSuccess)).toString());
                     } catch (Exception err) {
                         Log.e(TAG, "adjust_create: Given event success string is not valid JSON string");
-                        dispatchEvent(LuaLoader.this.eventTrackingSuccessListener, EVENT_EVENT_TRACKING_SUCCESS, new JSONObject().toString());
+                        dispatchEvent(LuaLoader.this.eventSuccessListener, EVENT_EVENT_TRACKING_SUCCESS, new JSONObject().toString());
                     }
                 }
             });
         }
 
         // Event tracking failure callback.
-        if (this.eventTrackingFailureListener != CoronaLua.REFNIL) {
+        if (this.eventFailureListener != CoronaLua.REFNIL) {
             adjustConfig.setOnEventTrackingFailedListener(new OnEventTrackingFailedListener() {
                 @Override
                 public void onEventTrackingFailed(AdjustEventFailure adjustEventFailure) {
                     try {
                         dispatchEvent(
-                                LuaLoader.this.eventTrackingFailureListener,
+                                LuaLoader.this.eventFailureListener,
                                 EVENT_EVENT_TRACKING_FAILURE,
                                 new JSONObject(LuaUtil.eventFailureToMap(adjustEventFailure)).toString());
                     } catch (Exception err) {
                         Log.e(TAG, "adjust_create: Given event failure string is not valid JSON string");
-                        dispatchEvent(LuaLoader.this.eventTrackingFailureListener, EVENT_EVENT_TRACKING_FAILURE, new JSONObject().toString());
+                        dispatchEvent(LuaLoader.this.eventFailureListener, EVENT_EVENT_TRACKING_FAILURE, new JSONObject().toString());
                     }
                 }
             });
         }
 
         // Session tracking success callback.
-        if (this.sessionTrackingSuccessListener != CoronaLua.REFNIL) {
+        if (this.sessionSuccessListener != CoronaLua.REFNIL) {
             adjustConfig.setOnSessionTrackingSucceededListener(new OnSessionTrackingSucceededListener() {
                 @Override
                 public void onSessionTrackingSucceeded(AdjustSessionSuccess adjustSessionSuccess) {
                     try {
                         dispatchEvent(
-                                LuaLoader.this.sessionTrackingSuccessListener,
+                                LuaLoader.this.sessionSuccessListener,
                                 EVENT_SESSION_TRACKING_SUCCESS,
                                 new JSONObject(LuaUtil.sessionSuccessToMap(adjustSessionSuccess)).toString());
                     } catch (Exception err) {
                         Log.e(TAG, "adjust_create: Given session success string is not valid JSON string");
-                        dispatchEvent(LuaLoader.this.sessionTrackingSuccessListener, EVENT_SESSION_TRACKING_SUCCESS, new JSONObject().toString());
+                        dispatchEvent(LuaLoader.this.sessionSuccessListener, EVENT_SESSION_TRACKING_SUCCESS, new JSONObject().toString());
                     }
                 }
             });
         }
 
         // Session tracking failure callback.
-        if (this.sessionTrackingFailureListener != CoronaLua.REFNIL) {
+        if (this.sessionFailureListener != CoronaLua.REFNIL) {
             adjustConfig.setOnSessionTrackingFailedListener(new OnSessionTrackingFailedListener() {
                 @Override
                 public void onSessionTrackingFailed(AdjustSessionFailure adjustSessionFailure) {
                     try {
                         dispatchEvent(
-                                LuaLoader.this.sessionTrackingFailureListener,
+                                LuaLoader.this.sessionFailureListener,
                                 EVENT_SESSION_TRACKING_FAILURE,
                                 new JSONObject(LuaUtil.sessionFailureToMap(adjustSessionFailure)).toString());
                     } catch (Exception err) {
                         Log.e(TAG, "adjust_create: Given session failure string is not valid JSON string");
-                        dispatchEvent(LuaLoader.this.sessionTrackingFailureListener, EVENT_SESSION_TRACKING_FAILURE, new JSONObject().toString());
+                        dispatchEvent(LuaLoader.this.sessionFailureListener, EVENT_SESSION_TRACKING_FAILURE, new JSONObject().toString());
                     }
                 }
             });
@@ -1518,41 +1518,41 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     }
 
     // Public API.
-    private int adjust_setEventTrackingSuccessListener(LuaState L) {
+    private int adjust_setEventSuccessListener(LuaState L) {
         // Hardcoded listener index for ADJUST.
         int listenerIndex = 1;
         if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
-            this.eventTrackingSuccessListener = CoronaLua.newRef(L, listenerIndex);
+            this.eventSuccessListener = CoronaLua.newRef(L, listenerIndex);
         }
         return 0;
     }
 
     // Public API.
-    private int adjust_setEventTrackingFailureListener(LuaState L) {
+    private int adjust_setEventFailureListener(LuaState L) {
         // Hardcoded listener index for ADJUST.
         int listenerIndex = 1;
         if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
-            this.eventTrackingFailureListener = CoronaLua.newRef(L, listenerIndex);
+            this.eventFailureListener = CoronaLua.newRef(L, listenerIndex);
         }
         return 0;
     }
 
     // Public API.
-    private int adjust_setSessionTrackingSuccessListener(LuaState L) {
+    private int adjust_setSessionSuccessListener(LuaState L) {
         // Hardcoded listener index for ADJUST.
         int listenerIndex = 1;
         if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
-            this.sessionTrackingSuccessListener = CoronaLua.newRef(L, listenerIndex);
+            this.sessionSuccessListener = CoronaLua.newRef(L, listenerIndex);
         }
         return 0;
     }
 
     // Public API.
-    private int adjust_setSessionTrackingFailureListener(LuaState L) {
+    private int adjust_setSessionFailureListener(LuaState L) {
         // Hardcoded listener index for ADJUST.
         int listenerIndex = 1;
         if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
-            this.sessionTrackingFailureListener = CoronaLua.newRef(L, listenerIndex);
+            this.sessionFailureListener = CoronaLua.newRef(L, listenerIndex);
         }
         return 0;
     }
@@ -2145,51 +2145,51 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    private class SetEventTrackingSuccessListenerWrapper implements NamedJavaFunction {
+    private class SetEventSuccessListenerWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
-            return "setEventTrackingSuccessListener";
+            return "setEventSuccessListener";
         }
 
         @Override
         public int invoke(LuaState L) {
-            return adjust_setEventTrackingSuccessListener(L);
+            return adjust_setEventSuccessListener(L);
         }
     }
 
-    private class SetEventTrackingFailureListenerWrapper implements NamedJavaFunction {
+    private class SetEventFailureListenerWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
-            return "setEventTrackingFailureListener";
+            return "setEventFailureListener";
         }
 
         @Override
         public int invoke(LuaState L) {
-            return adjust_setEventTrackingFailureListener(L);
+            return adjust_setEventFailureListener(L);
         }
     }
 
-    private class SetSessionTrackingSuccessListenerWrapper implements NamedJavaFunction {
+    private class SetSessionSuccessListenerWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
-            return "setSessionTrackingSuccessListener";
+            return "setSessionSuccessListener";
         }
 
         @Override
         public int invoke(LuaState L) {
-            return adjust_setSessionTrackingSuccessListener(L);
+            return adjust_setSessionSuccessListener(L);
         }
     }
 
-    private class SetSessionTrackingFailureListenerWrapper implements NamedJavaFunction {
+    private class SetSessionFailureListenerWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
-            return "setSessionTrackingFailureListener";
+            return "setSessionFailureListener";
         }
 
         @Override
         public int invoke(LuaState L) {
-            return adjust_setSessionTrackingFailureListener(L);
+            return adjust_setSessionFailureListener(L);
         }
     }
 

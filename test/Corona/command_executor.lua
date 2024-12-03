@@ -336,10 +336,10 @@ function CommandExecutor:config()
     -- first, clear all callback
     adjust.setDeferredDeeplinkListener(deferredDeeplinkListenerEmpty)
     adjust.setAttributionListener(attributionListenerEmpty)
-    adjust.setSessionTrackingSuccessListener(sessionTrackingSuccessListenerEmpty)
-    adjust.setSessionTrackingFailureListener(sessionTrackingFailureListenerEmpty)
-    adjust.setEventTrackingSuccessListener(eventTrackingSuccessListenerEmpty)
-    adjust.setEventTrackingFailureListener(eventTrackingFailureListenerEmpty)
+    adjust.setSessionSuccessListener(sessionSuccessListenerEmpty)
+    adjust.setSessionFailureListener(sessionFailureListenerEmpty)
+    adjust.setEventSuccessListener(eventSuccessListenerEmpty)
+    adjust.setEventFailureListener(eventFailureListenerEmpty)
     adjust.setUpdateSkanListener(skanUpdateCallbackListenerEmpty)
 
     if self.command:containsParameter("deferredDeeplinkCallback") then
@@ -358,25 +358,25 @@ function CommandExecutor:config()
     if self.command:containsParameter("sessionCallbackSendSuccess") then
         localBasePath = self.basePath
         print("[CommandExecutor]: Setting session send success callback... local-base-path=" .. localBasePath)
-        adjust.setSessionTrackingSuccessListener(sessionTrackingSuccessListener)
+        adjust.setSessionSuccessListener(sessionSuccessListener)
     end
 
     if self.command:containsParameter("sessionCallbackSendFailure") then
         localBasePath = self.basePath
         print("[CommandExecutor]: Setting session send failure callback... local-base-path=" .. localBasePath)
-        adjust.setSessionTrackingFailureListener(sessionTrackingFailureListener)
+        adjust.setSessionFailureListener(sessionFailureListener)
     end
 
     if self.command:containsParameter("eventCallbackSendSuccess") then
         localBasePath = self.basePath
         print("[CommandExecutor]: Setting event tracking success callback... local-base-path=" .. localBasePath)
-        adjust.setEventTrackingSuccessListener(eventTrackingSuccessListener)
+        adjust.setEventSuccessListener(eventSuccessListener)
     end
 
     if self.command:containsParameter("eventCallbackSendFailure") then
         localBasePath = self.basePath
         print("[CommandExecutor]: Setting event tracking failed callback... local-base-path=" .. localBasePath)
-        adjust.setEventTrackingFailureListener(eventTrackingFailureListener)
+        adjust.setEventFailureListener(eventFailureListener)
     end
 
     if self.command:containsParameter("skanCallback") then
@@ -390,13 +390,13 @@ function deferredDeeplinkListenerEmpty(event)
 end
 function attributionListenerEmpty(event)
 end
-function sessionTrackingSuccessListenerEmpty(event)
+function sessionSuccessListenerEmpty(event)
 end
-function sessionTrackingFailureListenerEmpty(event)
+function sessionFailureListenerEmpty(event)
 end
-function eventTrackingSuccessListenerEmpty(event)
+function eventSuccessListenerEmpty(event)
 end
-function eventTrackingFailureListenerEmpty(event)
+function eventFailureListenerEmpty(event)
 end
 function skanUpdateCallbackListenerEmpty(event)
 end
@@ -440,7 +440,7 @@ function attributionListener(event)
     testLib.sendInfoToServer(localBasePath)
 end
 
-function sessionTrackingSuccessListener(event)
+function sessionSuccessListener(event)
     print("[CommandExecutor]: Session tracking success event received!")
     local json_session_success = json.decode(event.message)
     testLib.addInfoToSend("message", json_session_success.message)
@@ -456,7 +456,7 @@ function sessionTrackingSuccessListener(event)
     testLib.sendInfoToServer(localBasePath)
 end
 
-function sessionTrackingFailureListener(event)
+function sessionFailureListener(event)
     print("[CommandExecutor]: Session tracking failure event received!")
     local json_session_failure = json.decode(event.message)
     testLib.addInfoToSend("message", json_session_failure.message)
@@ -473,7 +473,7 @@ function sessionTrackingFailureListener(event)
     testLib.sendInfoToServer(localBasePath)
 end
 
-function eventTrackingSuccessListener(event)
+function eventSuccessListener(event)
     print("[CommandExecutor]: Event tracking success event received!")
     local json_event_success = json.decode(event.message)
     testLib.addInfoToSend("message", json_event_success.message)
@@ -491,7 +491,7 @@ function eventTrackingSuccessListener(event)
     testLib.sendInfoToServer(localBasePath)
 end
 
-function eventTrackingFailureListener(event)
+function eventFailureListener(event)
     print("[CommandExecutor]: Event tracking failed event received!")
     local json_event_failure = json.decode(event.message)
     testLib.addInfoToSend("message", json_event_failure.message)
