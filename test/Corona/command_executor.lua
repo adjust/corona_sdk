@@ -287,6 +287,10 @@ function CommandExecutor:config()
         adjustConfig.allowSkAdNetworkHandling = (self.command:getFirstParameterValue("allowSkAdNetworkHandling") == "true")
     end
 
+    if self.command:containsParameter("isSkanAttributionEnabled") then
+        adjustConfig.isSkanAttributionEnabled = (self.command:getFirstParameterValue("isSkanAttributionEnabled") == "true")
+    end
+
     if self.command:containsParameter("allowIdfaReading") then
         adjustConfig.allowIdfaReading = (self.command:getFirstParameterValue("allowIdfaReading") == "true")
     end

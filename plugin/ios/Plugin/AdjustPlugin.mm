@@ -374,7 +374,7 @@ int AdjustPlugin::initSdk(lua_State *L) {
     lua_pop(L, 1);
 
     // SKAdNetwork handling.
-    lua_getfield(L, 1, "allowSkAdNetworkHandling");
+    lua_getfield(L, 1, "isSkanAttributionEnabled");
     if (!lua_isnil(L, 2)) {
         isSkanAttributionEnabled = lua_toboolean(L, 2);
         if (isSkanAttributionEnabled == NO) {
