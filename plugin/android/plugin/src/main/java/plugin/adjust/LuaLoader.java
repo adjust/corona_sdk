@@ -141,12 +141,10 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 new requestAppTrackingAuthorizationWrapper(),
                 new SetUpdateSkanListenerWrapper(),
                 new CheckForNewAttStatus(),
-                new UpdateConversionValueWrapper(),
-                new UpdateConversionValueWithCallbackWrapper(),
+                new UpdateSkanConversionValueWrapper(),
                 new TrackAppStoreSubscriptionWrapper(),
                 new VerifyAppStorePurchaseWrapper(),
                 new VerifyAndTrackAppStorePurchaseWrapper(),
-                new UpdateConversionValueWithSkan4CallbackWrapper(),
                 // Testing.
                 new SetTestOptionsWrapper(),
                 new OnResumeWrapper(),
@@ -2256,34 +2254,10 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    private class UpdateConversionValueWrapper implements NamedJavaFunction {
+    private class UpdateSkanConversionValueWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
-            return "updateConversionValue";
-        }
-
-        @Override
-        public int invoke(LuaState luaState) {
-            return 0;
-        }
-    }
-
-    private class UpdateConversionValueWithCallbackWrapper implements NamedJavaFunction {
-        @Override
-        public String getName() {
-            return "updateConversionValueWithCallback";
-        }
-
-        @Override
-        public int invoke(LuaState luaState) {
-            return 0;
-        }
-    }
-
-    private class UpdateConversionValueWithSkan4CallbackWrapper implements NamedJavaFunction {
-        @Override
-        public String getName() {
-            return "updateConversionValueWithSkan4Callback";
+            return "updateSkanConversionValue";
         }
 
         @Override

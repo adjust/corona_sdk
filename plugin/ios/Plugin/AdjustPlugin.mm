@@ -28,10 +28,9 @@
 #define EVENT_GET_AUTHORIZATION_STATUS @"adjust_requestAppTrackingAuthorization"
 #define EVENT_GET_LAST_DEEPLINK @"adjust_getLastDeeplink"
 #define EVENT_PROCESS_AND_RESOLVE_DEEPLINK @"adjust_processAndResolveDeeplink"
-#define EVENT_UPDATE_CONVERSION_VALUE_WITH_CALLBACK @"adjust_updateConversionValueWithCallback"
-#define EVENT_UPDATE_CONVERSION_VALUE_WITH_SKAN4_CALLBACK @"adjust_updateConversionValueWithSkan4Callback"
 #define EVENT_VERIFY_APP_STORE_PURCHASE_CALLBACK @"adjust_verifyAppStorePurchase"
 #define EVENT_VERIFY_AND_TRACK_APP_STORE_PURCHASE_CALLBACK @"adjust_verifyAndTrackAppStorePurchase"
+#define EVENT_UPDATE_SKAN_CONVERSION_VALUE @"adjust_updateSkanConversionValue"
 
 #define SDK_PREFIX @"corona5.0.0"
 
@@ -88,7 +87,7 @@ public:
     static int trackAppStoreSubscription(lua_State *L);
     static int requestAppTrackingAuthorization(lua_State *L);
     static int getAppTrackingAuthorizationStatus(lua_State *L);
-    static int updateConversionValue(lua_State *L);
+    static int updateSkanConversionValue(lua_State *L);
     static int trackThirdPartySharing(lua_State *L);
     static int trackMeasurementConsent(lua_State *L);
     static int setAttributionListener(lua_State *L);
@@ -100,8 +99,6 @@ public:
     static int setUpdateSkanListener(lua_State *L);
     static int checkForNewAttStatus(lua_State *L);
     static int getLastDeeplink(lua_State *L);
-    static int updateConversionValueWithCallback(lua_State *L);
-    static int updateConversionValueWithSkan4Callback(lua_State *L);
     static int verifyAppStorePurchase(lua_State *L);
     static int verifyAndTrackAppStorePurchase(lua_State *L);
 
@@ -226,12 +223,10 @@ AdjustPlugin::Open(lua_State *L) {
         { "requestAppTrackingAuthorization", requestAppTrackingAuthorization },
         { "setUpdateSkanListener", setUpdateSkanListener },
         { "checkForNewAttStatus", checkForNewAttStatus },
-        { "updateConversionValue", updateConversionValue },
-        { "updateConversionValueWithCallback", updateConversionValueWithCallback },
+        { "updateSkanConversionValue", updateSkanConversionValue },
         { "trackAppStoreSubscription", trackAppStoreSubscription },
         { "verifyAppStorePurchase", verifyAppStorePurchase },
         { "verifyAndTrackAppStorePurchase", verifyAndTrackAppStorePurchase },
-        { "updateConversionValueWithSkan4Callback", updateConversionValueWithSkan4Callback },
         { "onResume", onResume }, // Test only.
         { "onPause", onPause },
         { "setTestOptions", setTestOptions },
@@ -1211,49 +1206,26 @@ int AdjustPlugin::getAppTrackingAuthorizationStatus(lua_State *L) {
 }
 
 // Public API.
-int AdjustPlugin::updateConversionValue(lua_State *L) {
-    NSInteger value = lua_tointeger(L, 1);
-    [Adjust updateConversionValue:value];
-    return 0;
-}
-
-// Public API.
-int AdjustPlugin::updateConversionValueWithCallback(lua_State *L) {
-    NSInteger value = lua_tointeger(L, 1);
-    int listenerIndex = 2;
-    if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
-        CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
-        [Adjust updatePostbackConversionValue:value completionHandler:^(NSError * _Nullable error) {
-            [AdjustSdkDelegate dispatchEvent:EVENT_UPDATE_CONVERSION_VALUE_WITH_CALLBACK
-                                   withState:L
-                                    callback:listener
-                                  andMessage:[error localizedDescription]];
-        }];
-    }
-    return 0;
-}
-
-// Public API.
-int AdjustPlugin::updateConversionValueWithSkan4Callback(lua_State *L) {
-    NSInteger conversionValue = lua_tointeger(L, 1);
-    const char* coarseValue = lua_tostring(L, 2);
-    BOOL lockWindow = lua_toboolean(L, 3);
-    int listenerIndex = 4;
-    if (coarseValue != NULL) {
-        if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
-            CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
-            [Adjust updatePostbackConversionValue:conversionValue
-                                      coarseValue:[NSString stringWithUTF8String:coarseValue]
-                                       lockWindow:lockWindow
-                                completionHandler:^(NSError * _Nullable error) {
-                [AdjustSdkDelegate dispatchEvent:EVENT_UPDATE_CONVERSION_VALUE_WITH_SKAN4_CALLBACK
-                                       withState:L
-                                        callback:listener
-                                      andMessage:[error localizedDescription]];
-            }];
+int AdjustPlugin::updateSkanConversionValue(lua_State *L) {
+        NSInteger conversionValue = lua_tointeger(L, 1);
+        const char* coarseValue = lua_tostring(L, 2);
+        BOOL lockWindow = lua_toboolean(L, 3);
+        int listenerIndex = 4;
+        if (coarseValue != NULL) {
+            if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
+                CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
+                [Adjust updatePostbackConversionValue:conversionValue
+                                          coarseValue:[NSString stringWithUTF8String:coarseValue]
+                                           lockWindow:lockWindow
+                                    completionHandler:^(NSError * _Nullable error) {
+                    [AdjustSdkDelegate dispatchEvent:EVENT_UPDATE_SKAN_CONVERSION_VALUE
+                                           withState:L
+                                            callback:listener
+                                          andMessage:[error localizedDescription]];
+                }];
+            }
         }
-    }
-    return 0;
+        return 0;
 }
 
 // Public API.
