@@ -80,11 +80,10 @@ print("[TestApp]: Setting test lib tests....")
 --testLib.addTestDirectory("coppa")
 --testLib.addTestDirectory("attribution-initiated-by")
 --testLib.addTestDirectory("push-token")
---testLib.addTestDirectory("deeplink-getter")
 --testLib.addTestDirectory("retry-in")
 --testLib.addTestDirectory("attribution-getter")
 --testLib.addTestDirectory("session-count")
---testLib.addTestDirectory("default-tracker")
+testLib.addTestDirectory("default-tracker")
 --testLib.addTestDirectory("error-responses")
 --testLib.addTestDirectory("third-party-sharing")
 --testLib.addTestDirectory("pasteboard")
@@ -111,7 +110,7 @@ print("[TestApp]: Setting test lib tests....")
 --testLib.addTestDirectory("event-callbacks")
 
 
---testLib.startTestSession("corona5.0.0@ios5.0.1")
+testLib.startTestSession("corona5.0.0@ios5.0.1")
 
 -- Start Test Session
 -- ------------------------

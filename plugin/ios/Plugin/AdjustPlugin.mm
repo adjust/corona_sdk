@@ -199,7 +199,7 @@ AdjustPlugin::Open(lua_State *L) {
         { "switchToOfflineMode", switchToOfflineMode },
         { "switchBackToOnlineMode", switchBackToOnlineMode },
         { "setAttributionListener", setAttributionListener },
-        { "setEventSuccessCallback", setEventSuccessListener },
+        { "setEventSuccessListener", setEventSuccessListener },
         { "setEventFailureListener", setEventFailureListener },
         { "setSessionSuccessListener", setSessionSuccessListener },
         { "setSessionFailureListener", setSessionFailureListener },
