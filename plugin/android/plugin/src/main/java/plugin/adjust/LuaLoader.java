@@ -137,7 +137,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 new SetReferrerWrapper(),
                 // iOS only.
                 new GetIdfaWrapper(),
-                new AppTrackingAuthorizationStatusWrapper(),
+                new GetAppTrackingAuthorizationStatusWrapper(),
                 new requestAppTrackingAuthorizationWrapper(),
                 new SetUpdateSkanListenerWrapper(),
                 new CheckForNewAttStatus(),
@@ -2231,10 +2231,10 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    private class AppTrackingAuthorizationStatusWrapper implements NamedJavaFunction {
+    private class GetAppTrackingAuthorizationStatusWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
-            return "appTrackingAuthorizationStatus";
+            return "getAppTrackingAuthorizationStatus";
         }
 
         @Override

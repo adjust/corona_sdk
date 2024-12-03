@@ -87,7 +87,7 @@ public:
     static int trackAdRevenue(lua_State *L);
     static int trackAppStoreSubscription(lua_State *L);
     static int requestAppTrackingAuthorization(lua_State *L);
-    static int appTrackingAuthorizationStatus(lua_State *L);
+    static int getAppTrackingAuthorizationStatus(lua_State *L);
     static int updateConversionValue(lua_State *L);
     static int trackThirdPartySharing(lua_State *L);
     static int trackMeasurementConsent(lua_State *L);
@@ -222,7 +222,7 @@ AdjustPlugin::Open(lua_State *L) {
         { "getAmazonAdId", getAmazonAdId },
         { "setReferrer", setReferrer },
         { "getIdfa", getIdfa }, // IOS only.
-        { "appTrackingAuthorizationStatus", appTrackingAuthorizationStatus },
+        { "getAppTrackingAuthorizationStatus", getAppTrackingAuthorizationStatus },
         { "requestAppTrackingAuthorization", requestAppTrackingAuthorization },
         { "setUpdateSkanListener", setUpdateSkanListener },
         { "checkForNewAttStatus", checkForNewAttStatus },
@@ -1204,7 +1204,7 @@ int AdjustPlugin::requestAppTrackingAuthorization(lua_State *L) {
 }
 
 // Public API.
-int AdjustPlugin::appTrackingAuthorizationStatus(lua_State *L) {
+int AdjustPlugin::getAppTrackingAuthorizationStatus(lua_State *L) {
     int status = [Adjust appTrackingAuthorizationStatus];
     lua_pushinteger(L, status);
     return 1;
