@@ -630,7 +630,7 @@ int AdjustPlugin::trackEvent(lua_State *L) {
         if (cstrProductId != NULL) {
             productId = [NSString stringWithUTF8String:cstrProductId];
         }
-        [event setCallbackId:productId];
+        [event setProductId:productId];
     }
     lua_pop(L, 1);
 
