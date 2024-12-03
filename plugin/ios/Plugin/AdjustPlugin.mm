@@ -162,6 +162,7 @@ void AdjustPlugin::InitializeSessionSuccessListener(CoronaLuaRef listener) {
 }
 
 void AdjustPlugin::InitializeSessionFailureListener(CoronaLuaRef listener) {
+    NSLog(@"InitializeSessionFailureListener");
     sessionFailureListener = listener;
 }
 
@@ -511,19 +512,19 @@ int AdjustPlugin::initSdk(lua_State *L) {
 
     // Callbacks.
     Self *library = ToLibrary(L);
-    BOOL isAttributionChangedListenerImplmented = library->GetAttributionChangedListener() != NULL;
-    BOOL isEventSuccessListenerImplmented = library->GetEventSuccessListener() != NULL;
-    BOOL isEventFailureListenerImplmented = library->GetEventFailureListener() != NULL;
-    BOOL isSessionSuccessListenerImplmented = library->GetSessionSuccessListener() != NULL;
-    BOOL isSessionFailureListenerImplmented = library->GetSessionFailureListener() != NULL;
+    BOOL isAttributionChangedListenerImplemented = library->GetAttributionChangedListener() != NULL;
+    BOOL isEventSuccessListenerImplemented = library->GetEventSuccessListener() != NULL;
+    BOOL isEventFailureListenerImplemented = library->GetEventFailureListener() != NULL;
+    BOOL isSessionSuccessListenerImplemented = library->GetSessionSuccessListener() != NULL;
+    BOOL isSessionFailureListenerImplemented = library->GetSessionFailureListener() != NULL;
     BOOL isDeferredDeeplinkListenerImplemented = library->GetDeferredDeeplinkListener() != NULL;
     BOOL isUpdateSkanListenerImplemented = library->GetUpdateSkanListener() != NULL;
 
-    if (isAttributionChangedListenerImplmented
-        || isEventSuccessListenerImplmented
-        || isEventFailureListenerImplmented
-        || isSessionSuccessListenerImplmented
-        || isSessionFailureListenerImplmented
+    if (isAttributionChangedListenerImplemented
+        || isEventSuccessListenerImplemented
+        || isEventFailureListenerImplemented
+        || isSessionSuccessListenerImplemented
+        || isSessionFailureListenerImplemented
         || isDeferredDeeplinkListenerImplemented
         || isUpdateSkanListenerImplemented) {
         [adjustConfig setDelegate:
@@ -803,6 +804,7 @@ int AdjustPlugin::setSessionSuccessListener(lua_State *L) {
 
 // Public API.
 int AdjustPlugin::setSessionFailureListener(lua_State *L) {
+    NSLog(@"session failure callback is set");
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
         Self *library = ToLibrary(L);

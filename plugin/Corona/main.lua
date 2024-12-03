@@ -35,7 +35,7 @@ local function attributionListener(event)
     print("[Adjust]: FB install referrer: " .. json_attribution.fbInstallReferrer)
 end
 
-local function sessionTrackingSuccessListener(event)
+local function sessionSuccessListener(event)
     local json_session_success = json.decode(event.message)
     print("[Adjust]: Session tracking success!")
     print("[Adjust]: Message: " .. json_session_success.message)
@@ -44,7 +44,7 @@ local function sessionTrackingSuccessListener(event)
     print("[Adjust]: JSON response: " .. json.encode(json_session_success.jsonResponse))
 end
 
-local function sessionTrackingFailureListener(event)
+local function sessionFailureListener(event)
     local json_session_failure = json.decode(event.message)
     print("[Adjust]: Session tracking failure!")
     print("[Adjust]: Message: " .. json_session_failure.message)
@@ -54,7 +54,7 @@ local function sessionTrackingFailureListener(event)
     print("[Adjust]: JSON response: " .. json.encode(json_session_failure.jsonResponse))
 end
 
-local function eventTrackingSuccessListener(event)
+local function eventSuccessListener(event)
     local json_event_success = json.decode(event.message)
     print("[Adjust]: Event tracking success!")
     print("[Adjust]: Event token: " .. json_event_success.eventToken)
@@ -64,7 +64,7 @@ local function eventTrackingSuccessListener(event)
     print("[Adjust]: JSON response: " .. json.encode(json_event_success.jsonResponse))
 end
 
-local function eventTrackingFailureListener(event)
+local function eventFailureListener(event)
     local json_event_failure = json.decode(event.message)
     print("[Adjust]: Event tracking failure!")
     print("[Adjust]: Event token: " .. json_event_failure.eventToken)
@@ -95,10 +95,10 @@ end
 -- initialize Adjust SDK
 --
 adjust.setAttributionListener(attributionListener)
-adjust.setEventTrackingSuccessListener(eventTrackingSuccessListener)
-adjust.setEventTrackingFailureListener(eventTrackingFailureListener)
-adjust.setSessionTrackingSuccessListener(sessionTrackingSuccessListener)
-adjust.setSessionTrackingFailureListener(sessionTrackingFailureListener)
+adjust.setEventSuccessListener(eventSuccessListener)
+adjust.setEventFailureListener(eventFailureListener)
+adjust.setSessionSuccessListener(sessionSuccessListener)
+adjust.setSessionFailureListener(sessionFailureListener)
 adjust.setDeferredDeeplinkListener(deferredDeeplinkListener)
 
 adjust.addGlobalCallbackParameter("scp1", "scp1_value1")

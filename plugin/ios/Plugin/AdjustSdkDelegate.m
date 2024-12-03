@@ -73,19 +73,19 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
                                         withSelector:@selector(adjustAttributionChangedWannabe:)];
         }
         if (eventSuccessCallback != NULL) {
-            [defaultInstance swizzleOriginalSelector:@selector(adjustEventSucceeded:)
+            [defaultInstance swizzleOriginalSelector:@selector(adjustEventTrackingSucceeded:)
                                         withSelector:@selector(adjustEventSucceededWannabe:)];
         }
         if (eventFailureCallback != NULL) {
-            [defaultInstance swizzleOriginalSelector:@selector(adjustEventFailed:)
+            [defaultInstance swizzleOriginalSelector:@selector(adjustEventTrackingFailed:)
                                         withSelector:@selector(adjustEventFailedWannabe:)];
         }
         if (sessionSuccessCallback != NULL) {
-            [defaultInstance swizzleOriginalSelector:@selector(adjustSessionSucceeded:)
+            [defaultInstance swizzleOriginalSelector:@selector(adjustSessionTrackingSucceeded:)
                                         withSelector:@selector(adjustSessionSucceededWannabe:)];
         }
         if (sessionFailureCallback != NULL) {
-            [defaultInstance swizzleOriginalSelector:@selector(adjustSessionFailed:)
+            [defaultInstance swizzleOriginalSelector:@selector(adjustSessionTrackingFailed:)
                                         withSelector:@selector(adjustSessionFailedWannabe:)];
         }
         if (deferredDeeplinkCallback != NULL) {

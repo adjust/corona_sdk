@@ -11,10 +11,10 @@
 #import "ADJConfig.h"
 
 #define ADJ_ATTRIBUTION_CHANGED @"adjust_attributionChanged"
-#define ADJ_EVENT_TRACKING_SUCCESS @"adjust_eventSuccess"
-#define ADJ_EVENT_TRACKING_FAILURE @"adjust_eventFailure"
-#define ADJ_SESSION_TRACKING_SUCCESS @"adjust_sessionSuccess"
-#define ADJ_SESSION_TRACKING_FAILURE @"adjust_sessionFailure"
+#define ADJ_EVENT_TRACKING_SUCCESS @"adjust_eventTrackingSuccess"
+#define ADJ_EVENT_TRACKING_FAILURE @"adjust_eventTrackingFailure"
+#define ADJ_SESSION_TRACKING_SUCCESS @"adjust_sessionTrackingSuccess"
+#define ADJ_SESSION_TRACKING_FAILURE @"adjust_sessionTrackingFailure"
 #define ADJ_DEFERRED_DEEPLINK @"adjust_deferredDeeplink"
 #define ADJ_UPDATE_SKAN @"adjust_updateSkan"
 
