@@ -25,7 +25,7 @@
 #define EVENT_GET_GOOGLE_AD_ID @"adjust_getGoogleAdId"
 #define EVENT_GET_AMAZON_AD_ID @"adjust_getAmazonAdId"
 #define EVENT_GET_SDK_VERSION @"adjust_getSdkVersion"
-#define EVENT_GET_AUTHORIZATION_STATUS @"adjust_requestTrackingAuthorizationWithCompletionHandler"
+#define EVENT_GET_AUTHORIZATION_STATUS @"adjust_requestAppTrackingAuthorization"
 #define EVENT_GET_LAST_DEEPLINK @"adjust_getLastDeeplink"
 #define EVENT_PROCESS_AND_RESOLVE_DEEPLINK @"adjust_processAndResolveDeeplink"
 #define EVENT_UPDATE_CONVERSION_VALUE_WITH_CALLBACK @"adjust_updateConversionValueWithCallback"
@@ -86,7 +86,7 @@ public:
     static int gdprForgetMe(lua_State *L);
     static int trackAdRevenue(lua_State *L);
     static int trackAppStoreSubscription(lua_State *L);
-    static int requestTrackingAuthorizationWithCompletionHandler(lua_State *L);
+    static int requestAppTrackingAuthorization(lua_State *L);
     static int appTrackingAuthorizationStatus(lua_State *L);
     static int updateConversionValue(lua_State *L);
     static int trackThirdPartySharing(lua_State *L);
@@ -223,7 +223,7 @@ AdjustPlugin::Open(lua_State *L) {
         { "setReferrer", setReferrer },
         { "getIdfa", getIdfa }, // IOS only.
         { "appTrackingAuthorizationStatus", appTrackingAuthorizationStatus },
-        { "requestTrackingAuthorizationWithCompletionHandler", requestTrackingAuthorizationWithCompletionHandler },
+        { "requestAppTrackingAuthorization", requestAppTrackingAuthorization },
         { "setUpdateSkanListener", setUpdateSkanListener },
         { "checkForNewAttStatus", checkForNewAttStatus },
         { "updateConversionValue", updateConversionValue },
@@ -284,10 +284,10 @@ int AdjustPlugin::initSdk(lua_State *L) {
     BOOL isCostDataInAttributionEnabled = NO;
     BOOL linkMeEnabled = NO;
     BOOL isDeviceIdsReadingOnceEnabled = NO;
-    NSArray *domainsArray = nil;
+    NSArray *urlStrategyDomains = nil;
     BOOL useSubdomains = NO;
     BOOL isDataResidency = NO;
-    BOOL coppaCompliant = NO;
+    BOOL isCoppaComplianceEnabled = NO;
     ADJLogLevel logLevel = ADJLogLevelInfo;
     NSString *defaultTracker = nil;
     NSString *externalDeviceId = nil;
@@ -417,10 +417,10 @@ int AdjustPlugin::initSdk(lua_State *L) {
     lua_pop(L, 1);
     
     // URL strategy.
-    lua_getfield(L, 1, "domains");
+    lua_getfield(L, 1, "urlStrategyDomains");
     if (!lua_isnil(L, 2) && lua_istable(L, 2)) {
         NSDictionary *dict = CoronaLuaCreateDictionary(L, 2);
-        domainsArray = [dict allValues];
+        urlStrategyDomains = [dict allValues];
     }
     lua_pop(L, 1);
     
@@ -438,8 +438,8 @@ int AdjustPlugin::initSdk(lua_State *L) {
     }
     lua_pop(L, 1);
 
-    if ([domainsArray count] > 0){
-        [adjustConfig setUrlStrategy:domainsArray useSubdomains:useSubdomains isDataResidency:isDataResidency];
+    if ([urlStrategyDomains count] > 0){
+        [adjustConfig setUrlStrategy:urlStrategyDomains useSubdomains:useSubdomains isDataResidency:isDataResidency];
     }
 
     // Send in background.
@@ -467,7 +467,7 @@ int AdjustPlugin::initSdk(lua_State *L) {
     }
     lua_pop(L, 1);
 
-    // Consent Waiting Time.
+    // Event deduplication Id max size.
     lua_getfield(L, 1, "eventDeduplicationIdsMaxSize");
     if (!lua_isnil(L, 2)) {
         eventDeduplicationIdsMaxSize = lua_tointeger(L, 2);
@@ -487,8 +487,8 @@ int AdjustPlugin::initSdk(lua_State *L) {
     // COPPA compliance.
     lua_getfield(L, 1, "coppaCompliant");
     if (!lua_isnil(L, 2)) {
-        coppaCompliant = lua_toboolean(L, 2);
-        if (coppaCompliant == YES) {
+        isCoppaComplianceEnabled = lua_toboolean(L, 2);
+        if (isCoppaComplianceEnabled == YES) {
             [adjustConfig enableCoppaCompliance];
         }
     }
@@ -1191,7 +1191,7 @@ int AdjustPlugin::gdprForgetMe(lua_State *L) {
 
 
 // Public API.
-int AdjustPlugin::requestTrackingAuthorizationWithCompletionHandler(lua_State *L) {
+int AdjustPlugin::requestAppTrackingAuthorization(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
         CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);

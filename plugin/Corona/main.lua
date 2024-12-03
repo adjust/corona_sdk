@@ -119,17 +119,29 @@ adjust.initSdk({
     logLevel = "VERBOSE",
     -- don't use any of the fields below if your are not sure what is their purpose
     -- please check https://github.com/adjust/corona_sdk/blob/master/README.md first
-    -- handleSkAdNetwork = false,
-    -- domains = {"adjust.com","adjust.cn"},
-    -- shouldLaunchDeeplink = false,
-    -- eventBufferingEnabled = true,
-    -- delayStart = 6.0,
-    -- isDeviceKnown = true,
+    -- processName = "processName",
+    -- defaultTracker = "defaultTracker",
     -- sendInBackground = true,
-    -- defaultTracker = "abc123",
+    -- externalDeviceId = "externalDeviceId",
+    -- isCostDataInAttributionEnabled = true,
+    -- isDeviceIdsReadingOnceEnabled = true,
+    -- urlStrategyDomains = {"adjust.com","adjust.cn"},
+    -- isDataResidency = true,
+    -- useSubdomains = true,
+    -- shouldLaunchDeeplink = false,
     -- coppaCompliant = true,
-    -- linkMeEnabled = true,
+    -- eventDeduplicationIdsMaxSize = 10,
+    -- -----Android only
     -- playStoreKidsApp = true,
+    -- preinstallFilePath = "preinstallFilePath",
+    -- preinstallTrackingEnabled = true,
+    -- -----ios only
+    -- linkMeEnabled = true,
+    -- allowAdServicesInfoReading = true,
+    -- allowIdfaReading = true,
+    -- allowIdfvReading = true,
+    -- allowSkAdNetworkHandling = false,
+    -- attConsentWaitingSeconds = 10,
 })
 
 --adjust.requestTrackingAuthorizationWithCompletionHandler(function(event)
@@ -142,7 +154,6 @@ adjust.initSdk({
 --end)
 
 -- adjust.setPushToken("{YourPushToken}")
--- adjust.sendFirstPackages()
 
 -- setting up assets
 -- ------------------------
@@ -475,34 +486,6 @@ widget.newButton({
 -- ------------------------
 local function handleGetAttribution(event)
     if ("ended" == event.phase) then
-        adjust.getAttribution(function(event)
-            local json_attribution = json.decode(event.message)
-            print("Tracker token: " .. json_attribution.trackerToken)
-            print("Tracker name: " .. json_attribution.trackerName)
-            print("Campaign: " .. json_attribution.campaign)
-            print("Network: " .. json_attribution.network)
-            print("Creative: " .. json_attribution.creative)
-            print("Adgroup: " .. json_attribution.adgroup)
-            print("Click label: " .. json_attribution.clickLabel)
-            print("Cost type: " .. json_attribution.costType)
-            print("Cost amount: " .. json_attribution.costAmount)
-            print("Cost currency: " .. json_attribution.costCurrency)
-            print("FB install referrer: " .. json_attribution.fbInstallReferrer)
-        end)
-        adjust.getAttribution(function(event)
-            local json_attribution = json.decode(event.message)
-            print("Tracker token: " .. json_attribution.trackerToken)
-            print("Tracker name: " .. json_attribution.trackerName)
-            print("Campaign: " .. json_attribution.campaign)
-            print("Network: " .. json_attribution.network)
-            print("Creative: " .. json_attribution.creative)
-            print("Adgroup: " .. json_attribution.adgroup)
-            print("Click label: " .. json_attribution.clickLabel)
-            print("Cost type: " .. json_attribution.costType)
-            print("Cost amount: " .. json_attribution.costAmount)
-            print("Cost currency: " .. json_attribution.costCurrency)
-            print("FB install referrer: " .. json_attribution.fbInstallReferrer)
-        end)
         adjust.getAttribution(function(event)
             local json_attribution = json.decode(event.message)
             print("Tracker token: " .. json_attribution.trackerToken)

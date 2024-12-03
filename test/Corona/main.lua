@@ -41,7 +41,7 @@ else
     protocol = "https"
     port = "8443"
 end
-local baseIp = "192.168.8.219"
+local baseIp = "192.168.8.14"
 local overwriteUrl = protocol .. "://" .. baseIp .. ":" .. port
 local controlUrl = "ws://" .. baseIp .. ":1987";
 print("[TestApp]: Using BaseUrl: [" .. overwriteUrl .. "]--")
@@ -67,7 +67,7 @@ command_executor.setPlatform(platformInfo)
 
 print("[TestApp]: Setting test lib tests....")
 
-testLib.addTest("Test_GdprForgetMe_inbetween_multiple_events")
+--testLib.addTest("Test_GdprForgetMe_inbetween_multiple_events")
 
 --testLib.addTestDirectory("deeplink-getter")
 --testLib.addTestDirectory("global-parameters")

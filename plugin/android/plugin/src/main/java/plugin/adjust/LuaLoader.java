@@ -50,7 +50,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     public static final String EVENT_GET_GOOGLE_AD_ID = "adjust_getGoogleAdId";
     public static final String EVENT_GET_AMAZON_AD_ID = "adjust_getAmazonAdId";
     public static final String EVENT_GET_LAST_DEEPLINK = "adjust_getLastDeeplink";
-    public static final String EVENT_GET_AUTHORIZATION_STATUS = "adjust_requestTrackingAuthorizationWithCompletionHandler";
+    public static final String EVENT_GET_AUTHORIZATION_STATUS = "adjust_requestAppTrackingAuthorization";
 
     private int attributionChangedListener;
     private int eventTrackingSuccessListener;
@@ -138,7 +138,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 // iOS only.
                 new GetIdfaWrapper(),
                 new AppTrackingAuthorizationStatusWrapper(),
-                new RequestTrackingAuthorizationWithCompletionHandlerWrapper(),
+                new requestAppTrackingAuthorizationWrapper(),
                 new SetUpdateSkanListenerWrapper(),
                 new CheckForNewAttStatus(),
                 new UpdateConversionValueWrapper(),
@@ -269,32 +269,24 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             Log.e(TAG, "adjust_initSdk: adjust_initSdk() must be supplied with a table");
             return 0;
         }
-
-        String logLevel = null;
         String appToken = null;
-        String userAgent = null;
         String environment = null;
         String processName = null;
         String defaultTracker = null;
+        boolean isSendingInBackgroundEnabled = false;
+        String logLevel = null;
         String externalDeviceId = null;
-        List<String> domains = new ArrayList<>();
+        boolean isPreinstallTrackingEnabled = false;
+        boolean isCostDataInAttributionEnabled = false;
+        boolean isDeviceIdsReadingOnceEnabled = false;
+        List<String> urlStrategyDomains = new ArrayList<>();
         boolean useSubdomains = false;
         boolean isDataResidency = false;
         String preinstallFilePath = null;
-        boolean readImei = false;
-        boolean isDeviceKnown = false;
-        boolean sendInBackground = false;
-        boolean isLogLevelSuppress = false;
-        boolean isCostDataInAttributionEnabled = false;
-        boolean preinstallTrackingEnabled = false;
         boolean coppaCompliant = false;
         boolean playStoreKidsApp = false;
-        double delayStart = 0.0;
-        long secretId = -1L;
-        long info1 = -1L;
-        long info2 = -1L;
-        long info3 = -1L;
-        long info4 = -1L;
+        boolean isLogLevelSuppress = false;
+        String fbAppId = null;
 
         // Log level.
         L.getField(1, "logLevel");
@@ -374,7 +366,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         L.pop(1);
 
         // URL strategy.
-        L.getField(1, "domains");
+        L.getField(1, "urlStrategyDomains");
         if (!L.isNil(2)) {
             if (L.isTable(2)) {
                 int length = L.length(2);
@@ -383,7 +375,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                     // Push the table to the stack
                     if (!L.isNil(3)) {
                         String dom = L.checkString(3);
-                        domains.add(dom);
+                        urlStrategyDomains.add(dom);
                     }
                     L.pop(1);
                 }
@@ -405,26 +397,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
-        if (!domains.isEmpty()) {
-            adjustConfig.setUrlStrategy(domains, useSubdomains, isDataResidency);
+        if (!urlStrategyDomains.isEmpty()) {
+            adjustConfig.setUrlStrategy(urlStrategyDomains, useSubdomains, isDataResidency);
         }
-
-//            urlStrategy = L.checkString(2);
-//            if (urlStrategy.equalsIgnoreCase("china")) {
-//                adjustConfig.setUrlStrategy(AdjustConfig.URL_STRATEGY_CHINA);
-//            } else if (urlStrategy.equalsIgnoreCase("india")) {
-//                adjustConfig.setUrlStrategy(AdjustConfig.URL_STRATEGY_INDIA);
-//            } else if (urlStrategy.equalsIgnoreCase("cn")) {
-//                adjustConfig.setUrlStrategy(AdjustConfig.URL_STRATEGY_CN);
-//            } else if (urlStrategy.equalsIgnoreCase("data-residency-eu")) {
-//                adjustConfig.setUrlStrategy(AdjustConfig.DATA_RESIDENCY_EU);
-//            } else if (urlStrategy.equalsIgnoreCase("data-residency-tr")) {
-//                adjustConfig.setUrlStrategy(AdjustConfig.DATA_RESIDENCY_TR);
-//            } else if (urlStrategy.equalsIgnoreCase("data-residency-us")) {
-//                adjustConfig.setUrlStrategy(AdjustConfig.DATA_RESIDENCY_US);
-//            }
-//        }
-//        L.pop(1);
 
 
         // Preinstall file path.
@@ -438,8 +413,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         // Background tracking.
         L.getField(1, "sendInBackground");
         if (!L.isNil(2)) {
-            sendInBackground = L.checkBoolean(2);
-            if (sendInBackground)
+            isSendingInBackgroundEnabled = L.checkBoolean(2);
+            if (isSendingInBackgroundEnabled)
                 adjustConfig.enableSendingInBackground();
         }
         L.pop(1);
@@ -461,12 +436,21 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
+        // Device Ids read once.
+        L.getField(1, "isDeviceIdsReadingOnceEnabled");
+        if (!L.isNil(2)) {
+            isDeviceIdsReadingOnceEnabled = L.toBoolean(2);
+            if (isDeviceIdsReadingOnceEnabled)
+                adjustConfig.enableDeviceIdsReadingOnce();
+        }
+        L.pop(1);
+
 
         // Preinstall tracking.
         L.getField(1, "preinstallTrackingEnabled");
         if (!L.isNil(2)) {
-            preinstallTrackingEnabled = L.checkBoolean(2);
-            if (preinstallTrackingEnabled)
+            isPreinstallTrackingEnabled = L.checkBoolean(2);
+            if (isPreinstallTrackingEnabled)
                 adjustConfig.enablePreinstallTracking();
         }
         L.pop(1);
@@ -486,6 +470,13 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             playStoreKidsApp = L.checkBoolean(2);
             if (playStoreKidsApp)
                 adjustConfig.enablePlayStoreKidsCompliance();
+        }
+        L.pop(1);
+
+        // Event Deduplication Id max size.
+        L.getField(1, "eventDeduplicationIdsMaxSize");
+        if (!L.isNil(2)) {
+            adjustConfig.setEventDeduplicationIdsMaxSize(L.checkInteger(2));
         }
         L.pop(1);
 
@@ -1595,7 +1586,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
     // iOS platform.
     // Public API.
-    private int adjust_requestTrackingAuthorizationWithCompletionHandler(LuaState L) {
+    private int adjust_requestAppTrackingAuthorization(LuaState L) {
         // Hardcoded listener index for ADJUST.
         int listenerIndex = 1;
         int listener = CoronaLua.REFNIL;
@@ -2301,15 +2292,15 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    private class RequestTrackingAuthorizationWithCompletionHandlerWrapper implements NamedJavaFunction {
+    private class requestAppTrackingAuthorizationWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
-            return "requestTrackingAuthorizationWithCompletionHandler";
+            return "requestAppTrackingAuthorization";
         }
 
         @Override
         public int invoke(LuaState L) {
-            return adjust_requestTrackingAuthorizationWithCompletionHandler(L);
+            return adjust_requestAppTrackingAuthorization(L);
         }
     }
 
