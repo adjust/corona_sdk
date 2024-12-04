@@ -49,7 +49,7 @@ public:
     void InitializeSessionSuccessListener(CoronaLuaRef listener);
     void InitializeSessionFailureListener(CoronaLuaRef listener);
     void InitializeDeferredDeeplinkListener(CoronaLuaRef listener);
-    void InitializeUpdateSkanListener(CoronaLuaRef listener);
+    void InitializeConversionValueUpdatedCallback(CoronaLuaRef listener);
 
     CoronaLuaRef GetAttributionChangedListener() const { return attributionChangedListener; }
     CoronaLuaRef GetEventSuccessListener() const { return eventSuccessListener; }
@@ -57,7 +57,7 @@ public:
     CoronaLuaRef GetSessionSuccessListener() const { return sessionSuccessListener; }
     CoronaLuaRef GetSessionFailureListener() const { return sessionFailureListener; }
     CoronaLuaRef GetDeferredDeeplinkListener() const { return deferredDeeplinkListener; }
-    CoronaLuaRef GetUpdateSkanListener() const { return updateSkanListener; }
+    CoronaLuaRef GetUpdateSkanListener() const { return conversionValueUpdateListener; }
 
     static int Open(lua_State *L);
     static Self *ToLibrary(lua_State *L);
@@ -96,7 +96,7 @@ public:
     static int setSessionSuccessListener(lua_State *L);
     static int setSessionFailureListener(lua_State *L);
     static int setDeferredDeeplinkListener(lua_State *L);
-    static int setUpdateSkanListener(lua_State *L);
+    static int setConversionValueUpdatedListener(lua_State *L);
     static int checkForNewAttStatus(lua_State *L);
     static int getLastDeeplink(lua_State *L);
     static int verifyAppStorePurchase(lua_State *L);
@@ -126,7 +126,7 @@ private:
     CoronaLuaRef sessionSuccessListener;
     CoronaLuaRef sessionFailureListener;
     CoronaLuaRef deferredDeeplinkListener;
-    CoronaLuaRef updateSkanListener;
+    CoronaLuaRef conversionValueUpdateListener;
 };
 
 // ----------------------------------------------------------------------------
@@ -142,7 +142,7 @@ eventFailureListener(NULL),
 sessionSuccessListener(NULL),
 sessionFailureListener(NULL),
 deferredDeeplinkListener(NULL),
-updateSkanListener(NULL){}
+conversionValueUpdateListener(NULL){}
 
 
 void AdjustPlugin::InitializeAttributionListener(CoronaLuaRef listener) {
@@ -170,8 +170,8 @@ void AdjustPlugin::InitializeDeferredDeeplinkListener(CoronaLuaRef listener) {
     deferredDeeplinkListener = listener;
 }
 
-void AdjustPlugin::InitializeUpdateSkanListener(CoronaLuaRef listener) {
-    updateSkanListener = listener;
+void AdjustPlugin::InitializeConversionValueUpdatedCallback(CoronaLuaRef listener) {
+    conversionValueUpdateListener = listener;
 }
 
 int
@@ -222,7 +222,7 @@ AdjustPlugin::Open(lua_State *L) {
         { "getIdfa", getIdfa }, // IOS only.
         { "getAppTrackingAuthorizationStatus", getAppTrackingAuthorizationStatus },
         { "requestAppTrackingAuthorization", requestAppTrackingAuthorization },
-        { "setUpdateSkanListener", setUpdateSkanListener },
+        { "setConversionValueUpdatedListener", setConversionValueUpdatedListener },
         { "checkForNewAttStatus", checkForNewAttStatus },
         { "updateSkanConversionValue", updateSkanConversionValue },
         { "trackAppStoreSubscription", trackAppStoreSubscription },
@@ -533,8 +533,8 @@ int AdjustPlugin::initSdk(lua_State *L) {
                                                   eventFailureCallback:library->GetEventFailureListener()
                                                 sessionSuccessCallback:library->GetSessionSuccessListener()
                                                 sessionFailureCallback:library->GetSessionFailureListener()
-                                                      deferredDeeplinkCallback:library->GetDeferredDeeplinkListener()
-                                                            updateSkanCallback:library->GetUpdateSkanListener()
+                                              deferredDeeplinkCallback:library->GetDeferredDeeplinkListener()
+                                         conversionValueUpdateCallback:library->GetUpdateSkanListener()
                                                   shouldLaunchDeferredDeeplink:shouldLaunchDeferredDeeplink
                                                                    andLuaState:L]];
     }
@@ -826,12 +826,12 @@ int AdjustPlugin::setDeferredDeeplinkListener(lua_State *L) {
 }
 
 // Public API.
-int AdjustPlugin::setUpdateSkanListener(lua_State *L) {
+int AdjustPlugin::setConversionValueUpdatedListener(lua_State *L) {
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
         Self *library = ToLibrary(L);
         CoronaLuaRef listener = CoronaLuaNewRef(L, listenerIndex);
-        library->InitializeUpdateSkanListener(listener);
+        library->InitializeConversionValueUpdatedCallback(listener);
     }
     return 0;
 }

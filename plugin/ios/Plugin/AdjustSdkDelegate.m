@@ -60,10 +60,10 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
                             eventFailureCallback:(CoronaLuaRef)eventFailureCallback
                           sessionSuccessCallback:(CoronaLuaRef)sessionSuccessCallback
                           sessionFailureCallback:(CoronaLuaRef)sessionFailureCallback
-                                deferredDeeplinkCallback:(CoronaLuaRef)deferredDeeplinkCallback
-                                      updateSkanCallback:(CoronaLuaRef)updateSkanCallback
-                            shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink
-                                             andLuaState:(lua_State *)luaState {
+                        deferredDeeplinkCallback:(CoronaLuaRef)deferredDeeplinkCallback
+                   conversionValueUpdateCallback:(CoronaLuaRef)conversionValueUpdateCallback
+                    shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink
+                                     andLuaState:(lua_State *)luaState {
     dispatch_once(&onceToken, ^{
         defaultInstance = [[AdjustSdkDelegate alloc] init];
 
@@ -92,7 +92,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
             [defaultInstance swizzleOriginalSelector:@selector(adjustDeferredDeeplinkReceived:)
                                         withSelector:@selector(adjustDeferredDeeplinkReceivedWannabe:)];
         }
-        if (updateSkanCallback != NULL) {
+        if (conversionValueUpdateCallback != NULL) {
             [defaultInstance swizzleOriginalSelector:@selector(adjustSkanUpdatedWithConversionData:)
                                         withSelector:@selector(adjustSkanUpdatedWithConversionDataWannabe:)];
         }
@@ -103,7 +103,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
         [defaultInstance setSessionSuccessCallback:sessionSuccessCallback];
         [defaultInstance setSessionFailureCallback:sessionFailureCallback];
         [defaultInstance setDeferredDeeplinkCallback:deferredDeeplinkCallback];
-        [defaultInstance setUpdateSkanCallback:updateSkanCallback];
+        [defaultInstance setConversionValueUpdateCallback:conversionValueUpdateCallback];
         [defaultInstance setShouldLaunchDeferredDeeplink:shouldLaunchDeferredDeeplink];
         [defaultInstance setLuaState:luaState];
     });
@@ -323,9 +323,9 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
         NSLog(@"[Adjust][bridge]: Error while trying to update skan dictionary to JSON string: %@", error);
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        [AdjustSdkDelegate dispatchEvent:ADJ_UPDATE_SKAN
+        [AdjustSdkDelegate dispatchEvent:ADJ_CONVERSION_VALUE_UPDATED
                                withState:_luaState
-                                callback:_updateSkanCallback
+                                callback:_conversionValueUpdateCallback
                               andMessage:jsonString];
     }
 }

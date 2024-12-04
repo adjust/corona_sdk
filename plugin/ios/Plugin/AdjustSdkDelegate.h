@@ -16,7 +16,7 @@
 #define ADJ_SESSION_TRACKING_SUCCESS @"adjust_sessionTrackingSuccess"
 #define ADJ_SESSION_TRACKING_FAILURE @"adjust_sessionTrackingFailure"
 #define ADJ_DEFERRED_DEEPLINK @"adjust_deferredDeeplink"
-#define ADJ_UPDATE_SKAN @"adjust_updateSkan"
+#define ADJ_CONVERSION_VALUE_UPDATED @"adjust_conversionValueUpdated"
 
 /**
  * @brief Adjust delegate singleton which takes care of bridging between native SDK and Lua callbacks.
@@ -60,7 +60,7 @@
 /**
  * @brief Deferred deep link callback reference.
  */
-@property (nonatomic) CoronaLuaRef updateSkanCallback;
+@property (nonatomic) CoronaLuaRef conversionValueUpdateCallback;
 
 /**
  * @brief Should deferred deep link be opened or not.
@@ -76,9 +76,7 @@
  * @param sessionSuccessCallback        Session success callback reference.
  * @param sessionFailureCallback        Session failure callback reference.
  * @param deferredDeeplinkCallback              Deferred deep link callback reference.
- * @param updateSkanCallback              skan update callback reference.
- * @param conversionValueUpdatedCallback        Conversion value updated callback reference.
- * @param skan4conversionValueUpdatedCallback   Conversion value updated callback reference.
+ * @param conversionValueUpdateCallback             conversion value update callback reference.
  * @param shouldLaunchDeferredDeeplink          Should deferred deep link be opened or not.
  * @param luaState                              Lua state object.
  *
@@ -89,9 +87,9 @@
                             eventFailureCallback:(CoronaLuaRef)eventFailureCallback
                           sessionSuccessCallback:(CoronaLuaRef)sessionSuccessCallback
                           sessionFailureCallback:(CoronaLuaRef)sessionFailureCallback
-                                deferredDeeplinkCallback:(CoronaLuaRef)deferredDeeplinkCallback
-                                      updateSkanCallback:(CoronaLuaRef)updateSkanCallback
-                            shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink
+                        deferredDeeplinkCallback:(CoronaLuaRef)deferredDeeplinkCallback
+                   conversionValueUpdateCallback:(CoronaLuaRef)conversionValueUpdateCallback
+                   shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink
                                              andLuaState:(lua_State *)luaState;
 
 /**

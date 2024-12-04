@@ -58,7 +58,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private int sessionSuccessListener;
     private int sessionFailureListener;
     private int deferredDeeplinkListener;
-    private int updateSkanListener;
+    private int conversionValueUpdatedListener;
     private boolean shouldLaunchDeeplink = true;
 
     /**
@@ -75,7 +75,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         eventFailureListener = CoronaLua.REFNIL;
         sessionSuccessListener = CoronaLua.REFNIL;
         sessionFailureListener = CoronaLua.REFNIL;
-        updateSkanListener = CoronaLua.REFNIL;
+        conversionValueUpdatedListener = CoronaLua.REFNIL;
         deferredDeeplinkListener = CoronaLua.REFNIL;
 
         // Set up this plugin to listen for Corona runtime events to be received by methods
@@ -139,7 +139,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 new GetIdfaWrapper(),
                 new GetAppTrackingAuthorizationStatusWrapper(),
                 new requestAppTrackingAuthorizationWrapper(),
-                new SetUpdateSkanListenerWrapper(),
+                new SetConversionValueUpdatedListenerWrapper(),
                 new CheckForNewAttStatus(),
                 new UpdateSkanConversionValueWrapper(),
                 new TrackAppStoreSubscriptionWrapper(),
@@ -222,7 +222,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         CoronaLua.deleteRef(runtime.getLuaState(), eventSuccessListener);
         CoronaLua.deleteRef(runtime.getLuaState(), eventFailureListener);
         CoronaLua.deleteRef(runtime.getLuaState(), deferredDeeplinkListener);
-        CoronaLua.deleteRef(runtime.getLuaState(), updateSkanListener);
+        CoronaLua.deleteRef(runtime.getLuaState(), conversionValueUpdatedListener);
 
         attributionChangedListener = CoronaLua.REFNIL;
         eventSuccessListener = CoronaLua.REFNIL;
@@ -230,7 +230,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         sessionSuccessListener = CoronaLua.REFNIL;
         sessionFailureListener = CoronaLua.REFNIL;
         deferredDeeplinkListener = CoronaLua.REFNIL;
-        updateSkanListener = CoronaLua.REFNIL;
+        conversionValueUpdatedListener = CoronaLua.REFNIL;
     }
 
     private void dispatchEvent(final int listener, final String name, final String message) {
@@ -1617,11 +1617,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
     // ios platform.
     // Public API.
-    private int adjust_setUpdateSkanListener(LuaState L) {
+    private int adjust_setConversionValueUpdatedListener(LuaState L) {
         // Hardcoded listener index for ADJUST.
         int listenerIndex = 1;
         if (CoronaLua.isListener(L, listenerIndex, "ADJUST")) {
-            this.updateSkanListener = CoronaLua.newRef(L, listenerIndex);
+            this.conversionValueUpdatedListener = CoronaLua.newRef(L, listenerIndex);
         }
         return 0;
     }
@@ -2205,15 +2205,15 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    private class SetUpdateSkanListenerWrapper implements NamedJavaFunction {
+    private class SetConversionValueUpdatedListenerWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
-            return "setUpdateSkanListener";
+            return "setConversionValueUpdatedListener";
         }
 
         @Override
         public int invoke(LuaState L) {
-            return adjust_setUpdateSkanListener(L);
+            return adjust_setConversionValueUpdatedListener(L);
         }
     }
 
