@@ -340,7 +340,7 @@ function CommandExecutor:config()
     adjust.setSessionFailureListener(sessionFailureListenerEmpty)
     adjust.setEventSuccessListener(eventSuccessListenerEmpty)
     adjust.setEventFailureListener(eventFailureListenerEmpty)
-    adjust.setUpdateSkanListener(skanUpdateCallbackListenerEmpty)
+    adjust.setConversionValueUpdatedListener(skanUpdateCallbackListenerEmpty)
 
     if self.command:containsParameter("deferredDeeplinkCallback") then
         localBasePath = self.basePath
