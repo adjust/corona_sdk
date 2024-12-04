@@ -163,7 +163,6 @@ local function handleTrackSimpleEvent(event)
         -- adjust.updateSkanConversionValue(6, "low", false, function(event)
         --     print("[Adjust]: Update conversion value SKAN4 style error = " .. event.message)
         -- end)
-        -- adjust.checkForNewAttStatus()
         -- adjust.trackMeasurementConsent(true)
         -- adjust.trackThirdPartySharing({
         --     enabled = true,

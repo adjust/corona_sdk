@@ -382,7 +382,7 @@ function CommandExecutor:config()
     if self.command:containsParameter("skanCallback") then
         localBasePath = self.basePath
         print("[CommandExecutor]: Setting skan callback... local-base-path=" .. localBasePath)
-        adjust.setUpdateSkanListener(skanUpdateCallbackListener)
+        adjust.setConversionValueUpdatedListener(skanUpdateCallbackListener)
     end
 end
 

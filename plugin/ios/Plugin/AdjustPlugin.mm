@@ -97,7 +97,6 @@ public:
     static int setSessionFailureListener(lua_State *L);
     static int setDeferredDeeplinkListener(lua_State *L);
     static int setConversionValueUpdatedListener(lua_State *L);
-    static int checkForNewAttStatus(lua_State *L);
     static int getLastDeeplink(lua_State *L);
     static int verifyAppStorePurchase(lua_State *L);
     static int verifyAndTrackAppStorePurchase(lua_State *L);
@@ -223,7 +222,6 @@ AdjustPlugin::Open(lua_State *L) {
         { "getAppTrackingAuthorizationStatus", getAppTrackingAuthorizationStatus },
         { "requestAppTrackingAuthorization", requestAppTrackingAuthorization },
         { "setConversionValueUpdatedListener", setConversionValueUpdatedListener },
-        { "checkForNewAttStatus", checkForNewAttStatus },
         { "updateSkanConversionValue", updateSkanConversionValue },
         { "trackAppStoreSubscription", trackAppStoreSubscription },
         { "verifyAppStorePurchase", verifyAppStorePurchase },
@@ -1468,12 +1466,6 @@ int AdjustPlugin::trackThirdPartySharing(lua_State *L) {
 int AdjustPlugin::trackMeasurementConsent(lua_State *L) {
     BOOL measurementConsent = lua_toboolean(L, 1);
     [Adjust trackMeasurementConsent:measurementConsent];
-    return 0;
-}
-
-// Public API.
-int AdjustPlugin::checkForNewAttStatus(lua_State *L) {
-    [Adjust checkForNewAttStatus];
     return 0;
 }
 

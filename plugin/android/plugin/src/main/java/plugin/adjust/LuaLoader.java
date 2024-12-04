@@ -140,7 +140,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 new GetAppTrackingAuthorizationStatusWrapper(),
                 new requestAppTrackingAuthorizationWrapper(),
                 new SetConversionValueUpdatedListenerWrapper(),
-                new CheckForNewAttStatus(),
                 new UpdateSkanConversionValueWrapper(),
                 new TrackAppStoreSubscriptionWrapper(),
                 new VerifyAppStorePurchaseWrapper(),
@@ -2238,18 +2237,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         @Override
         public int invoke(LuaState luaState) {
             luaState.pushInteger(0);
-            return 0;
-        }
-    }
-
-    private class CheckForNewAttStatus implements NamedJavaFunction {
-        @Override
-        public String getName() {
-            return "checkForNewAttStatus";
-        }
-
-        @Override
-        public int invoke(LuaState L) {
             return 0;
         }
     }
