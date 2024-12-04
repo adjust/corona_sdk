@@ -128,9 +128,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
         // Dispatch event to library's listener
         CoronaLuaDispatchEvent(luaState, callback, 0);
     } @catch (NSException *exception) {
-        NSLog(@"exception: %@", exception);
-    } @finally {
-        NSLog(@"event dispatched");
+        NSLog(@"[Adjust][bridge]: Error: %@", exception);
     }
     // Create event and add message to it.
     

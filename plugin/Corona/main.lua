@@ -156,10 +156,18 @@ display.setDefault("background", 229,255,204)
 -- ------------------------
 local function handleTrackSimpleEvent(event)
     if ("ended" == event.phase) then
-        print("event called")
         adjust.trackEvent({
             eventToken = "g3mfiw"
         })
+
+        --adjust.verifyAppStorePurchase(
+        --        "receipt",
+        --        "transactionId",
+        --        "productId",
+        --        function(result)
+        --            print("verifications result :" .. result.message)
+        --        end
+        --)
         -- adjust.updateSkanConversionValue(6, "low", false, function(event)
         --     print("[Adjust]: Update conversion value SKAN4 style error = " .. event.message)
         -- end)

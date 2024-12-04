@@ -161,7 +161,6 @@ void AdjustPlugin::InitializeSessionSuccessListener(CoronaLuaRef listener) {
 }
 
 void AdjustPlugin::InitializeSessionFailureListener(CoronaLuaRef listener) {
-    NSLog(@"InitializeSessionFailureListener");
     sessionFailureListener = listener;
 }
 
@@ -538,7 +537,6 @@ int AdjustPlugin::initSdk(lua_State *L) {
     }
 
     [Adjust initSdk:adjustConfig];
-    NSLog(@"sdk init finished");
     return 0;
 }
 
@@ -802,7 +800,6 @@ int AdjustPlugin::setSessionSuccessListener(lua_State *L) {
 
 // Public API.
 int AdjustPlugin::setSessionFailureListener(lua_State *L) {
-    NSLog(@"session failure callback is set");
     int listenerIndex = 1;
     if (CoronaLuaIsListener(L, listenerIndex, "ADJUST")) {
         Self *library = ToLibrary(L);
@@ -1391,7 +1388,6 @@ int AdjustPlugin::verifyAndTrackAppStorePurchase(lua_State *L) {
                     NSLog(@"[Adjust][bridge]: Error while trying to convert attribution dictionary to JSON string: %@", error);
                 } else {
                     NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-                    NSLog(@"ADJUSTVERIFY %@", jsonString);
                     [AdjustSdkDelegate dispatchEvent:EVENT_VERIFY_AND_TRACK_APP_STORE_PURCHASE_CALLBACK withState:L callback:listener andMessage:jsonString];
                 }
             }
@@ -1428,7 +1424,6 @@ int AdjustPlugin::trackThirdPartySharing(lua_State *L) {
             NSDictionary *granularOptions = [dict objectForKey:key];
             for (id keySetting in granularOptions) {
                 if (![keySetting isEqualToString:@"partnerName"]) {
-                    NSLog(@"%@ -- %@ -- %@",granularOptions[@"partnerName"],granularOptions[@"key"],granularOptions[@"value"]);
                     [adjustThirdPartySharing addGranularOption:granularOptions[@"partnerName"]
                                                            key:granularOptions[@"key"]
                                                          value:granularOptions[@"value"]];
