@@ -43,6 +43,7 @@ This is the Adjust™ plugin for Solar2D (ex Corona SDK). You can read more abou
     * [Attribution callback](#attribution-callback)
     * [Session and event callbacks](#session-event-callbacks)
     * [Disable tracking](#disable-tracking)
+    * [Enable tracking](#enable-tracking)
     * [Offline mode](#offline-mode)
     * [GDPR right to be forgotten](#gdpr-forget-me)
     * [Background tracking](#background-tracking)
@@ -54,7 +55,6 @@ This is the Adjust™ plugin for Solar2D (ex Corona SDK). You can read more abou
     * [Set external device ID](#set-external-device-id)
     * [User attribution](#user-attribution)
     * [Push token](#push-token)
-    * [Track additional device identifiers](#track-additional-ids)
     * [Pre-installed trackers](#pre-installed-trackers)
     * [Deeplinking](#deeplinking)
         * [Standard deeplinking scenario](#deeplinking-standard)
@@ -114,7 +114,7 @@ You can now add the Adjust SDK to your Corona Enterprise app project. The Adjust
 Inside your Android Studio app project, create a `libs` folder inside of your app folder and add the `plugin.adjust.jar` file to it. After that, please update your app's `build.gradle` file and add the following lines to your `dependencies` section:
 
 ```
-compile 'com.adjust.sdk:adjust-android:4.33.3'
+compile 'com.adjust.sdk:adjust-android:5.0.2'
 compile 'com.android.installreferrer:installreferrer:2.2'
 ```
 
@@ -163,7 +163,7 @@ You can increase or decrease the amount of logs you see in tests by setting the 
 "WARN"      // disable info logging
 "ERROR"     // disable warnings as well
 "ASSERT"    // disable errors as well
-"SUPPRESS"  // disable all logging
+"SUPPRESS"  // Suppress all logging
 ```
 
 ### <a id="sdk-project-settings">Adjust project settings
@@ -913,12 +913,21 @@ And both event and session failed objects also contain:
 
 ### <a id="disable-tracking"></a>Disable tracking
 
-You can disable the Adjust SDK from tracking by invoking the `setEnabled` method of the `adjust` instance with the enabled parameter set to `false`. This setting is **remembered between sessions**, but it can only be activated after the first session.
+You can disable the Adjust SDK from tracking by invoking the `disable` method of the `adjust` instance . This setting is **remembered between sessions**, but it can only be activated after the first session.
 
 ```lua
 local adjust = require "plugin.adjust"
 
-adjust.setEnabled(false)
+adjust.disable()
+```
+### <a id="enable-tracking"></a>Enable tracking
+
+You can enable the Adjust SDK from tracking by invoking the `enable` method of the `adjust` instance . This setting is **remembered between sessions**, but it can only be activated after the first session.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.enable()
 ```
 
 You can verify if the Adjust SDK is currently active with the `isEnabled` method of the `adjust` instance:
@@ -937,7 +946,7 @@ It is always possible to activate the Adjust SDK by invoking `setEnabled` with t
 
 The Adjust SDK sends event and session data to Adjust’s servers in real time. You can pause the sending of information by putting the SDK in offline mode. In offline mode the SDK stores all data in a local file on the device. The SDK sends this information to Adjust’s servers when you disable offline mode.
 
-You can toggle offline mode at any time by calling the `adjust.switchToOfflineMode()` method.
+You can switch to offline mode at any time by calling the `adjust.switchToOfflineMode()` method.
 
 ```lua
 local adjust = require "plugin.adjust"
@@ -1101,28 +1110,6 @@ adjust.setPushToken("YourPushNotificationToken");
 
 Push tokens are used for Audience Builder and client callbacks, and they are required for the upcoming uninstall tracking feature.
 
-### <a id="track-additional-ids"></a>Track additional device identifiers
-
-If you are distributing your Android app **outside of the Google Play Store** and would like to track additional device identifiers (IMEI and MEID), you need to explicitly instruct the Adjust SDK to do so. You can do that by passing the `readMobileEquipmentIdentity` parameter when making the call to `adjust.initSdk` method. **The Adjust SDK does not collect these identifiers by default**.
-
-```lua
-local adjust = require "plugin.adjust"
-
-adjust.initSdk({
-    appToken = "{YourAppToken}",
-    environment = "SANDBOX",
-    logLevel = "VERBOSE"
-})
-```
-
-You will also need to add the `READ_PHONE_STATE` permission to your `AndroidManifest.xml` file:
-
-```xml
-<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-```
-
-In order to use this feature, additional steps are required within your Adjust Dashboard. For more information, please contact your dedicated account manager or write an email to support@adjust.com.
-
 ### <a id="pre-installed-trackers"></a>Pre-installed trackers
 
 If you want to use the Adjust SDK to recognize users whose devices came with your app pre-installed, follow these steps.
@@ -1130,13 +1117,14 @@ If you want to use the Adjust SDK to recognize users whose devices came with you
 1. Create a new tracker in your [dashboard].
 2. Open your app delegate and set the default tracker by passing the `defaultTracker` parameter to the `adjust.initSdk` method call:
 
-    ```lua
-    local adjust = require "plugin.adjust"
+```lua
+local adjust = require "plugin.adjust"
 
 adjust.initSdk({
     appToken = "{YourAppToken}",
     environment = "SANDBOX",
-    logLevel = "VERBOSE"
+    logLevel = "VERBOSE",
+    defaultTracker = "abc123"
 })
 ```
 
@@ -1214,11 +1202,11 @@ adjust.setDeferredDeeplinkListener(deferredDeeplinkListener)
 adjust.initSdk({
     appToken = "{YourAppToken}",
     environment = "SANDBOX",
-    logLevel = "VERBOSE"
+    logLevel = "VERBOSE",
 })
 ```
 
-In deferred deeplinking, there is one additional setting available to pass to the `adjust.initSdk` method call. Once the Adjust SDK gets the deferred deeplink information, you can choose whether our SDK opens this URL or not. You can choose to set this option by passing the `isDeferredDeeplinkOpeningEnabled` parameter to the `adjust.initSdk` method call:
+In deferred deeplinking, there is one additional setting available to pass to the `adjust.initSdk` method call. Once the Adjust SDK gets the deferred deeplink information, you can choose whether our SDK opens this URL or not. You can choose to set this option by passing the `shouldLaunchDeeplink` parameter to the `adjust.initSdk` method call:
 
 
 ```lua
@@ -1239,7 +1227,7 @@ adjust.initSdk({
     appToken = "{YourAppToken}",
     environment = "SANDBOX",
     logLevel = "VERBOSE",
-    isDeferredDeeplinkOpeningEnabled = false
+    shouldLaunchDeeplink = false
 })
 ```
 
@@ -1299,7 +1287,7 @@ Upon receiving this information, Adjust changes sharing the specific user's data
 
 Call the following method to instruct the Adjust SDK to send the granular options to the Adjust backend:
 
-```csharp
+```lua
 adjust.trackThirdPartySharing({
     granularOptions = {
         {
@@ -1344,7 +1332,7 @@ adjust.initSdk({
     -- for EU data region
     urlStrategyDomains = {"eu.adjust.com"},
     -- or TR data region
-    -- urlStrategyDomains = {"tr.adjust.com",
+    -- urlStrategyDomains = {"tr.adjust.com"},
     -- or US data region
     -- urlStrategyDomains = {"us.adjust.com"},
     useSubdomains = true,
