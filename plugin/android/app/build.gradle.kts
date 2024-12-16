@@ -1087,4 +1087,6 @@ dependencies {
         implementation(project(":plugin"))
     }
     implementation("androidx.multidex:multidex:2.0.1")
+    implementation("com.adjust.sdk:adjust-android:5.0.2")
+    implementation("com.android.installreferrer:installreferrer:2.2")
 }
