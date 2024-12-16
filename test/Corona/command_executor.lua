@@ -55,7 +55,6 @@ function CommandExecutor:executeCommand(command)
     elseif method == "resume" then self:resume()
     elseif method == "pause" then self:pause()
     elseif method == "setEnabled" then self:setEnabled()
-    elseif method == "setReferrer" then self:setReferrer()
     elseif method == "setOfflineMode" then self:setOfflineMode()
     elseif method == "addGlobalCallbackParameter" then self:addGlobalCallbackParameter()
     elseif method == "addGlobalPartnerParameter" then self:addGlobalPartnerParameter()
@@ -65,7 +64,6 @@ function CommandExecutor:executeCommand(command)
     elseif method == "removeGlobalPartnerParameters" then self:removeGlobalPartnerParameters()
     elseif method == "setPushToken" then self:setPushToken()
     elseif method == "openDeeplink" then self:openDeeplink()
-    elseif method == "sendReferrer" then self:sendReferrer()
     elseif method == "gdprForgetMe" then self:gdprForgetMe()
     elseif method == "trackSubscription" then self:trackSubscription()
     elseif method == "trackAdRevenue" then self:trackAdRevenue()
@@ -138,7 +136,6 @@ function CommandExecutor:testOptions()
     if self.command:containsParameter("doNotIgnoreSystemLifecycleBootstrap") then
         local doNotIgnoreSystemLifecycleBootstrap = self.command:getFirstParameterValue("doNotIgnoreSystemLifecycleBootstrap")
         if doNotIgnoreSystemLifecycleBootstrap == "true" then
-            print("testoption ignoreSystemLifecycleBootstrap = false")
             testOptions.ignoreSystemLifecycleBootstrap = false
         end
     end
@@ -171,12 +168,10 @@ function CommandExecutor:testOptions()
 
     local useTestConnectionOptions = false;
     if self.command:containsParameter("teardown") then
-        print("tearDown called")
         local teardownOptions = self.command.parameters["teardown"]
         for k in pairs(teardownOptions) do
             local option = teardownOptions[k]
             if option == "resetSdk" then
-                print("resetSDK called")
                 testOptions.teardown = true
                 testOptions.basePath = self.basePath
                 testOptions.gdprPath = self.gdprPath
@@ -187,12 +182,9 @@ function CommandExecutor:testOptions()
                 testOptions.tryInstallReferrer = false
                 useTestConnectionOptions = true
             elseif option == "deleteState" then
-                print("deleteState called")
                 testOptions.setContext = true
                 testOptions.deleteState = true
             elseif option == "resetTest" then
-
-                print("resetTest called")
                 self:clearSavedConfigsAndEvents()
                 testOptions.timerIntervalInMilliseconds = -1
                 testOptions.timerStartInMilliseconds = -1
@@ -217,6 +209,7 @@ function CommandExecutor:testOptions()
     end
 
     adjust.setTestOptions(testOptions)
+    adjust.teardown()
     if useTestConnectionOptions then
         if platformInfo == "android" then
             testLib.setTestConnectionOptions();
@@ -247,10 +240,6 @@ function CommandExecutor:config()
         adjustConfig.logLevel = self.command:getFirstParameterValue("logLevel")
     end
 
-    if self.command:containsParameter("sdkPrefix") then
-        -- not needed
-    end
-
     if self.command:containsParameter("defaultTracker") then
         adjustConfig.defaultTracker = self.command:getFirstParameterValue("defaultTracker")
     end
@@ -259,28 +248,12 @@ function CommandExecutor:config()
         adjustConfig.externalDeviceId = self.command:getFirstParameterValue("externalDeviceId")
     end
 
-    if self.command:containsParameter("delayStart") then
-        adjustConfig.delayStart = tonumber(self.command:getFirstParameterValue("delayStart"))
-    end
-
-    if self.command:containsParameter("deviceKnown") then
-        adjustConfig.isDeviceKnown = (self.command:getFirstParameterValue("deviceKnown") == "true")
-    end
-
     if self.command:containsParameter("isCostDataInAttributionEnabled") then
         adjustConfig.needsCost = (self.command:getFirstParameterValue("isCostDataInAttributionEnabled") == "true")
     end
 
-    if self.command:containsParameter("eventBufferingEnabled") then
-        adjustConfig.eventBufferingEnabled = (self.command:getFirstParameterValue("eventBufferingEnabled") == "true")
-    end
-
     if self.command:containsParameter("allowAdServicesInfoReading") then
         adjustConfig.allowAdServicesInfoReading = (self.command:getFirstParameterValue("allowAdServicesInfoReading") == "true")
-    end
-
-    if self.command:containsParameter("allowiAdInfoReading") then
-        adjustConfig.allowiAdInfoReading = (self.command:getFirstParameterValue("allowiAdInfoReading") == "true")
     end
 
     if self.command:containsParameter("allowSkAdNetworkHandling") then
@@ -303,221 +276,149 @@ function CommandExecutor:config()
         adjustConfig.isSendingInBackgroundEnabled = (self.command:getFirstParameterValue("sendInBackground") == "true")
     end
 
-    if self.command:containsParameter("userAgent") then
-        adjustConfig.userAgent = self.command:getFirstParameterValue("userAgent")
-    end
-
     if self.command:containsParameter("coppaCompliant") then
-        adjustConfig.coppaCompliant = (self.command:getFirstParameterValue("coppaCompliant") == "true")
+        adjustConfig.isCoppaComplianceEnabled = (self.command:getFirstParameterValue("coppaCompliant") == "true")
     end
-
 
     if self.command:containsParameter("playStoreKids") then
-        adjustConfig.playStoreKids = (self.command:getFirstParameterValue("playStoreKids") == "true")
-    end
-
-
-    --[[if (command.containsParameter("coppaCompliant")) {
-    --            String coppaCompliantS = command.getFirstParameterValue("coppaCompliant");
-    --            boolean coppaCompliant = "true".equals(coppaCompliantS);
-    --            if (coppaCompliant) {
-    --                adjustConfig.enableCoppaCompliance();
-    --            }
-    --        }
-    --
-    --        if (command.containsParameter("playStoreKids")) {
-    --            String playStoreKidsS = command.getFirstParameterValue("playStoreKids");
-    --            boolean playStoreKids = "true".equals(playStoreKidsS);
-    --            if (playStoreKids) {
-    --                adjustConfig.enablePlayStoreKidsCompliance();
-    --            }
-    --        }]]
-
-    -- first, clear all callback
-    adjust.setDeferredDeeplinkListener(deferredDeeplinkListenerEmpty)
-    adjust.setAttributionListener(attributionListenerEmpty)
-    adjust.setSessionSuccessListener(sessionSuccessListenerEmpty)
-    adjust.setSessionFailureListener(sessionFailureListenerEmpty)
-    adjust.setEventSuccessListener(eventSuccessListenerEmpty)
-    adjust.setEventFailureListener(eventFailureListenerEmpty)
-    adjust.setConversionValueUpdatedListener(skanUpdateCallbackListenerEmpty)
-
-    if self.command:containsParameter("deferredDeeplinkCallback") then
-        localBasePath = self.basePath
-        adjustConfig.shouldLaunchDeeplink = (self.command:getFirstParameterValue("deferredDeeplinkCallback") == "true")
-        print("[CommandExecutor]: Setting deferred deeplink callback... adjustConfig.shouldLaunchDeeplink=" .. tostring(adjustConfig.shouldLaunchDeeplink))
-        adjust.setDeferredDeeplinkListener(deferredDeeplinkListener)
+        adjustConfig.isPlayStoreKidsComplianceEnabled = (self.command:getFirstParameterValue("playStoreKids") == "true")
     end
 
     if self.command:containsParameter("attributionCallbackSendAll") then
         localBasePath = self.basePath
-        print("[CommandExecutor]: Setting attribution callback... lbp=" .. localBasePath)
-        adjust.setAttributionListener(attributionListener)
+        adjust.setAttributionListener(function(event)
+            print("[CommandExecutor]: Attribution received!")
+            local json_attribution = json.decode(event.message)
+
+            testLib.addInfoToSend("tracker_token", json_attribution.trackerToken)
+            testLib.addInfoToSend("tracker_name", json_attribution.trackerName)
+            testLib.addInfoToSend("network", json_attribution.network)
+            testLib.addInfoToSend("campaign", json_attribution.campaign)
+            testLib.addInfoToSend("adgroup", json_attribution.adgroup)
+            testLib.addInfoToSend("creative", json_attribution.creative)
+            testLib.addInfoToSend("click_label", json_attribution.clickLabel)
+            testLib.addInfoToSend("cost_type", json_attribution.costType)
+            testLib.addInfoToSend("cost_amount", json_attribution.costAmount)
+            testLib.addInfoToSend("cost_currency", json_attribution.costCurrency)
+          
+            if json_attribution.fbInstallReferrer ~= nil and json_attribution.fbInstallReferrer ~= "" then
+                testLib.addInfoToSend("fb_install_referrer", json_attribution.fbInstallReferrer)
+            end
+
+            testLib.sendInfoToServer(localBasePath)
+        end)
     end
 
     if self.command:containsParameter("sessionCallbackSendSuccess") then
         localBasePath = self.basePath
-        print("[CommandExecutor]: Setting session send success callback... local-base-path=" .. localBasePath)
-        adjust.setSessionSuccessListener(sessionSuccessListener)
+        adjust.setSessionSuccessListener(function(event)
+            print("[CommandExecutor]: Session tracking success event received!")
+            local json_session_success = json.decode(event.message)
+            testLib.addInfoToSend("message", json_session_success.message)
+            testLib.addInfoToSend("timestamp", json_session_success.timestamp)
+            testLib.addInfoToSend("adid", json_session_success.adid)
+            if json_session_success.jsonResponse ~= nil then
+                if platformInfo == "ios" then
+                    testLib.addInfoToSend("jsonResponse", json.encode(json_session_success.jsonResponse))
+                else
+                    testLib.addInfoToSend("jsonResponse", json_session_success.jsonResponse)
+                end
+            end
+            testLib.sendInfoToServer(localBasePath)
+        end)
     end
 
     if self.command:containsParameter("sessionCallbackSendFailure") then
         localBasePath = self.basePath
-        print("[CommandExecutor]: Setting session send failure callback... local-base-path=" .. localBasePath)
-        adjust.setSessionFailureListener(sessionFailureListener)
+        adjust.setSessionFailureListener(function(event)
+            print("[CommandExecutor]: Session tracking failure event received!")
+            local json_session_failure = json.decode(event.message)
+            testLib.addInfoToSend("message", json_session_failure.message)
+            testLib.addInfoToSend("timestamp", json_session_failure.timestamp)
+            testLib.addInfoToSend("adid", json_session_failure.adid)
+            testLib.addInfoToSend("willRetry", tostring(json_session_failure.willRetry))
+            if json_session_failure.jsonResponse ~= nil then
+                if platformInfo == "ios" then
+                    testLib.addInfoToSend("jsonResponse", json.encode(json_session_failure.jsonResponse))
+                else
+                    testLib.addInfoToSend("jsonResponse", json_session_failure.jsonResponse)
+                end
+            end
+            testLib.sendInfoToServer(localBasePath)
+        end)
     end
 
     if self.command:containsParameter("eventCallbackSendSuccess") then
         localBasePath = self.basePath
-        print("[CommandExecutor]: Setting event tracking success callback... local-base-path=" .. localBasePath)
-        adjust.setEventSuccessListener(eventSuccessListener)
+        adjust.setEventSuccessListener(function(event)
+            print("[CommandExecutor]: Event tracking success event received!")
+            local json_event_success = json.decode(event.message)
+            testLib.addInfoToSend("message", json_event_success.message)
+            testLib.addInfoToSend("timestamp", json_event_success.timestamp)
+            testLib.addInfoToSend("adid", json_event_success.adid)
+            testLib.addInfoToSend("eventToken", json_event_success.eventToken)
+            testLib.addInfoToSend("callbackId", json_event_success.callbackId)
+            if json_event_success.jsonResponse ~= nil then
+                if platformInfo == "ios" then
+                    testLib.addInfoToSend("jsonResponse", json.encode(json_event_success.jsonResponse))
+                else
+                    testLib.addInfoToSend("jsonResponse", json_event_success.jsonResponse)
+                end
+            end
+            testLib.sendInfoToServer(localBasePath)
+        end)
     end
 
     if self.command:containsParameter("eventCallbackSendFailure") then
         localBasePath = self.basePath
-        print("[CommandExecutor]: Setting event tracking failed callback... local-base-path=" .. localBasePath)
-        adjust.setEventFailureListener(eventFailureListener)
+        adjust.setEventFailureListener(function(event)
+            print("[CommandExecutor]: Event tracking failed event received!")
+            local json_event_failure = json.decode(event.message)
+            testLib.addInfoToSend("message", json_event_failure.message)
+            testLib.addInfoToSend("timestamp", json_event_failure.timestamp)
+            testLib.addInfoToSend("adid", json_event_failure.adid)
+            testLib.addInfoToSend("eventToken", json_event_failure.eventToken)
+            testLib.addInfoToSend("callbackId", json_event_failure.callbackId)
+            testLib.addInfoToSend("willRetry", tostring(json_event_failure.willRetry))
+            if json_event_failure.jsonResponse ~= nil then
+                if platformInfo == "ios" then
+                    testLib.addInfoToSend("jsonResponse", json.encode(json_event_failure.jsonResponse))
+                else
+                    testLib.addInfoToSend("jsonResponse", json_event_failure.jsonResponse)
+                end
+            end
+            testLib.sendInfoToServer(localBasePath)
+        end)
+    end
+
+    if self.command:containsParameter("deferredDeeplinkCallback") then
+        localBasePath = self.basePath
+        adjustConfig.isDeferredDeeplinkOpeningEnabled = (self.command:getFirstParameterValue("deferredDeeplinkCallback") == "true")
+        adjust.setDeferredDeeplinkListener(function(event)
+            print("[CommandExecutor]: Deferred deeplink received!")
+            local deeplink
+            if platform == "ios" then
+                deeplink = event.message
+            else
+                deeplink = json.decode(event.message).deeplink
+            end
+            testLib.addInfoToSend("deeplink", deeplink)
+            testLib.sendInfoToServer(localBasePath)
+        end)
     end
 
     if self.command:containsParameter("skanCallback") then
         localBasePath = self.basePath
         print("[CommandExecutor]: Setting skan callback... local-base-path=" .. localBasePath)
-        adjust.setConversionValueUpdatedListener(skanUpdateCallbackListener)
+        adjust.setConversionValueUpdatedListener(function(event)
+            print("skanUpdateCallbackListener triggered")
+            local json_skan_update = json.decode(event.message)
+            testLib.addInfoToSend('conversion_value', json_skan_update.conversionValue);
+            testLib.addInfoToSend('coarse_value', json_skan_update.coarseValue);
+            testLib.addInfoToSend('lock_window', json_skan_update.lockWindow);
+            testLib.sendInfoToServer(localBasePath);
+        end)
     end
-end
-
-function deferredDeeplinkListenerEmpty(event)
-end
-function attributionListenerEmpty(event)
-end
-function sessionSuccessListenerEmpty(event)
-end
-function sessionFailureListenerEmpty(event)
-end
-function eventSuccessListenerEmpty(event)
-end
-function eventFailureListenerEmpty(event)
-end
-function skanUpdateCallbackListenerEmpty(event)
-end
-
-function deferredDeeplinkListener(event)
-    print("[CommandExecutor]: Deferred deeplink received!")
-
-    if event == nil then
-        print("[CommandExecutor]: Deeplink response, uri = nil")
-        return false
-    end
-
-    local deeplink
-    if platform == "ios" then
-        deeplink = event.message
-    else
-        deeplink = json.decode(event.message).uri
-    end
-
-    print("[CommandExecutor]: deferred deeplink: " .. deeplink)
-    testLib.addInfoToSend("deeplink", deeplink)
-    testLib.sendInfoToServer(localBasePath)
-end
-
-function attributionListener(event)
-    print("[CommandExecutor]: Attribution received!")
-    local json_attribution = json.decode(event.message)
-    testLib.addInfoToSend("tracker_token", json_attribution.trackerToken)
-    testLib.addInfoToSend("tracker_name", json_attribution.trackerName)
-    testLib.addInfoToSend("network", json_attribution.network)
-    testLib.addInfoToSend("campaign", json_attribution.campaign)
-    testLib.addInfoToSend("adgroup", json_attribution.adgroup)
-    testLib.addInfoToSend("creative", json_attribution.creative)
-    testLib.addInfoToSend("click_label", json_attribution.clickLabel)
-    testLib.addInfoToSend("cost_type", json_attribution.costType)
-    testLib.addInfoToSend("cost_amount", json_attribution.costAmount)
-    testLib.addInfoToSend("cost_currency", json_attribution.costCurrency)
-    if json_attribution.fbInstallReferrer ~= nil and json_attribution.fbInstallReferrer ~= "" then
-        testLib.addInfoToSend("fb_install_referrer", json_attribution.fbInstallReferrer)
-    end
-    testLib.sendInfoToServer(localBasePath)
-end
-
-function sessionSuccessListener(event)
-    print("[CommandExecutor]: Session tracking success event received!")
-    local json_session_success = json.decode(event.message)
-    testLib.addInfoToSend("message", json_session_success.message)
-    testLib.addInfoToSend("timestamp", json_session_success.timestamp)
-    testLib.addInfoToSend("adid", json_session_success.adid)
-    if json_session_success.jsonResponse ~= nil then
-        if platformInfo == "ios" then
-            testLib.addInfoToSend("jsonResponse", json.encode(json_session_success.jsonResponse))
-        else
-            testLib.addInfoToSend("jsonResponse", json_session_success.jsonResponse)
-        end
-    end
-    testLib.sendInfoToServer(localBasePath)
-end
-
-function sessionFailureListener(event)
-    print("[CommandExecutor]: Session tracking failure event received!")
-    local json_session_failure = json.decode(event.message)
-    testLib.addInfoToSend("message", json_session_failure.message)
-    testLib.addInfoToSend("timestamp", json_session_failure.timestamp)
-    testLib.addInfoToSend("adid", json_session_failure.adid)
-    testLib.addInfoToSend("willRetry", tostring(json_session_failure.willRetry))
-    if json_session_failure.jsonResponse ~= nil then
-        if platformInfo == "ios" then
-            testLib.addInfoToSend("jsonResponse", json.encode(json_session_failure.jsonResponse))
-        else
-            testLib.addInfoToSend("jsonResponse", json_session_failure.jsonResponse)
-        end
-    end
-    testLib.sendInfoToServer(localBasePath)
-end
-
-function eventSuccessListener(event)
-    print("[CommandExecutor]: Event tracking success event received!")
-    local json_event_success = json.decode(event.message)
-    testLib.addInfoToSend("message", json_event_success.message)
-    testLib.addInfoToSend("timestamp", json_event_success.timestamp)
-    testLib.addInfoToSend("adid", json_event_success.adid)
-    testLib.addInfoToSend("eventToken", json_event_success.eventToken)
-    testLib.addInfoToSend("callbackId", json_event_success.callbackId)
-    if json_event_success.jsonResponse ~= nil then
-        if platformInfo == "ios" then
-            testLib.addInfoToSend("jsonResponse", json.encode(json_event_success.jsonResponse))
-        else
-            testLib.addInfoToSend("jsonResponse", json_event_success.jsonResponse)
-        end
-    end
-    testLib.sendInfoToServer(localBasePath)
-end
-
-function eventFailureListener(event)
-    print("[CommandExecutor]: Event tracking failed event received!")
-    local json_event_failure = json.decode(event.message)
-    testLib.addInfoToSend("message", json_event_failure.message)
-    testLib.addInfoToSend("timestamp", json_event_failure.timestamp)
-    testLib.addInfoToSend("adid", json_event_failure.adid)
-    testLib.addInfoToSend("eventToken", json_event_failure.eventToken)
-    testLib.addInfoToSend("callbackId", json_event_failure.callbackId)
-    testLib.addInfoToSend("willRetry", tostring(json_event_failure.willRetry))
-    if json_event_failure.jsonResponse ~= nil then
-        if platformInfo == "ios" then
-            testLib.addInfoToSend("jsonResponse", json.encode(json_event_failure.jsonResponse))
-        else
-            testLib.addInfoToSend("jsonResponse", json_event_failure.jsonResponse)
-        end
-    end
-    testLib.sendInfoToServer(localBasePath)
-end
-
-function skanUpdateCallbackListener(event)
-    print("skanUpdateCallbackListener triggered")
-    local json_skan_update = json.decode(event.message)
-    testLib.addInfoToSend('conversion_value', json_skan_update.conversionValue);
-    testLib.addInfoToSend('coarse_value', json_skan_update.coarseValue);
-    testLib.addInfoToSend('lock_window', json_skan_update.lockWindow);
-    testLib.sendInfoToServer(localBasePath);
-    print(json_skan_update)
 end
 
 function CommandExecutor:start()
@@ -531,7 +432,6 @@ function CommandExecutor:start()
     end
 
     local adjustConfig = self.savedConfigs[configNumber]
-    print("[CommandExecutor]: Sending adjust config to adjust.create: " .. json.encode(adjustConfig))
     adjust.initSdk(adjustConfig)
     self.savedConfigs[configNumber] = nil
 end
@@ -562,6 +462,22 @@ function CommandExecutor:event()
         adjustEvent.callbackId = self.command:getFirstParameterValue("callbackId")
     end
 
+    if self.command:containsParameter("deduplicationId") then
+        adjustEvent.deduplicationId = self.command:getFirstParameterValue("deduplicationId")
+    end
+
+    if self.command:containsParameter("productId") then
+        adjustEvent.productId = self.command:getFirstParameterValue("productId")
+    end
+
+    if self.command:containsParameter("purchaseToken") then
+        adjustEvent.purchaseToken = self.command:getFirstParameterValue("purchaseToken")
+    end
+
+    if self.command:containsParameter("transactionId") then
+        adjustEvent.transactionId = self.command:getFirstParameterValue("transactionId")
+    end
+
     if self.command:containsParameter("callbackParams") then
         local callbackParams = self.command.parameters["callbackParams"]
         adjustEvent.callbackParameters = {}
@@ -587,27 +503,6 @@ function CommandExecutor:event()
             k = k + 1
         end
     end
-
-    if self.command:containsParameter("orderId") then
-        adjustEvent.orderId = self.command:getFirstParameterValue("orderId")
-    end
-
-    if self.command:containsParameter("deduplicationId") then
-        adjustEvent.deduplicationId = self.command:getFirstParameterValue("deduplicationId")
-    end
-
-    if self.command:containsParameter("productId") then
-        adjustEvent.productId = self.command:getFirstParameterValue("productId")
-    end
-
-    if self.command:containsParameter("purchaseToken") then
-        adjustEvent.purchaseToken = self.command:getFirstParameterValue("purchaseToken")
-    end
-
-    if self.command:containsParameter("transactionId") then
-        adjustEvent.transactionId = self.command:getFirstParameterValue("transactionId")
-    end
-
 end
 
 function CommandExecutor:trackEvent()
@@ -625,14 +520,6 @@ function CommandExecutor:trackEvent()
     self.savedEvents[eventNumber] = nil
 end
 
-function CommandExecutor:resume()
-    adjust.onResume("test")
-end
-
-function CommandExecutor:pause()
-    adjust.onPause("test")
-end
-
 function CommandExecutor:setEnabled()
     local enabled = (self.command:getFirstParameterValue("enabled") == "true")
     if enabled then
@@ -640,11 +527,6 @@ function CommandExecutor:setEnabled()
     else
         adjust.disable()
     end
-end
-
-function CommandExecutor:setReferrer()
-    local referrer = self.command:getFirstParameterValue("referrer")
-    adjust.setReferrer(referrer)
 end
 
 function CommandExecutor:setOfflineMode()
@@ -718,11 +600,6 @@ end
 function CommandExecutor:openDeeplink()
     local deeplink = self.command:getFirstParameterValue("deeplink")
     adjust.processDeeplink(deeplink)
-end
-
-function CommandExecutor:sendReferrer()
-    local referrer = self.command:getFirstParameterValue("referrer")
-    adjust.setReferrer(referrer)
 end
 
 function CommandExecutor:gdprForgetMe()
@@ -872,44 +749,42 @@ function CommandExecutor:verifyPurchase()
         local productId = self.command:getFirstParameterValue("productId")
         local localBasePath = self.basePath
         adjust.verifyAppStorePurchase(
-                receipt,
-                transactionId,
-                productId,
-                function(result)
-                    local json_verificationResult = json.decode(result.message)
-                    if json_verificationResult.verificationStatus ~= nil then
-                        testLib.addInfoToSend("verification_status", json_verificationResult.verificationStatus);
-                    end
-                    if json_verificationResult.code ~= nil then
-                        testLib.addInfoToSend("code", tostring(json_verificationResult.code));
-                    end
-                    if json_verificationResult.message ~= nil then
-                        testLib.addInfoToSend("message", json_verificationResult.message);
-                    end
-                    testLib.sendInfoToServer(localBasePath)
+            receipt,
+            transactionId,
+            productId,
+            function(result)
+                local json_verificationResult = json.decode(result.message)
+                if json_verificationResult.verificationStatus ~= nil then
+                    testLib.addInfoToSend("verification_status", json_verificationResult.verificationStatus);
                 end
+                if json_verificationResult.code ~= nil then
+                    testLib.addInfoToSend("code", tostring(json_verificationResult.code));
+                end
+                if json_verificationResult.message ~= nil then
+                    testLib.addInfoToSend("message", json_verificationResult.message);
+                end
+                testLib.sendInfoToServer(localBasePath)
+            end
         )
     else
         local sku = self.command:getFirstParameterValue("productId")
         local purchaseToken = self.command:getFirstParameterValue("purchaseToken")
         local localBasePath = self.basePath
         adjust.verifyPlayStorePurchase(
-                sku,
-                purchaseToken,
-                function(result)
-                    local json_verificationResult = json.decode(result.message)
-                    testLib.addInfoToSend("verification_status", json_verificationResult.verificationStatus);
-                    testLib.addInfoToSend("code", tostring(json_verificationResult.code));
-                    testLib.addInfoToSend("message", json_verificationResult.message);
-                    testLib.sendInfoToServer(localBasePath)
-                end
+            sku,
+            purchaseToken,
+            function(result)
+                local json_verificationResult = json.decode(result.message)
+                testLib.addInfoToSend("verification_status", json_verificationResult.verificationStatus);
+                testLib.addInfoToSend("code", tostring(json_verificationResult.code));
+                testLib.addInfoToSend("message", json_verificationResult.message);
+                testLib.sendInfoToServer(localBasePath)
+            end
         )
-
     end
 end
 
 function CommandExecutor:verifyTrack()
-
     self:event()
     local eventNumber = 0
     local localBasePath = self.basePath
@@ -931,7 +806,6 @@ function CommandExecutor:verifyTrack()
         end
         adjust.verifyAndTrackAppStorePurchase(myAdjustEvent)
         self.savedEvents[eventNumber] = nil
-
     else
         if self.command:containsParameter("eventName") then
             local eventName = self.command:getFirstParameterValue("eventName")
@@ -1011,15 +885,8 @@ function CommandExecutor:attributionGetter()
             testLib.addInfoToSend("fb_install_referrer", json_attribution.fbInstallReferrer)
         end
 
-        --for key,value in next,map,nil do
-        --    if key ~= nil and value ~= nil then
-        --        testLib.addInfoToSend(key,value)
-        --    end
-        --end
-
         testLib.sendInfoToServer(self.basePath);
     end);
-
 end
 
 function CommandExecutor:trackAdRevenue()
@@ -1080,6 +947,14 @@ function CommandExecutor:trackAdRevenue()
     end
 
     adjust.trackAdRevenue(adRevenue)
+end
+
+function CommandExecutor:resume()
+    adjust.onResume("test")
+end
+
+function CommandExecutor:pause()
+    adjust.onPause("test")
 end
 
 function CommandExecutor:clearSavedConfigsAndEvents()

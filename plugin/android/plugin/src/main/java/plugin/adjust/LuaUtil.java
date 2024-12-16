@@ -2,8 +2,8 @@
 //  LuaUtil.java
 //  Adjust SDK
 //
-//  Created by Abdullah Obaied (@obaied) on 14th September 2017.
-//  Copyright (c) 2017-2022 Adjust GmbH. All rights reserved.
+//  Created by Abdullah Obaied on 14th September 2017.
+//  Copyright (c) 2017-Present Adjust GmbH. All rights reserved.
 //
 
 package plugin.adjust;
@@ -53,8 +53,7 @@ final public class LuaUtil {
     private static final String SESSION_FAILED_WILL_RETRY = "willRetry";
     private static final String SESSION_FAILED_JSON_RESPONSE = "jsonResponse";
 
-    private static final String DEEPLINK_URI = "uri";
-
+    private static final String DEEPLINK_URL = "deeplink";
 
     private static final String PV_VERIFICATION_STATUS = "verificationStatus";
     private static final String PV_CODE = "code";
@@ -150,13 +149,13 @@ final public class LuaUtil {
         return map;
     }
 
-    public static Map deferredDeeplinkToMap(Uri uri) {
+    public static Map deferredDeeplinkToMap(Uri deeplink) {
         Map map = new HashMap();
-        if (null == uri) {
+        if (null == deeplink) {
             return map;
         }
 
-        map.put(DEEPLINK_URI, uri.toString());
+        map.put(DEEPLINK_URL, deeplink.toString());
         return map;
     }
 }
