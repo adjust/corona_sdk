@@ -1,4 +1,4 @@
-import os, shutil, glob, platform, subprocess
+import os, shutil, glob, platform, subprocess, time
 
 ## ------------------------------------------------------------------
 ## Tag.
@@ -197,12 +197,14 @@ def gradle_run(options):
     execute_command(cmd_params)
 
 def extract_plugin_jar_from_aar():
+    execute_command(['rm', '-rf', 'plugin.adjust.jar'])
     execute_command(['unzip', 'plugin-release.aar', '-d', 'temp'])
     execute_command(['mv', 'temp/classes.jar', 'plugin.adjust.jar'])
     execute_command(['rm', '-rf', 'temp'])
     execute_command(['rm', '-rf', 'plugin-release.aar'])
 
 def extract_test_jar_from_aar():
+    execute_command(['rm', '-rf', 'test.adjust.jar'])
     execute_command(['unzip', 'plugin-release.aar', '-d', 'temp'])
     execute_command(['mv', 'temp/classes.jar', 'test.adjust.jar'])
     execute_command(['rm', '-rf', 'temp'])

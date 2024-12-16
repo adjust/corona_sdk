@@ -42,10 +42,10 @@ try:
             android.build_plugin(dir_root, dir_dist)
         if args.type == 'app-test':
             set_log_tag('CORONA-SDK-ANDROID-APP-TEST')
-            android.build_app_test(dir_root)
+            android.build_app_test(dir_root, dir_dist)
         if args.type == 'app-example':
             set_log_tag('CORONA-SDK-ANDROID-APP-EXAMPLE')
-            android.build_app_example(dir_root)
+            android.build_app_example(dir_root, dir_dist)
 finally:
     # Remove autocreated python compiled files.
     remove_files('*.pyc', dir_script, log=False)
