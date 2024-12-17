@@ -286,8 +286,7 @@ function CommandExecutor:config()
 
     if self.command:containsParameter("attributionCallbackSendAll") then
         localBasePath = self.basePath
-        adjust.setAttributionListener(function(event)
-            print("[CommandExecutor]: Attribution received!")
+        adjust.setAttributionCallback(function(event)
             local json_attribution = json.decode(event.message)
 
             testLib.addInfoToSend("tracker_token", json_attribution.trackerToken)
@@ -311,8 +310,7 @@ function CommandExecutor:config()
 
     if self.command:containsParameter("sessionCallbackSendSuccess") then
         localBasePath = self.basePath
-        adjust.setSessionSuccessListener(function(event)
-            print("[CommandExecutor]: Session tracking success event received!")
+        adjust.setSessionSuccessCallback(function(event)
             local json_session_success = json.decode(event.message)
             testLib.addInfoToSend("message", json_session_success.message)
             testLib.addInfoToSend("timestamp", json_session_success.timestamp)
@@ -330,8 +328,7 @@ function CommandExecutor:config()
 
     if self.command:containsParameter("sessionCallbackSendFailure") then
         localBasePath = self.basePath
-        adjust.setSessionFailureListener(function(event)
-            print("[CommandExecutor]: Session tracking failure event received!")
+        adjust.setSessionFailureCallback(function(event)
             local json_session_failure = json.decode(event.message)
             testLib.addInfoToSend("message", json_session_failure.message)
             testLib.addInfoToSend("timestamp", json_session_failure.timestamp)
@@ -350,8 +347,7 @@ function CommandExecutor:config()
 
     if self.command:containsParameter("eventCallbackSendSuccess") then
         localBasePath = self.basePath
-        adjust.setEventSuccessListener(function(event)
-            print("[CommandExecutor]: Event tracking success event received!")
+        adjust.setEventSuccessCallback(function(event)
             local json_event_success = json.decode(event.message)
             testLib.addInfoToSend("message", json_event_success.message)
             testLib.addInfoToSend("timestamp", json_event_success.timestamp)
@@ -371,8 +367,7 @@ function CommandExecutor:config()
 
     if self.command:containsParameter("eventCallbackSendFailure") then
         localBasePath = self.basePath
-        adjust.setEventFailureListener(function(event)
-            print("[CommandExecutor]: Event tracking failed event received!")
+        adjust.setEventFailureCallback(function(event)
             local json_event_failure = json.decode(event.message)
             testLib.addInfoToSend("message", json_event_failure.message)
             testLib.addInfoToSend("timestamp", json_event_failure.timestamp)
@@ -394,8 +389,7 @@ function CommandExecutor:config()
     if self.command:containsParameter("deferredDeeplinkCallback") then
         localBasePath = self.basePath
         adjustConfig.isDeferredDeeplinkOpeningEnabled = (self.command:getFirstParameterValue("deferredDeeplinkCallback") == "true")
-        adjust.setDeferredDeeplinkListener(function(event)
-            print("[CommandExecutor]: Deferred deeplink received!")
+        adjust.setDeferredDeeplinkCallback(function(event)
             local deeplink
             if platform == "ios" then
                 deeplink = event.message
@@ -409,9 +403,7 @@ function CommandExecutor:config()
 
     if self.command:containsParameter("skanCallback") then
         localBasePath = self.basePath
-        print("[CommandExecutor]: Setting skan callback... local-base-path=" .. localBasePath)
-        adjust.setConversionValueUpdatedListener(function(event)
-            print("skanUpdateCallbackListener triggered")
+        adjust.setConversionValueUpdatedCallback(function(event)
             local json_skan_update = json.decode(event.message)
             testLib.addInfoToSend('conversion_value', json_skan_update.conversionValue);
             testLib.addInfoToSend('coarse_value', json_skan_update.coarseValue);
@@ -599,7 +591,9 @@ end
 
 function CommandExecutor:openDeeplink()
     local deeplink = self.command:getFirstParameterValue("deeplink")
-    adjust.processDeeplink(deeplink)
+    local adjustDeeplink = {}
+    adjustDeeplink.deeplink = deeplink
+    adjust.processDeeplink(adjustDeeplink)
 end
 
 function CommandExecutor:gdprForgetMe()
@@ -767,20 +761,19 @@ function CommandExecutor:verifyPurchase()
             end
         )
     else
-        local sku = self.command:getFirstParameterValue("productId")
+        local productId = self.command:getFirstParameterValue("productId")
         local purchaseToken = self.command:getFirstParameterValue("purchaseToken")
         local localBasePath = self.basePath
-        adjust.verifyPlayStorePurchase(
-            sku,
-            purchaseToken,
-            function(result)
-                local json_verificationResult = json.decode(result.message)
-                testLib.addInfoToSend("verification_status", json_verificationResult.verificationStatus);
-                testLib.addInfoToSend("code", tostring(json_verificationResult.code));
-                testLib.addInfoToSend("message", json_verificationResult.message);
-                testLib.sendInfoToServer(localBasePath)
-            end
-        )
+        local playStorePurchase = {}
+        playStorePurchase.productId = productId
+        playStorePurchase.purchaseToken = purchaseToken
+        adjust.verifyPlayStorePurchase(playStorePurchase, function(result)
+            local json_verificationResult = json.decode(result.message)
+            testLib.addInfoToSend("verification_status", json_verificationResult.verificationStatus);
+            testLib.addInfoToSend("code", tostring(json_verificationResult.code));
+            testLib.addInfoToSend("message", json_verificationResult.message);
+            testLib.sendInfoToServer(localBasePath)
+        end)
     end
 end
 
@@ -795,16 +788,14 @@ function CommandExecutor:verifyTrack()
             eventNumber = tonumber(eventNumberStr)
         end
 
-        local myAdjustEvent = self.savedEvents[eventNumber]
-        myAdjustEvent.listener = function(result)
-            print("result got")
+        local adjustEvent = self.savedEvents[eventNumber]
+        adjust.verifyAndTrackAppStorePurchase(adjustEvent, function(result)
             local json_verificationResult = json.decode(result.message)
             testLib.addInfoToSend("verification_status", json_verificationResult.verificationStatus);
             testLib.addInfoToSend("code", tostring(json_verificationResult.code));
             testLib.addInfoToSend("message", json_verificationResult.message);
             testLib.sendInfoToServer(localBasePath)
-        end
-        adjust.verifyAndTrackAppStorePurchase(myAdjustEvent)
+        end)
         self.savedEvents[eventNumber] = nil
     else
         if self.command:containsParameter("eventName") then
@@ -813,16 +804,14 @@ function CommandExecutor:verifyTrack()
             eventNumber = tonumber(eventNumberStr)
         end
 
-        local myAdjustEvent = self.savedEvents[eventNumber]
-        myAdjustEvent.listener = function(result)
-            print("result got")
+        local adjustEvent = self.savedEvents[eventNumber]
+        adjust.verifyAndTrackPlayStorePurchase(adjustEvent, function(result)
             local json_verificationResult = json.decode(result.message)
             testLib.addInfoToSend("verification_status", json_verificationResult.verificationStatus);
             testLib.addInfoToSend("code", tostring(json_verificationResult.code));
             testLib.addInfoToSend("message", json_verificationResult.message);
             testLib.sendInfoToServer(localBasePath)
-        end
-        adjust.verifyAndTrackPlayStorePurchase(myAdjustEvent)
+        end)
         self.savedEvents[eventNumber] = nil
     end
 end
@@ -840,8 +829,10 @@ end
 function CommandExecutor:processDeeplink()
     local deeplink = self.command:getFirstParameterValue("deeplink")
     local localBasePath = self.basePath
+    local adjustDeeplink = {}
+    adjustDeeplink.deeplink = deeplink
 
-    adjust.processAndResolveDeeplink(deeplink,function(resolvedLink)
+    adjust.processAndResolveDeeplink(adjustDeeplink, function(resolvedLink)
         testLib.addInfoToSend("resolved_link", tostring(resolvedLink.message));
         testLib.sendInfoToServer(localBasePath)
     end)
@@ -950,11 +941,11 @@ function CommandExecutor:trackAdRevenue()
 end
 
 function CommandExecutor:resume()
-    adjust.onResume("test")
+    adjust.onResume()
 end
 
 function CommandExecutor:pause()
-    adjust.onPause("test")
+    adjust.onPause()
 end
 
 function CommandExecutor:clearSavedConfigsAndEvents()
