@@ -64,7 +64,7 @@
 		A4C2449C1683FA5300C395D1 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4C244991683FA5300C395D1 /* Social.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		A4E2537F166AE3DC00DCDC2C /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4E2537E166AE3DC00DCDC2C /* Twitter.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		C22C1E4B1E981D9000D74196 /* LaunchScreen.storyboardc in Resources */ = {isa = PBXBuildFile; fileRef = C22C1E4A1E981D9000D74196 /* LaunchScreen.storyboardc */; };
-		E4692A822CE767AA002BF432 /* AdjustSigSdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4692A812CE76790002BF432 /* AdjustSigSdk.a */; };
+		E40DC9B32D11C71900C494F6 /* AdjustSigSdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4692A802CE7677E002BF432 /* AdjustSigSdk.a */; };
 		E640B2F21BFC00B00031FAE9 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E640B2F11BFC00B00031FAE9 /* AssetsLibrary.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		E640B2F41BFC00BA0031FAE9 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E640B2F31BFC00BA0031FAE9 /* Photos.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		F56457D91FA108F500EC8C29 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F56712391F73451B006B502D /* Images.xcassets */; };
@@ -165,7 +165,7 @@
 				A484117A15128D5D0074BD57 /* AVFoundation.framework in Frameworks */,
 				A484117B15128D5D0074BD57 /* CFNetwork.framework in Frameworks */,
 				9D28CC1A2617E89900AEDF67 /* AdSupport.framework in Frameworks */,
-				E4692A822CE767AA002BF432 /* AdjustSigSdk.a in Frameworks */,
+				E40DC9B32D11C71900C494F6 /* AdjustSigSdk.a in Frameworks */,
 				9D6ABE742762129C00B9919D /* libplugin_library.a in Frameworks */,
 				9D28CC1C2617E8A400AEDF67 /* AdServices.framework in Frameworks */,
 				A484112215114F700074BD57 /* CoreGraphics.framework in Frameworks */,
