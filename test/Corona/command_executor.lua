@@ -74,7 +74,6 @@ function CommandExecutor:executeCommand(command)
     elseif method == "processDeeplink" then self:processDeeplink()
     elseif method == "attributionGetter" then self:attributionGetter()
     elseif method == "getLastDeeplink" then self:getLastDeeplink()
-
     else print("CommandExecutor: unknown method name: " .. method)
     end
 end
@@ -253,11 +252,7 @@ function CommandExecutor:config()
     end
 
     if self.command:containsParameter("allowAdServicesInfoReading") then
-        adjustConfig.allowAdServicesInfoReading = (self.command:getFirstParameterValue("allowAdServicesInfoReading") == "true")
-    end
-
-    if self.command:containsParameter("allowSkAdNetworkHandling") then
-        adjustConfig.isSkanAttributionEnabled = (self.command:getFirstParameterValue("allowSkAdNetworkHandling") == "true")
+        adjustConfig.isAdServicesEnabled = (self.command:getFirstParameterValue("allowAdServicesInfoReading") == "true")
     end
 
     if self.command:containsParameter("isSkanAttributionEnabled") then
@@ -265,11 +260,15 @@ function CommandExecutor:config()
     end
 
     if self.command:containsParameter("allowIdfaReading") then
-        adjustConfig.allowIdfaReading = (self.command:getFirstParameterValue("allowIdfaReading") == "true")
+        adjustConfig.isIdfaReadingEnabled = (self.command:getFirstParameterValue("allowIdfaReading") == "true")
+    end
+
+    if self.command:containsParameter("allowIdfvReading") then
+        adjustConfig.isIdfvReadingEnabled = (self.command:getFirstParameterValue("allowIdfvReading") == "true")
     end
 
     if self.command:containsParameter("attConsentWaitingSeconds") then
-        adjustConfig.attConsentWaitingSeconds = tonumber(self.command:getFirstParameterValue("attConsentWaitingSeconds"))
+        adjustConfig.attConsentWaitingInterval = tonumber(self.command:getFirstParameterValue("attConsentWaitingSeconds"))
     end
 
     if self.command:containsParameter("sendInBackground") then
@@ -288,7 +287,6 @@ function CommandExecutor:config()
         localBasePath = self.basePath
         adjust.setAttributionCallback(function(event)
             local json_attribution = json.decode(event.message)
-
             testLib.addInfoToSend("tracker_token", json_attribution.trackerToken)
             testLib.addInfoToSend("tracker_name", json_attribution.trackerName)
             testLib.addInfoToSend("network", json_attribution.network)
@@ -299,11 +297,9 @@ function CommandExecutor:config()
             testLib.addInfoToSend("cost_type", json_attribution.costType)
             testLib.addInfoToSend("cost_amount", json_attribution.costAmount)
             testLib.addInfoToSend("cost_currency", json_attribution.costCurrency)
-          
             if json_attribution.fbInstallReferrer ~= nil and json_attribution.fbInstallReferrer ~= "" then
                 testLib.addInfoToSend("fb_install_referrer", json_attribution.fbInstallReferrer)
             end
-
             testLib.sendInfoToServer(localBasePath)
         end)
     end
@@ -605,7 +601,6 @@ function CommandExecutor:trackSubscription()
         local price = self.command:getFirstParameterValue("revenue")
         local currency = self.command:getFirstParameterValue("currency")
         local transactionId = self.command:getFirstParameterValue("transactionId")
-        local receipt = self.command:getFirstParameterValue("receipt")
         local transactionDate = self.command:getFirstParameterValue("transactionDate")
         local salesRegion = self.command:getFirstParameterValue("salesRegion")
 
@@ -613,7 +608,6 @@ function CommandExecutor:trackSubscription()
         subscription.price = price
         subscription.currency = currency
         subscription.transactionId = transactionId
-        subscription.receipt = receipt
         subscription.transactionDate = transactionDate
         subscription.salesRegion = salesRegion
 
@@ -738,28 +732,19 @@ end
 
 function CommandExecutor:verifyPurchase()
     if platformInfo == "ios" then
-        local receipt = self.command:getFirstParameterValue("receipt")
         local transactionId = self.command:getFirstParameterValue("transactionId")
         local productId = self.command:getFirstParameterValue("productId")
         local localBasePath = self.basePath
-        adjust.verifyAppStorePurchase(
-            receipt,
-            transactionId,
-            productId,
-            function(result)
-                local json_verificationResult = json.decode(result.message)
-                if json_verificationResult.verificationStatus ~= nil then
-                    testLib.addInfoToSend("verification_status", json_verificationResult.verificationStatus);
-                end
-                if json_verificationResult.code ~= nil then
-                    testLib.addInfoToSend("code", tostring(json_verificationResult.code));
-                end
-                if json_verificationResult.message ~= nil then
-                    testLib.addInfoToSend("message", json_verificationResult.message);
-                end
-                testLib.sendInfoToServer(localBasePath)
-            end
-        )
+        local appStorePurchase = {}
+        appStorePurchase.productId = productId
+        appStorePurchase.transactionId = transactionId
+        adjust.verifyAppStorePurchase(appStorePurchase, function(result)
+            local json_verificationResult = json.decode(result.message)
+            testLib.addInfoToSend("verification_status", json_verificationResult.verificationStatus);
+            testLib.addInfoToSend("code", tostring(json_verificationResult.code));
+            testLib.addInfoToSend("message", json_verificationResult.message);
+            testLib.sendInfoToServer(localBasePath)
+        end)
     else
         local productId = self.command:getFirstParameterValue("productId")
         local purchaseToken = self.command:getFirstParameterValue("purchaseToken")
@@ -841,42 +826,20 @@ end
 function CommandExecutor:attributionGetter()
     adjust.getAttribution(function(event)
         local json_attribution = json.decode(event.message)
-        local map = {}
-        if json_attribution.trackerToken ~= nil then
-            testLib.addInfoToSend("tracker_token",json_attribution.trackerToken)
-        end
-        if json_attribution.trackerName ~= nil then
-            testLib.addInfoToSend("tracker_name",json_attribution.trackerName)
-        end
-        if json_attribution.network ~= nil then
-            testLib.addInfoToSend("network",  json_attribution.network)
-        end
-        if json_attribution.campaign ~= nil then
-            testLib.addInfoToSend("campaign",  json_attribution.campaign)
-        end
-        if json_attribution.adgroup ~= nil then
-            testLib.addInfoToSend("adgroup",  json_attribution.adgroup)
-        end
-        if json_attribution.creative ~= nil then
-            testLib.addInfoToSend("creative",  json_attribution.creative)
-        end
-        if json_attribution.clickLabel ~= nil then
-            testLib.addInfoToSend("click_label",  json_attribution.clickLabel)
-        end
-        if json_attribution.costType ~= nil then
-            testLib.addInfoToSend("cost_type",  json_attribution.costType)
-        end
-        if json_attribution.costAmount ~= nil then
-            testLib.addInfoToSend("cost_amount",  tostring(json_attribution.costAmount))
-        end
-        if json_attribution.costCurrency ~= nil then
-            testLib.addInfoToSend("cost_currency",  json_attribution.costCurrency)
-        end
-        if json_attribution.fbInstallReferrer ~= nil and json_attribution.fbInstallReferrer ~="" then
+        testLib.addInfoToSend("tracker_token", json_attribution.trackerToken)
+        testLib.addInfoToSend("tracker_name", json_attribution.trackerName)
+        testLib.addInfoToSend("network", json_attribution.network)
+        testLib.addInfoToSend("campaign", json_attribution.campaign)
+        testLib.addInfoToSend("adgroup", json_attribution.adgroup)
+        testLib.addInfoToSend("creative", json_attribution.creative)
+        testLib.addInfoToSend("click_label", json_attribution.clickLabel)
+        testLib.addInfoToSend("cost_type", json_attribution.costType)
+        testLib.addInfoToSend("cost_amount", json_attribution.costAmount)
+        testLib.addInfoToSend("cost_currency", json_attribution.costCurrency)
+        if json_attribution.fbInstallReferrer ~= nil and json_attribution.fbInstallReferrer ~= "" then
             testLib.addInfoToSend("fb_install_referrer", json_attribution.fbInstallReferrer)
         end
-
-        testLib.sendInfoToServer(self.basePath);
+        testLib.sendInfoToServer(localBasePath)
     end);
 end
 

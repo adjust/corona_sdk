@@ -12,7 +12,7 @@
 #include <CoronaRuntime.h>
 #import <UIKit/UIKit.h>
 
-static lua_State *initialLuaState;
+lua_State PluginLibrary::cachedLuaState = nullptr; // Initialize static variable
 
 // This corresponds to the name of the library, e.g. [Lua] require "plugin.testlibrary"
 const char PluginLibrary::kName[] = "plugin.adjust.test";
@@ -32,8 +32,8 @@ void PluginLibrary::InitExecuteCommandListener(CoronaLuaRef listener) {
 int PluginLibrary::Open(lua_State *L) {
     // Register __gc callback
     const char kMetatableName[] = __FILE__; // Globally unique string to prevent collision
-    CoronaLuaInitializeGCMetatable( L, kMetatableName, Finalizer );
-    
+    CoronaLuaInitializeGCMetatable(L, kMetatableName, Finalizer);
+
     // Functions in library
     const luaL_Reg kVTable[] = {
         { "initTestLibrary", initTestLibrary },
@@ -42,17 +42,22 @@ int PluginLibrary::Open(lua_State *L) {
         { "startTestSession", startTestSession },
         { "addInfoToSend", addInfoToSend },
         { "sendInfoToServer", sendInfoToServer },
-        { "setTestConnectionOptions", NULL },
-        
+        { "setTestConnectionOptions", NULL }, // Placeholder
+
         { NULL, NULL }
     };
-    
+
     // Set library as upvalue for each library function
     Self *library = new Self;
     CoronaLuaPushUserdata(L, library, kMetatableName);
-    
+
     luaL_openlib(L, kName, kVTable, 1); // leave "library" on top of stack
-    
+
+    // Cache the Lua state if it's not already cached
+    if (cachedLuaState == nullptr) {
+        cachedLuaState = L;
+    }
+
     return 1;
 }
 
@@ -63,63 +68,60 @@ int PluginLibrary::Finalizer(lua_State *L) {
     return 0;
 }
 
-PluginLibrary * PluginLibrary::ToLibrary(lua_State *L) {
+PluginLibrary *PluginLibrary::ToLibrary(lua_State *L) {
     // library is pushed as part of the closure
     Self *library = (Self *)CoronaLuaToUserdata(L, lua_upvalueindex(1));
     return library;
 }
 
-
 int PluginLibrary::initTestLibrary(lua_State *L) {
     NSLog(@"[TestLibrary][bridge]: Init test library started...");
-    Self *library = ToLibrary(L);
-    initialLuaState = L;
-    
+    Self *library = ToLibrary(cachedLuaState); // Use cachedLuaState
+
     const char *baseUrlCStr = lua_tostring(L, 1);
     NSString *baseUrl = [NSString stringWithUTF8String:baseUrlCStr];
-    
+
     const char *controlUrlCStr = lua_tostring(L, 2);
     NSString *controlUrl = [NSString stringWithUTF8String:controlUrlCStr];
-    
+
     NSLog(@"[TestLibrary][bridge]: Init test library with base URL: [%@] and control URL: [%@]", baseUrl, controlUrl);
-    
-    if (CoronaLuaIsListener(L, 3, kEvent))
-    {
-        Self *library = ToLibrary(L);
+
+    if (CoronaLuaIsListener(L, 3, kEvent)) {
+        Self *library = ToLibrary(cachedLuaState); // Use cachedLuaState
         CoronaLuaRef listener = CoronaLuaNewRef(L, 3);
         library->InitExecuteCommandListener(listener);
     }
-    
+
     TestLibCommandExecutor *commandExecutor = [[TestLibCommandExecutor alloc] initWithPluginLibrary:library];
     library->testLibrary = [ATLTestLibrary testLibraryWithBaseUrl:baseUrl andControlUrl:controlUrl andCommandDelegate:commandExecutor];
-    
+
     NSLog(@"[TestLibrary][bridge]: Test library initialization completed.");
     return 0;
 }
 
 int PluginLibrary::addTest(lua_State *L) {
-    Self *library = ToLibrary(L);
+    Self *library = ToLibrary(cachedLuaState);
     const char *testName = lua_tostring(L, 1);
     [library->testLibrary addTest:[NSString stringWithUTF8String:testName]];
     return 0;
 }
 
 int PluginLibrary::addTestDirectory(lua_State *L) {
-    Self *library = ToLibrary(L);
+    Self *library = ToLibrary(cachedLuaState);
     const char *testDir = lua_tostring(L, 1);
     [library->testLibrary addTestDirectory:[NSString stringWithUTF8String:testDir]];
     return 0;
 }
 
 int PluginLibrary::startTestSession(lua_State *L) {
-    Self *library = ToLibrary(L);
-    const char *clientSdk = lua_tostring(L, 1);    
+    Self *library = ToLibrary(cachedLuaState);
+    const char *clientSdk = lua_tostring(L, 1);
     [library->testLibrary startTestSession:[NSString stringWithUTF8String:clientSdk]];
     return 0;
 }
 
 int PluginLibrary::addInfoToSend(lua_State *L) {
-    Self *library = ToLibrary(L);
+    Self *library = ToLibrary(cachedLuaState);
     NSString *key = [NSString stringWithUTF8String:lua_tostring(L, 1)];
     NSString *value = [NSString stringWithUTF8String:lua_tostring(L, 2)];
     NSLog(@"[TestLibrary][bridge]: Adding info to send to server: [%@, %@]", key, value);
@@ -128,7 +130,7 @@ int PluginLibrary::addInfoToSend(lua_State *L) {
 }
 
 int PluginLibrary::sendInfoToServer(lua_State *L) {
-    Self *library = ToLibrary(L);
+    Self *library = ToLibrary(cachedLuaState);
     NSString *basePath = [NSString stringWithUTF8String:lua_tostring(L, 1)];
     NSLog(@"[TestLibrary][bridge]: Sending info to server, basePath: %@", basePath);
     [library->testLibrary sendInfoToServer:basePath];
@@ -136,18 +138,18 @@ int PluginLibrary::sendInfoToServer(lua_State *L) {
 }
 
 void PluginLibrary::dispachExecuteCommand(NSString *commandJson) {
-    lua_State *L = initialLuaState;
-    
+    lua_State *L = cachedLuaState; // Use cachedLuaState
+
     // Create event and add message to it
     CoronaLuaNewEvent(L, kEvent);
     lua_pushstring(L, [commandJson UTF8String]);
     lua_setfield(L, -2, "message");
-    
+
     // Dispatch event to library's listener
     CoronaLuaDispatchEvent(L, this->GetExecuteCommandListener(), 0);
 }
 
 // ----------------------------------------------------------------------------
 CORONA_EXPORT int luaopen_plugin_adjust_test(lua_State *L) {
-    return PluginLibrary::Open( L );
+    return PluginLibrary::Open(L);
 }

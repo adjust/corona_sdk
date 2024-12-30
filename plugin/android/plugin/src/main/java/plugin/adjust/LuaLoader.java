@@ -33,28 +33,31 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private static final String TAG = "AdjustLuaLoader";
     private static final String SDK_PREFIX = "corona5.0.0";
 
+    // subscriptions
     public static final String EVENT_ATTRIBUTION_CHANGED = "adjust_attributionChanged";
     public static final String EVENT_SESSION_TRACKING_SUCCESS = "adjust_sessionTrackingSuccess";
     public static final String EVENT_SESSION_TRACKING_FAILURE = "adjust_sessionTrackingFailure";
     public static final String EVENT_EVENT_TRACKING_SUCCESS = "adjust_eventTrackingSuccess";
     public static final String EVENT_EVENT_TRACKING_FAILURE = "adjust_eventTrackingFailure";
     public static final String EVENT_DEFERRED_DEEPLINK = "adjust_deferredDeeplink";
+    // one time callbacks
+    public static final String EVENT_PROCESS_AND_RESOLVE_DEEPLINK = "adjust_processAndResolveDeeplink";
     public static final String EVENT_IS_ADJUST_ENABLED = "adjust_isEnabled";
     public static final String EVENT_GET_ATTRIBUTION = "adjust_getAttribution";
     public static final String EVENT_GET_ADID = "adjust_getAdid";
-    public static final String EVENT_GET_GOOGLE_AD_ID = "adjust_getGoogleAdId";
-    public static final String EVENT_GET_AMAZON_AD_ID = "adjust_getAmazonAdId";
     public static final String EVENT_GET_LAST_DEEPLINK = "adjust_getLastDeeplink";
     public static final String EVENT_GET_SDK_VERSION = "adjust_getSdkVersion";
-    public static final String EVENT_PROCESS_AND_RESOLVE_DEEPLINK = "adjust_processAndResolveDeeplink";
+    // android only
+    public static final String EVENT_GET_GOOGLE_AD_ID = "adjust_getGoogleAdId";
+    public static final String EVENT_GET_AMAZON_AD_ID = "adjust_getAmazonAdId";
     public static final String EVENT_VERIFY_PLAY_STORE_PURCHASE = "adjust_verifyPlayStorePurchase";
     public static final String EVENT_VERIFY_AND_TRACK_PLAY_STORE_PURCHASE = "adjust_verifyAndTrackPlayStorePurchase";
-
-    public static final String EVENT_GET_IDFA = "adjust_getIdfa";
-    public static final String EVENT_GET_IDFV = "adjust_getIdfv";
+    // ios only
     public static final String EVENT_VERIFY_APP_STORE_PURCHASE = "adjust_verifyAppStorePurchase";
     public static final String EVENT_VERIFY_AND_TRACK_APP_STORE_PURCHASE = "adjust_verifyAndTrackAppStorePurchase";
     public static final String EVENT_REQUEST_APP_TRACKING_AUTHORIZATION_STATUS = "adjust_requestAppTrackingAuthorization";
+    public static final String EVENT_GET_IDFA = "adjust_getIdfa";
+    public static final String EVENT_GET_IDFV = "adjust_getIdfv";
     public static final String EVENT_GET_APP_TRACKING_AUTHORIZATION_STATUS = "adjust_getAppTrackingAuthorization";
     public static final String EVENT_UPDATE_SKAN_CONVERSION_VALUE = "adjust_updateSkanConversionValue";
 
@@ -308,7 +311,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
-        // assert log level
+        // suppress log level
         L.getField(1, "logLevel");
         if (!L.isNil(2)) {
             logLevel = L.checkString(2);

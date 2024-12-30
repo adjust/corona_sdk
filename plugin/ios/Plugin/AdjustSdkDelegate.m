@@ -32,7 +32,6 @@ NSString * const KEY_ADID = @"adid";
 NSString * const KEY_COST_TYPE = @"costType";
 NSString * const KEY_COST_AMOUNT = @"costAmount";
 NSString * const KEY_COST_CURRENCY = @"costCurrency";
-NSString * const KEY_FB_INSTALL_REFERRER = @"fbInstallReferrer";
 NSString * const KEY_MESSAGE = @"message";
 NSString * const KEY_TIMESTAMP = @"timestamp";
 NSString * const KEY_EVENT_TOKEN = @"eventToken";
@@ -56,14 +55,14 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
 #pragma mark - Public methods
 
 + (id)getInstanceWithSwizzleOfAttributionChangedCallback:(CoronaLuaRef)attributionCallback
-                            eventSuccessCallback:(CoronaLuaRef)eventSuccessCallback
-                            eventFailureCallback:(CoronaLuaRef)eventFailureCallback
-                          sessionSuccessCallback:(CoronaLuaRef)sessionSuccessCallback
-                          sessionFailureCallback:(CoronaLuaRef)sessionFailureCallback
-                        deferredDeeplinkCallback:(CoronaLuaRef)deferredDeeplinkCallback
-                   conversionValueUpdateCallback:(CoronaLuaRef)conversionValueUpdateCallback
-                    shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink
-                                     andLuaState:(lua_State *)luaState {
+                                    eventSuccessCallback:(CoronaLuaRef)eventSuccessCallback
+                                    eventFailureCallback:(CoronaLuaRef)eventFailureCallback
+                                  sessionSuccessCallback:(CoronaLuaRef)sessionSuccessCallback
+                                  sessionFailureCallback:(CoronaLuaRef)sessionFailureCallback
+                                deferredDeeplinkCallback:(CoronaLuaRef)deferredDeeplinkCallback
+                                     skanUpdatedCallback:(CoronaLuaRef)skanUpdatedCallback
+                            shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink
+                                                luaState:(lua_State *)luaState {
     dispatch_once(&onceToken, ^{
         defaultInstance = [[AdjustSdkDelegate alloc] init];
 
@@ -92,7 +91,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
             [defaultInstance swizzleOriginalSelector:@selector(adjustDeferredDeeplinkReceived:)
                                         withSelector:@selector(adjustDeferredDeeplinkReceivedWannabe:)];
         }
-        if (conversionValueUpdateCallback != NULL) {
+        if (skanUpdatedCallback != NULL) {
             [defaultInstance swizzleOriginalSelector:@selector(adjustSkanUpdatedWithConversionData:)
                                         withSelector:@selector(adjustSkanUpdatedWithConversionDataWannabe:)];
         }
@@ -103,7 +102,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
         [defaultInstance setSessionSuccessCallback:sessionSuccessCallback];
         [defaultInstance setSessionFailureCallback:sessionFailureCallback];
         [defaultInstance setDeferredDeeplinkCallback:deferredDeeplinkCallback];
-        [defaultInstance setConversionValueUpdateCallback:conversionValueUpdateCallback];
+        [defaultInstance setSkanUpdatedCallback:skanUpdatedCallback];
         [defaultInstance setShouldLaunchDeferredDeeplink:shouldLaunchDeferredDeeplink];
         [defaultInstance setLuaState:luaState];
     });
@@ -119,19 +118,17 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
 + (void)dispatchEvent:(NSString *)eventName
             withState:(lua_State *)luaState
              callback:(CoronaLuaRef)callback
-           andMessage:(NSString *)message {
+              message:(NSString *)message {
     @try {
         CoronaLuaNewEvent(luaState, [eventName UTF8String]);
         lua_pushstring(luaState, [message UTF8String]);
         lua_setfield(luaState, -2, "message");
-
+        
         // Dispatch event to library's listener
         CoronaLuaDispatchEvent(luaState, callback, 0);
     } @catch (NSException *exception) {
-        NSLog(@"[Adjust][bridge]: Error: %@", exception);
+        NSLog(@"[AdjustPlugin]: Error while dispatching event %@ with message %@", eventName, message);
     }
-    // Create event and add message to it.
-    
 }
 
 + (void)addKey:(NSString *)key
@@ -162,20 +159,19 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
     [AdjustSdkDelegate addKey:KEY_COST_TYPE andValue:attribution.costType toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_COST_AMOUNT andValue:attribution.costAmount toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_COST_CURRENCY andValue:attribution.costCurrency toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_FB_INSTALL_REFERRER andValue:nil toDictionary:dictionary];
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
                                                        options:NSJSONWritingPrettyPrinted
                                                          error:&error];
     if (!jsonData) {
-        NSLog(@"[Adjust][bridge]: Error while trying to convert attribution dictionary to JSON string: %@", error);
+        NSLog(@"[AdjustPlugin]: Error while trying to convert attribution dictionary to JSON string: %@", error);
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         [AdjustSdkDelegate dispatchEvent:ADJ_ATTRIBUTION_CHANGED
                                withState:_luaState
                                 callback:_attributionChangedCallback
-                              andMessage:jsonString];
+                                 message:jsonString];
     }
 }
 
@@ -197,13 +193,13 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
                                                        options:NSJSONWritingPrettyPrinted
                                                          error:&error];
     if (!jsonData) {
-        NSLog(@"[Adjust][bridge]: Error while trying to convert session success dictionary to JSON string: %@", error);
+        NSLog(@"[AdjustPlugin]: Error while trying to convert session success dictionary to JSON string: %@", error);
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         [AdjustSdkDelegate dispatchEvent:ADJ_SESSION_TRACKING_SUCCESS
                                withState:_luaState
                                 callback:_sessionSuccessCallback
-                              andMessage:jsonString];
+                                 message:jsonString];
     }
 }
 
@@ -226,13 +222,13 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
                                                        options:NSJSONWritingPrettyPrinted
                                                          error:&error];
     if (!jsonData) {
-        NSLog(@"[Adjust][bridge]: Error while trying to convert session failure dictionary to JSON string: %@", error);
+        NSLog(@"[AdjustPlugin]: Error while trying to convert session failure dictionary to JSON string: %@", error);
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         [AdjustSdkDelegate dispatchEvent:ADJ_SESSION_TRACKING_FAILURE
                                withState:_luaState
                                 callback:_sessionFailureCallback
-                              andMessage:jsonString];
+                                 message:jsonString];
     }
 }
 
@@ -256,13 +252,13 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
                                                        options:NSJSONWritingPrettyPrinted
                                                          error:&error];
     if (!jsonData) {
-        NSLog(@"[Adjust][bridge]: Error while trying to convert event success dictionary to JSON string: %@", error);
+        NSLog(@"[AdjustPlugin]: Error while trying to convert event success dictionary to JSON string: %@", error);
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         [AdjustSdkDelegate dispatchEvent:ADJ_EVENT_TRACKING_SUCCESS
                                withState:_luaState
                                 callback:_eventSuccessCallback
-                              andMessage:jsonString];
+                                 message:jsonString];
     }
 }
 
@@ -287,13 +283,13 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
                                                        options:NSJSONWritingPrettyPrinted
                                                          error:&error];
     if (!jsonData) {
-        NSLog(@"[Adjust][bridge]: Error while trying to convert event failure dictionary to JSON string: %@", error);
+        NSLog(@"[AdjustPlugin]: Error while trying to convert event failure dictionary to JSON string: %@", error);
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         [AdjustSdkDelegate dispatchEvent:ADJ_EVENT_TRACKING_FAILURE
                                withState:_luaState
                                 callback:_eventFailureCallback
-                              andMessage:jsonString];
+                                 message:jsonString];
     }
 }
 
@@ -302,7 +298,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
     [AdjustSdkDelegate dispatchEvent:ADJ_DEFERRED_DEEPLINK
                            withState:_luaState
                             callback:_deferredDeeplinkCallback
-                          andMessage:strDeeplink];
+                             message:strDeeplink];
     return _shouldLaunchDeferredDeeplink;
 }
 
@@ -318,16 +314,15 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
                                                        options:NSJSONWritingPrettyPrinted
                                                          error:&error];
     if (!jsonData) {
-        NSLog(@"[Adjust][bridge]: Error while trying to update skan dictionary to JSON string: %@", error);
+        NSLog(@"[AdjustPlugin]: Error while trying to update skan dictionary to JSON string: %@", error);
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        [AdjustSdkDelegate dispatchEvent:ADJ_CONVERSION_VALUE_UPDATED
+        [AdjustSdkDelegate dispatchEvent:ADJ_SKAN_UPDATED
                                withState:_luaState
-                                callback:_conversionValueUpdateCallback
-                              andMessage:jsonString];
+                                callback:_skanUpdatedCallback
+                                 message:jsonString];
     }
 }
-
 
 #pragma mark - Private & helper methods
 

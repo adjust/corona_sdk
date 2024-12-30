@@ -23,27 +23,28 @@ class PluginLibrary {
 public:
     typedef PluginLibrary Self;
     static Self *ToLibrary(lua_State *L);
-    
+
     static const char kName[];
     static const char kEvent[];
-    
+    static lua_State *cachedLuaState;
+
     void InitExecuteCommandListener(CoronaLuaRef listener);
     CoronaLuaRef GetExecuteCommandListener() const { return executeCommandListener; }
     void dispachExecuteCommand(NSString *commandJson);
-    
+
     static int Open(lua_State *L);
-    
+
     static int initTestLibrary(lua_State *L);
     static int addTest(lua_State *L);
     static int addTestDirectory(lua_State *L);
     static int startTestSession(lua_State *L);
     static int addInfoToSend(lua_State *L);
     static int sendInfoToServer(lua_State *L);
-    
+
 protected:
     PluginLibrary();
     static int Finalizer(lua_State *L);
-    
+
 private:
     CoronaLuaRef executeCommandListener;
     ATLTestLibrary *testLibrary;
