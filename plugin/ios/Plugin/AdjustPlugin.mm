@@ -518,7 +518,7 @@ int AdjustPlugin::initSdk(lua_State *L) {
     }
     
     // ATT consent waiting interval
-    lua_getfield(L, 1, "attConsentWaitingSeconds");
+    lua_getfield(L, 1, "attConsentWaitingInterval");
     if (!lua_isnil(L, 2)) {
         attConsentWaitingInterval = lua_tonumber(L, 2);
         [adjustConfig setAttConsentWaitingInterval:attConsentWaitingInterval];
@@ -920,8 +920,8 @@ int AdjustPlugin::processAndResolveDeeplink(lua_State *L){
 
     NSString *deeplink = nil;
     lua_getfield(L, 1, "deeplink");
-    if (!lua_isnil(L, 2)) {
-        const char *cstrDeeplink = lua_tostring(L, 2);
+    if (!lua_isnil(L, 3)) {
+        const char *cstrDeeplink = lua_tostring(L, 3);
         if (cstrDeeplink != NULL) {
             deeplink = [NSString stringWithUTF8String:cstrDeeplink];
         }
@@ -1030,33 +1030,31 @@ int AdjustPlugin::getAttribution(lua_State *L) {
         CoronaLuaRef callback = CoronaLuaNewRef(L, callbackIndex);
         NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
         [Adjust attributionWithCompletionHandler:^(ADJAttribution * _Nullable attribution) {
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                if (nil != attribution) {
-                    [AdjustSdkDelegate addKey:@"trackerToken" andValue:attribution.trackerToken toDictionary:dictionary];
-                    [AdjustSdkDelegate addKey:@"trackerName" andValue:attribution.trackerName toDictionary:dictionary];
-                    [AdjustSdkDelegate addKey:@"network" andValue:attribution.network toDictionary:dictionary];
-                    [AdjustSdkDelegate addKey:@"campaign" andValue:attribution.campaign toDictionary:dictionary];
-                    [AdjustSdkDelegate addKey:@"creative" andValue:attribution.creative toDictionary:dictionary];
-                    [AdjustSdkDelegate addKey:@"adgroup" andValue:attribution.adgroup toDictionary:dictionary];
-                    [AdjustSdkDelegate addKey:@"clickLabel" andValue:attribution.clickLabel toDictionary:dictionary];
-                    [AdjustSdkDelegate addKey:@"costType" andValue:attribution.costType toDictionary:dictionary];
-                    [AdjustSdkDelegate addKey:@"costAmount" andValue:attribution.costAmount toDictionary:dictionary];
-                    [AdjustSdkDelegate addKey:@"costCurrency" andValue:attribution.costCurrency toDictionary:dictionary];
-                    NSError *error;
-                    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
-                                                                       options:NSJSONWritingPrettyPrinted
-                                                                         error:&error];
-                    if (!jsonData) {
-                        NSLog(@"[AdjustPlugin]: Error while trying to convert attribution dictionary to JSON string: %@", error);
-                    } else {
-                        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-                        [AdjustSdkDelegate dispatchEvent:EVENT_GET_ATTRIBUTION
-                                               withState:L
-                                                callback:callback
-                                                 message:jsonString];
-                    }
+            if (nil != attribution) {
+                [AdjustSdkDelegate addKey:@"trackerToken" andValue:attribution.trackerToken toDictionary:dictionary];
+                [AdjustSdkDelegate addKey:@"trackerName" andValue:attribution.trackerName toDictionary:dictionary];
+                [AdjustSdkDelegate addKey:@"network" andValue:attribution.network toDictionary:dictionary];
+                [AdjustSdkDelegate addKey:@"campaign" andValue:attribution.campaign toDictionary:dictionary];
+                [AdjustSdkDelegate addKey:@"creative" andValue:attribution.creative toDictionary:dictionary];
+                [AdjustSdkDelegate addKey:@"adgroup" andValue:attribution.adgroup toDictionary:dictionary];
+                [AdjustSdkDelegate addKey:@"clickLabel" andValue:attribution.clickLabel toDictionary:dictionary];
+                [AdjustSdkDelegate addKey:@"costType" andValue:attribution.costType toDictionary:dictionary];
+                [AdjustSdkDelegate addKey:@"costAmount" andValue:attribution.costAmount toDictionary:dictionary];
+                [AdjustSdkDelegate addKey:@"costCurrency" andValue:attribution.costCurrency toDictionary:dictionary];
+                NSError *error;
+                NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
+                                                                   options:NSJSONWritingPrettyPrinted
+                                                                     error:&error];
+                if (!jsonData) {
+                    NSLog(@"[AdjustPlugin]: Error while trying to convert attribution dictionary to JSON string: %@", error);
+                } else {
+                    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+                    [AdjustSdkDelegate dispatchEvent:EVENT_GET_ATTRIBUTION
+                                           withState:L
+                                            callback:callback
+                                             message:jsonString];
                 }
-            });
+            }
         }];
     }
     return 0;
@@ -1283,8 +1281,8 @@ int AdjustPlugin::verifyAppStorePurchase(lua_State *L) {
 
     // product ID
     lua_getfield(L, 1, "productId");
-    if (!lua_isnil(L, 2)) {
-        const char *cstrProductId = lua_tostring(L, 2);
+    if (!lua_isnil(L, 3)) {
+        const char *cstrProductId = lua_tostring(L, 3);
         if (cstrProductId != NULL) {
             productId = [NSString stringWithUTF8String:cstrProductId];
         }
@@ -1293,8 +1291,8 @@ int AdjustPlugin::verifyAppStorePurchase(lua_State *L) {
 
     // transaction ID
     lua_getfield(L, 1, "transactionId");
-    if (!lua_isnil(L, 2)) {
-        const char *cstrTransactionId = lua_tostring(L, 2);
+    if (!lua_isnil(L, 3)) {
+        const char *cstrTransactionId = lua_tostring(L, 3);
         if (cstrTransactionId != NULL) {
             transactionId = [NSString stringWithUTF8String:cstrTransactionId];
         }
@@ -1306,7 +1304,7 @@ int AdjustPlugin::verifyAppStorePurchase(lua_State *L) {
                                              productId:productId];
 
     // verification callback
-    int callbackIndex = 4;
+    int callbackIndex = 2;
     if (CoronaLuaIsListener(L, callbackIndex, "ADJUST")) {
         CoronaLuaRef callback = CoronaLuaNewRef(L, callbackIndex);
         [Adjust verifyAppStorePurchase:purchase
@@ -1359,8 +1357,8 @@ int AdjustPlugin::verifyAndTrackAppStorePurchase(lua_State *L) {
 
     // event token
     lua_getfield(L, 1, "eventToken");
-    if (!lua_isnil(L, 2)) {
-        const char *cstrEventToken = lua_tostring(L, 2);
+    if (!lua_isnil(L, 3)) {
+        const char *cstrEventToken = lua_tostring(L, 3);
         if (cstrEventToken != NULL) {
             eventToken = [NSString stringWithUTF8String:cstrEventToken];
         }
@@ -1371,15 +1369,15 @@ int AdjustPlugin::verifyAndTrackAppStorePurchase(lua_State *L) {
 
     // revenue
     lua_getfield(L, 1, "revenue");
-    if (!lua_isnil(L, 2)) {
-        revenue = lua_tonumber(L, 2);
+    if (!lua_isnil(L, 3)) {
+        revenue = lua_tonumber(L, 3);
     }
     lua_pop(L, 1);
 
     // currency
     lua_getfield(L, 1, "currency");
-    if (!lua_isnil(L, 2)) {
-        const char *cstrCurrency = lua_tostring(L, 2);
+    if (!lua_isnil(L, 3)) {
+        const char *cstrCurrency = lua_tostring(L, 3);
         if (cstrCurrency != NULL) {
             currency = [NSString stringWithUTF8String:cstrCurrency];
         }
@@ -1392,8 +1390,8 @@ int AdjustPlugin::verifyAndTrackAppStorePurchase(lua_State *L) {
 
     // deduplication ID
     lua_getfield(L, 1, "deduplicationId");
-    if (!lua_isnil(L, 2)) {
-        const char *cstrDeduplicationId = lua_tostring(L, 2);
+    if (!lua_isnil(L, 3)) {
+        const char *cstrDeduplicationId = lua_tostring(L, 3);
         if (cstrDeduplicationId != NULL) {
             deduplicationId = [NSString stringWithUTF8String:cstrDeduplicationId];
             [event setDeduplicationId:deduplicationId];
@@ -1403,8 +1401,8 @@ int AdjustPlugin::verifyAndTrackAppStorePurchase(lua_State *L) {
 
     // callback ID
     lua_getfield(L, 1, "callbackId");
-    if (!lua_isnil(L, 2)) {
-        const char *cstrCallbackId = lua_tostring(L, 2);
+    if (!lua_isnil(L, 3)) {
+        const char *cstrCallbackId = lua_tostring(L, 3);
         if (cstrCallbackId != NULL) {
             callbackId = [NSString stringWithUTF8String:cstrCallbackId];
             [event setCallbackId:callbackId];
@@ -1414,8 +1412,8 @@ int AdjustPlugin::verifyAndTrackAppStorePurchase(lua_State *L) {
 
     // product ID
     lua_getfield(L, 1, "productId");
-    if (!lua_isnil(L, 2)) {
-        const char *cstrProductId = lua_tostring(L, 2);
+    if (!lua_isnil(L, 3)) {
+        const char *cstrProductId = lua_tostring(L, 3);
         if (cstrProductId != NULL) {
             productId = [NSString stringWithUTF8String:cstrProductId];
             [event setProductId:productId];
@@ -1425,8 +1423,8 @@ int AdjustPlugin::verifyAndTrackAppStorePurchase(lua_State *L) {
     
     // transaction ID
     lua_getfield(L, 1, "transactionId");
-    if (!lua_isnil(L, 2)) {
-        const char *cstrTransactionId = lua_tostring(L, 2);
+    if (!lua_isnil(L, 3)) {
+        const char *cstrTransactionId = lua_tostring(L, 3);
         if (cstrTransactionId != NULL) {
             transactionId = [NSString stringWithUTF8String:cstrTransactionId];
             [event setTransactionId:transactionId];
@@ -1436,7 +1434,7 @@ int AdjustPlugin::verifyAndTrackAppStorePurchase(lua_State *L) {
 
     // callback parameters
     lua_getfield(L, 1, "callbackParameters");
-    if (!lua_isnil(L, 2) && lua_istable(L, 2)) {
+    if (!lua_isnil(L, 3) && lua_istable(L, 3)) {
         NSDictionary *dict = CoronaLuaCreateDictionary(L, 2);
         for (id key in dict) {
             NSDictionary *callbackParams = [dict objectForKey:key];
@@ -1448,7 +1446,7 @@ int AdjustPlugin::verifyAndTrackAppStorePurchase(lua_State *L) {
 
     // partner parameters
     lua_getfield(L, 1, "partnerParameters");
-    if (!lua_isnil(L, 2) && lua_istable(L, 2)) {
+    if (!lua_isnil(L, 3) && lua_istable(L, 3)) {
         NSDictionary *dict = CoronaLuaCreateDictionary(L, 2);
         for(id key in dict) {
             NSDictionary *partnerParams = [dict objectForKey:key];

@@ -247,7 +247,7 @@ function CommandExecutor:config()
         adjustConfig.externalDeviceId = self.command:getFirstParameterValue("externalDeviceId")
     end
 
-    if self.command:containsParameter("isCostDataInAttributionEnabled") then
+    if self.command:containsParameter("needsCost") then
         adjustConfig.needsCost = (self.command:getFirstParameterValue("isCostDataInAttributionEnabled") == "true")
     end
 
@@ -255,7 +255,7 @@ function CommandExecutor:config()
         adjustConfig.isAdServicesEnabled = (self.command:getFirstParameterValue("allowAdServicesInfoReading") == "true")
     end
 
-    if self.command:containsParameter("isSkanAttributionEnabled") then
+    if self.command:containsParameter("allowSkAdNetworkHandling") then
         adjustConfig.isSkanAttributionEnabled = (self.command:getFirstParameterValue("isSkanAttributionEnabled") == "true")
     end
 
@@ -399,11 +399,11 @@ function CommandExecutor:config()
 
     if self.command:containsParameter("skanCallback") then
         localBasePath = self.basePath
-        adjust.setConversionValueUpdatedCallback(function(event)
+        adjust.setSkanUpdatedCallback(function(event)
             local json_skan_update = json.decode(event.message)
-            testLib.addInfoToSend('conversion_value', json_skan_update.conversionValue);
-            testLib.addInfoToSend('coarse_value', json_skan_update.coarseValue);
-            testLib.addInfoToSend('lock_window', json_skan_update.lockWindow);
+            testLib.addInfoToSend("conversion_value", json_skan_update.conversionValue);
+            testLib.addInfoToSend("coarse_value", json_skan_update.coarseValue);
+            testLib.addInfoToSend("lock_window", json_skan_update.lockWindow);
             testLib.sendInfoToServer(localBasePath);
         end)
     end
@@ -824,6 +824,7 @@ function CommandExecutor:processDeeplink()
 end
 
 function CommandExecutor:attributionGetter()
+    local localBasePath = self.basePath
     adjust.getAttribution(function(event)
         local json_attribution = json.decode(event.message)
         testLib.addInfoToSend("tracker_token", json_attribution.trackerToken)

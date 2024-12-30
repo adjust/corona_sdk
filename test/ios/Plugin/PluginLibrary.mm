@@ -136,15 +136,17 @@ int PluginLibrary::sendInfoToServer(lua_State *L) {
 }
 
 void PluginLibrary::dispachExecuteCommand(NSString *commandJson) {
-    lua_State *L = initialLuaState;
-    
-    // Create event and add message to it
-    CoronaLuaNewEvent(L, kEvent);
-    lua_pushstring(L, [commandJson UTF8String]);
-    lua_setfield(L, -2, "message");
-    
-    // Dispatch event to library's listener
-    CoronaLuaDispatchEvent(L, this->GetExecuteCommandListener(), 0);
+    dispatch_async(dispatch_get_main_queue(), ^{
+        lua_State *L = initialLuaState;
+        
+        // Create event and add message to it
+        CoronaLuaNewEvent(L, kEvent);
+        lua_pushstring(L, [commandJson UTF8String]);
+        lua_setfield(L, -2, "message");
+        
+        // Dispatch event to library's listener
+        CoronaLuaDispatchEvent(L, this->GetExecuteCommandListener(), 0);
+    });
 }
 
 // ----------------------------------------------------------------------------
