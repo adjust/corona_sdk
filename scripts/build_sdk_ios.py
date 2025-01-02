@@ -38,7 +38,7 @@ def build_plugin(dir_root, dir_dist):
     debug_green('Copying Corona plugin static library file to dist directory ...')
     copy_file(dir_plugin_output + '/libplugin_adjust.a', dir_dist + '/libplugin_adjust.a')
 
-def build_app_example(dir_root):
+def build_app_example(dir_root, dir_dist):
     ## ------------------------------------------------------------------
     ## paths
     dir_adjust_sdk       = '{0}/ext/ios/sdk'.format(dir_root)
@@ -78,10 +78,15 @@ def build_app_example(dir_root):
     copy_file(dir_plugin_output + '/libplugin_adjust.a', dir_ios_app + '/libplugin_adjust.a')
 
     ## ------------------------------------------------------------------
+    ## Copy Corona plugin static library to dist folder into VERSION subfolder.
+    debug_green('Copying Corona plugin static library file to dist directory ...')
+    copy_file(dir_plugin_output + '/libplugin_adjust.a', dir_dist + '/libplugin_adjust.a')
+
+    ## ------------------------------------------------------------------
     ## Script completed.
     debug_green('Open Xcode and run the example app project located in {0}/plugin/ios/App.xcodeproj'.format(dir_root))
 
-def build_app_test(dir_root):
+def build_app_test(dir_root, dir_dist):
     ## ------------------------------------------------------------------
     ## paths
     dir_adjust_sdk              = '{0}/ext/ios/sdk'.format(dir_root)
@@ -126,6 +131,11 @@ def build_app_test(dir_root):
     ## Copy Corona plugin static library to test app dir.
     debug_green('Copying static library from generated framework to output directory (test app dir) ...')
     copy_file(dir_plugin_output + '/libplugin_adjust.a', dir_ios_app_test + '/libplugin_adjust.a')
+
+    ## ------------------------------------------------------------------
+    ## Copy Corona plugin static library to dist folder into VERSION subfolder.
+    debug_green('Copying Corona plugin static library file to dist directory ...')
+    copy_file(dir_plugin_output + '/libplugin_adjust.a', dir_dist + '/libplugin_adjust.a')
 
     ## Generate static test library and public header files.
     debug_green('Building AdjustTestLibrary.framework as Debug target ...')

@@ -31,10 +31,10 @@ try:
             ios.build_plugin(dir_root, dir_dist)
         if args.type == 'app-test':
             set_log_tag('CORONA-SDK-IOS-APP-TEST')
-            ios.build_app_test(dir_root)
+            ios.build_app_test(dir_root, dir_dist)
         if args.type == 'app-example':
             set_log_tag('CORONA-SDK-IOS-APP-EXAMPLE')
-            ios.build_app_example(dir_root)
+            ios.build_app_example(dir_root, dir_dist)
     else:
         if args.type == 'plugin':
             set_log_tag('CORONA-SDK-ANDROID')
