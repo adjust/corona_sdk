@@ -1,83 +1,105 @@
 ## Summary
 
-This is the Adjust™ plugin for Solar2D (ex Corona SDK). You can read more about Adjust™ at [adjust.com].
+This is the Adjust™ plugin for Solar2D (ex Corona). You can read more about Adjust™ at [adjust.com](https://adjust.com).
 
 ## Table of contents
 
 * [Example app](#example-app)
-* [Simulator integration](#sim-integration)
-* [Basic integration](#basic-integration)
-    * [Get the SDK](#sdk-get)
-    * [Add the SDK to your app](#sdk-add)
-        * [Add the SDK to your Android project](#sdk-add-android)
-        * [Add the SDK to your iOS project](#sdk-add-ios)
-    * [Integrate the SDK into your app](#sdk-integrate)
-    * [Adjust logging](#sdk-logging)
-    * [Adjust project settings](#sdk-project-settings)
-        * [Android permissions](#android-permissions)
-        * [Google Play Services](#android-gps)
-        * [Proguard settings](#android-proguard)
-        * [Install referrer](#android-referrer)
-            * [Google Play Referrer API](#android-referrer-gpr-api)
-            * [Google Play Store intent](#android-referrer-gps-intent)
-            * [Huawei Referrer API](#android-huawei-referrer-api)
-        * [iOS frameworks](#ios-frameworks)
+* [Integration guide](#integration-guide)
+   * [Simulator integration](#integration-simulator)
+   * [Get the SDK](#sdk-get)
+   * [Add the SDK to your Android project](#sdk-add-android)
+   * [Add the SDK to your iOS project](#sdk-add-ios)
+   * [Integrate the SDK into your app](#sdk-integrate)
+   * [Adjust logging](#sdk-logging)
+   * [Android permissions](#android-permissions)
+   * [iOS frameworks](#ios-frameworks)
+   * [SDK signature](#sdk-signature)
 * [Additional features](#additional-features)
-    * [AppTrackingTransparency framework](#att-framework)
-        * [App-tracking authorisation wrapper](#ata-wrapper)
-        * [Get current authorisation status](#ata-getter)
-        * [Check for ATT status change](#att-status-change)
-    * [SKAdNetwork framework](#skadn-framework)
-        * [Update SKAdNetwork conversion value](#skadn-value)
-        * [Conversion value updated callback](#skadn-cv-updated-callback)
-    * [Event tracking](#event-tracking)
-        * [Revenue tracking](#revenue-tracking)
-        * [Revenue deduplication](#revenue-deduplication)
-        * [Callback parameters](#callback-parameters)
-        * [Partner parameters](#partner-parameters)
-        * [Callback identifier](#callback-id)
-    * [Subscription tracking](#subscription-tracking)
-    * [Session parameters](#session-parameters)
-        * [Session callback parameters](#session-callback-parameters)
-        * [Session partner parameters](#session-partner-parameters)
-    * [Attribution callback](#attribution-callback)
-    * [Session and event callbacks](#session-event-callbacks)
-    * [Disable tracking](#disable-tracking)
-    * [Enable tracking](#enable-tracking)
-    * [Offline mode](#offline-mode)
-    * [GDPR right to be forgotten](#gdpr-forget-me)
-    * [Background tracking](#background-tracking)
-    * [Device IDs](#device-ids)
-        * [iOS advertising identifier](#di-idfa)
-        * [Google Play Services advertising identifier](#di-gps-adid)
-        * [Amazon advertising identifier](#di-fire-adid)
-        * [Adjust device identifier](#di-adid)
-    * [Set external device ID](#set-external-device-id)
-    * [User attribution](#user-attribution)
-    * [Push token](#push-token)
-    * [Pre-installed trackers](#pre-installed-trackers)
-    * [Deeplinking](#deeplinking)
-        * [Standard deeplinking scenario](#deeplinking-standard)
-        * [Deeplinking on iOS 8 and earlier](#deeplinking-ios-old)
-        * [Deeplinking on iOS 9 and later](#deeplinking-ios-new)
-        * [Deeplinking on Android](#deeplinking-android)
-        * [Deferred deeplinking scenario](#deeplinking-deferred)
-        * [Reattribution via deeplinks](#deeplinking-reattribution)
-    * [Third-party sharing](#third-party-sharing)
-        * [Disable third-party sharing](#disable-third-party-sharing)
-        * [Enable third-party sharing](#enable-third-party-sharing)
-    * [Measurement consent](#measurement-consent)
-    * [Data residency](#data-residency)
+   * [Send event information](#event-sending)
+      * [Event revenue](#event-revenue)
+      * [Event deduplication](#event-deduplication)
+      * [Event callback identifier](#event-callback-id)
+      * [Event callback parameters](#event-callback-params)
+      * [Event partner parameters](#event-partner-params)
+   * [User attribution](#user-attribution)
+      * [Attribution callback](#attribution-callback)
+      * [Get user attribution](#attribution-getter)
+   * [Preinstalled apps](#preinstalled-apps)
+      * [Default link token](#preinstall-default-link)
+   * [Global parameters](#global-params)
+      * [Global callback parameters](#global-callback-params)
+      * [Global partner parameters](#global-partner-params)
+   * [Privacy features](#privacy-features)
+      * [GDPR right to be forgotten](#gdpr-forget-me)
+      * [Third party sharing](#third-party-sharing)
+      * [Disable third-party sharing for specific users](#disable-third-party-sharing)
+      * [Enable or re-enable third-party sharing for specific users](#enable-third-party-sharing)
+      * [Send granular options](#send-granular-options)
+      * [Manage Facebook Limited Data Use](#facebook-limited-data-use)
+      * [Provide consent data to Google (Digital Markets Act compliance)](#digital-markets-act)
+      * [Update partner sharing settings](#partner-sharing-settings)
+      * [Consent measurement for specific users](#measurement-consent)
+      * [COPPA compliance](#coppa-compliance)
+      * [Play Store kids apps](#play-store-kids-apps)
+      * [URL strategies](#url-strategies)
+   * [Deep linking](#deeplinking)
+      * [Deferred deep linking scenario](#deeplinking-deferred)
+      * [Reattribution via deep links](#deeplinking-reattribution)
+      * [Resolve Adjust short links](#short-links-resolution)
+      * [Get last processed deep link](#last-deeplink-getter)
+   * [App Tracking Transparency](#app-tracking-transparency)
+      * [ATT authorization wrapper](#att-wrapper)
+      * [Get current authorization status](#att-status-getter)
+      * [ATT prompt waiting interval](#att-waiting-interval)
+   * [SKAdNetwork and conversion values](#skan-framework)
+      * [Disable SKAdNetwork communication](#skan-disable)
+      * [Listen for changes to conversion values](#skan-update-callback)
+      * [Set up direct install postbacks](#skan-postbacks)
+   * [Record ad revenue information](#adrevenue-recording)
+      * [Ad revenue amount](#adrevenue-amount)
+      * [Ad revenue network](#adrevenue-network)
+      * [Ad revenue unit](#adrevenue-unit)
+      * [Ad revenue placement](#adrevenue-placement)
+      * [Ad impressions count](#adrevenue-impressions)
+      * [Ad revenue callback parameters](#adrevenue-callback-params)
+      * [Ad revenue partner parameters](#adrevenue-partner-params)
+   * [Purchase verification](#purchase-verification)
+      * [Verify purchase and record event](#verify-and-record)
+      * [Verify purchase only](#verify-only)
+   * [Send subscription information](#subscription-sending)
+      * [Subscription purchase date](#subscription-purchase-date)
+      * [Subscription region](#subscription-region)
+      * [Subscription callback parameters](#subscription-callback-params)
+      * [Subscription partner parameters](#subscription-partner-params)
+   * [Device IDs](#device-ids)
+      * [iOS advertising identifier](#idfa)
+      * [iOS identifier for vendors](#idfv)
+      * [Google Play Services advertising identifier](#gps-adid)
+      * [Amazon advertising identifier](#fire-adid)
+      * [Adjust device identifier](#adid)
+   * [Session and event callbacks](#session-event-callbacks)
+   * [Disable the SDK](#disable-sdk)
+   * [Offline mode](#offline-mode)
+   * [Sending from background](#background-sending)
+   * [External device ID](#external-device-id)
+   * [Push token](#push-token)
+   * [Disable AdServices information reading](#disable-ad-services)
 * [License](#license)
-
 
 ## <a id="example-app"></a>Example app
 
-There is example inside the [`plugin` directory][plugin]. In there in you can check how to integrate the Adjust SDK into your app.
+An example app is included in the [`plugin` directory](./plugin). You can use the example app to see how the Adjust SDK can be integrated.
 
-## <a id="sim-integration"></a>Simulator integration
+## <a id="integration-guide"></a>Integration guide
 
-Easiest way to add Adjust plugin to your Simulator project is to add `build.settings` entry:
+The Adjust Corona SDK enables you to record attribution, events, and more in your Solar2D / Corona app. Follow the steps in this guide to set up your app to work with the Adjust SDK.
+
+> Before you begin: The Adjust SDK supports iOS 12 or later and Android API level 21 (Lollipop) or later.
+
+### <a id="integration-simulator"></a>Simulator integration
+
+Easiest way to add Adjust SDK to your Simulator project is to add `build.settings` entry:
 
 ```lua
 settings = 
@@ -86,7 +108,7 @@ settings =
     {
         plist =
         {
-            NSUserTrackingUsageDescription = "This would allow the app to advertise better.",
+            NSUserTrackingUsageDescription = "Reason for asking access to IDFA identifier",
         },
     },
     plugins =
@@ -97,21 +119,13 @@ settings =
 
 ```
 
-## <a id="basic-integration"></a>Basic integration
-
-These are the essential steps required to integrate the Adjust SDK into your Corona app project.
-
 ### <a id="sdk-get"></a>Get the SDK
 
-You can get the latest version of the Adjust SDK from our [releases page][releases]. Please, download both the `plugin.adjust.jar` and `libplugin_adjust.a` files, since you will need to add them to your app's projects.
-
-### <a id="sdk-add"></a>Add the SDK to your app
-
-You can now add the Adjust SDK to your Corona Enterprise app project. The Adjust SDK will soon be published to the Corona plugin marketplace. Once this happens, this chapter will be updated with integration instructions for users working from the plugin marketplace.
+You can also get the latest version of the Adjust SDK from our [releases page][releases]. Please, download both the `plugin.adjust.jar` and `libplugin_adjust.a` files, since you will need to add them to your app's projects. In addition to that, you will also need to download the latest version of the Adjust signature library for each of the platforms from [here](https://github.com/adjust/adjust_signature_sdk/releases) and add them to your app's projects.
 
 #### <a id="sdk-add-android"></a>Add the SDK to your Android project
 
-Inside your Android Studio app project, create a `libs` folder inside of your app folder and add the `plugin.adjust.jar` file to it. After that, please update your app's `build.gradle` file and add the following lines to your `dependencies` section:
+Inside your Android Studio app project, create a `libs` folder inside of your app folder and add the `plugin.adjust.jar` to it. After that, please update your app's `build.gradle` file and add the following lines to your `dependencies` section to add the dependency to the native Adjust Android SDK:
 
 ```
 compile 'com.adjust.sdk:adjust-android:5.0.2'
@@ -120,14 +134,50 @@ compile 'com.android.installreferrer:installreferrer:2.2'
 
 #### <a id="sdk-add-ios"></a>Add the SDK to your iOS project
 
-Inside your Xcode app project, select your app's target, go to `General -> Linked Frameworks and Libraries` section, press the `+` button and add the `libplugin_adjust.a` library into the list.
-
+Inside your Xcode app project, select your app's target, go to `General -> Linked Frameworks and Libraries` section, press the `+` button and add the `libplugin_adjust.a` and `AdjustSigSdk.a` library into the list.
 
 ### <a id="sdk-integrate"></a>Integrate the SDK into your app
 
-The initialization method has been renamed.
+In order to start the Adjust SDK, initialize your config object with your app token and the environment you want to run your application in.
 
-**V5:**
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.initSdk({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX"
+})
+```
+
+Replace `{YourAppToken}` with your app token. You can find this in your [dashboard](https://dash.adjust.com).
+
+Depending on whether you build your app for testing or for production, you must set `environment` with one of these values:
+
+```lua
+SANDBOX
+PRODUCTION
+```
+
+**Important:** This value should be set to `SANDBOX` if and only if you or someone else is testing your app. Make sure to set the environment to `PRODUCTION` just before you publish the app. Set it back to `SANDBOX` when you start developing and testing it again.
+
+We use this environment to distinguish between real traffic and test traffic from test devices. It is very important that you keep this value meaningful at all times!
+
+### <a id="sdk-logging"></a>Adjust logging
+
+You can increase or decrease the amount of logs you see in tests by setting the `logLevel` parameter value when calling the `initSdk` method and assign one of the following string values to it:
+
+```lua
+"VERBOSE"   // enable all logging
+"DEBUG"     // enable more logging
+"INFO"      // default
+"WARN"      // disable info logging
+"ERROR"     // disable warnings as well
+"ASSERT"    // disable errors as well
+"SUPPRESS"  // suppress all logging
+```
+
+Example:
+
 ```lua
 local adjust = require "plugin.adjust"
 
@@ -138,138 +188,17 @@ adjust.initSdk({
 })
 ```
 
+### <a id="android-permissions"></a>Android permissions
 
-Replace `{YourAppToken}` with your app token. You can find this in your [dashboard].
-
-Depending on whether you are building your app for testing or for production, you need to set `environment` with one of these string values:
-
-```lua
-SANDBOX
-PRODUCTION
-```
-
-**Important:** This value should be set to `SANDBOX` if and only if you or someone else is testing your app. Make sure to set the environment to `PRODUCTION` before you publish the app. Set it back to `SANDBOX` when you start developing and testing it again.
-
-We use this environment to distinguish between real traffic and test traffic from test devices. It is imperative that you keep this value meaningful at all times.
-
-### <a id="sdk-logging">Adjust logging
-
-You can increase or decrease the amount of logs you see in tests by setting the `logLevel` parameter value when calling the `adjust.initSdk` method and assign one of the following string values to it:
-
-```lua
-"VERBOSE"   // enable all logging
-"DEBUG"     // enable more logging
-"INFO"      // default
-"WARN"      // disable info logging
-"ERROR"     // disable warnings as well
-"ASSERT"    // disable errors as well
-"SUPPRESS"  // Suppress all logging
-```
-
-### <a id="sdk-project-settings">Adjust project settings
-
-Once the Adjust SDK has been added to your app, certain tweaks need to be performed so that the Adjust SDK can work properly. Below you can find a description of every additional thing that you need to do after you've added the Adjust SDK into to your app.
-
-
-### <a id="android-permissions">Android permissions
-
-With the Adjust SDK dependency now pulled from Maven as an AAR, required permissions are automatically added.
-
-- `ACCESS_NETWORK_STATE` is optional.
-- The `AD_ID` permission can be removed if not required in the application.
+The Adjust SDK includes the `com.google.android.gms.AD_ID` and `android.permission.INTERNET` permissions by default. You can remove the `com.google.android.gms.AD_ID` permission by adding a remove directive to your app's manifest file if you need to make your app COPPA-compliant or if you don't target the Google Play Store.
 
 ```xml
-<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+<manifest>
+    <uses-permission android:name="com.google.android.gms.AD_ID" tools:node="remove" />
+</manifest>
 ```
 
-The Adjust SDK might need the `INTERNET` permission at any point in time. The Adjust SDK needs the `ACCESS_WIFI_STATE` permission in case your app is not targeting the Google Play Store and doesn't use Google Play Services. If you are targeting the Google Play Store and you are using Google Play Services, the Adjust SDK doesn't need the `ACCESS_WIFI_STATE` permission and, if you don't need it anywhere else in your app, you can remove it.
-
-#### <a id="gps-adid-permission"></a>Add permission to gather Google advertising ID
-
-If you are targeting Android 12 and above (API level 31), you need to add the `com.google.android.gms.AD_ID` permission to read the device's advertising ID. Add the following line to your `AndroidManifest.xml` to enable the permission.
-
-```xml
-<uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
-```
-
-For more information, see [Google's `AdvertisingIdClient.Info` documentation](https://developers.google.com/android/reference/com/google/android/gms/ads/identifier/AdvertisingIdClient.Info#public-string-getid).
-
-**Note**: As of SDK v4.33.0, this permission is being automatically added by Adjust SDK, so you don't need to do it on your own.
-
-### <a id="android-gps"></a>Google Play Services
-
-Since August 1, 2014, apps in the Google Play Store must use the [Google advertising ID][google-ad-id] to uniquely identify each device. To allow the Adjust SDK to use the Google advertising ID, you must integrate [Google Play Services][google-play-services].
-
-Open the `build.gradle` file of your app and find the `dependencies` block. Add the following line:
-
-```
-compile 'com.google.android.gms:play-services-ads-identifier:18.0.1'
-```
-
-To check whether the analytics part of the Google Play Services library has been successfully added to your app, you should start your app by configuring the SDK to run in `SANDBOX` mode and set the log level to `VERBOSE`. After that, track a session or some events in your app and observe the list of parameters in the verbose logs which are being read once the session or event has been tracked. If you see a parameter called `gps_adid` in there, you have successfully added the analytics part of the Google Play Services library to your app and our SDK is reading the necessary information from it.
-
-### <a id="android-proguard"></a>Proguard settings
-
-If you are using Proguard, add these lines to your Proguard file:
-
-```
--keep class com.adjust.sdk.** { *; }
--keep class com.google.android.gms.common.ConnectionResult {
-    int SUCCESS;
-}
--keep class com.google.android.gms.ads.identifier.AdvertisingIdClient {
-    com.google.android.gms.ads.identifier.AdvertisingIdClient$Info getAdvertisingIdInfo(android.content.Context);
-}
--keep class com.google.android.gms.ads.identifier.AdvertisingIdClient$Info {
-    java.lang.String getId();
-    boolean isLimitAdTrackingEnabled();
-}
--keep public class com.android.installreferrer.** { *; }
-```
-
-### <a id="android-referrer"></a>Install referrer
-
-In order to correctly attribute an install of your Android app to its source, Adjust needs information about the **install referrer**. This can be obtained by using the **Google Play Referrer API** or by catching the **Google Play Store intent** with a broadcast receiver.
-
-**Important**: The Google Play Referrer API is newly introduced by Google with the express purpose of providing a more reliable and secure way of obtaining install referrer information and to aid attribution providers in the fight against click injection. It is **strongly advised** that you support this in your application. The Google Play Store intent is a less secure way of obtaining install referrer information. It will continue to exist in parallel with the new Google Play Referrer API temporarily, but it is set to be deprecated in future.
-
-#### <a id="android-referrer-gpr-api"></a>Google Play Referrer API
-
-In order to support this in your app, please make sure that you have followed the [Add the SDK to your Android project](#sdk-add-android) chapter properly and that you have following line added to your `build.gradle` file:
-
-```
-compile 'com.android.installreferrer:installreferrer:2.2'
-```
-
-Also, make sure that you have paid attention to the [Proguard settings](#android-proguard) chapter and that you have added all the rules mentioned in it, especially the one needed for this feature:
-
-```
--keep public class com.android.installreferrer.** { *; }
-```
-
-This feature is supported if you are using the **Adjust SDK v4.12.0 or above**.
-
-#### <a id="android-referrer-gps-intent"></a>Google Play Store intent
-
-The Google Play Store `INSTALL_REFERRER` intent should be captured with a broadcast receiver. If you are **not using your own broadcast receiver** to receive the `INSTALL_REFERRER` intent, add the following `receiver` tag inside the `application` tag in your `AndroidManifest.xml`.
-
-```xml
-<receiver
-    android:name="com.adjust.sdk.AdjustReferrerReceiver"
-    android:exported="true" >
-    <intent-filter>
-        <action android:name="com.android.vending.INSTALL_REFERRER" />
-    </intent-filter>
-</receiver>
-```
-
-We use this broadcast receiver to retrieve the install referrer and pass it to our backend.
-
-Please bear in mind that, if you are using your own broadcast receiver which handles the `INSTALL_REFERRER` intent, you don't need the Adjust broadcast receiver to be added to your manifest file. You can remove it, but, inside your own receiver, add the call to the Adjust broadcast receiver as described in our [Android guide][broadcast-receiver-custom].
-
-#### <a id="android-huawei-referrer-api"></a>Huawei Referrer API
-
-As of v4.23.0, the Adjust SDK supports install tracking on Huawei devices with Huawei App Gallery version 10.4 and higher. No additional integration steps are needed to start using the Huawei Referrer API.
+See Google's [AdvertisingIdClient.Info](https://developers.google.com/android/reference/com/google/android/gms/ads/identifier/AdvertisingIdClient.Info#public-string-getid) documentation for more information about this permission.
 
 ### <a id="ios-frameworks"></a>iOS frameworks
 
@@ -280,122 +209,17 @@ You can add following iOS frameworks to your generated Xcode project to take adv
 * `StoreKit.framework` - needed for communication with `SKAdNetwork` framework
 * `AppTrackingTransparency.framework` - needed to ask for user's consent to be tracked and obtain status of that consent
 
+### <a id="sdk-signature"></a>SDK signature
+
+By following the Adjust SDK integration guide, you will be adding signature library for iOS by manually linking it and the signature library for Android will be automatically added to your app once you specify the dependency to native Adjust Android SDK inside of your `build.gradle` file. After this, all the setup for signing of the SDK traffic has been completed. However, enforcing signing checks is not a feature that is enabled by default. If you want to take the advantage of this feature to secure communications between the Adjust SDK and Adjust's servers, follow the instructions in the [SDK signature guide on the Adjust Help Center](https://help.adjust.com/en/article/sdk-signature).
+
 ## <a id="additional-features"></a>Additional features
 
-You can take advantage of the following features once you have integrated the Adjust SDK into your project.
+You can take advantage of the following features once the Adjust SDK is integrated into your project.
 
-### <a id="att-framework"></a>AppTrackingTransparency framework
+### <a id="event-sending"></a>Send event information
 
-**Note**: This feature exists only in iOS platform.
-
-For each package sent, the Adjust backend receives one of the following four (4) states of consent for access to app-related data that can be used for tracking the user or the device:
-
-- Authorized
-- Denied
-- Not Determined
-- Restricted
-
-After a device receives an authorization request to approve access to app-related data, which is used for user device tracking, the returned status will either be Authorized or Denied.
-
-Before a device receives an authorization request for access to app-related data, which is used for tracking the user or device, the returned status will be Not Determined.
-
-If authorization to use app tracking data is restricted, the returned status will be Restricted.
-
-The SDK has a built-in mechanism to receive an updated status after a user responds to the pop-up dialog, in case you don't want to customize your displayed dialog pop-up. To conveniently and efficiently communicate the new state of consent to the backend, Adjust SDK offers a wrapper around the app tracking authorization method described in the following chapter, App-tracking authorization wrapper.
-
-
-### <a id="ata-wrapper"></a>App-tracking authorization wrapper
-
-The method name has been renamed.
-
-**V5:**
-```lua
-adjust.requestAppTrackingAuthorization(function(event)
-    print("[Adjust]: Authorization status = " .. event.message)
-    if     event.message == "0" then print("[Adjust]: ATTrackingManagerAuthorizationStatusNotDetermined")
-    elseif event.message == "1" then print("[Adjust]: ATTrackingManagerAuthorizationStatusRestricted")
-    elseif event.message == "2" then print("[Adjust]: ATTrackingManagerAuthorizationStatusDenied")
-    elseif event.message == "3" then print("[Adjust]: ATTrackingManagerAuthorizationStatusAuthorized")
-    end
-end)
-```
-
-
-### <a id="ad-ata-getter"></a>Get current authorisation status
-
-**Note**: This feature exists only in iOS platform.
-
-To get the current app tracking authorization status you can call `appTrackingAuthorizationStatus` method of `Adjust` API that will return one of the following possibilities:
-
-* `0`: The user hasn't been asked yet
-* `1`: The user device is restricted
-* `2`: The user denied access to IDFA
-* `3`: The user authorized access to IDFA
-* `-1`: The status is not available
-
-To use this wrapper, you can call it as such:
-
-```lua
-local status = adjust.getAppTrackingAuthorizationStatus()
-print("[Adjust]: Authorization status = " .. status)
-if     status == "0" then print("[Adjust]: ATTrackingManagerAuthorizationStatusNotDetermined")
-elseif status == "1" then print("[Adjust]: ATTrackingManagerAuthorizationStatusRestricted")
-elseif status == "2" then print("[Adjust]: ATTrackingManagerAuthorizationStatusDenied")
-elseif status == "3" then print("[Adjust]: ATTrackingManagerAuthorizationStatusAuthorized")
-end
-```
-
-### <a id="skadn-framework"></a>SKAdNetwork framework
-
-The configuration parameter for enabling or disabling SKAdNetwork has been renamed.
-
-**V5:**
-```lua
-local adjust = require "plugin.adjust"
-
-adjust.initSdk({
-    appToken = "{YourAppToken}",
-    environment = "SANDBOX",
-    logLevel = "VERBOSE",
-    isSkanAttributionEnabled = false
-})
-```
-
-
-### <a id="skadn-value"></a>Update SKAdNetwork conversion value
-
-**Note**: This feature exists only in iOS platform.
-
-You can use Adjust SDK wrapper method `updateSkanConversionValue` to update SKAdNetwork conversion value for your user:
-
-```lua
-adjust.updateSkanConversionValue(6, "low", false, function(event)
-    print("error = " .. event.message)
-end)
-```
-
-### <a id="skadn-cv-updated-callback"></a>Conversion value updated callback
-
-You can register callback to get notified each time when Adjust SDK updates conversion value for the user.
-
-```lua
-local function conversionValueUpdatedListener(event)
-    print("[Adjust]: Update conversion value: " .. event.message)
-end
-
-adjust.setConversionValueUpdatedListener(conversionValueUpdatedListener)
-
-
-adjust.initSdk({
-    appToken = "{YourAppToken}",
-    environment = "SANDBOX",
-    logLevel = "VERBOSE"
-})
-```
-
-### <a id="event-tracking"></a>Event tracking
-
-You can use Adjust to track all kinds of events. Let's say you want to track every tap on a button. If you create a new event token in your [dashboard] - let's say that event token is `abc123` - you can add the following line in your button’s click handler method to track the click:
+You can tell Adjust about every event you want to record. Let's say that event token is `abc123`. You can record that event like this:
 
 ```lua
 local adjust = require "plugin.adjust"
@@ -405,44 +229,58 @@ adjust.trackEvent({
 })
 ```
 
-### <a id="revenue-tracking"></a>Revenue tracking
+### <a id="event-revenue"></a>Event revenue
 
-If your users can generate revenue by tapping on advertisements or making in-app purchases, then you can track that revenue with events. Let's say a tap is worth €0.01. You could track the revenue event like this:
+If your users can generate revenue by tapping on advertisements or making in-app purchases, then you can record those revenues with events. Let's say a tap is worth €1.50. You could record the revenue event like this:
 
 ```lua
 local adjust = require "plugin.adjust"
 
 adjust.trackEvent({
     eventToken = "abc123",
-    revenue = 0.01,
+    revenue = 1.5,
     currency = "EUR"
 })
 ```
 
-When you set a currency token, Adjust will automatically convert the incoming revenue into a reporting revenue of your choice. Read more about [currency conversion here][currency-conversion].
+### <a id="event-deduplication"></a>Event deduplication
 
-### <a id="revenue-deduplication"></a>Revenue deduplication
-
-You can also add an optional deduplication ID to avoid tracking duplicate revenue. The last ten deduplication IDs are remembered, and revenue events with duplicate deduplicationIds are skipped. This is especially useful for in-app purchase tracking. You can see an example below.
-
-If you want to track in-app purchases, please make sure to call `trackEvent` only when the transaction is completed and an item is purchased. That way you can avoid tracking revenue that is not actually being generated.
+You can also add an optional deduplication ID to avoid recording duplicate events. The last ten transaction IDs are remembered by default, and events with duplicate deduplication IDs are skipped. If you would like to make the Adjust SDK to remember more than last 10 transaction IDs, you can do that by passing the new limit to `eventDeduplicationIdsMaxSize` parameter of the initialization map:
 
 ```lua
 local adjust = require "plugin.adjust"
 
+adjust.initSdk({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE",
+    eventDeduplicationIdsMaxSize = 20
+})
+
+-- ...
+
 adjust.trackEvent({
     eventToken = "abc123",
-    revenue = 0.01,
+    revenue = 1.5,
     currency = "EUR",
-    deduplicationId = "YourDeduplicationId"
+    deduplicationId = "deduplucation-id"
 })
 ```
 
-**Note**: Transaction ID is the iOS term. The unique identifier for completed Android in-app purchases is **Order ID**.
+### <a id="event-callback-id"></a>Event callback identifier
 
-### <a id="callback-parameters"></a>Callback parameters
+You can also add custom string identifier to each event you want to record. This identifier will later be reported in event success and/or event failure callbacks to enable you to keep track on which event was successfully recorded or not. You can set this identifier by setting the `callbackId` parameter of the `trackEvent` parameter map:
 
-You can register a callback URL for an event in your [dashboard][dashboard], and we will send a GET request to that URL whenever the event is tracked. You can also put some key-value pairs in an object and pass them to the `trackEvent` method. We will then append these named parameters to your callback URL.
+```lua
+adjust.trackEvent({
+    eventToken = "abc123",
+    callbackId = "callback-id"
+})
+```
+
+### <a id="event-callback-params"></a>Event callback parameters
+
+You can also register a callback URL for that event in your [dashboard](https://dash.adjust.com), and we will send a GET request to that URL whenever the event gets recorded. In that case, you can also put some key-value pairs in an object and pass it to the `trackEvent` method. We will then append these named parameters to your callback URL.
 
 For example, suppose you have registered the URL `http://www.adjust.com/callback` for your event with event token `abc123` and execute the following lines:
 
@@ -464,21 +302,19 @@ adjust.trackEvent({
 })
 ```
 
-In that case, we would track the event and send a request to:
+In this case we would record the event and send a request to:
 
 ```
 http://www.adjust.com/callback?key=value&foo=bar
 ```
 
-It should be mentioned that we support a variety of placeholders, like `{idfa}` for iOS or `{gps_adid}` for Android, that can be used as parameter values.  In the resulting callback, the `{idfa}` placeholder would be replaced with the ID for advertisers of the current device for iOS and the `{gps_adid}` would be replaced with the Google advertising ID of the current device for Android. Also note that we don't store any of your custom parameters, but only append them to your callbacks. If you haven't registered a callback for an event, these parameters won't even be read.
+It should be mentioned that we support a variety of placeholders like `{idfa}` for iOS or `{gps_adid}` for Android that can be used as parameter values. In the resulting callback, the `{idfa}` placeholder would be replaced with the ID for Advertisers of the current device for iOS and the `{gps_adid}` would be replaced with the Google Advertising ID of the current device for Android. Also note that we don't store any of your custom parameters, but only append them to your callbacks. If you haven't registered a callback for an event, these parameters won't even be read.
 
-You can read more about using URL callbacks, including a full list of available values, in our [callbacks guide][callbacks-guide].
+### <a id="event-partner-params"></a>Event partner parameters
 
-### <a id="partner-parameters"></a>Partner parameters
+You can also add parameters for integrations that have been activated in your Adjust dashboard that can be transmitted to network partners.
 
-Similarly to the callback parameters mentioned above, you can also add parameters that Adjust will transmit to network partners of your choice. You can activate these networks in your Adjust Dashboard.
-
-These work similarly to the callback parameters mentioned above but parameter name used for them is `partnerParameters`:
+This works similarly to the callback parameters mentioned above but parameter name used for them is `partnerParameters`:
 
 ```lua
 local adjust = require "plugin.adjust"
@@ -498,255 +334,33 @@ adjust.trackEvent({
 })
 ```
 
-You can read more about special partners and networks in our [guide to special partners][special-partners].
+### <a id="user-attribution"></a>User attribution
 
-### <a id="callback-id"></a>Callback identifier
-
-You can also add custom string identifier to each event you want to track. This identifier will later be reported in event success and/or event failure callbacks to enable you to keep track on which event was successfully tracked or not. You can set this identifier by passing the `callbackId` field when tracking event:
-
-```lua
-local adjust = require "plugin.adjust"
-
-adjust.trackEvent({
-    eventToken = "abc123",
-    callbackId = "Your-Custom-Id"
-})
-```
-
-### <a id="subscription-tracking"></a>Subscription tracking
-
-**Note**: This feature is only available in the SDK v4.23.0 and above.
-
-You can track App Store and Play Store subscriptions and verify their validity with the Adjust SDK. After a subscription has been successfully purchased, make the following call to the Adjust SDK:
-
-**For App Store subscription:**
-
-```lua
-local adjust = require "plugin.adjust"
-
-adjust.trackAppStoreSubscription({
-    price = "6.66",
-    currency = "EUR",
-    transactionId = "your-transaction-id",
-    transactionDate = "unix-timestamp",
-    salesRegion = "your-sales-region",
-})
-```
-
-**For Play Store subscription:**
-
-```lua
-adjust.trackPlayStoreSubscription({
-    price = "6",
-    currency = "EUR",
-    orderId = "your-order-id",
-    signature = "your-signature",
-    purchaseToken = "your-purchase-token",
-    purchaseTime = "unix-timestamp",
-})
-```
-
-Subscription tracking parameters for App Store subscription:
-
-- [price](https://developer.apple.com/documentation/storekit/skproduct/1506094-price?language=objc)
-- currency (you need to pass [currencyCode](https://developer.apple.com/documentation/foundation/nslocale/1642836-currencycode?language=objc) of the [priceLocale](https://developer.apple.com/documentation/storekit/skproduct/1506145-pricelocale?language=objc) object)
-- [transactionId](https://developer.apple.com/documentation/storekit/skpaymenttransaction/1411288-transactionidentifier?language=objc)
-- [transactionDate](https://developer.apple.com/documentation/storekit/skpaymenttransaction/1411273-transactiondate?language=objc)
-- salesRegion (you need to pass [countryCode](https://developer.apple.com/documentation/foundation/nslocale/1643060-countrycode?language=objc) of the [priceLocale](https://developer.apple.com/documentation/storekit/skproduct/1506145-pricelocale?language=objc) object)
-
-Subscription tracking parameters for Play Store subscription:
-
-- [price](https://developer.android.com/reference/com/android/billingclient/api/SkuDetails#getpriceamountmicros)
-- [currency](https://developer.android.com/reference/com/android/billingclient/api/SkuDetails#getpricecurrencycode)
-- [sku](https://developer.android.com/reference/com/android/billingclient/api/Purchase#getsku)
-- [orderId](https://developer.android.com/reference/com/android/billingclient/api/Purchase#getorderid)
-- [signature](https://developer.android.com/reference/com/android/billingclient/api/Purchase#getsignature)
-- [purchaseToken](https://developer.android.com/reference/com/android/billingclient/api/Purchase#getpurchasetoken)
-- [purchaseTime](https://developer.android.com/reference/com/android/billingclient/api/Purchase#getpurchasetime)
-
-**Note:** Subscription tracking API offered by Adjust SDK expects all parameters to be passed as `string` values. Parameters described above are the ones which API exects you to pass to subscription object prior to tracking subscription. There are various libraries which are handling in app purchases in Corona and each one of them should return information described above in some form upon successfully completed subscription purchase. You should locate where these parameters are placed in response you are getting from library you are using for in app purchases, extract those values and pass them to Adjust API as string values.
-
-Just like with event tracking, you can attach callback and partner parameters to the subscription object as well:
-
-**For App Store subscription:**
-
-```lua
-local adjust = require "plugin.adjust"
-
-adjust.trackAppStoreSubscription({
-    price = "6.66",
-    currency = "EUR",
-    transactionId = "your-transaction-id",
-    transactionDate = "unix-timestamp",
-    salesRegion = "your-sales-region",
-    callbackParameters = {
-        {
-            key = "callback_key1",
-            value = "callback_value1",
-        },
-        {
-            key = "callback_key2",
-            value = "callback_value2",
-        },
-    },
-    partnerParameters = {
-        {
-            key = "callback_key3",
-            value = "callback_value3",
-        },
-        {
-            key = "callback_key6",
-            value = "callback_value6",
-        },
-    },
-})
-```
-
-**For Play Store subscription:**
-
-```lua
-adjust.trackPlayStoreSubscription({
-    price = "6",
-    currency = "EUR",
-    orderId = "your-order-id",
-    signature = "your-signature",
-    purchaseToken = "your-purchase-token",
-    purchaseTime = "unix-timestamp",
-    callbackParameters = {
-        {
-            key = "callback_key1",
-            value = "callback_value1",
-        },
-        {
-            key = "callback_key2",
-            value = "callback_value2",
-        },
-    },
-    partnerParameters = {
-        {
-            key = "callback_key3",
-            value = "callback_value3",
-        },
-        {
-            key = "callback_key6",
-            value = "callback_value6",
-        },
-    },
-})
-```
-
-### <a id="session-parameters"></a>Session parameters
-
-Some parameters are saved to be sent with every event and session of the Adjust SDK. Once you have added any of these parameters, you don't need to add them every time, since they will be saved locally. If you add the same parameter twice, there will be no effect.
-
-These session parameters can be called before the Adjust SDK is launched to make sure they are sent even on install. If you need to send them with an install but can only obtain the needed values after launch, it's possible to [delay](#delay-start) the first launch of the Adjust SDK to allow for this behavior.
-
-### <a id="session-callback-parameters"></a>Session callback parameters
-
-The same callback parameters that are registered for [events](#callback-parameters) can also be saved to be sent with every event or session of the Adjust SDK.
-
-Session callback parameters have a similar interface to event callback parameters, except that, instead of adding the key and its value to an event, they are added through a call to the `addSessionCallbackParameter` method of the `adjust` instance:
-
-```lua
-local adjust = require "plugin.adjust"
-
-adjust.addGlobalCallbackParameter("foo", "bar")
-```
-
-Session callback parameters will be merged with the callback parameters added to an event. The callback parameters added to an event take precedence over the session callback parameters. This means that, when adding a callback parameter to an event with the same key as one added from the session, the callback parameter added to the event will prevail.
-
-It's possible to remove a specific session callback parameter by passing the desired key to the `removeSessionCallbackParameter` method of the `adjust` instance:
-
-```lua
-local adjust = require "plugin.adjust"
-
-adjust.removeGlobalCallbackParameter("foo")
-```
-
-If you wish to remove all keys and values from the session callback parameters, you can reset them with the `resetSessionCallbackParameters` method of the `adjust` instance:
-
-```lua
-local adjust = require "plugin.adjust"
-
-adjust.removeGlobalCallbackParameters()
-```
-
-### <a id="session-partner-parameters"></a>Session partner parameters
-
-In the same way that there are [session callback parameters](#session-callback-parameters) that are sent with every event or session of the Adjust SDK, there are also session partner parameters.
-
-These will be transmitted to network partners that you have integrated and activated in your Adjust [dashboard].
-
-Session partner parameters have a similar interface to event partner parameters. Except that, instead of adding the key and its value to an event, they are added through a call to the `addSessionPartnerParameter` method of the `adjust` instance:
-
-```lua
-local adjust = require "plugin.adjust"
-
-adjust.addGlobalPartnerParameter("foo", "bar")
-```
-
-The session partner parameters will be merged with the partner parameters added to an event. The partner parameters added to an event take precedence over the session partner parameters. This means that, when adding a partner parameter to an event with the same key as one added from the session, the partner parameter added to the event will prevail.
-
-It's possible to remove a specific session partner parameter by passing the desired key to the `removeSessionPartnerParameter` method of the `adjust` instance:
-
-```lua
-local adjust = require "plugin.adjust"
-
-adjust.removeGlobalPartnerParameter("foo")
-```
-
-If you wish to remove all keys and values from the session partner parameters, you can reset them with the `resetSessionPartnerParameters` method of the `adjust` instance:
-
-```lua
-local adjust = require "plugin.adjust"
-
-adjust.removeGlobalPartnerParameters()
-```
-
-
-### <a id="needs-cost"></a>Cost Data in attribution
-
-To receive cost in attribution data you need to request it explicitly in `initSdk` call
-```lua
-local adjust = require "plugin.adjust"
-
-adjust.initSdk({
-    appToken = "{YourAppToken}",
-    environment = "SANDBOX",
-    logLevel = "VERBOSE",
-    isCostDataInAttributionEnabled = true
-})
-```
-
-If it is set to `true`, fields `costType`, `costAmount` and `costCurrency` would be set in the [attribution callback](#attribution-callback) event.
+Each recorded install is getting certain attribution assigned and also, during the app lifetime, the attribution can change.
 
 ### <a id="attribution-callback"></a>Attribution callback
 
-You can register a listener to be notified of tracker attribution changes. Due to the different sources considered for attribution, this information cannot be provided synchronously. The simplest way to achieve this is to create a single anonymous listener which is going to be called **each time a user's attribution value changes**. Use the `setAttributionListener` method of the `adjust` instance to set the listener before starting the SDK:
+You can register a callback to be notified of attribution changes. Due to the different sources considered for attribution, this information can not be provided synchronously. You can implement attribution callback like this:
 
 ```lua
 local adjust = require "plugin.adjust"
 local json = require "json"
 
-local function attributionListener(event)
+-- attribution callback needs to be set before calling initSdk method
+adjust.setAttributionCallback(function(event)
     local json_attribution = json.decode(event.message)
     print("Attribution changed!")
-    print("Tracker token: " .. json_attribution.trackerToken)
-    print("Tracker name: " .. json_attribution.trackerName)
-    print("Campaign: " .. json_attribution.campaign)
-    print("Network: " .. json_attribution.network)
-    print("Creative: " .. json_attribution.creative)
-    print("Adgroup: " .. json_attribution.adgroup)
-    print("Click label: " .. json_attribution.clickLabel)
-    print("Cost Type: " .. json_attribution.costType)
-    print("Cost Amount: " .. json_attribution.costAmount)
-    print("Cost Currency: " .. json_attribution.costCurrency)
-    print("FB install referrer: " .. json_attribution.fbInstallReferrer)
-end
-
--- ...
-
-adjust.setAttributionListener(attributionListener)
+    print("Tracker token: " .. (json_attribution.trackerToken or "N/A"))
+    print("Tracker name: " .. (json_attribution.trackerName or "N/A"))
+    print("Campaign: " .. (json_attribution.campaign or "N/A"))
+    print("Network: " .. (json_attribution.network or "N/A"))
+    print("Creative: " .. (json_attribution.creative or "N/A"))
+    print("Adgroup: " .. (json_attribution.adgroup or "N/A"))
+    print("Cost type: " .. (json_attribution.costType or "N/A"))
+    print("Cost amount: " .. (json_attribution.costAmount or "N/A"))
+    print("Cost currency: " .. (json_attribution.costCurrency or "N/A"))
+    print("FB install referrer: " .. (json_attribution.fbInstallReferrer or "N/A"))
+end)
 
 -- ...
 
@@ -757,7 +371,7 @@ adjust.initSdk({
 })
 ```
 
-Within the listener function you have access to the `attribution` parameters. Here is a quick summary of their properties:
+The callback function will get called when the SDK receives final attribution data. Within the callback function you have access to the `attribution` parameter. Here is a quick summary of its properties:
 
 - `trackerToken`        the tracker token of the current attribution
 - `trackerName`         the tracker name of the current attribution
@@ -771,314 +385,9 @@ Within the listener function you have access to the `attribution` parameters. He
 - `costCurrency`        the currency used, use `isCostDataInAttributionEnabled` to request this value
 - `fbInstallReferrer`   the Facebook install referrer information
 
-Please make sure to consider our [applicable attribution data policies][attribution-data].
+### <a id="attribution-getter"></a>Get user attribution
 
-### <a id="session-event-callbacks">Session and event callbacks
-
-You can register a callback to be notified of successfully tracked and failed events and/or sessions.
-
-Follow the same steps as for attribution callbacks to implement the following callback function for successfully tracked events:
-
-```lua
-local adjust = require "plugin.adjust"
-local json = require "json"
-
-local function eventSuccessListener(event)
-    local json_event_success = json.decode(event.message)
-    print("Event tracking success!")
-    print("Event token: " .. json_event_success.eventToken)
-    print("Message: " .. json_event_success.message)
-    print("Timestamp: " .. json_event_success.timestamp)
-    print("Callback Id: " .. json_event_success.callbackId)
-    print("Adid: " .. json_event_success.adid)
-    print("JSON response: " .. json_event_success.jsonResponse)
-end
-
--- ...
-
-adjust.setEventSuccessListener(eventSuccessListener)
-
--- ...
-
-adjust.initSdk({
-    appToken = "{YourAppToken}",
-    environment = "SANDBOX",
-    logLevel = "VERBOSE"
-})
-```
-
-The following callback function for failed events:
-
-```lua
-local adjust = require "plugin.adjust"
-local json = require "json"
-
-local function eventFailureListener(event)
-    local json_event_failure = json.decode(event.message)
-    print("Event tracking failure!")
-    print("Event token: " .. json_event_failure.eventToken)
-    print("Message: " .. json_event_failure.message)
-    print("Timestamp: " .. json_event_failure.timestamp)
-    print("Callback Id: " .. json_event_failure.callbackId)
-    print("Adid: " .. json_event_failure.adid)
-    print("Will retry: " .. json_event_failure.willRetry)
-    print("JSON response: " .. json_event_failure.jsonResponse)
-end
-
--- ...
-
-adjust.setEventFailureListener(eventFailureListener)
-
--- ...
-
-adjust.initSdk({
-    appToken = "{YourAppToken}",
-    environment = "SANDBOX",
-    logLevel = "VERBOSE"
-})
-```
-
-For successfully tracked sessions:
-
-```lua
-local adjust = require "plugin.adjust"
-local json = require "json"
-
-local function sessionSuccessListener(event)
-    local json_session_success = json.decode(event.message)
-    print("Session tracking success!")
-    print("Message: " .. json_session_success.message)
-    print("Timestamp: " .. json_session_success.timestamp)
-    print("Adid: " .. json_session_success.adid)
-    print("JSON response: " .. json_session_success.jsonResponse)
-end
-
--- ...
-
-adjust.setSessionSuccessListener(sessionSuccessListener)
-
--- ...
-
-adjust.initSdk({
-    appToken = "{YourAppToken}",
-    environment = "SANDBOX",
-    logLevel = "VERBOSE"
-})
-```
-
-And for failed sessions:
-
-```lua
-local adjust = require "plugin.adjust"
-local json = require "json"
-
-local function sessionFailureListener(event)
-    local json_session_failure = json.decode(event.message)
-    print("Session tracking failure!")
-    print("Message: " .. json_session_failure.message)
-    print("Timestamp: " .. json_session_failure.timestamp)
-    print("Adid: " .. json_session_failure.adid)
-    print("Will retry: " .. json_session_failure.adid)
-    print("JSON response: " .. json_session_failure.jsonResponse)
-end
-
--- ...
-
-adjust.setSessionFailureListener(sessionFailureListener)
-
--- ...
-
-adjust.initSdk({
-    appToken = "{YourAppToken}",
-    environment = "SANDBOX",
-    logLevel = "VERBOSE"
-})
-```
-
-The callback functions will be called after the SDK tries to send a package to the server. Within the callback you have access to a response data object specifically for the callback. Here is a quick summary of the session response data properties:
-
-- `var message` the message from the server or the error logged by the SDK
-- `var timestamp` timestamp from the server
-- `var adid` a unique device identifier provided by Adjust
-- `var jsonResponse` the JSON object with the response from the server
-
-Both event response data objects contain:
-
-- `var eventToken` the event token, if the package tracked was an event
-- `var callbackId` the custom defined callback ID set on event object
-
-And both event and session failed objects also contain:
-
-- `var willRetry` indicates there will be an attempt to resend the package at a later time
-
-### <a id="disable-tracking"></a>Disable tracking
-
-You can disable the Adjust SDK from tracking by invoking the `disable` method of the `adjust` instance . This setting is **remembered between sessions**, but it can only be activated after the first session.
-
-```lua
-local adjust = require "plugin.adjust"
-
-adjust.disable()
-```
-### <a id="enable-tracking"></a>Enable tracking
-
-You can enable the Adjust SDK from tracking by invoking the `enable` method of the `adjust` instance . This setting is **remembered between sessions**, but it can only be activated after the first session.
-
-```lua
-local adjust = require "plugin.adjust"
-
-adjust.enable()
-```
-
-You can verify if the Adjust SDK is currently active with the `isEnabled` method of the `adjust` instance:
-
-```lua
-local adjust = require "plugin.adjust"
-
-adjust.isEnabled(function(event) 
-    print("isEnabled = " .. event.message) 
-end)
-```
-
-It is always possible to activate the Adjust SDK by invoking `setEnabled` with the parameter set to `true`.
-
-### <a id="offline-mode"></a>Activate/Deactivate offline mode
-
-The Adjust SDK sends event and session data to Adjust’s servers in real time. You can pause the sending of information by putting the SDK in offline mode. In offline mode the SDK stores all data in a local file on the device. The SDK sends this information to Adjust’s servers when you disable offline mode.
-
-You can switch to offline mode at any time by calling the `adjust.switchToOfflineMode()` method.
-
-```lua
-local adjust = require "plugin.adjust"
-
-adjust.switchToOfflineMode()
-```
-You can re-enable the SDK by calling the `adjust.switchBackToOnlineMode()` method. This prompts the SDK to resume sending information.
-
-```lua
-local adjust = require "plugin.adjust"
-
-adjust.switchBackToOnlineMode()
-```
-
-### <a id="gdpr-forget-me"></a>GDPR right to be forgotten
-
-In accordance with article 17 of the EU's General Data Protection Regulation (GDPR), you can notify Adjust when a user has exercised their right to be forgotten. Calling the following method will instruct the Adjust SDK to communicate the user's choice to be forgotten to the Adjust backend:
-
-```lua
-local adjust = require "plugin.adjust"
-
-adjust.gdprForgetMe();
-```
-
-Upon receiving this information, Adjust will erase the user's data and the Adjust SDK will stop tracking the user. No requests from this device will be sent to Adjust in the future.
-
-### <a id="background-tracking"></a>Background tracking
-
-The default behavior of the Adjust SDK is to **pause sending HTTP requests while the app is in the background**. You can change this by passing the `isSendingInBackgroundEnabled` parameter into the `adjust.initSdk` method call:
-
-```lua
-local adjust = require "plugin.adjust"
-
-adjust.initSdk({
-    appToken = "{YourAppToken}",
-    environment = "SANDBOX",
-    logLevel = "VERBOSE",
-    isSendingInBackgroundEnabled = true
-})
-```
-
-If nothing is set here, sending in background is **disabled by default**.
-
-### <a id="device-ids"></a>Device IDs
-
-Certain services (such as Google Analytics) require you to coordinate device and client IDs in order to prevent duplicate reporting.
-
-### <a id="di-idfa"></a>iOS Advertising Identifier
-
-To obtain the IDFA, call the `getIdfa` method of the `adjust` instance. You need to pass a callback to that method in order to obtain the value:
-
-```lua
-local adjust = require "plugin.adjust"
-
-adjust.getIdfa(function(event) 
-    print("idfa = " .. event.message) 
-end)
-```
-
-### <a id="di-gps-adid"></a>Google Play Services advertising identifier
-
-The Google Play Services Advertising Identifier (Google advertising ID) is a unique identifier for a device. Users can opt out of sharing their Google advertising ID by toggling the "Opt out of Ads Personalization" setting on their device. When a user has enabled this setting, the Adjust SDK returns a string of zeros when trying to read the Google advertising ID.
-
-> **Important**: If you are targeting Android 12 and above (API level 31), you need to add the [`com.google.android.gms.AD_ID` permission](#gps-adid-permission) to your app. If you do not add this permission, you will not be able to read the Google advertising ID even if the user has not opted out of sharing their ID.
-
-If you need to obtain the Google advertising ID, you can call the `getGoogleAdId` method of the `adjust` instance. You need to pass a callback to that method in order to obtain the value:
-
-```lua
-local adjust = require "plugin.adjust"
-
-adjust.getGoogleAdId(function(event) 
-    print("googleAdId = " .. event.message) 
-end)
-```
-
-### <a id="di-fire-adid"></a>Amazon advertising identifier
-
-If you need to obtain the Amazon advertising ID, you can call the `getAmazonAdId` method on `adjust` instance:
-
-```lua
-local adjust = require "plugin.adjust"
-
-adjust.getAmazonAdId(function(event) 
-    print("amazonAdId = " .. event.message) 
-end)
-```
-
-### <a id="di-adid"></a>Adjust device identifier
-
-For every device with your app installed on it, the Adjust backend generates a unique **Adjust device identifier** (**adid**). In order to obtain this identifier, call the `getAdid` method of the `adjust` instance. You need to pass a callback to that method in order to obtain the value:
-
-```lua
-local adjust = require "plugin.adjust"
-
-adjust.getAdid(function(event) 
-    print("adid = " .. event.message) 
-end)
-```
-
-**Note**: Information about the **adid** is only available after an app installation has been tracked by the Adjust backend. From that moment on, the Adjust SDK has information about the device **adid** and you can access it with this method. So, **it is not possible** to access the **adid** value before the SDK has been initialized and installation of your app has been successfully tracked.
-
-### <a id="set-external-device-id"></a>Set external device ID
-
-> **Note** If you want to use external device IDs, please contact your Adjust representative. They will talk you through the best approach for your use case.
-
-An external device identifier is a custom value that you can assign to a device or user. They can help you to recognize users across sessions and platforms. They can also help you to deduplicate installs by user so that a user isn't counted as multiple new installs.
-
-You can also use an external device ID as a custom identifier for a device. This can be useful if you use these identifiers elsewhere and want to keep continuity.
-
-Check out our [external device identifiers article](https://help.adjust.com/en/article/external-device-identifiers) for more information.
-
-> **Note** This setting requires Adjust SDK v4.20.0 or later.
-
-To set an external device ID, assign the identifier to the `externalDeviceId` property in your `adjust.initSdk` call.
-
-```lua
-adjust.initSdk({
-    appToken = "{YourAppToken}",
-    environment = "SANDBOX",
-    logLevel = "VERBOSE"
-})
-```
-
-> **Important**: You need to make sure this ID is **unique to the user or device** depending on your use-case. Using the same ID across different users or devices could lead to duplicated data. Talk to your Adjust representative for more information.
-
-If you want to use the external device ID in your business analytics, you can pass it as a session callback parameter. See the section on [session callback parameters](#session-callback-parameters) for more information.
-
-You can import existing external device IDs into Adjust. This ensures that the backend matches future data to your existing device records. If you want to do this, please contact your Adjust representative.
-
-### <a id="user-attribution"></a>User attribution
-
-As described in the [attribution callback section](#attribution-callback), this callback is triggered to provide you with information about a new attribution whenever it changes. If you want to access information about a user's current attribution at any other time, you can make a call to the `getAttribution` method of the `adjust` instance:
+If you want to access information about a user's current attribution whenever you need it, you can make a call to the `getAttribution` method:
 
 ```lua
 local adjust = require "plugin.adjust"
@@ -1086,36 +395,28 @@ local json = require "json"
 
 adjust.getAttribution(function(event) 
     local json_attribution = json.decode(event.message)
-    print("Tracker token: " .. json_attribution.trackerToken)
-    print("Tracker name: " .. json_attribution.trackerName)
-    print("Campaign: " .. json_attribution.campaign)
-    print("Network: " .. json_attribution.network)
-    print("Creative: " .. json_attribution.creative)
-    print("Adgroup: " .. json_attribution.adgroup)
-    print("Click label: " .. json_attribution.clickLabel)
+    print("Tracker token: " .. (json_attribution.trackerToken or "N/A"))
+    print("Tracker name: " .. (json_attribution.trackerName or "N/A"))
+    print("Campaign: " .. (json_attribution.campaign or "N/A"))
+    print("Network: " .. (json_attribution.network or "N/A"))
+    print("Creative: " .. (json_attribution.creative or "N/A"))
+    print("Adgroup: " .. (json_attribution.adgroup or "N/A"))
+    print("Cost type: " .. (json_attribution.costType or "N/A"))
+    print("Cost amount: " .. (json_attribution.costAmount or "N/A"))
+    print("Cost currency: " .. (json_attribution.costCurrency or "N/A"))
+    print("FB install referrer: " .. (json_attribution.fbInstallReferrer or "N/A"))
 end)
 ```
 
-**Note**: Information about current attribution is only available after an app installation has been tracked by the Adjust backend and the attribution callback has been triggered. From that moment on, the Adjust SDK has information about a user's attribution and you can access it with this method. So, **it is not possible** to access a user's attribution value before the SDK has been initialized and an attribution callback has been triggered.
+**Note**: Information about current attribution is available after app installation has been recorded by the Adjust backend and the attribution callback has been initially triggered. From that moment on, the Adjust SDK has information about a user's attribution and you can access it with this method. So, **it is not possible** to access a user's attribution value before the SDK has been initialised and an attribution callback has been triggered.
 
-### <a id="push-token"></a>Push token
+### <a id="preinstalled-apps"></a>Preinstalled apps
 
-To send us the push notification token, add the following call to Adjust **whenever you get your token in the app or when it gets updated**:
+You can use the Adjust SDK to record activity from apps that came preinstalled on a user’s device. This enables you to attribute these users to a custom defined campaign link instead to an organic one.
 
-```js
-local adjust = require "plugin.adjust"
+### <a id="preinstall-default-link"></a>Default link token
 
-adjust.setPushToken("YourPushNotificationToken");
-```
-
-Push tokens are used for Audience Builder and client callbacks, and they are required for the upcoming uninstall tracking feature.
-
-### <a id="pre-installed-trackers"></a>Pre-installed trackers
-
-If you want to use the Adjust SDK to recognize users whose devices came with your app pre-installed, follow these steps.
-
-1. Create a new tracker in your [dashboard].
-2. Open your app delegate and set the default tracker by passing the `defaultTracker` parameter to the `adjust.initSdk` method call:
+Configuring a default link token enables you to attribute all preinstalls to a predefined Adjust link. Adjust records all information against this token until the attribution source changes. To set this up, first you need to [create a new campaign link in Campaign Lab](https://help.adjust.com/en/article/links). After doing this, you need to set `defaultTracker` parameter of the initialization map and pass a token you got generated for your campign link:
 
 ```lua
 local adjust = require "plugin.adjust"
@@ -1128,136 +429,89 @@ adjust.initSdk({
 })
 ```
 
-Replace `abc123` with the tracker token you created in step 1. Please note that the dashboard displays a tracker URL (including `http://app.adjust.com/`). In your source code, you should specify only the six-character token and not the entire URL.
+In case this approach is not applicable to your preinstall use case, please reach out to support@adjust.com to explore other ways of how the attribution for preinstalled apps can be handled.
 
-3. Build and run your app. You should see a line like the following in the app's log output:
+### <a id="global-params"></a>Global parameters
 
-    ```
-    Default tracker: 'abc123'
-    ```
+Some parameters are saved to be sent in every session, event, ad revenue and subscription request of the Adjust SDK. Once you have added any of these parameters, you don't need to add them every time, since they will be saved locally. If you add the same parameter twice, there will be no effect. These global parameters can be set before the Adjust SDK is launched to make sure they are sent even on install.
 
-### <a id="deeplinking"></a>Deep linking
+### <a id="global-callback-params"></a>Global callback parameters
 
-If you are using the Adjust tracker URL with an option to deep link into your app from the URL, there is the possibility to get information about the deeplink URL and its content. There are two scenarios when it comes to deeplinking: standard and deferred:
-
-- Standard deeplinking is when a user already has your app installed.
-- Deferred deeplinking is when a user does not have your app installed.
-
-**Note**: At this moment, due to Corona framework limitations, standard deeplinking is currently fully supported **only on the Android platform**. Deferred deeplinking works well on both the iOS and Android platforms.
-
-### <a id="deeplinking-standard"></a>Standard deeplinking
-
-Standard deeplinking is a platform-specific feature and, in order to support it, you need to add some additional settings to your app. If your user already has the app installed and hits a tracker URL with deeplink information in it, your application will be opened and the content of the deep link will be sent to your app so that you can parse it and decide what to do next.
-
-**Note for iOS**: With the introduction of iOS 9, Apple has changed the way deeplinking is handled in apps. Depending on which deeplinking scenario you want to use for your app (or if you want to use them both to support a wide range of devices), you need to set up your app to handle one or both of the following scenarios.
-
-Like mentioned above, standard deeplinking is currently not supported due to Corona platform limitations, but, nevertheless, setting it up in your Xcode project as described in the chapters below is still required for deferred deep linking.
-
-### <a id="deeplinking-ios-old"></a>Deeplinking on iOS 8 and earlier
-
-To support deeplink handling in your app for iOS 8 and earlier versions, you need to set a `Custom URL Scheme` setting for your iOS app. In order to do this, please follow our [official iOS SDK README instructions][deeplinking-ios8-lower]. There is **no need** to override methods inside of `AppDelegate.m` (in Corona's case: `AppCoronaDelegate.mm`), just follow the Xcode project setting part of the instructions.
-
-### <a id="deeplinking-ios-new"></a>Deeplinking on iOS 9 and later
-
-Starting from **iOS 9**, Apple introduced suppressed support for the old style deeplinking with custom URL schemes, as described above, in favor of `universal links`. If you want to support deeplinking in your app for iOS 9 and higher, you need to add support for universal link handling. In order to do this, please follow our [official iOS SDK README instructions][deeplinking-ios9-higher]. There is **no need** to override methods inside of `AppDelegate.m` (in Corona's case: `AppCoronaDelegate.mm`), just follow the Xcode project setting part of the instructions.
-
-### <a id="deeplinking-android"></a>Deeplinking on Android
-
-In order to support deeplinking in your Android app, you need to add support for handling the custom URL scheme that you want to use to open your Android app. In order to do this, please follow our [official Android SDK README instructions][deeplinking-android].
-
-In order to obtain information about the link that caused your app to open, you need to add some additional code to your `main.lua` file:
-
-```lua
-local function onSystemEvent(event)
-    if event.type == "applicationOpen" and event.url then
-        print("url = " .. event.url)
-    end
-end
-```
-
-The value of the `event.url` variable in the above example (if available) represents the actual link that opened your Android app.
-
-By completing this, you should be able to handle direct deeplinking on **Android**.
-
-### <a id="deeplinking-deferred"></a>Deferred deeplinking
-
-While deferred deeplinking is not supported out of the box on Android or iOS, the Adjust SDK makes it possible.
-
-In order to get information about the URL content through deferred deeplinking, you should set a callback method on the the `adjust` instance which will receive one parameter where the content of the URL will be delivered. You should set this method on the config object by calling the `setDeferredDeeplinkListener` method:
+The global callback parameters have a similar interface to the event callback parameters. Instead of adding the key and its value to an event, it's added through a call to `addGlobalCallbackParameter` method:
 
 ```lua
 local adjust = require "plugin.adjust"
-local json = require "json"
 
-local function deferredDeeplinkListener(event)
-    print("deeplink = " .. event.message)
-end
-
--- ...
-
-adjust.setDeferredDeeplinkListener(deferredDeeplinkListener)
-
--- ...
-
-adjust.initSdk({
-    appToken = "{YourAppToken}",
-    environment = "SANDBOX",
-    logLevel = "VERBOSE",
-})
+adjust.addGlobalCallbackParameter("foo", "bar")
 ```
 
-In deferred deeplinking, there is one additional setting available to pass to the `adjust.initSdk` method call. Once the Adjust SDK gets the deferred deeplink information, you can choose whether our SDK opens this URL or not. You can choose to set this option by passing the `shouldLaunchDeeplink` parameter to the `adjust.initSdk` method call:
+The global callback parameters will be merged with the callback parameters added to an event / ad revenue / subscription. The callback parameters added to any of these packages take precedence over the global callback parameters. Meaning that, when adding a callback parameter to any of these packages with the same key to one added globaly, the value that prevails is the callback parameter added any of these particular packages.
 
+It's possible to remove a specific global callback parameter by passing the desired key to the `removeGlobalCallbackParameter` method:
 
 ```lua
 local adjust = require "plugin.adjust"
-local json = require "json"
 
-local function deferredDeeplinkListener(event)
-    print("deeplink = " .. event.message)
-end
-
--- ...
-
-adjust.setDeferredDeeplinkListener(deferredDeeplinkListener)
-
--- ...
-
-adjust.initSdk({
-    appToken = "{YourAppToken}",
-    environment = "SANDBOX",
-    logLevel = "VERBOSE",
-    shouldLaunchDeeplink = false
-})
+adjust.removeGlobalCallbackParameter("foo")
 ```
 
-If nothing is set here, **the Adjust SDK will always try to launch the URL by default**.
-
-### <a id="deeplinking-reattribution"></a>Reattribution via deeplinks
-
-Adjust enables you to run re-engagement campaigns by using deeplinks. For more information on this, please check our [official docs][reattribution-with-deeplinks].
-
-If you are using this feature, in order for your users to be properly reattributed, you need to make one additional call to the Adjust SDK in your app.
-
-Once you have received information about the deeplink content in your app, add a call to the `processDeeplink` or `processAndResolveDeeplink` method of the `adjust` instance. By making this call, the Adjust SDK will try to find if there is any new attribution information inside of the deeplink, and, if there is any, it will be sent to the Adjust backend. If a user should be reattributed through a click on an Adjust tracker URL with deeplink content in it, you will see the [attribution callback](#attribution-callback) in your app being triggered with new attribution information for this user.
-
-In the code examples described above, a call to the `processDeeplink` or `processAndResolveDeeplink` method should be done like this:
-
+If you wish to remove all keys and values from the global callback parameters, you can remove them with the `removeGlobalCallbackParameters` method:
 
 ```lua
-local function onSystemEvent(event)
-    if event.type == "applicationOpen" and event.url then
-        print("url = " .. event.url)
-        adjust.processAndResolveDeeplink(event.url,function(resolvedLink)
-            print(resolvedLink.message)
-        end)
-    end
-end 
+local adjust = require "plugin.adjust"
+
+adjust.removeGlobalCallbackParameters()
 ```
 
-Having added these calls, if the deeplink that opened your app contains any reattribution parameters, our SDK will pass that information to the backend, which will decide whether the user is going to be reattributed or not. As already mentioned, if a user gets reattributed, an attribution callback (if implemented) will be triggered with the new attribution value, and you will have this information in your app, as well.
+### <a id="global-partner-params"></a>Global partner parameters
 
-## <a id="third-party-sharing"></a>Third-party sharing for specific users
+In the same way that there are [global callback parameters](#session-callback-params) that are sent for every event or session of the Adjust SDK, there are also global partner parameters.
+
+These will be transmitted to network partners, for the integrations that have been activated in your Adjust [dashboard](https://dash.adjust.com).
+
+The global partner parameters have a similar interface to the event / ad revenue / subscription partner parameters. Instead of adding the key and its value to an event, it's added through a call to the `addGlobalPartnerParameter` method:
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.addGlobalPartnerParameter("foo", "bar")
+```
+
+The global partner parameters will be merged with the partner parameters added to an event / ad revenue / subscription. The partner parameters added to any of thes packages take precedence over the global partner parameters. Meaning that, when adding a partner parameter to any of these packages with the same key to one added globally, the value that prevails is the partner parameter added to any of these particular packages.
+
+It's possible to remove a specific global partner parameter by passing the desired key to the `removeGlobalPartnerParameter` method:
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.removeGlobalPartnerParameter("foo")
+```
+
+If you wish to remove all keys and values from the global partner parameters, you can remove them with the `removeGlobalPartnerParameters` method:
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.removeGlobalPartnerParameters()
+```
+
+### <a id="privacy-features"></a>Privacy features
+
+The Adjust SDK contains features that you can use to handle user privacy in your app.
+
+### <a id="gdpr-forget-me"></a>GDPR right to be forgotten
+
+In accordance with article 17 of the EU's General Data Protection Regulation (GDPR), you can notify Adjust when a user has exercised their right to be forgotten. Calling the following method will instruct the Adjust SDK to communicate the user's choice to be forgotten to the Adjust backend:
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.gdprForgetMe()
+```
+
+Upon receiving this information, Adjust will erase the user's data and no requests from this device will be sent to Adjust in the future.
+
+### <a id="third-party-sharing"></a>Third-party sharing for specific users
 
 You can notify Adjust when a user disables, enables, and re-enables data sharing with third-party partners.
 
@@ -1266,6 +520,8 @@ You can notify Adjust when a user disables, enables, and re-enables data sharing
 Call the following method to instruct the Adjust SDK to communicate the user's choice to disable data sharing to the Adjust backend:
 
 ```lua
+local adjust = require "plugin.adjust"
+
 adjust.trackThirdPartySharing({
     enabled = false,
 })
@@ -1278,6 +534,8 @@ Upon receiving this information, Adjust will block the sharing of that specific 
 Call the following method to instruct the Adjust SDK to communicate the user's choice to share data or change data sharing, to the Adjust backend:
 
 ```lua
+local adjust = require "plugin.adjust"
+
 adjust.trackThirdPartySharing({
     enabled = true,
 })
@@ -1285,15 +543,204 @@ adjust.trackThirdPartySharing({
 
 Upon receiving this information, Adjust changes sharing the specific user's data to partners. The Adjust SDK will continue to work as expected.
 
-Call the following method to instruct the Adjust SDK to send the granular options to the Adjust backend:
+### <a id="send-granular-options">Send granular options</a>
+
+You can attach granular information when a user updates their third-party sharing preferences. Use this information to communicate more detail about a user’s decision. To do this, set the `granularOptions` parameter like this:
 
 ```lua
+local adjust = require "plugin.adjust"
+
 adjust.trackThirdPartySharing({
     granularOptions = {
         {
+            partnerName = "PartnerName",
+            key = "key",
+            value = "value",
+        },
+    },
+})
+```
+
+The following partners are available:
+
+| Partner name              | String value                  |
+|---------------------------|-------------------------------|
+| AppleAds                  | `apple_ads`                   |
+| Facebook                  | `facebook`                    |
+| GoogleAds                 | `adwords`                     |
+| GoogleMarketingPlatform   | `google_marketing_platform`   |
+| Snapchat                  | `snapchat`                    |
+| Tencent                   | `tencent`                     |
+| TikTokSan                 | `tiktok_san`                  |
+| X (formerly Twitter)      | `twitter`                     |
+| YahooGemini               | `yahoo_gemini`                |
+| YahooJapanSearch          | `yahoo_japan_search`          |
+
+### <a id="facebook-limited-data-use">Manage Facebook Limited Data Use</a>
+
+Facebook provides a feature called Limited Data Use (LDU) to comply with the California Consumer Privacy Act (CCPA). This feature enables you to notify Facebook when a California-based user is opted out of the sale of data. You can also use it if you want to opt all users out by default.
+
+You can update the Facebook LDU status by passing arguments to the `granularOptions` parameter.
+
+| Parameter                        | Description                                                                 |
+|----------------------------------|-----------------------------------------------------------------------------|
+| `partner_name`                   | Use `facebook` to toggle LDU.                                              |
+| `data_processing_options_country`| The country in which the user is located.                                  |
+|                                  | - `0`: Request that Facebook use geolocation.                              |
+|                                  | - `1`: United States of America.                                           |
+| `data_processing_options_state`  | Notifies Facebook in which state the user is located.                      |
+|                                  | - `0`: Request that Facebook use geolocation.                              |
+|                                  | - `1000`: California.                                                      |
+|                                  | - `1001`: Colorado.                                                        |
+|                                  | - `1002`: Connecticut.                                                     |
+
+> Note: If you call this method with a 0 value for **either** `data_processing_options_country` or `data_processing_options_state`, the Adjust SDK passes **both** fields back as 0.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.trackThirdPartySharing({
+    granularOptions = {
+        {
+            partnerName = "facebook",
+            key = "data_processing_options_country",
+            value = "1",
+        },
+        {
+            partnerName = "facebook",
+            key = "data_processing_options_state",
+            value = "1000",
+        },
+    },
+})
+```
+
+### <a id="digital-markets-act">Provide consent data to Google (Digital Markets Act compliance)</a>
+
+> Important: Passing these options is required if you use Google Ads or Google Marketing Platform and have users located in the European Economic Area (EEA).
+
+To comply with the EU’s Digital Markets Act (DMA), Google Ads and the Google Marketing Platform require explicit consent to receive Adjust’s attribution requests to their APIs. To communicate this consent, you need to add the following granular options to your third party sharing instance for the partner `google_dma`.
+
+| Key                 | Value               | Description                                                                                                      |
+|---------------------|---------------------|------------------------------------------------------------------------------------------------------------------|
+| `eea`               | `1` (positive) \| `0` (negative) | Informs Adjust whether users installing the app are within the European Economic Area. Includes EU member states, Switzerland, Norway, Iceland, and Slovenia. |
+| `ad_personalization`| `1` (positive) \| `0` (negative) | Informs Adjust whether users consented with being served personalized ads via Google Ads and/or Google Marketing Platform. This parameter also informs the `npa` parameter reserved for Google Marketing Platform. |
+| `ad_user_data`      | `1` (positive) \| `0` (negative) | Informs Adjust whether users consented with their advertiser ID being leveraged for attribution purposes.         |
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.trackThirdPartySharing({
+    granularOptions = {
+        {
+            partnerName = "google_dma",
+            key = "eea",
+            value = "1",
+        },
+        {
+            partnerName = "google_dma",
+            key = "ad_personalization",
+            value = "1",
+        },
+        {
+            partnerName = "google_dma",
+            key = "ad_user_data",
+            value = "1",
+        },
+    },
+})
+```
+
+### <a id="partner-sharing-settings">Update partner sharing settings</a>
+
+By default, Adjust shares all metrics with any partners you’ve configured in your app settings. You can use the Adjust SDK to update your third party sharing settings on a per-partner basis. To do this, set the `partnerSharingSettings` parameter with the following arguments:
+
+| Argument     | Data type | Description                                                |
+|--------------|-----------|------------------------------------------------------------|
+| `partnerName`| string    | The name of the partner. [Download the full list of available partners](https://assets.ctfassets.net/5s247im0esyq/5WvsJ7J7fGFUlfsFeGdalj/643651619adc3256acac7885ec60624d/modules.csv). |
+| `key`        | string    | The metric to share with the partner.                      |
+| `value`      | bool   | The user’s decision.                                       |
+
+You can use the `key` to specify which metrics you want to disable or re-enable. If you want to enable/disable sharing all metrics, you can use the `all` key. The full list of available metrics is available below:
+
+- `ad_revenue`
+- `all`
+- `attribution`
+- `update`
+- `att_update`
+- `cost_update`
+- `event`
+- `install`
+- `reattribution`
+- `reattribution_reinstall`
+- `reinstall`
+- `rejected_install`
+- `rejected_reattribution`
+- `sdk_click`
+- `sdk_info`
+- `session`
+- `subscription`
+- `uninstall`
+
+When you set a `false` value against a metric for a partner, Adjust stops sharing the metric with the partner.
+
+> Tip: If you only want to share a few metrics with a partner, you can pass the `all` key with a `false` value to disable all sharing and then pass individual metrics with a `true` value to limit what you share.
+
+Examples:
+
+If you want to stop sharing all metrics with a specific partner, pass the `all` key with a `false` value.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.trackThirdPartySharing({
+    partnerSharingSettings = {
+        {
             partnerName = "PartnerA",
-            key = "foo",
-            value = "bar",
+            key = "all",
+            value = false
+        },
+    },
+})
+```
+
+To re-enable sharing, pass the `all` key with a `true` value.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.trackThirdPartySharing({
+    partnerSharingSettings = {
+        {
+            partnerName = "PartnerA",
+            key = "all",
+            value = true
+        },
+    },
+})
+```
+
+You can stop or start sharing specific metrics by calling the `addPartnerSharingSetting` method multiple times with different keys. For example, if you only want to share event information with a partner, you can pass:
+
+- `all` with a `false` value to disable sharing all information
+- `event` with a `true` value to enable event sharing
+
+> Note: Specific keys always take priority over `all`. If you pass `all` with other keys, the individual key values override the `all` setting.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.trackThirdPartySharing({
+    partnerSharingSettings = {
+        {
+            partnerName = "PartnerA",
+            key = "all",
+            value = false
+        },
+        {
+            partnerName = "PartnerA",
+            key = "event",
+            value = true
         },
     },
 })
@@ -1301,26 +748,26 @@ adjust.trackThirdPartySharing({
 
 ### <a id="measurement-consent"></a>Consent measurement for specific users
 
-You can notify Adjust when a user exercises their right to change data sharing with partners for marketing purposes, but they allow data sharing for statistical purposes.
+If you’re using [Data Privacy settings](https://help.adjust.com/en/article/manage-data-collection-and-retention) in your Adjust dashboard, you need to set up the Adjust SDK to work with them. This includes settings such as consent expiry period and user data retention period.
 
-Call the following method to instruct the Adjust SDK to communicate the user's choice to change data sharing, to the Adjust backend:
+To toggle this feature, call the `trackMeasurementConsent` method with the boolean parameter indicating whether consent measurement is enabled (`true`) or not (`false`).
+
+When enabled, the SDK communicates the data privacy settings to Adjust’s servers. Adjust’s servers then applies your data privacy rules to the user. The Adjust SDK continues to work as expected.
 
 ```lua
-adjust.trackMeasurementConsent(true);
+local adjust = require "plugin.adjust"
+
+adjust.trackMeasurementConsent(true)
+-- or
+adjust.trackMeasurementConsent(false)
 ```
 
-Upon receiving this information, Adjust changes sharing the specific user's data to partners. The Adjust SDK will continue to work as expected.
+### <a id="coppa-compliance"></a>COPPA compliance
 
-### <a id="data-residency"></a>Data residency
+f you need your app to be compliant with the Children’s Online Privacy Protection Act (COPPA), set the `isCoppaComplianceEnabled` parameter on your initialization map. This performs the following actions:
 
-The URL strategy feature allows you to set either:
-
-The country in which Adjust stores your data (data residency).
-The endpoint to which the Adjust SDK sends traffic (URL strategy).
-This is useful if you’re operating in a country with strict privacy requirements. When you set your URL strategy, Adjust stores data in the selected data residency region or sends traffic to the chosen domain.
-
-To set your country of data residency, you should pass these 3 arguments as bellow:
-
+1. Disables third-party sharing **before** the user launches their first `session`.
+2. Prevents the SDK from reading device and advertising IDs (for example: `gps_adid`, `idfa`, and `android_id`).
 
 ```lua
 local adjust = require "plugin.adjust"
@@ -1329,14 +776,1081 @@ adjust.initSdk({
     appToken = "{YourAppToken}",
     environment = "SANDBOX",
     logLevel = "VERBOSE",
-    -- for EU data region
-    urlStrategyDomains = {"eu.adjust.com"},
-    -- or TR data region
-    -- urlStrategyDomains = {"tr.adjust.com"},
-    -- or US data region
-    -- urlStrategyDomains = {"us.adjust.com"},
+    isCoppaComplianceEnabled = true
+})
+```
+
+### <a id="play-store-kids-apps"></a>Play Store kids apps
+
+If your app targets users under the age of 13, and the install region **isn’t** the USA, you need to mark it as a Kids App. This prevents the SDK from reading device and advertising IDs (for example: `idfa`, `gps_adid` and `android_id`).
+
+To mark your app as a Play Store Kids App, set the `isPlayStoreKidsComplianceEnabled` parameter on your initialization map.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.initSdk({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE",
+    isPlayStoreKidsComplianceEnabled = true
+})
+```
+
+### <a id="url-strategies"></a>URL strategies
+
+The URL strategy feature allows you to set either:
+
+- The country in which Adjust stores your data (data residency).
+- The endpoint to which the Adjust SDK sends traffic (URL strategy).
+
+This is useful if you’re operating in a country with strict privacy requirements. When you set your URL strategy, Adjust stores data in the selected data residency region or sends traffic to the chosen domain.
+
+To set your country of data residency, set the URL strategy parameters in your initialization map:
+
+- `urlStrategyDomains` (`list`): The country or countries of data residence, or the endpoints to which you want to send SDK traffic.
+- `useSubdomains` (`bool`): Whether the source should prefix a subdomain.
+- `isDataResidency` (`bool`): Whether the domain should be used for data residency.
+
+| URL strategy                | Main and fallback domain                           | Use sub domains | Is Data Residency |
+|-----------------------------|----------------------------------------------------|-----------------|-------------------|
+| EU data residency           | `{"eu.adjust.com"}`                                  | `true`          | `true`            |
+| Turkish data residency      | `{"tr.adjust.com"}`                                  | `true`          | `true`            |
+| US data residency           | `{"us.adjust.com"}`                                  | `true`          | `true`            |
+| China global URL strategy   | `{"adjust.world"`, `"adjust.com"}`                   | `true`          | `false`           |
+| China only URL strategy     | `{"adjust.cn"}`                                      | `true`          | `false`           |
+| India URL strategy          | `{"adjust.net.in"`, `"adjust.com"}`                  | `true`          | `false`           |
+
+Examples:
+
+```lua
+-- India URL strategy
+local adjust = require "plugin.adjust"
+adjust.initSdk({
+    appToken = "2fm9gkqubvpc",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE",
+    -- URL strategy parameters below
+    urlStrategyDomains = { "adjust.net.in", "adjust.com" },
     useSubdomains = true,
-    isDataResidency = true,
+    isDataResidency = false
+})
+```
+
+```lua
+-- China global URL strategy
+local adjust = require "plugin.adjust"
+adjust.initSdk({
+    appToken = "2fm9gkqubvpc",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE",
+    -- URL strategy parameters below
+    urlStrategyDomains = { "adjust.world", "adjust.com" },
+    useSubdomains = true,
+    isDataResidency = false
+})
+```
+
+```lua
+-- China only URL strategy
+local adjust = require "plugin.adjust"
+adjust.initSdk({
+    appToken = "2fm9gkqubvpc",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE",
+    -- URL strategy parameters below
+    urlStrategyDomains = { "adjust.cn" },
+    useSubdomains = true,
+    isDataResidency = false
+})
+```
+
+```lua
+-- EU data residency
+local adjust = require "plugin.adjust"
+adjust.initSdk({
+    appToken = "2fm9gkqubvpc",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE",
+    -- URL strategy parameters below
+    urlStrategyDomains = { "eu.adjust.com" },
+    useSubdomains = true,
+    isDataResidency = true
+})
+```
+
+```lua
+-- US data residency
+local adjust = require "plugin.adjust"
+adjust.initSdk({
+    appToken = "2fm9gkqubvpc",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE",
+    -- URL strategy parameters below
+    urlStrategyDomains = { "us.adjust.com" },
+    useSubdomains = true,
+    isDataResidency = true
+})
+```
+
+```lua
+-- Turkey data residency
+local adjust = require "plugin.adjust"
+adjust.initSdk({
+    appToken = "2fm9gkqubvpc",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE",
+    -- URL strategy parameters below
+    urlStrategyDomains = { "us.adjust.com" },
+    useSubdomains = true,
+    isDataResidency = true
+})
+```
+
+### <a id="deeplinking"></a>Deep linking
+
+If you are using the Adjust campaign link URL with an option to deep link into your app from the URL, there is the possibility to get information about the deep link URL and its content. Hitting the URL can happen when the user has your app already installed (standard deep linking scenario) or if they don't have the app on their device (deferred deep linking scenario).
+
+### <a id="deeplinking-deferred"></a>Deferred deep linking scenario
+
+While deferred deep linking is not supported out of the box on Android and iOS, our Adjust SDK makes it possible.
+
+In order to get information about the URL content in a deferred deep linking scenario, you should set a callback method, which will receive one `string` parameter where the content of the URL will be delivered. You should set this method on the config object by calling the method `setDeferredDeeplinkCallback`:
+
+```lua
+local adjust = require "plugin.adjust"
+
+-- make sure to set the callback before calling initSdk
+adjust.setDeferredDeeplinkCallback(function(event)
+    print("Deferred deep link: " .. event.message)
+end)
+
+-- ...
+
+adjust.initSdk({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE"
+})
+```
+
+In a deferred deep linking scenario, there is one additional setting which can be set in the initialization map. Once the Adjust SDK gets the deferred deep link information, you have the possibility to choose whether our SDK should open this URL or not. You can choose to set this option by setting the `isDeferredDeeplinkOpeningEnabled` parameter in the initialization map:
+
+```lua
+local adjust = require "plugin.adjust"
+
+-- make sure to set the callback before calling initSdk
+adjust.setDeferredDeeplinkCallback(function(event)
+    print("Deferred deep link: " .. event.message)
+end)
+
+-- ...
+
+adjust.initSdk({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE",
+    isDeferredDeeplinkOpeningEnabled = false
+})
+```
+
+If nothing is set, **the Adjust SDK will always try to launch the URL by default**.
+
+To enable your app to support deep linking, you should do some additional set up for each supported platform.
+
+### <a id="deeplinking-reattribution"></a>Reattribution via deep links
+
+Adjust enables you to run re-engagement campaigns through deep links.
+
+If you are using this feature, in order for your user to be properly reattributed, you need to make one additional call to the Adjust SDK in your app.
+
+Once you have received deep link content information in your app, add a call to the `processDeeplink` method. By making this call, the Adjust SDK will try to find if there is any new attribution information inside of the deep link. If there is any, it will be sent to the Adjust backend. If your user should be reattributed due to a click on the Adjust campaign link URL with deep link content, you will see the [attribution callback](#attribution-callback) in your app being triggered with new attribution info for this user.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjustDeeplink = {}
+adjustDeeplink.deeplink = "your-deep-link"
+
+adjust.processDeeplink(adjustDeeplink)
+```
+
+### <a id="short-links-resolution"></a>Resolve Adjust short links
+
+To resolve an Adjust shortened deep link, invoke the `processAndResolveDeeplink` method with a callback function. The callback function receives the resolved deep link as a `string`.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjustDeeplink = {}
+adjustDeeplink.deeplink = "your-deep-link"
+
+adjust.processAndResolveDeeplink(adjustDeeplink, function(resolvedLink)
+    print("Resolved link: " .. resolvedLink.message)
+end)
+```
+
+> Note: If the link passed to the `processAndResolveDeeplink` method was shortened, the callback function receives the extended original link. Otherwise, the callback function receives the link you passed.
+
+### <a id="last-deeplink-getter"></a>Get last processed deep link
+
+You can get the last deep link URL processed by the `processDeeplink` or `processAndResolveDeepLink` method by calling the `getLastDeeplink` method. This method returns the last processed deep link as a string.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.getLastDeeplink(function(lastDeeplink)
+    print("Last deep link = " .. lastDeeplink.message)
+end)
+```
+
+### <a id="app-tracking-transparency"></a>App Tracking Transparency
+
+> Note: This feature exists only in iOS platform.
+
+If you want to record the device’s ID for Advertisers (IDFA), you must display a prompt to get your user’s authorization. To do this, you need to include Apple’s App Tracking Transparency (ATT) framework in your app. The Adjust SDK stores the user’s authorization status and sends it to Adjust’s servers with each request.
+
+Below, you can find the list of possible ATT status values:
+
+| Status                                    | Code | Description                                                          |
+|-------------------------------------------|------|----------------------------------------------------------------------|
+| `ATTrackingManagerAuthorizationStatusNotDetermined` | `0`  | The user hasn’t responded to the access prompt yet                   |
+| `ATTrackingManagerAuthorizationStatusRestricted`   | `1`  | Access to app-related data is blocked at the device level            |
+| `ATTrackingManagerAuthorizationStatusDenied`       | `2`  | The user has denied access to app-related data for device measurement |
+| `ATTrackingManagerAuthorizationStatusAuthorized`   | `3`  | The user has approved access to app-related data for device measurement |
+
+> Note: You might receive a status code of -1 if the SDK is unable to retrieve the ATT (App Tracking Transparency) status.
+
+### <a id="att-wrapper"></a>ATT authorization wrapper
+
+**Note**: This feature exists only in iOS platform.
+
+The Adjust SDK contains a wrapper around [Apple’s requestTrackingAuthorizationWithCompletionHandler: method](https://developer.apple.com/documentation/apptrackingtransparency/attrackingmanager/3547037-requesttrackingauthorizationwith). You can use this wrapper if you don’t want to use the ATT prompt.
+
+The callback method triggers when your user responds to the consent dialog. This method sends the user’s consent status code to Adjust’s servers. You can define responses to each status code within the callback function.
+
+You must specify text content for the ATT. To do this, add your text to the `NSUserTrackingUsageDescription` key in your `Info.plist` file.
+
+
+You can trigger ATT prompt via Adjust SDK wrapper method like this:
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.requestAppTrackingAuthorization(function(status)
+    if status.message == 0 then
+        -- ATTrackingManagerAuthorizationStatusNotDetermined case
+    elseif status.message == 1 then
+        -- ATTrackingManagerAuthorizationStatusRestricted case
+    elseif status.message == 2 then
+        -- ATTrackingManagerAuthorizationStatusDenied case
+    elseif status.message == 3 then
+        -- ATTrackingManagerAuthorizationStatusAuthorized case
+    else
+        -- error case
+    end
+end)
+```
+
+### <a id="att-status-getter"></a>Get current authorization status
+
+You can retrieve a user’s current authorization status at any time. Call the `getAppTrackingAuthorizationStatus` method to return the authorization status code as an `integer`.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.getAppTrackingAuthorizationStatus(function(status)
+    print("Authorization status: " .. status.message)
+end)
+```
+
+### <a id="att-waiting-interval"></a>ATT prompt waiting interval
+
+If your app includes an onboarding process or a tutorial, you may want to delay sending your user’s ATT consent status until after the user has completed this process. To do this, you can set the `attConsentWaitingInterval` parameter of your initialization map to delay the sending of data for up to **360 seconds** to give the user time to complete the initial onboarding. After the timeout ends or the user sets their consent status, the SDK sends all information it has recorded during the delay to Adjust’s servers along with the user’s consent status.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.initSdk({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE",
+    attConsentWaitingInterval = 30
+})
+```
+
+### <a id="skan-framework"></a>SKAdNetwork and conversion values
+
+> Important: This feature is only available on devices running iOS 14 and above.
+
+SKAdNetwork is Apple’s attribution framework for app install and reinstall attribution. The SKAdNetwork workflow goes like this:
+
+1. Apple gathers attribution information and notifies the relevant ad network.
+2. The network sends a postback with this information to Adjust.
+3. Adjust displays SKAdNetwork data in [Datascape](https://help.adjust.com/en/suite/article/datascape).
+
+### <a id="skan-disable"></a>Disable SKAdNetwork communication
+
+The Adjust SDK communicates with SKAdNetwork by default. The SDK registers for SKAdNetwork attribution upon initialization.
+
+You can control this behavior by setting `isSkanAttributionEnabled` parameter of your initialization map:
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.initSdk({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE",
+    isSkanAttributionEnabled = false
+})
+```
+
+### <a id="skan-update-callback"></a>Listen for changes to conversion values
+
+If you use Adjust to manage conversion values, the Adjust’s servers send conversion value updates to the SDK. You can set up a callback function to listen for these changes assigning a callback method for this on before you initialize the SDK:
+
+```lua
+local adjust = require "plugin.adjust"
+local json = require "json"
+
+-- callback needs to be set before calling initSdk method
+adjust.setSkanUpdatedCallback(function(event)
+    local json_skan_updated = json.decode(event.message)
+    print("SKAN conversion value updated!")
+    print("Conversion value: " .. (json_skan_updated.conversionValue or "N/A"))
+    print("Coarse value: " .. (json_skan_updated.coarseValue or "N/A"))
+    print("Lock window: " .. (json_skan_updated.lockWindow or "N/A"))
+    print("Error: " .. (json_skan_updated.error or "N/A"))
+end)
+
+-- ...
+
+adjust.initSdk({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE"
+})
+```
+
+The callback function receives a postback from SKAdNetwork with the following properties:
+
+| Arguments      | Description                                                                                                                       |
+|----------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| `conversionValue`   | The conversion value sent by Adjust’s servers                                                                                    |
+| `coarseValue` | The coarse conversion value. This value is used if your app doesn’t have sufficient installs to reach the privacy threshold.      |
+|                | - `none`                                                                                                                         |
+|                | - `low`                                                                                                                          |
+|                | - `medium`                                                                                                                       |
+|                | - `high`                                                                                                                         |
+|                | Apple sends `none` whenever none of the conditions that are set for `low`, `medium`, and `high` were met.                        |
+| `lockWindow`  | Whether to send the postback before the conversion window ends. `true` indicates the postback will be sent before the window ends.   |
+|                | Defaults to `false` in SKAdNetwork 4.0 postbacks and `null` in older SKAdNetwork versions.                                             |
+| `error`        | Contains the error message if an error occurred.                                                                                 |
+
+### <a id="skan-postbacks"></a>Set up direct install postbacks
+
+> Note: Direct install postbacks contain only SKAdNetwork information. Information such as campaign data isn’t included in these postbacks.
+
+You can configure your app to send a copy of winning SKAdNetwork callbacks to Adjust. This enables you to use SKAdNetwork information in your analytics.
+
+To set up direct install postbacks, you need to add the Adjust callback URL to your `Info.plist` file:
+
+```xml
+<key>NSAdvertisingAttributionReportEndpoint</key>
+<string>https://adjust-skadnetwork.com</string>
+```
+
+> See also: See Apple’s guide on [Configuring an Advertised App](https://developer.apple.com/documentation/storekit/skadnetwork/configuring_an_advertised_app) for more information.
+
+### <a id="adrevenue-recording"></a>Record ad revenue information
+
+You can record ad revenue for [supported network partners](https://help.adjust.com/en/article/ad-revenue) using the Adjust SDK.
+
+> Important: You need to perform some extra setup steps in your Adjust dashboard to measure ad revenue. Contact your Technical Account Manager or support@adjust.com to get started.
+
+To send ad revenue information with the Adjust SDK, you need to instantiate an ad revenue map. This map contains variables that are sent to Adjust when ad revenue is recorded in your app.
+
+To instantiate an ad revenue map, pass the following parameters:
+
+- source (`string`): The source of the ad revenue. See the table below for available sources.
+
+| Argument                     | Ad revenue Source       |
+|------------------------------|-------------------------|
+| `"applovin_max_sdk"`         | AppLovin MAX            |
+| `"admob_sdk"`                | AdMob                   |
+| `"ironsource_sdk"`           | ironSource              |
+| `"admost_sdk"`               | AdMost                  |
+| `"unity_sdk"`                | Unity                   |
+| `"helium_chartboost_sdk"`    | Helium Chartboost       |
+| `"adx_sdk"`                  | Ad(X)                   |
+| `"tradplus_sdk"`             | TradPlus                |
+| `"topon_sdk"`                | TopOn                   |
+| `"publisher_sdk"`            | Generic source          |
+
+### <a id="adrevenue-amount"></a>Ad revenue amount
+
+To send the ad revenue amount, call the `setRevenue` method of your `AdjustAdRevenue` instance and pass the following arguments:
+
+- revenue (`integer`): The amount of revenue
+- currency (`string`): The 3 character [ISO 4217 code](https://www.iban.com/currency-codes) of your reporting currency
+
+> See also: Check the [guide to recording purchases in different currencies](https://help.adjust.com/en/article/currency-conversion) for more information.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.trackAdRevenue({
+    source = "applovin_max_sdk",
+    revenue = 1.0,
+    currency = "EUR"
+})
+```
+
+### <a id="adrevenue-network"></a>Ad revenue network
+
+To record the network associated with the ad revenue, assign `adRevenueNetwork` parameter in your ad revenue map with the network name.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.trackAdRevenue({
+    source = "applovin_max_sdk",
+    revenue = 1.0,
+    currency = "EUR",
+    adRevenueNetwork = "network1"
+})
+```
+
+### <a id="adrevenue-unit"></a>Ad revenue unit
+
+To send the ad revenue unit, assign `adRevenueUnit` parameter of your ad revenue map with the unit value.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.trackAdRevenue({
+    source = "applovin_max_sdk",
+    revenue = 1.0,
+    currency = "EUR",
+    adRevenueUnit = "unit1"
+})
+```
+
+### <a id="adrevenue-placement"></a>Ad revenue placement
+
+To send the ad revenue placement, assign `adRevenuePlacement` parameter of your ad revenue map with the placement value.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.trackAdRevenue({
+    source = "applovin_max_sdk",
+    revenue = 1.0,
+    currency = "EUR",
+    adRevenuePlacement = "banner"
+})
+```
+
+### <a id="adrevenue-impressions"></a>Ad impressions count
+
+To send the number of recorded ad impressions, assign `adImpressionsCount` parameter of your ad revenue map with the number of ad impressions.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.trackAdRevenue({
+    source = "applovin_max_sdk",
+    revenue = 1.0,
+    currency = "EUR",
+    adImpressionsCount = 6
+})
+```
+
+### <a id="adrevenue-callback-params"></a>Ad revenue callback parameters
+
+Similar to how one can set [event callback parameters](#event-callback-params), the same can be done for ad revenue:
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.trackAdRevenue({
+    source = "applovin_max_sdk",
+    revenue = 1.0,
+    currency = "EUR",
+    callbackParameters = {
+        {
+            key = "key",
+            value = "value",
+        },
+        {
+            key = "foo",
+            value = "bar",
+        }
+    }
+})
+```
+
+### <a id="adrevenue-partner-params"></a>Ad revenue partner parameters
+
+Similar to how one can set [event partner parameters](#event-partner-params), the same can be done for ad revenue:
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.trackAdRevenue({
+    source = "applovin_max_sdk",
+    revenue = 1.0,
+    currency = "EUR",
+    partnerParameters = {
+        {
+            key = "key",
+            value = "value",
+        },
+        {
+            key = "foo",
+            value = "bar",
+        }
+    }
+})
+```
+
+### <a id="purchase-verification"></a>Purchase verification
+
+If you’ve enabled [purchase verification](https://help.adjust.com/en/article/purchase-verification), you can use the Adjust SDK to request App Store or Google Play Store purchase verification. There are two ways to verify purchases with the Adjust SDK.
+
+### <a id="verify-and-record"></a>Verify purchase and record event
+
+With this approach, you will be performing verification of your purchase and having an event recorded for that verification. This will give you an overview later in the dashboard on the events (and assigned revenue) based on whether verification was successful or not.
+
+In order to do this, you need to complete your in-app purchase and then pass parameters that Adjust SDK needs out of that purchase in order to be able to try to verify the purchase. Once you have obtained the verification parameters the SDK needs, you can perform verification and recording of an event by calling `verifyAndTrackAppStorePurchase` or `verifyAndTrackPlayStorePurchase` methods.
+
+Next to revenue and currency of the purchase, you need to obtain the following parameters as well:
+
+- Product ID (for both, App Store and Play Store purchases)
+- Transaction ID (for App Store purchases)
+- Purchase token (for Play Store purchases)
+
+```lua
+local adjust = require "plugin.adjust"
+local json = require "json"
+
+-- perform App Store in-app purchase
+
+-- create an event with purchase parameters attached
+adjustEvent = {}
+adjustEvent.eventToken = "abc123"
+adjustEvent.revenue = 6.0
+adjustEvent.currency = "EUR"
+adjustEvent.transactionId = "transaction-id"
+adjustEvent.productId = "product-id"
+
+-- call verifyAndTrackAppStorePurchase method
+adjust.verifyAndTrackAppStorePurchase(adjustEvent, function(result)
+    local json_verification_result = json.decode(result.message)
+    print("Verification status: " .. json_verification_result.verificationStatus)
+    print("Code: " .. json_verification_result.code)
+    print("Message: " .. json_verification_result.message)
+end)
+```
+
+```lua
+local adjust = require "plugin.adjust"
+local json = require "json"
+
+-- perform Play Store in-app purchase
+
+-- create an event with purchase parameters attached
+adjustEvent = {}
+adjustEvent.eventToken = "abc123"
+adjustEvent.revenue = 6.0
+adjustEvent.currency = "EUR"
+adjustEvent.productId = "product-id"
+adjustEvent.purchaseToken = "purchase-token"
+
+-- call verifyAndTrackPlayStorePurchase method
+adjust.verifyAndTrackPlayStorePurchase(adjustEvent, function(result)
+    local json_verification_result = json.decode(result.message)
+    print("Verification status: " .. json_verification_result.verificationStatus)
+    print("Code: " .. json_verification_result.code)
+    print("Message: " .. json_verification_result.message)
+end)
+```
+
+### <a id="verify-only"></a>Verify purchase only
+
+In case you don't want to see revenue events being automatically recorded once you verify the purchase, but you are instead interested in just getting the information on the validity of the purchase, you can also perform only the verification of the purchase. For this, you need to invoke `verifyAppStorePurchase` and `verifyPlayStorePurchase` methods.
+
+```lua
+local adjust = require "plugin.adjust"
+local json = require "json"
+
+-- perform App Store in-app purchase
+
+-- create a purchase map with purchase parameters attached
+adjustPurchase = {}
+adjustPurchase.transactionId = "transaction-id"
+adjustPurchase.productId = "product-id"
+
+-- call verifyAppStorePurchase method
+adjust.verifyAppStorePurchase(adjustPurchase, function(result)
+    local json_verification_result = json.decode(result.message)
+    print("Verification status: " .. json_verification_result.verificationStatus)
+    print("Code: " .. json_verification_result.code)
+    print("Message: " .. json_verification_result.message)
+end)
+```
+
+```lua
+local adjust = require "plugin.adjust"
+local json = require "json"
+
+-- perform Play Store in-app purchase
+
+-- create a purchase map with purchase parameters attached
+adjustPurchase = {}
+adjustPurchase.productId = "product-id"
+adjustPurchase.purchaseToken = "purchase-token"
+
+-- call verifyPlayStorePurchase method
+adjust.verifyPlayStorePurchase(adjustPurchase, function(result)
+    local json_verification_result = json.decode(result.message)
+    print("Verification status: " .. json_verification_result.verificationStatus)
+    print("Code: " .. json_verification_result.code)
+    print("Message: " .. json_verification_result.message)
+end)
+```
+
+### <a id="subscription-sending"></a>Send subscription information
+
+> Important: The following steps only set up subscription measurement within the Adjust SDK. To enable the feature, follow the steps at [Set up subscriptions for your app](https://help.adjust.com/en/article/set-up-subscriptions-for-your-app).
+
+You can record App Store and Play Store subscriptions and verify their validity with the Adjust SDK. After the user purchases a subscription, create a subscription map containing the purchase details.
+
+```lua
+-- App Store subscription
+local adjust = require "plugin.adjust"
+
+adjust.trackAppStoreSubscription({
+    price = "just-price-numeric-value-as-string", -- for example "0.99" or "6.00"
+    currency = "EUR",
+    transactionId = "transaction-id"
+})
+```
+
+```lua
+-- Play Store subscription
+local adjust = require "plugin.adjust"
+
+adjust.trackPlayStoreSubscription({
+    price = "price-numeric-value-in-micros-as-string", -- for example "0.99" should be "990000"
+    currency = "EUR",
+    sku = "product-sku",
+    orderId = "order-id",
+    signature = "signature",
+    purchaseToken = "purchase-token"
+})
+```
+
+Subscription parameters for App Store subscription:
+
+- [price](https://developer.apple.com/documentation/storekit/product/price)
+- currency (you need to pass [currencyCode](https://developer.apple.com/documentation/foundation/nslocale/1642836-currencycode?language=objc))
+- [transactionId](https://developer.apple.com/documentation/storekit/skpaymenttransaction/1411288-transactionidentifier?language=objc)
+- [transactionDate](https://developer.apple.com/documentation/storekit/skpaymenttransaction/1411273-transactiondate?language=objc)
+- salesRegion (you need to pass [countryCode](https://developer.apple.com/documentation/foundation/nslocale/1643060-countrycode?language=objc) of the [priceLocale](https://developer.apple.com/documentation/storekit/skproduct/1506145-pricelocale?language=objc) object)
+
+Subscription parameters for Play Store subscription:
+
+- [price](https://developer.android.com/reference/com/android/billingclient/api/SkuDetails#getpriceamountmicros)
+- [currency](https://developer.android.com/reference/com/android/billingclient/api/SkuDetails#getpricecurrencycode)
+- [sku](https://developer.android.com/reference/com/android/billingclient/api/Purchase#getsku)
+- [orderId](https://developer.android.com/reference/com/android/billingclient/api/Purchase#getorderid)
+- [signature](https://developer.android.com/reference/com/android/billingclient/api/Purchase#getsignature)
+- [purchaseToken](https://developer.android.com/reference/com/android/billingclient/api/Purchase#getpurchasetoken)
+- [purchaseTime](https://developer.android.com/reference/com/android/billingclient/api/Purchase#getpurchasetime)
+
+> Note: All the links behind the parameters are pointing to fields one needs to obtain from native iOS and Android in-app purchases API. In-app purchases on Solar2D / Corona platform are being done with usage of some plugins which are wrapping the native API and can therefore have these fields exposed under different names or, in bad case scenario, not provide some of these fields at all. In case you are having issues in understanding how to properly pass these fields based on what your Solar2D / Corona plugin is sending you back, feel free contact us about it.
+
+### <a id="subscription-purchase-date"></a>Subscription purchase date
+
+You can record the date on which the user purchased a subscription. The SDK returns this data for you to report on.
+
+```lua
+-- App Store subscription
+local adjust = require "plugin.adjust"
+
+adjust.trackAppStoreSubscription({
+    price = "just-price-numeric-value-as-string", -- for example "0.99" or "6.00"
+    currency = "EUR",
+    transactionId = "transaction-id",
+    transactionDate = "unix-timestamp"
+})
+```
+
+```lua
+-- Play Store subscription
+local adjust = require "plugin.adjust"
+
+adjust.trackPlayStoreSubscription({
+    price = "price-numeric-value-in-micros-as-string", -- for example "0.99" should be "990000"
+    currency = "EUR",
+    sku = "product-sku",
+    orderId = "order-id",
+    signature = "signature",
+    purchaseToken = "purchase-token",
+    purchaseDate = "unix-timestamp"
+})
+```
+
+### <a id="subscription-region"></a>Subscription region
+
+> Note: This is feature is iOS only.
+
+You can record the region in which the user purchased a subscription. To do this, set the `salesRegion` method of your Apple App Store subscription map to the country code as a string. This needs to be formatted as the [countryCode](https://developer.apple.com/documentation/storekit/storefront/3792000-countrycode) of the [Storefront](https://developer.apple.com/documentation/storekit/storefront) object.
+
+```lua
+-- App Store subscription
+local adjust = require "plugin.adjust"
+
+adjust.trackAppStoreSubscription({
+    price = "just-price-numeric-value-as-string", -- for example "0.99" or "6.00"
+    currency = "EUR",
+    transactionId = "transaction-id",
+    salesRegion = "sales-region"
+})
+```
+
+### <a id="subscription-callback-params"></a>Subscription callback parameters
+
+Similar to how one can set [event callback parameters](#event-callback-params), the same can be done for subscriptions:
+
+```lua
+-- App Store subscription
+local adjust = require "plugin.adjust"
+
+adjust.trackAppStoreSubscription({
+    price = "just-price-numeric-value-as-string", -- for example "0.99" or "6.00"
+    currency = "EUR",
+    transactionId = "transaction-id",
+    callbackParameters = {
+        {
+            key = "key",
+            value = "value",
+        },
+        {
+            key = "foo",
+            value = "bar",
+        }
+    }
+})
+```
+
+### <a id="subscription-partner-params"></a>Subscription partner parameters
+
+Similar to how one can set [event partner parameters](#event-partner-params), the same can be done for subscriptions:
+
+```lua
+-- App Store subscription
+local adjust = require "plugin.adjust"
+
+adjust.trackAppStoreSubscription({
+    price = "just-price-numeric-value-as-string", -- for example "0.99" or "6.00"
+    currency = "EUR",
+    transactionId = "transaction-id",
+    partnerParameters = {
+        {
+            key = "key",
+            value = "value",
+        },
+        {
+            key = "foo",
+            value = "bar",
+        }
+    }
+})
+```
+
+### <a id="device-ids"></a>Device IDs
+
+The Adjust SDK contains helper methods that return device information. Use these methods to add details to your callbacks and improve your reporting.
+
+### <a id="idfa"></a>IDFA
+
+To obtain the IDFA, call the `getIdfa` method:
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.getIdfa(function(event)
+    print("IDFA: " .. (event.message or "N/A"))
+end)
+```
+
+### <a id="idfv"></a>IDFV
+
+To obtain the IDFV, call the `getIdfv` method:
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.getIdfv(function(event)
+    print("IDFV: " .. (event.message or "N/A"))
+end)
+```
+
+### <a id="gps-adid"></a>Google advertising identifier
+
+To obtain Google advertising ID, call the `getGoogleAdId` method:
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.getGoogleAdId(function(event)
+    print("Google Advertising ID: " .. (event.message or "N/A"))
+end)
+```
+
+### <a id="fire-adid"></a>Amazon advertising identifier
+
+If you need to obtain the Amazon advertising ID, you can call the `getAmazonAdId` method:
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.getAmazonAdId(function(event)
+    print("Amazon Advertising ID: " .. (event.message or "N/A"))
+end)
+```
+
+### <a id="adid"></a>Adjust device identifier
+
+For every device with your app installed on it, the Adjust backend generates a unique **Adjust device identifier** (**adid**). In order to obtain this identifier, you can make a call to `getAdid` method:
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.getAdid(function(event)
+    print("Adjust ID: " .. (event.message or "N/A"))
+end)
+```
+
+**Note**: Information about the **adid** is available after app installation has been recorded by the Adjust backend. From that moment on, the Adjust SDK has information about the device **adid** and you can access it with this method. So, **it is not possible** to access the **adid** value before the SDK has been initialised and installation of your app has been successfully recorded.
+
+### <a id="session-event-callbacks"></a>Session and event callbacks
+
+You can register a callback to be notified of successful and failed recorded events and/or sessions.
+
+Follow the same steps to implement the callback for successfully recorded events:
+
+```lua
+local adjust = require "plugin.adjust"
+
+-- make sure to set callback before calling initSdk method
+adjust.setEventSuccessCallback(function(event)
+    local json_event_success = json.decode(event.message)
+    print("Event tracking success!")
+    print("Event token: " .. (json_event_success.eventToken or "N/A"))
+    print("Message: " .. (json_event_success.message or "N/A"))
+    print("Timestamp: " .. (json_event_success.timestamp or "N/A"))
+    print("Adid: " .. (json_event_success.adid or "N/A"))
+    print("JSON response: " .. (json.encode(json_event_success.jsonResponse) or "N/A"))
+end)
+
+adjust.initSdk({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX"
+})
+```
+
+The callback function for failed recorded events:
+
+```lua
+local adjust = require "plugin.adjust"
+
+-- make sure to set callback before calling initSdk method
+adjust.setEventFailureCallback(function(event)
+    local json_event_failure = json.decode(event.message)
+    print("Event tracking failure!")
+    print("Event token: " .. (json_event_failure.eventToken or "N/A"))
+    print("Message: " .. (json_event_failure.message or "N/A"))
+    print("Timestamp: " .. (json_event_failure.timestamp or "N/A"))
+    print("Adid: " .. (json_event_failure.adid or "N/A"))
+    print("Will retry: " .. (json_event_failure.willRetry or "N/A"))
+    print("JSON response: " .. (json.encode(json_event_failure.jsonResponse) or "N/A"))
+end)
+
+adjust.initSdk({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX"
+})
+```
+
+For successfully recorded sessions:
+
+```lua
+local adjust = require "plugin.adjust"
+
+-- make sure to set callback before calling initSdk method
+adjust.setSessionSuccessCallback(function(event)
+    local json_session_success = json.decode(event.message)
+    print("Session tracking success!")
+    print("Message: " .. (json_session_success.message or "N/A"))
+    print("Timestamp: " .. (json_session_success.timestamp or "N/A"))
+    print("Adid: " .. (json_session_success.adid or "N/A"))
+    print("JSON response: " .. (json.encode(json_session_success.jsonResponse) or "N/A"))
+end)
+
+adjust.initSdk({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX"
+})
+```
+
+And for failed recorded sessions:
+
+```lua
+local adjust = require "plugin.adjust"
+
+-- make sure to set callback before calling initSdk method
+adjust.setSessionFailureCallback(function(event)
+    local json_session_failure = json.decode(event.message)
+    print("Session tracking failure!")
+    print("Message: " .. (json_session_failure.message or "N/A"))
+    print("Timestamp: " .. (json_session_failure.timestamp or "N/A"))
+    print("Adid: " .. (json_session_failure.adid or "N/A"))
+    print("Will retry: " .. (json_session_failure.willRetry or "N/A"))
+    print("JSON response: " .. (json.encode(json_session_failure.jsonResponse) or "N/A"))
+end)
+
+adjust.initSdk({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX"
+})
+```
+
+The callback functions will be called after the SDK tries to send a package to the server. Within the callback, you have access to a response data object specifically for the callback. Here is a quick summary of the session response data properties:
+
+- `message` the message from the server or the error logged by the SDK.
+- `timestamp` timestamp from the server.
+- `adid` a unique device identifier provided by Adjust.
+- `jsonResponse` the JSON string with the response from the server.
+
+Both event response data objects contain:
+
+- `eventToken` the event token, if the package recorded was an event.
+- `callbackId` the custom defined callback ID set on event object.
+
+And both event and session failed objects also contain:
+
+- `willRetry` indicates there will be an attempt to resend the package at a later time.
+
+### <a id="disable-sdk"></a>Disable the SDK
+
+You can disable the Adjust SDK from recording any activity by invoking the `disable` method. This setting is **remembered between sessions**.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.disable()
+```
+
+You can verify if the Adjust SDK is currently active with the `isEnabled` method. It is always possible to activate the Adjust SDK by invoking `enable` method.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.enable()
+```
+
+### <a id="offline-mode"></a>Offline mode
+
+You can put the Adjust SDK in offline mode to suspend transmission to our servers, while still retaining recorded data to be sent later. While in offline mode, all information is saved in a file, so be careful not to trigger too many events while in offline mode.
+
+You can activate offline mode by calling the `switchToOfflineMode` method.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.switchToOfflineMode()
+```
+
+Conversely, you can deactivate the offline mode by calling `switchBackToOnlineMode` method. When the Adjust SDK is put back in online mode, all saved information is sent to our servers with the correct timestamps.
+
+Unlike disabling the SDK, this setting is **not remembered between sessions**. This means that the SDK is in online mode whenever it is started, even if the app was terminated in offline mode.
+
+### <a id="background-sending"></a>Sending from background 
+
+The default behaviour of the Adjust SDK is to **pause sending HTTP requests while the app is in the background**. You can change this in your initialization map by assigning the `isSendingInBackgroundEnabled` parameter:
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.initSdk({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE",
+    isSendingInBackgroundEnabled = true
+})
+```
+
+If nothing is set, sending in background is **disabled by default**.
+
+### <a id="external-device-id"></a>Set external device ID
+
+> **Note** If you want to use external device IDs, please contact your Adjust representative. They will talk you through the best approach for your use case.
+
+An external device identifier is a custom value that you can assign to a device or user. They can help you to recognize users across sessions and platforms. They can also help you to deduplicate installs by user so that a user isn't counted as multiple new installs.
+
+You can also use an external device ID as a custom identifier for a device. This can be useful if you use these identifiers elsewhere and want to keep continuity.
+
+Check out our [external device identifiers article](https://help.adjust.com/en/article/external-device-identifiers) for more information.
+
+To set an external device ID, assign the identifier to the `externalDeviceId` parameter of your initialization map.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.initSdk({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE",
+    externalDeviceId = "unique-id-for-each-user"
+})
+```
+
+> **Important**: You need to make sure this ID is **unique to the user or device** depending on your use-case. Using the same ID across different users or devices could lead to duplicated data. Talk to your Adjust representative for more information.
+
+If you want to use the external device ID in your business analytics, you can pass it as a session callback parameter. See the section on [session callback parameters](#session-callback-params) for more information.
+
+You can import existing external device IDs into Adjust. This ensures that the backend matches future data to your existing device records. If you want to do this, please contact your Adjust representative.
+
+### <a id="push-token"></a>Push token
+
+To send us the push notification token, add the following call to Adjust **whenever you get your token in the app or when it gets updated**:
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.setPushToken("push-notifications-token")
+```
+
+Push tokens are used for Audience Builder and client callbacks, and they are required for the uninstall detection feature.
+
+### <a id="disable-ad-services"></a>Disable AdServices information reading
+
+> Note: This is iOS only feature.
+
+The SDK is enabled by default to try to communicate with `AdServices.framework` on iOS in order to try to obtain attribution token which is later being used for handling Apple Search Ads attribution. In case you would not like Adjust to show information from Apple Search Ads campaigns, you can disable this in the SDK by assigning `isSkanAttributionEnabled` parameter of your initialization map:
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.initSdk({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE",
+    isSkanAttributionEnabled = false
 })
 ```
 
@@ -1344,36 +1858,22 @@ adjust.initSdk({
 
 The Adjust SDK is licensed under the MIT License.
 
-Copyright (c) 2012-2021 Adjust GmbH, http://www.adjust.com
+Copyright (c) 2017-Present Adjust GmbH, http://www.adjust.com
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
-[dashboard]:    http://adjust.com
-[adjust.com]:   http://adjust.com
-
-[plugin]:      ./plugin
-[releases]:     https://github.com/adjust/corona_sdk/releases
-
-[google-ad-id]:         https://developer.android.com/google/play-services/id.html
-[enable-ulinks]:        https://github.com/adjust/ios_sdk#deeplinking-setup-new
-[event-tracking]:       https://docs.adjust.com/en/event-tracking
-[callbacks-guide]:      https://docs.adjust.com/en/callbacks
-[attribution-data]:     https://github.com/adjust/sdks/blob/master/doc/attribution-data.md
-[special-partners]:     https://docs.adjust.com/en/special-partners
-[broadcast-receiver]:   https://github.com/adjust/android_sdk#sdk-broadcast-receiver
-
-[deeplinking-android]:    https://github.com/adjust/android_sdk/blob/master/README.md#deeplinking
-[google-launch-modes]:    http://developer.android.com/guide/topics/manifest/activity-element.html#lmode
-[currency-conversion]:    https://docs.adjust.com/en/event-tracking/#tracking-purchases-in-different-currencies
-[google-play-services]:   http://developer.android.com/google/play-services/index.html
-[deeplinking-ios8-lower]: https://github.com/adjust/ios_sdk#deeplinking-setup-old
-
-[deeplinking-ios9-higher]:      https://github.com/adjust/ios_sdk#deeplinking-setup-new
-[bencooding-android-tools]: 	  https://github.com/benbahrenburg/benCoding.Android.Tools
-[broadcast-receiver-custom]:    https://github.com/adjust/android_sdk/blob/master/doc/english/referrer.md
-[reattribution-with-deeplinks]: https://docs.adjust.com/en/deeplinking/#manually-appending-attribution-data-to-a-deep-link
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
