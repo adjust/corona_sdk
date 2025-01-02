@@ -2,8 +2,8 @@
 //  PluginLibrary.mm
 //  Adjust SDK
 //
-//  Created by Abdullah Obaied (@obaied) on 11th September 2017.
-//  Copyright (c) 2017-2022 Adjust GmbH. All rights reserved.
+//  Created by Abdullah Obaied on 11th September 2017.
+//  Copyright (c) 2017-Present Adjust GmbH. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -1065,9 +1065,6 @@ int AdjustPlugin::getAdid(lua_State *L) {
     if (CoronaLuaIsListener(L, callbackIndex, "ADJUST")) {
         CoronaLuaRef callback = CoronaLuaNewRef(L, callbackIndex);
         [Adjust adidWithCompletionHandler:^(NSString * _Nullable adid) {
-            if (nil == adid) {
-                adid = @"";
-            }
             [AdjustSdkDelegate dispatchEvent:EVENT_GET_ADID
                                    withState:L
                                     callback:callback
@@ -1082,7 +1079,7 @@ int AdjustPlugin::getLastDeeplink(lua_State *L) {
     if (CoronaLuaIsListener(L, callbackIndex, "ADJUST")) {
         CoronaLuaRef callback = CoronaLuaNewRef(L, callbackIndex);
         [Adjust lastDeeplinkWithCompletionHandler:^(NSURL * _Nullable lastDeeplink) {
-            NSString *strLastDeeplink = nil != lastDeeplink ? [lastDeeplink absoluteString] : @"";
+            NSString *strLastDeeplink = nil != lastDeeplink ? [lastDeeplink absoluteString] : nil;
             [AdjustSdkDelegate dispatchEvent:EVENT_GET_LAST_DEEPLINK
                                    withState:L
                                     callback:callback
@@ -1097,13 +1094,14 @@ int AdjustPlugin::getSdkVersion(lua_State *L) {
     if (CoronaLuaIsListener(L, callbackIndex, "ADJUST")) {
         CoronaLuaRef callback = CoronaLuaNewRef(L, callbackIndex);
         [Adjust sdkVersionWithCompletionHandler:^(NSString * _Nullable sdkVersion) {
-            if (sdkVersion == nil) {
-                sdkVersion = @"";
+            NSString *sdkVersionFormatted = nil;
+            if (sdkVersion != nil) {
+                sdkVersion = [NSString stringWithFormat:@"%@@%@", SDK_PREFIX, sdkVersion];
             }
             [AdjustSdkDelegate dispatchEvent:EVENT_GET_SDK_VERSION
                                    withState:L
                                     callback:callback
-                                     message:[NSString stringWithFormat:@"%@@%@", SDK_PREFIX, sdkVersion]];
+                                     message:sdkVersionFormatted];
         }];
     }
     return 0;
@@ -1541,9 +1539,6 @@ int AdjustPlugin::getIdfa(lua_State *L) {
     if (CoronaLuaIsListener(L, callbackIndex, "ADJUST")) {
         CoronaLuaRef callback = CoronaLuaNewRef(L, callbackIndex);
         [Adjust idfaWithCompletionHandler:^(NSString * _Nullable idfa) {
-            if (nil == idfa) {
-                idfa = @"";
-            }
             [AdjustSdkDelegate dispatchEvent:EVENT_GET_IDFA
                                    withState:L
                                     callback:callback
@@ -1559,9 +1554,6 @@ int AdjustPlugin::getIdfv(lua_State *L) {
     if (CoronaLuaIsListener(L, callbackIndex, "ADJUST")) {
         CoronaLuaRef callback = CoronaLuaNewRef(L, callbackIndex);
         [Adjust idfvWithCompletionHandler:^(NSString * _Nullable idfv) {
-            if (nil == idfv) {
-                idfv = @"";
-            }
             [AdjustSdkDelegate dispatchEvent:EVENT_GET_IDFV
                                    withState:L
                                     callback:callback
@@ -1652,11 +1644,10 @@ int AdjustPlugin::getGoogleAdId(lua_State *L) {
     int callbackIndex = 1;
     if (CoronaLuaIsListener(L, callbackIndex, "ADJUST")) {
         CoronaLuaRef callback = CoronaLuaNewRef(L, callbackIndex);
-        NSString *googleAdId = @"";
         [AdjustSdkDelegate dispatchEvent:EVENT_GET_GOOGLE_AD_ID
                                withState:L
                                 callback:callback
-                                 message:googleAdId];
+                                 message:nil];
     }
     return 0;
 }
@@ -1666,11 +1657,10 @@ int AdjustPlugin::getAmazonAdId(lua_State *L) {
     int callbackIndex = 1;
     if (CoronaLuaIsListener(L, callbackIndex, "ADJUST")) {
         CoronaLuaRef callback = CoronaLuaNewRef(L, callbackIndex);
-        NSString *amazonAdId = @"";
         [AdjustSdkDelegate dispatchEvent:EVENT_GET_AMAZON_AD_ID
                                withState:L
                                 callback:callback
-                                 message:amazonAdId];
+                                 message:nil];
     }
     return 0;
 }

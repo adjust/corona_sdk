@@ -2,8 +2,8 @@
 //  AdjustSdkDelegate.m
 //  Adjust SDK
 //
-//  Created by Abdullah Obaied (@obaied) on 11th September 2017.
-//  Copyright (c) 2017-2022 Adjust GmbH. All rights reserved.
+//  Created by Abdullah Obaied on 11th September 2017.
+//  Copyright (c) 2017-Present Adjust GmbH. All rights reserved.
 //
 
 #import <objc/runtime.h>
@@ -137,7 +137,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
     if (nil != value) {
         [dictionary setObject:[NSString stringWithFormat:@"%@", value] forKey:key];
     } else {
-        [dictionary setObject:@"" forKey:key];
+        [dictionary setObject:[NSNull null] forKey:key];
     }
 }
 
@@ -185,7 +185,13 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
     [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:sessionSuccessResponseData.timestamp toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_ADID andValue:sessionSuccessResponseData.adid toDictionary:dictionary];
     if (sessionSuccessResponseData.jsonResponse != nil) {
-        [dictionary setObject:sessionSuccessResponseData.jsonResponse forKey:KEY_JSON_RESPONSE];
+        NSError *writeError = nil;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:sessionSuccessResponseData.jsonResponse
+                                                           options:NSJSONWritingPrettyPrinted
+                                                             error:&writeError];
+        NSString *strJsonResponse = [[NSString alloc] initWithData:jsonData
+                                                          encoding:NSUTF8StringEncoding];
+        [AdjustSdkDelegate addKey:KEY_JSON_RESPONSE andValue:strJsonResponse toDictionary:dictionary];
     }
 
     NSError *error;
@@ -214,7 +220,13 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
     [AdjustSdkDelegate addKey:KEY_ADID andValue:sessionFailureResponseData.adid toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_WILL_RETRY andValue:(sessionFailureResponseData.willRetry ? @"true" : @"false") toDictionary:dictionary];
     if (sessionFailureResponseData.jsonResponse != nil) {
-        [dictionary setObject:sessionFailureResponseData.jsonResponse forKey:KEY_JSON_RESPONSE];
+        NSError *writeError = nil;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:sessionFailureResponseData.jsonResponse
+                                                           options:NSJSONWritingPrettyPrinted
+                                                             error:&writeError];
+        NSString *strJsonResponse = [[NSString alloc] initWithData:jsonData
+                                                          encoding:NSUTF8StringEncoding];
+        [AdjustSdkDelegate addKey:KEY_JSON_RESPONSE andValue:strJsonResponse toDictionary:dictionary];
     }
 
     NSError *error;
@@ -244,7 +256,13 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
     [AdjustSdkDelegate addKey:KEY_EVENT_TOKEN andValue:eventSuccessResponseData.eventToken toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_CALLBACK_ID andValue:eventSuccessResponseData.callbackId toDictionary:dictionary];
     if (eventSuccessResponseData.jsonResponse != nil) {
-        [dictionary setObject:eventSuccessResponseData.jsonResponse forKey:KEY_JSON_RESPONSE];
+        NSError *writeError = nil;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:eventSuccessResponseData.jsonResponse
+                                                           options:NSJSONWritingPrettyPrinted
+                                                             error:&writeError];
+        NSString *strJsonResponse = [[NSString alloc] initWithData:jsonData
+                                                          encoding:NSUTF8StringEncoding];
+        [AdjustSdkDelegate addKey:KEY_JSON_RESPONSE andValue:strJsonResponse toDictionary:dictionary];
     }
 
     NSError *error;
@@ -275,7 +293,13 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
     [AdjustSdkDelegate addKey:KEY_CALLBACK_ID andValue:eventFailureResponseData.callbackId toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_WILL_RETRY andValue:(eventFailureResponseData.willRetry ? @"true" : @"false") toDictionary:dictionary];
     if (eventFailureResponseData.jsonResponse != nil) {
-        [dictionary setObject:eventFailureResponseData.jsonResponse forKey:KEY_JSON_RESPONSE];
+        NSError *writeError = nil;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:eventFailureResponseData.jsonResponse
+                                                           options:NSJSONWritingPrettyPrinted
+                                                             error:&writeError];
+        NSString *strJsonResponse = [[NSString alloc] initWithData:jsonData
+                                                          encoding:NSUTF8StringEncoding];
+        [AdjustSdkDelegate addKey:KEY_JSON_RESPONSE andValue:strJsonResponse toDictionary:dictionary];
     }
 
     NSError *error;

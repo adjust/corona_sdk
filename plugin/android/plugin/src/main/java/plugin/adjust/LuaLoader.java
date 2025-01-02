@@ -254,10 +254,17 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                     // dispatch event to library's callback
                     try {
                         LuaState luaState = runtime.getLuaState();
-
                         CoronaLua.newEvent(luaState, name);
-                        luaState.pushString(message);
-                        luaState.setField(-2, "message");
+                        // message
+                        if (message == null) {
+                            // push nil if message is null
+                            luaState.pushNil();
+                            luaState.setField(-2, "message");
+                        } else {
+                            // push string if not null
+                            luaState.pushString(message);
+                            luaState.setField(-2, "message");
+                        }
 
                         CoronaLua.dispatchEvent(luaState, callback, 0);
                     } catch (Exception e) {
@@ -1048,7 +1055,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             Adjust.getAdid(new OnAdidReadListener() {
                 @Override
                 public void onAdidRead(String adid) {
-                    dispatchEvent(finalCallback, EVENT_GET_ADID, adid == null ? "" : adid);
+                    dispatchEvent(finalCallback, EVENT_GET_ADID, adid);
                 }
             });
         }
@@ -1067,7 +1074,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                     dispatchEvent(
                         finalCallback,
                         EVENT_GET_LAST_DEEPLINK,
-                        deeplink != null ? deeplink.toString() : "");
+                        deeplink != null ? deeplink.toString() : null);
                 }
             });
         }
@@ -1085,8 +1092,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 public void onSdkVersionRead(String sdkVersion) {
                     dispatchEvent(
                         finalCallback,
-                        EVENT_GET_SDK_VERSION, 
-                        sdkVersion != null ? (SDK_PREFIX + "@" + sdkVersion) : "");
+                        EVENT_GET_SDK_VERSION,
+                        sdkVersion != null ? (SDK_PREFIX + "@" + sdkVersion) : null);
                 }
             });
         }
@@ -1452,7 +1459,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                     dispatchEvent(
                         finalCallback,
                         EVENT_GET_GOOGLE_AD_ID,
-                        googleAdId != null ? googleAdId : "");
+                        googleAdId);
                 }
             });
         }
@@ -1472,7 +1479,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                     dispatchEvent(
                         finalCallback,
                         EVENT_GET_AMAZON_AD_ID,
-                        amazonAdId != null ? amazonAdId : "");
+                        amazonAdId);
                 }
             });
         }
@@ -1545,7 +1552,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         int callback = CoronaLua.REFNIL;
         if (CoronaLua.isListener(L, callbackIndex, "ADJUST")) {
             callback = CoronaLua.newRef(L, callbackIndex);
-            dispatchEvent(callback, EVENT_GET_IDFA, "");
+            dispatchEvent(callback, EVENT_GET_IDFA, null);
         }
         return 0;
     }
@@ -1556,7 +1563,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         int callback = CoronaLua.REFNIL;
         if (CoronaLua.isListener(L, callbackIndex, "ADJUST")) {
             callback = CoronaLua.newRef(L, callbackIndex);
-            dispatchEvent(callback, EVENT_GET_IDFV, "");
+            dispatchEvent(callback, EVENT_GET_IDFV, null);
         }
         return 0;
     }

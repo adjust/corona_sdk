@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.HashMap;
 
 import com.adjust.sdk.*;
+import com.ansca.corona.CoronaLua;
+import com.naef.jnlua.LuaState;
 
 final public class LuaUtil {
     private static final String ATTRIBUTION_TRACKER_TOKEN = "trackerToken";
@@ -65,9 +67,9 @@ final public class LuaUtil {
         if (null == purchaseVerificationResult) {
             return map;
         }
-        map.put(PV_VERIFICATION_STATUS, null != purchaseVerificationResult.getVerificationStatus() ? purchaseVerificationResult.getVerificationStatus() : "");
+        map.put(PV_VERIFICATION_STATUS, getMapValue(purchaseVerificationResult.getVerificationStatus()));
         map.put(PV_CODE, String.valueOf(purchaseVerificationResult.getCode()));
-        map.put(PV_MESSAGE, null != purchaseVerificationResult.getMessage() ? purchaseVerificationResult.getMessage() : "");
+        map.put(PV_MESSAGE, getMapValue(purchaseVerificationResult.getMessage()));
         return map;
     }
 
@@ -77,17 +79,17 @@ final public class LuaUtil {
             return map;
         }
 
-        map.put(ATTRIBUTION_TRACKER_TOKEN, null != attribution.trackerToken ? attribution.trackerToken : "");
-        map.put(ATTRIBUTION_TRACKER_NAME, null != attribution.trackerName ? attribution.trackerName : "");
-        map.put(ATTRIBUTION_NETWORK, null != attribution.network ? attribution.network : "");
-        map.put(ATTRIBUTION_CAMPAIGN, null != attribution.campaign ? attribution.campaign : "");
-        map.put(ATTRIBUTION_ADGROUP, null != attribution.adgroup ? attribution.adgroup : "");
-        map.put(ATTRIBUTION_CREATIVE, null != attribution.creative ? attribution.creative : "");
-        map.put(ATTRIBUTION_CLICK_LABEL, null != attribution.clickLabel ? attribution.clickLabel : "");
-        map.put(ATTRIBUTION_COST_TYPE, null != attribution.costType ? attribution.costType : "");
-        map.put(ATTRIBUTION_COST_AMOUNT, null != attribution.costAmount && !attribution.costAmount.isNaN() ? attribution.costAmount : "");
-        map.put(ATTRIBUTION_COST_CURRENCY, null != attribution.costCurrency ? attribution.costCurrency : "");
-        map.put(ATTRIBUTION_FB_INSTALL_REFERRER, null != attribution.fbInstallReferrer ? attribution.fbInstallReferrer : "");
+        map.put(ATTRIBUTION_TRACKER_TOKEN, getMapValue(attribution.trackerToken));
+        map.put(ATTRIBUTION_TRACKER_NAME, getMapValue(attribution.trackerName));
+        map.put(ATTRIBUTION_NETWORK, getMapValue(attribution.network));
+        map.put(ATTRIBUTION_CAMPAIGN, getMapValue(attribution.campaign));
+        map.put(ATTRIBUTION_ADGROUP, getMapValue(attribution.adgroup));
+        map.put(ATTRIBUTION_CREATIVE, getMapValue(attribution.creative));
+        map.put(ATTRIBUTION_CLICK_LABEL, getMapValue(attribution.clickLabel));
+        map.put(ATTRIBUTION_COST_TYPE, getMapValue(attribution.costType));
+        map.put(ATTRIBUTION_COST_AMOUNT, attribution.costAmount.isNaN() ? null : attribution.costAmount);
+        map.put(ATTRIBUTION_COST_CURRENCY, getMapValue(attribution.costCurrency));
+        map.put(ATTRIBUTION_FB_INSTALL_REFERRER, getMapValue(attribution.fbInstallReferrer));
         return map;
     }
 
@@ -97,12 +99,12 @@ final public class LuaUtil {
             return map;
         }
 
-        map.put(EVENT_SUCCESS_MESSAGE, null != eventSuccess.message ? eventSuccess.message : "");
-        map.put(EVENT_SUCCESS_TIMESTAMP, null != eventSuccess.timestamp ? eventSuccess.timestamp : "");
-        map.put(EVENT_SUCCESS_ADID, null != eventSuccess.adid ? eventSuccess.adid : "");
-        map.put(EVENT_SUCCESS_EVENT_TOKEN, null != eventSuccess.eventToken ? eventSuccess.eventToken : "");
-        map.put(EVENT_SUCCESS_CALLBACK_ID, null != eventSuccess.callbackId ? eventSuccess.callbackId : "");
-        map.put(EVENT_SUCCESS_JSON_RESPONSE, null != eventSuccess.jsonResponse ? eventSuccess.jsonResponse.toString() : "");
+        map.put(EVENT_SUCCESS_MESSAGE, getMapValue(eventSuccess.message));
+        map.put(EVENT_SUCCESS_TIMESTAMP, getMapValue(eventSuccess.timestamp));
+        map.put(EVENT_SUCCESS_ADID, getMapValue(eventSuccess.adid));
+        map.put(EVENT_SUCCESS_EVENT_TOKEN, getMapValue(eventSuccess.eventToken));
+        map.put(EVENT_SUCCESS_CALLBACK_ID, getMapValue(eventSuccess.callbackId));
+        map.put(EVENT_SUCCESS_JSON_RESPONSE, eventSuccess.jsonResponse != null ? eventSuccess.jsonResponse.toString() : null);
         return map;
     }
 
@@ -112,13 +114,13 @@ final public class LuaUtil {
             return map;
         }
 
-        map.put(EVENT_FAILED_MESSAGE, null != eventFailure.message ? eventFailure.message : "");
-        map.put(EVENT_FAILED_TIMESTAMP, null != eventFailure.timestamp ? eventFailure.timestamp : "");
-        map.put(EVENT_FAILED_ADID, null != eventFailure.adid ? eventFailure.adid : "");
-        map.put(EVENT_FAILED_EVENT_TOKEN, null != eventFailure.eventToken ? eventFailure.eventToken : "");
-        map.put(EVENT_FAILED_CALLBACK_ID, null != eventFailure.callbackId ? eventFailure.callbackId : "");
-        map.put(EVENT_FAILED_WILL_RETRY, eventFailure.willRetry ? "true" : "false");
-        map.put(EVENT_FAILED_JSON_RESPONSE, null != eventFailure.jsonResponse ? eventFailure.jsonResponse.toString() : "");
+        map.put(EVENT_FAILED_MESSAGE, getMapValue(eventFailure.message));
+        map.put(EVENT_FAILED_TIMESTAMP, getMapValue(eventFailure.timestamp));
+        map.put(EVENT_FAILED_ADID, getMapValue(eventFailure.adid));
+        map.put(EVENT_FAILED_EVENT_TOKEN, getMapValue(eventFailure.eventToken));
+        map.put(EVENT_FAILED_CALLBACK_ID, getMapValue(eventFailure.callbackId));
+        map.put(EVENT_FAILED_WILL_RETRY, eventFailure.willRetry);
+        map.put(EVENT_FAILED_JSON_RESPONSE, eventFailure.jsonResponse != null ? eventFailure.jsonResponse.toString() : null);
         return map;
     }
 
@@ -128,10 +130,10 @@ final public class LuaUtil {
             return map;
         }
 
-        map.put(SESSION_SUCCESS_MESSAGE, null != sessionSuccess.message ? sessionSuccess.message : "");
-        map.put(SESSION_SUCCESS_TIMESTAMP, null != sessionSuccess.timestamp ? sessionSuccess.timestamp : "");
-        map.put(SESSION_SUCCESS_ADID, null != sessionSuccess.adid ? sessionSuccess.adid : "");
-        map.put(SESSION_SUCCESS_JSON_RESPONSE, null != sessionSuccess.jsonResponse ? sessionSuccess.jsonResponse.toString() : "");
+        map.put(SESSION_SUCCESS_MESSAGE, getMapValue(sessionSuccess.message));
+        map.put(SESSION_SUCCESS_TIMESTAMP, getMapValue(sessionSuccess.timestamp));
+        map.put(SESSION_SUCCESS_ADID, getMapValue(sessionSuccess.adid));
+        map.put(SESSION_SUCCESS_JSON_RESPONSE, sessionSuccess.jsonResponse != null ? sessionSuccess.jsonResponse.toString() : null);
         return map;
     }
 
@@ -141,11 +143,11 @@ final public class LuaUtil {
             return map;
         }
 
-        map.put(SESSION_FAILED_MESSAGE, null != sessionFailure.message ? sessionFailure.message : "");
-        map.put(SESSION_FAILED_TIMESTAMP, null != sessionFailure.timestamp ? sessionFailure.timestamp : "");
-        map.put(SESSION_FAILED_ADID, null != sessionFailure.adid ? sessionFailure.adid : "");
-        map.put(SESSION_FAILED_WILL_RETRY, sessionFailure.willRetry ? "true" : "false");
-        map.put(SESSION_FAILED_JSON_RESPONSE, null != sessionFailure.jsonResponse ? sessionFailure.jsonResponse.toString() : "");
+        map.put(SESSION_FAILED_MESSAGE, getMapValue(sessionFailure.message));
+        map.put(SESSION_FAILED_TIMESTAMP, getMapValue(sessionFailure.timestamp));
+        map.put(SESSION_FAILED_ADID, getMapValue(sessionFailure.adid));
+        map.put(SESSION_FAILED_WILL_RETRY, sessionFailure.willRetry);
+        map.put(SESSION_FAILED_JSON_RESPONSE, sessionFailure.jsonResponse != null ? sessionFailure.jsonResponse.toString() : null);
         return map;
     }
 
@@ -157,5 +159,17 @@ final public class LuaUtil {
 
         map.put(DEEPLINK_URL, deeplink.toString());
         return map;
+    }
+
+    private static Object getMapValue(Object value) {
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof String) {
+            if (((String) value).equalsIgnoreCase("")) {
+                return null;
+            }
+        }
+        return value;
     }
 }

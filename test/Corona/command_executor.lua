@@ -311,12 +311,10 @@ function CommandExecutor:config()
             testLib.addInfoToSend("message", json_session_success.message)
             testLib.addInfoToSend("timestamp", json_session_success.timestamp)
             testLib.addInfoToSend("adid", json_session_success.adid)
-            if json_session_success.jsonResponse ~= nil then
-                if platformInfo == "ios" then
-                    testLib.addInfoToSend("jsonResponse", json.encode(json_session_success.jsonResponse))
-                else
-                    testLib.addInfoToSend("jsonResponse", json_session_success.jsonResponse)
-                end
+            if platformInfo == "ios" then
+                testLib.addInfoToSend("jsonResponse", json.encode(json_session_success.jsonResponse))
+            else
+                testLib.addInfoToSend("jsonResponse", json_session_success.jsonResponse)
             end
             testLib.sendInfoToServer(localBasePath)
         end)
@@ -330,12 +328,10 @@ function CommandExecutor:config()
             testLib.addInfoToSend("timestamp", json_session_failure.timestamp)
             testLib.addInfoToSend("adid", json_session_failure.adid)
             testLib.addInfoToSend("willRetry", tostring(json_session_failure.willRetry))
-            if json_session_failure.jsonResponse ~= nil then
-                if platformInfo == "ios" then
-                    testLib.addInfoToSend("jsonResponse", json.encode(json_session_failure.jsonResponse))
-                else
-                    testLib.addInfoToSend("jsonResponse", json_session_failure.jsonResponse)
-                end
+            if platformInfo == "ios" then
+                testLib.addInfoToSend("jsonResponse", json.encode(json_session_failure.jsonResponse))
+            else
+                testLib.addInfoToSend("jsonResponse", json_session_failure.jsonResponse)
             end
             testLib.sendInfoToServer(localBasePath)
         end)
@@ -350,12 +346,13 @@ function CommandExecutor:config()
             testLib.addInfoToSend("adid", json_event_success.adid)
             testLib.addInfoToSend("eventToken", json_event_success.eventToken)
             testLib.addInfoToSend("callbackId", json_event_success.callbackId)
-            if json_event_success.jsonResponse ~= nil then
-                if platformInfo == "ios" then
-                    testLib.addInfoToSend("jsonResponse", json.encode(json_event_success.jsonResponse))
-                else
-                    testLib.addInfoToSend("jsonResponse", json_event_success.jsonResponse)
-                end
+            if json_event_success.callbackId ~= nil and json_event_success.callbackId ~= "" then
+                testLib.addInfoToSend("callbackId", json_event_success.callbackId)
+            end
+            if platformInfo == "ios" then
+                testLib.addInfoToSend("jsonResponse", json.encode(json_event_success.jsonResponse))
+            else
+                testLib.addInfoToSend("jsonResponse", json_event_success.jsonResponse)
             end
             testLib.sendInfoToServer(localBasePath)
         end)
@@ -369,14 +366,14 @@ function CommandExecutor:config()
             testLib.addInfoToSend("timestamp", json_event_failure.timestamp)
             testLib.addInfoToSend("adid", json_event_failure.adid)
             testLib.addInfoToSend("eventToken", json_event_failure.eventToken)
-            testLib.addInfoToSend("callbackId", json_event_failure.callbackId)
+            if json_event_failure.callbackId ~= nil and json_event_failure.callbackId ~= "" then
+                testLib.addInfoToSend("callbackId", json_event_failure.callbackId)
+            end
             testLib.addInfoToSend("willRetry", tostring(json_event_failure.willRetry))
-            if json_event_failure.jsonResponse ~= nil then
-                if platformInfo == "ios" then
-                    testLib.addInfoToSend("jsonResponse", json.encode(json_event_failure.jsonResponse))
-                else
-                    testLib.addInfoToSend("jsonResponse", json_event_failure.jsonResponse)
-                end
+            if platformInfo == "ios" then
+                testLib.addInfoToSend("jsonResponse", json.encode(json_event_failure.jsonResponse))
+            else
+                testLib.addInfoToSend("jsonResponse", json_event_failure.jsonResponse)
             end
             testLib.sendInfoToServer(localBasePath)
         end)
