@@ -1,230 +1,386 @@
+# Corona SDK v5 migration guide
 
-# Corona SDK v4 to v5 Migration Guide
+The [Adjust Corona SDK](https://github.com/adjust/corona_sdk) has been updated to v5. Follow this guide to migrate from v4 to the latest version.
 
-The migration guide has been made by following the current README and outlining what has changed from what we had currently documented (and also some things that weren't documented).
+## Before you begin
 
----
+The minimum supported iOS and Android versions have been updated. If your app targets a lower version, update it first.
 
-## Add the SDK to Your iOS App
+- iOS: **12.0**
+- Android: **API 21**
 
-In addition to the steps mentioned in this chapter, go to the signature releases page, download the latest `AdjustSigSdk-iOS-Static-3.X.Y.a.zip`, and link that static library in the same way as the `libplugin_adjust.a` library.
+### Update the initialization method
 
----
+In Corona SDK v5, the initialization method name has changed from `start` to `initSdk`.
 
-## Integrate the SDK into Your App
+```lua
+local adjust = require "plugin.adjust"
 
-### Initialization Method
+adjust.initSdk({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX"
+})
+```
 
-- **V4**:
-  ```lua
-  local adjust = require "plugin.adjust"
+### Android permissions
 
-  adjust.create({
-      appToken = "{YourAppToken}",
-      environment = "SANDBOX"
-  })
-  ```
+In Corona SDK v4, you needed to declare several permissions to allow your app for Android to access device information via the Adjust SDK for Android.
 
-- **V5**:
-  ```lua
-  local adjust = require "plugin.adjust"
+```xml
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+<uses-permission android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE" />
+```
 
-  adjust.initSdk({
-      appToken = "{YourAppToken}",
-      environment = "SANDBOX"
-  })
-  ```
+In Corona SDK v5, you can delete some or all from your manifest file, depending on your setup.
 
----
+- `android.permission.INTERNET` is bundled in the Adjust SDK for Android.
+- `android.permission.ACCESS_WIFI_STATE` is no longer required.
+- `android.permission.ACCESS_NETWORK_STATE` is optional. This allows the SDK to access information about the network a device is connected to, and send this information as part of the callbacks parameters.
+- `com.google.android.gms.permission.AD_ID` is bundled in the Adjust SDK for Android. You can remove it with the following snippet:
 
-## Android Permissions
+```xml
+<uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove"/>
+```
 
-Since the native Android SDK dependency is being pulled from Maven as an AAR, all the permissions required by the SDK are added automatically. For example:
-- `ACCESS_NETWORK_STATE` is optional.
-- The `AD_ID` permission can be removed if not required.
+Learn more about [Adjust's COPPA compliance](https://help.adjust.com/en/article/coppa-compliance).
 
----
+## Changes and removals
 
-## ProGuard Settings
+Below is the complete list of changed, renamed, and removed APIs in Corona SDK v5.
 
-Since the native Android SDK dependency is being pulled from Maven as an AAR, ProGuard rules are bundled inside it and are no longer needed to be added by clients. This chapter can be removed.
+Each section includes a reference to the previous and current API implementations, as well as a minimal code snippet that illustrates how to use the latest version.
 
----
+## Changed APIs
 
-## Install Referrer
+The following APIs have changed in Corona SDK v5.
 
-The chapter about adding install referrer dependency is unnecessary as the ProGuard rules for it are bundled into the SDK. Everything is handled automatically.
+### Disable and enable the SDK
 
----
+The `setEnabled` method has been renamed. Corona SDK v5 introduces two separate methods, for clarity:
 
-## Google Play Store Intent
+- Call `disable` to disable the SDK.
+- Call `enable` to enable the SDK.
 
-Refer to the documentation for details on integrating Google Play Store intent:
-[Google Play Store Intent Documentation](https://docs.google.com/document/d/1u1htdrZiERgGobz3NzlxK1eGWVmjToMY5k7Y8hInc38/edit?tab=t.0#heading=h.nssk6aqssj7p).
+```lua
+local adjust = require "plugin.adjust"
 
----
+adjust.disable(); -- disable SDK
+adjust.enable(); -- enable SDK
+```
 
-## Huawei Install Referrer
+### Offline mode
 
-This feature has been removed from being automatically supported in the SDK. However, in Corona, you can add the dependency to a native plugin for Huawei install referrer and make it work. Refer to the documentation for detailed steps.
+The `setOfflineMode` method has been renamed. Corona SDK v5 introduces two separate methods, for clarity:
 
----
+- Call `switchToOfflineMode` to set the SDK to offline mode.
+- Call `switchBackToOnlineMode` to set the SDK back to online mode.
 
-## App-Tracking Authorization Wrapper
+```lua
+local adjust = require "plugin.adjust"
 
-### Method Renamed
+adjust.switchToOfflineMode(); -- enable offline mode
+adjust.switchBackToOnlineMode(); -- disable offline mode
+```
 
-- **V4**:
-  ```lua
-  adjust.requestTrackingAuthorizationWithCompletionHandler(function(event)
-      print("[Adjust]: Authorization status = " .. event.message)
-      if     event.message == "0" then print("[Adjust]: ATTrackingManagerAuthorizationStatusNotDetermined")
-      elseif event.message == "1" then print("[Adjust]: ATTrackingManagerAuthorizationStatusRestricted")
-      elseif event.message == "2" then print("[Adjust]: ATTrackingManagerAuthorizationStatusDenied")
-      elseif event.message == "3" then print("[Adjust]: ATTrackingManagerAuthorizationStatusAuthorized")
-      end
-  end)
-  ```
+### Send from background
 
-- **V5**:
-  ```lua
-  adjust.requestAppTrackingAuthorization(function(event)
-      print("[Adjust]: Authorization status = " .. event.message)
-      if     event.message == "0" then print("[Adjust]: ATTrackingManagerAuthorizationStatusNotDetermined")
-      elseif event.message == "1" then print("[Adjust]: ATTrackingManagerAuthorizationStatusRestricted")
-      elseif event.message == "2" then print("[Adjust]: ATTrackingManagerAuthorizationStatusDenied")
-      elseif event.message == "3" then print("[Adjust]: ATTrackingManagerAuthorizationStatusAuthorized")
-      end
-  end)
-  ```
+The `sendInBackground` initialization map parameter has been renamed to `isSendingInBackgroundEnabled`.
 
----
+To enable the Corona SDK v5 to attempt sending information to Adjust while your app is running in the background, set the `isSendingInBackgroundEnabled` parameter of your initialization map. This feature is disabled by default.
 
-## Get Current Authorization Status
+```lua
+local adjust = require "plugin.adjust"
 
-### Method Renamed
+adjust.initSdk({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE",
+    isSendingInBackgroundEnabled = true
+})
+```
 
-- **V4**:
-  ```lua
-  local status = adjust.appTrackingAuthorizationStatus()
-  print("[Adjust]: Authorization status = " .. status)
-  if     status == "0" then print("[Adjust]: ATTrackingManagerAuthorizationStatusNotDetermined")
-  elseif status == "1" then print("[Adjust]: ATTrackingManagerAuthorizationStatusRestricted")
-  elseif status == "2" then print("[Adjust]: ATTrackingManagerAuthorizationStatusDenied")
-  elseif status == "3" then print("[Adjust]: ATTrackingManagerAuthorizationStatusAuthorized")
-  end
-  ```
+### Attribution callback
 
-- **V5**:
-  ```lua
-  local status = adjust.getAppTrackingAuthorizationStatus()
-  print("[Adjust]: Authorization status = " .. status)
-  if     status == "0" then print("[Adjust]: ATTrackingManagerAuthorizationStatusNotDetermined")
-  elseif status == "1" then print("[Adjust]: ATTrackingManagerAuthorizationStatusRestricted")
-  elseif status == "2" then print("[Adjust]: ATTrackingManagerAuthorizationStatusDenied")
-  elseif status == "3" then print("[Adjust]: ATTrackingManagerAuthorizationStatusAuthorized")
-  end
-  ```
+In Corona SDK v5, the `setAttributionListener` method has been renamed to `setAttributionCallback`.
 
----
+The properties of the `attribution` map have also changed:
 
-## SKAdNetwork
+- The `adid` is no longer part of the attribution.
 
-### Configuration Parameter Renamed
+Below is a sample snippet that implements these changes:
 
-- **V4**:
-  ```lua
-  local adjust = require "plugin.adjust"
+```lua
+local adjust = require "plugin.adjust"
+local json = require "json"
 
-  adjust.create({
-      appToken = "{YourAppToken}",
-      environment = "SANDBOX",
-      logLevel = "VERBOSE",
-      handleSkAdNetwork = false
-  })
-  ```
+adjust.setAttributionCallback(function(event)
+    local json_attribution = json.decode(event.message)
+    print("Attribution changed!")
+    print("Tracker token: " .. (json_attribution.trackerToken or "N/A"))
+    print("Tracker name: " .. (json_attribution.trackerName or "N/A"))
+    print("Campaign: " .. (json_attribution.campaign or "N/A"))
+    print("Network: " .. (json_attribution.network or "N/A"))
+    print("Creative: " .. (json_attribution.creative or "N/A"))
+    print("Adgroup: " .. (json_attribution.adgroup or "N/A"))
+    print("Cost type: " .. (json_attribution.costType or "N/A"))
+    print("Cost amount: " .. (json_attribution.costAmount or "N/A"))
+    print("Cost currency: " .. (json_attribution.costCurrency or "N/A"))
+    print("FB install referrer: " .. (json_attribution.fbInstallReferrer or "N/A"))
+end)
+```
 
-- **V5**:
-  ```lua
-  local adjust = require "plugin.adjust"
+### Event deduplication
 
-  adjust.initSdk({
-      appToken = "{YourAppToken}",
-      environment = "SANDBOX",
-      logLevel = "VERBOSE",
-      isSkanAttributionEnabled = false
-  })
-  ```
+In Corona SDK v5, event deduplication is decoupled from the event `transactionId`. To prevent measuring duplicated events, use the `deduplicationId` ID field.
 
----
+```lua
+local adjust = require "plugin.adjust"
 
-## Event Deduplication
+adjust.trackEvent({
+    eventToken = "abc123",
+    revenue = 1.5,
+    currency = "EUR",
+    deduplicationId = "deduplucation-id"
+})
+```
 
-### Deduplication Field Changed
+### Session callback parameters
 
-- **V4**:
-  ```lua
-  adjust.trackEvent({
-      eventToken = "abc123",
-      transactionId = "YourDeduplicationId"
-  })
-  ```
+In Corona SDK v5, the session callback parameters have been renamed to global callback parameters together with corresponding methods.
 
-- **V5**:
-  ```lua
-  adjust.trackEvent({
-      eventToken = "abc123",
-      deduplicationId = "YourDeduplicationId"
-  })
-  ```
+```lua
+local adjust = require "plugin.adjust"
 
----
+adjust.addGlobalCallbackParameter("user_id", "855");
+adjust.removeGlobalCallbackParameter("user_id");
+adjust.removeGlobalCallbackParameters();
+```
 
-## Subscription Tracking
+### Session partner parameters
 
-For App Store subscription tracking, it’s no longer necessary to pass the `receipt` field.
+In Corona SDK v5, the session partner parameters have been renamed to global partner parameters together with corresponding methods.
 
-- **V4**:
-  ```lua
-  adjust.trackAppStoreSubscription({
-      price = "6.66",
-      currency = "EUR",
-      transactionId = "your-transaction-id",
-      receipt = "your-receipt",
-      transactionDate = "unix-timestamp",
-      salesRegion = "your-sales-region",
-  })
-  ```
+```lua
+local adjust = require "plugin.adjust"
 
-- **V5**:
-  ```lua
-  adjust.trackAppStoreSubscription({
-      price = "6.66",
-      currency = "EUR",
-      transactionId = "your-transaction-id",
-      transactionDate = "unix-timestamp",
-      salesRegion = "your-sales-region",
-  })
-  ```
+adjust.addGlobalPartnerParameter("user_id", "855");
+adjust.removeGlobalPartnerParameter("user_id");
+adjust.removeGlobalPartnerParameters();
+```
 
----
+## Session and event callbacks
 
-## Additional Changes
+### Session success callback
 
-### Session Callback Parameters Renamed
-- **V4**:
-  ```lua
-  adjust.addSessionCallbackParameter("foo", "bar")
-  adjust.removeSessionCallbackParameter("foo")
-  adjust.resetSessionCallbackParameters()
-  ```
-- **V5**:
-  ```lua
-  adjust.addGlobalCallbackParameter("foo", "bar")
-  adjust.removeGlobalCallbackParameter("foo")
-  adjust.removeGlobalCallbackParameters()
-  ```
+In Corona SDK v5, the `setSessionTrackingSuccessListener` method has been renamed to `setSessionSuccessCallback`.
 
----
+```lua
+local adjust = require "plugin.adjust"
 
-Final note: Corona SDK v5 aligns closely with non-native SDKs. Refer to the official documentation for remaining parts.
+adjust.setSessionSuccessCallback(function(event)
+    local json_session_success = json.decode(event.message)
+    print("Session tracking success!")
+    print("Message: " .. (json_session_success.message or "N/A"))
+    print("Timestamp: " .. (json_session_success.timestamp or "N/A"))
+    print("Adid: " .. (json_session_success.adid or "N/A"))
+    print("JSON response: " .. (json.encode(json_session_success.jsonResponse) or "N/A"))
+end)
+```
+
+### Session failure callback
+
+In Corona SDK v5, the `setSessionTrackingFailureListener` method has been renamed to `setSessionFailureCallback`.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.setSessionFailureCallback(function(event)
+    local json_session_failure = json.decode(event.message)
+    print("Session tracking failure!")
+    print("Message: " .. (json_session_failure.message or "N/A"))
+    print("Timestamp: " .. (json_session_failure.timestamp or "N/A"))
+    print("Adid: " .. (json_session_failure.adid or "N/A"))
+    print("Will retry: " .. (json_session_failure.willRetry or "N/A"))
+    print("JSON response: " .. (json.encode(json_session_failure.jsonResponse) or "N/A"))
+end)
+```
+
+### Event success callback
+
+In Corona SDK v5, the `setEventTrackingSuccessListener` method has been renamed to `setEventSuccessCallback`.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.setEventSuccessCallback(function(event)
+    local json_event_success = json.decode(event.message)
+    print("Event tracking success!")
+    print("Event token: " .. (json_event_success.eventToken or "N/A"))
+    print("Message: " .. (json_event_success.message or "N/A"))
+    print("Timestamp: " .. (json_event_success.timestamp or "N/A"))
+    print("Adid: " .. (json_event_success.adid or "N/A"))
+    print("JSON response: " .. (json.encode(json_event_success.jsonResponse) or "N/A"))
+end)
+```
+
+### Event failure callback
+
+In Corona SDK v5, the `setEventTrackingFailureListener` method has been renamed to `setEventFailureCallback`.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.setEventFailureCallback(function(event)
+    local json_event_failure = json.decode(event.message)
+    print("Event tracking failure!")
+    print("Event token: " .. (json_event_failure.eventToken or "N/A"))
+    print("Message: " .. (json_event_failure.message or "N/A"))
+    print("Timestamp: " .. (json_event_failure.timestamp or "N/A"))
+    print("Adid: " .. (json_event_failure.adid or "N/A"))
+    print("Will retry: " .. (json_event_failure.willRetry or "N/A"))
+    print("JSON response: " .. (json.encode(json_event_failure.jsonResponse) or "N/A"))
+end)
+```
+
+## Deep linking
+
+### Reattribution via deep links
+
+In Corona SDK v5, the `appWillOpenUrl` method has been renamed to `processDeeplink`.
+
+To process a direct deep link, create a deep link map with the `deeplink` parameter, and pass it to the `processDeeplink` method.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjustDeeplink = {}
+adjustDeeplink.deeplink = "your-deep-link"
+
+adjust.processDeeplink(adjustDeeplink)
+```
+
+### Disable opening deferred deep links
+
+In Corona SDK v5, the `shouldLaunchDeeplink` parameter has been renamed to `isDeferredDeeplinkOpeningEnabled`. Opening deferred deep links is enabled by default.
+
+To disable opening deferred deep links, call the renamed method:
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.initSdk({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE",
+    isDeferredDeeplinkOpeningEnabled = false
+})
+```
+
+### Deferred deep link callback
+
+In Corona SDK v5, the `setDeferredDeeplinkListener` method has been renamed to `setDeferredDeeplinkCallback`.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.setDeferredDeeplinkCallback(function(event)
+    print("Deferred deep link: " .. event.message)
+end)
+```
+
+## iOS only API
+
+### SKAdNetwork handling
+
+In Corona SDK v5, the `handleSkAdNetwork` parameter has been renamed to `isSkanAttributionEnabled`. The `SKAdNetwork` API is enabled by default.
+
+To disable the `SKAdNetwork` communication, set the `isSkanAttributionEnabled` parameter of your initialization map.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.initSdk({
+    appToken = "{YourAppToken}",
+    environment = "SANDBOX",
+    logLevel = "VERBOSE",
+    isSkanAttributionEnabled = false
+})
+```
+
+### App Tracking Transparency authorization wrapper 
+
+In Corona SDK v5, the `requestTrackingAuthorizationWithCompletionHandler` method has been renamed to `requestAppTrackingAuthorization` for clarity.
+
+The renamed method is invoked like so:
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.requestAppTrackingAuthorization(function(status)
+    if status.message == 0 then
+        -- ATTrackingManagerAuthorizationStatusNotDetermined case
+    elseif status.message == 1 then
+        -- ATTrackingManagerAuthorizationStatusRestricted case
+    elseif status.message == 2 then
+        -- ATTrackingManagerAuthorizationStatusDenied case
+    elseif status.message == 3 then
+        -- ATTrackingManagerAuthorizationStatusAuthorized case
+    else
+        -- error case
+    end
+end)
+```
+
+## Get device information
+
+### Get attribution information
+
+`adid` field is no longer the part of the attribution map which `getAttribution` getter is returning.
+
+```lua
+local adjust = require "plugin.adjust"
+local json = require "json"
+
+adjust.getAttribution(function(event) 
+    local json_attribution = json.decode(event.message)
+    print("Tracker token: " .. (json_attribution.trackerToken or "N/A"))
+    print("Tracker name: " .. (json_attribution.trackerName or "N/A"))
+    print("Campaign: " .. (json_attribution.campaign or "N/A"))
+    print("Network: " .. (json_attribution.network or "N/A"))
+    print("Creative: " .. (json_attribution.creative or "N/A"))
+    print("Adgroup: " .. (json_attribution.adgroup or "N/A"))
+    print("Cost type: " .. (json_attribution.costType or "N/A"))
+    print("Cost amount: " .. (json_attribution.costAmount or "N/A"))
+    print("Cost currency: " .. (json_attribution.costCurrency or "N/A"))
+    print("FB install referrer: " .. (json_attribution.fbInstallReferrer or "N/A"))
+end)
+```
+
+## Removed APIs
+
+The following APIs have been removed from Corona SDK v5.
+
+- The `delayStart` initialization parameter has been removed.
+- The `sendFirstPackages` method has been removed.
+- The `eventBufferingEnabled` initialization parameter has been removed.
+- The `readMobileEquipmentIdentity` initialization parameter has been removed. (non-Google Play Store Android apps only)
+
+### Disable third party sharing globally
+
+The `disableThirdPartySharing` method has been removed.
+
+To disable all third-party sharing in Corona SDK v5, use the `trackThirdPartySharing` method.
+
+```lua
+local adjust = require "plugin.adjust"
+
+adjust.trackThirdPartySharing({
+    enabled = false,
+})
+```
+
+### Huawei referrer API
+
+This feature has been removed. If your Solar2D / Corona app uses the Huawei referrer API, contact your Adjust representative or email support@adjust.com before you upgrade.
