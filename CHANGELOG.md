@@ -1,4 +1,4 @@
-### Version 5.0.0 (3rd December 2025)
+### Version 5.0.0 (3rd January 2025)
 
 We're excited to release our major new SDK version (v5). Among many internal improvements, our spoofing protection solution is now included out of the box, reinforcing our commitment to accurate, actionable, and fraud-free data.
 
