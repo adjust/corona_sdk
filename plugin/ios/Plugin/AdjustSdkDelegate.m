@@ -2,12 +2,17 @@
 //  AdjustSdkDelegate.m
 //  Adjust SDK
 //
-//  Created by Abdullah Obaied (@obaied) on 11th September 2017.
-//  Copyright (c) 2017-2022 Adjust GmbH. All rights reserved.
+//  Created by Abdullah Obaied on 11th September 2017.
+//  Copyright (c) 2017-Present Adjust GmbH. All rights reserved.
 //
 
 #import <objc/runtime.h>
 #import "AdjustSdkDelegate.h"
+#import "ADJAttribution.h"
+#import "ADJSessionSuccess.h"
+#import "ADJSessionFailure.h"
+#import "ADJEventSuccess.h"
+#import "ADJEventFailure.h"
 
 static dispatch_once_t onceToken;
 static AdjustSdkDelegate *defaultInstance = nil;
@@ -50,15 +55,14 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
 #pragma mark - Public methods
 
 + (id)getInstanceWithSwizzleOfAttributionChangedCallback:(CoronaLuaRef)attributionCallback
-                            eventTrackingSuccessCallback:(CoronaLuaRef)eventTrackingSuccessCallback
-                            eventTrackingFailureCallback:(CoronaLuaRef)eventTrackingFailureCallback
-                          sessionTrackingSuccessCallback:(CoronaLuaRef)sessionTrackingSuccessCallback
-                          sessionTrackingFailureCallback:(CoronaLuaRef)sessionTrackingFailureCallback
+                                    eventSuccessCallback:(CoronaLuaRef)eventSuccessCallback
+                                    eventFailureCallback:(CoronaLuaRef)eventFailureCallback
+                                  sessionSuccessCallback:(CoronaLuaRef)sessionSuccessCallback
+                                  sessionFailureCallback:(CoronaLuaRef)sessionFailureCallback
                                 deferredDeeplinkCallback:(CoronaLuaRef)deferredDeeplinkCallback
-                          conversionValueUpdatedCallback:(CoronaLuaRef)conversionValueUpdatedCallback
-                     skan4ConversionValueUpdatedCallback:(CoronaLuaRef)skan4ConversionValueUpdatedCallback
+                                     skanUpdatedCallback:(CoronaLuaRef)skanUpdatedCallback
                             shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink
-                                             andLuaState:(lua_State *)luaState {
+                                                luaState:(lua_State *)luaState {
     dispatch_once(&onceToken, ^{
         defaultInstance = [[AdjustSdkDelegate alloc] init];
 
@@ -67,43 +71,38 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
             [defaultInstance swizzleOriginalSelector:@selector(adjustAttributionChanged:)
                                         withSelector:@selector(adjustAttributionChangedWannabe:)];
         }
-        if (eventTrackingSuccessCallback != NULL) {
+        if (eventSuccessCallback != NULL) {
             [defaultInstance swizzleOriginalSelector:@selector(adjustEventTrackingSucceeded:)
-                                        withSelector:@selector(adjustEventTrackingSucceededWannabe:)];
+                                        withSelector:@selector(adjustEventSucceededWannabe:)];
         }
-        if (eventTrackingFailureCallback != NULL) {
+        if (eventFailureCallback != NULL) {
             [defaultInstance swizzleOriginalSelector:@selector(adjustEventTrackingFailed:)
-                                        withSelector:@selector(adjustEventTrackingFailedWannabe:)];
+                                        withSelector:@selector(adjustEventFailedWannabe:)];
         }
-        if (sessionTrackingSuccessCallback != NULL) {
+        if (sessionSuccessCallback != NULL) {
             [defaultInstance swizzleOriginalSelector:@selector(adjustSessionTrackingSucceeded:)
-                                        withSelector:@selector(adjustSessionTrackingSucceededWannabe:)];
+                                        withSelector:@selector(adjustSessionSucceededWannabe:)];
         }
-        if (sessionTrackingFailureCallback != NULL) {
+        if (sessionFailureCallback != NULL) {
             [defaultInstance swizzleOriginalSelector:@selector(adjustSessionTrackingFailed:)
-                                        withSelector:@selector(adjustSessionTrackingFailedWannabe:)];
+                                        withSelector:@selector(adjustSessionFailedWannabe:)];
         }
         if (deferredDeeplinkCallback != NULL) {
-            [defaultInstance swizzleOriginalSelector:@selector(adjustDeeplinkResponse:)
-                                        withSelector:@selector(adjustDeeplinkResponseWannabe:)];
+            [defaultInstance swizzleOriginalSelector:@selector(adjustDeferredDeeplinkReceived:)
+                                        withSelector:@selector(adjustDeferredDeeplinkReceivedWannabe:)];
         }
-        if (conversionValueUpdatedCallback != NULL) {
-            [defaultInstance swizzleOriginalSelector:@selector(adjustConversionValueUpdated:)
-                                        withSelector:@selector(adjustConversionValueUpdatedWannabe:)];
-        }
-        if (skan4ConversionValueUpdatedCallback != NULL) {
-            [defaultInstance swizzleOriginalSelector:@selector(adjustConversionValueUpdated:coarseValue:lockWindow:)
-                                        withSelector:@selector(adjustConversionValueUpdatedWannabe:coarseValue:lockWindow:)];
+        if (skanUpdatedCallback != NULL) {
+            [defaultInstance swizzleOriginalSelector:@selector(adjustSkanUpdatedWithConversionData:)
+                                        withSelector:@selector(adjustSkanUpdatedWithConversionDataWannabe:)];
         }
 
         [defaultInstance setAttributionChangedCallback:attributionCallback];
-        [defaultInstance setEventTrackingSuccessCallback:eventTrackingSuccessCallback];
-        [defaultInstance setEventTrackingFailureCallback:eventTrackingFailureCallback];
-        [defaultInstance setSessionTrackingSuccessCallback:sessionTrackingSuccessCallback];
-        [defaultInstance setSessionTrackingFailureCallback:sessionTrackingFailureCallback];
+        [defaultInstance setEventSuccessCallback:eventSuccessCallback];
+        [defaultInstance setEventFailureCallback:eventFailureCallback];
+        [defaultInstance setSessionSuccessCallback:sessionSuccessCallback];
+        [defaultInstance setSessionFailureCallback:sessionFailureCallback];
         [defaultInstance setDeferredDeeplinkCallback:deferredDeeplinkCallback];
-        [defaultInstance setConversionValueUpdatedCallback:conversionValueUpdatedCallback];
-        [defaultInstance setSkan4ConversionValueUpdatedCallback:skan4ConversionValueUpdatedCallback];
+        [defaultInstance setSkanUpdatedCallback:skanUpdatedCallback];
         [defaultInstance setShouldLaunchDeferredDeeplink:shouldLaunchDeferredDeeplink];
         [defaultInstance setLuaState:luaState];
     });
@@ -119,14 +118,17 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
 + (void)dispatchEvent:(NSString *)eventName
             withState:(lua_State *)luaState
              callback:(CoronaLuaRef)callback
-           andMessage:(NSString *)message {
-    // Create event and add message to it.
-    CoronaLuaNewEvent(luaState, [eventName UTF8String]);
-    lua_pushstring(luaState, [message UTF8String]);
-    lua_setfield(luaState, -2, "message");
-
-    // Dispatch event to library's listener
-    CoronaLuaDispatchEvent(luaState, callback, 0);
+              message:(NSString *)message {
+    @try {
+        CoronaLuaNewEvent(luaState, [eventName UTF8String]);
+        lua_pushstring(luaState, [message UTF8String]);
+        lua_setfield(luaState, -2, "message");
+        
+        // Dispatch event to library's listener
+        CoronaLuaDispatchEvent(luaState, callback, 0);
+    } @catch (NSException *exception) {
+        NSLog(@"[AdjustPlugin]: Error while dispatching event %@ with message %@", eventName, message);
+    }
 }
 
 + (void)addKey:(NSString *)key
@@ -135,7 +137,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
     if (nil != value) {
         [dictionary setObject:[NSString stringWithFormat:@"%@", value] forKey:key];
     } else {
-        [dictionary setObject:@"" forKey:key];
+        [dictionary setObject:[NSNull null] forKey:key];
     }
 }
 
@@ -154,187 +156,195 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
     [AdjustSdkDelegate addKey:KEY_CREATIVE andValue:attribution.creative toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_ADGROUP andValue:attribution.adgroup toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_CLICK_LABEL andValue:attribution.clickLabel toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_ADID andValue:attribution.adid toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_COST_TYPE andValue:attribution.costType toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_COST_AMOUNT andValue:attribution.costAmount toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_COST_CURRENCY andValue:attribution.costCurrency toDictionary:dictionary];
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
-                                                       options:NSJSONWritingPrettyPrinted
+                                                       options:0
                                                          error:&error];
     if (!jsonData) {
-        NSLog(@"[Adjust][bridge]: Error while trying to convert attribution dictionary to JSON string: %@", error);
+        NSLog(@"[AdjustPlugin]: Error while trying to convert attribution dictionary to JSON string: %@", error);
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         [AdjustSdkDelegate dispatchEvent:ADJ_ATTRIBUTION_CHANGED
                                withState:_luaState
                                 callback:_attributionChangedCallback
-                              andMessage:jsonString];
+                                 message:jsonString];
     }
 }
 
-- (void)adjustSessionTrackingSucceededWannabe:(ADJSessionSuccess *)sessionSuccessResponseData {
+- (void)adjustSessionSucceededWannabe:(ADJSessionSuccess *)sessionSuccessResponseData {
     if (nil == sessionSuccessResponseData) {
         return;
     }
 
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     [AdjustSdkDelegate addKey:KEY_MESSAGE andValue:sessionSuccessResponseData.message toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:sessionSuccessResponseData.timeStamp toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:sessionSuccessResponseData.timestamp toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_ADID andValue:sessionSuccessResponseData.adid toDictionary:dictionary];
     if (sessionSuccessResponseData.jsonResponse != nil) {
-        [dictionary setObject:sessionSuccessResponseData.jsonResponse forKey:KEY_JSON_RESPONSE];
+        NSError *writeError = nil;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:sessionSuccessResponseData.jsonResponse
+                                                           options:0
+                                                             error:&writeError];
+        NSString *strJsonResponse = [[NSString alloc] initWithData:jsonData
+                                                          encoding:NSUTF8StringEncoding];
+        [AdjustSdkDelegate addKey:KEY_JSON_RESPONSE andValue:strJsonResponse toDictionary:dictionary];
     }
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
-                                                       options:NSJSONWritingPrettyPrinted
+                                                       options:0
                                                          error:&error];
     if (!jsonData) {
-        NSLog(@"[Adjust][bridge]: Error while trying to convert session success dictionary to JSON string: %@", error);
+        NSLog(@"[AdjustPlugin]: Error while trying to convert session success dictionary to JSON string: %@", error);
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         [AdjustSdkDelegate dispatchEvent:ADJ_SESSION_TRACKING_SUCCESS
                                withState:_luaState
-                                callback:_sessionTrackingSuccessCallback
-                              andMessage:jsonString];
+                                callback:_sessionSuccessCallback
+                                 message:jsonString];
     }
 }
 
-- (void)adjustSessionTrackingFailedWannabe:(ADJSessionFailure *)sessionFailureResponseData {
+- (void)adjustSessionFailedWannabe:(ADJSessionFailure *)sessionFailureResponseData {
     if (nil == sessionFailureResponseData) {
         return;
     }
 
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     [AdjustSdkDelegate addKey:KEY_MESSAGE andValue:sessionFailureResponseData.message toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:sessionFailureResponseData.timeStamp toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:sessionFailureResponseData.timestamp toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_ADID andValue:sessionFailureResponseData.adid toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_WILL_RETRY andValue:(sessionFailureResponseData.willRetry ? @"true" : @"false") toDictionary:dictionary];
     if (sessionFailureResponseData.jsonResponse != nil) {
-        [dictionary setObject:sessionFailureResponseData.jsonResponse forKey:KEY_JSON_RESPONSE];
+        NSError *writeError = nil;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:sessionFailureResponseData.jsonResponse
+                                                           options:0
+                                                             error:&writeError];
+        NSString *strJsonResponse = [[NSString alloc] initWithData:jsonData
+                                                          encoding:NSUTF8StringEncoding];
+        [AdjustSdkDelegate addKey:KEY_JSON_RESPONSE andValue:strJsonResponse toDictionary:dictionary];
     }
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
-                                                       options:NSJSONWritingPrettyPrinted
+                                                       options:0
                                                          error:&error];
     if (!jsonData) {
-        NSLog(@"[Adjust][bridge]: Error while trying to convert session failure dictionary to JSON string: %@", error);
+        NSLog(@"[AdjustPlugin]: Error while trying to convert session failure dictionary to JSON string: %@", error);
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         [AdjustSdkDelegate dispatchEvent:ADJ_SESSION_TRACKING_FAILURE
                                withState:_luaState
-                                callback:_sessionTrackingFailureCallback
-                              andMessage:jsonString];
+                                callback:_sessionFailureCallback
+                                 message:jsonString];
     }
 }
 
-- (void)adjustEventTrackingSucceededWannabe:(ADJEventSuccess *)eventSuccessResponseData {
+- (void)adjustEventSucceededWannabe:(ADJEventSuccess *)eventSuccessResponseData {
     if (nil == eventSuccessResponseData) {
         return;
     }
 
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     [AdjustSdkDelegate addKey:KEY_MESSAGE andValue:eventSuccessResponseData.message toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:eventSuccessResponseData.timeStamp toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:eventSuccessResponseData.timestamp toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_ADID andValue:eventSuccessResponseData.adid toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_EVENT_TOKEN andValue:eventSuccessResponseData.eventToken toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_CALLBACK_ID andValue:eventSuccessResponseData.callbackId toDictionary:dictionary];
     if (eventSuccessResponseData.jsonResponse != nil) {
-        [dictionary setObject:eventSuccessResponseData.jsonResponse forKey:KEY_JSON_RESPONSE];
+        NSError *writeError = nil;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:eventSuccessResponseData.jsonResponse
+                                                           options:0
+                                                             error:&writeError];
+        NSString *strJsonResponse = [[NSString alloc] initWithData:jsonData
+                                                          encoding:NSUTF8StringEncoding];
+        [AdjustSdkDelegate addKey:KEY_JSON_RESPONSE andValue:strJsonResponse toDictionary:dictionary];
     }
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
-                                                       options:NSJSONWritingPrettyPrinted
+                                                       options:0
                                                          error:&error];
     if (!jsonData) {
-        NSLog(@"[Adjust][bridge]: Error while trying to convert event success dictionary to JSON string: %@", error);
+        NSLog(@"[AdjustPlugin]: Error while trying to convert event success dictionary to JSON string: %@", error);
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         [AdjustSdkDelegate dispatchEvent:ADJ_EVENT_TRACKING_SUCCESS
                                withState:_luaState
-                                callback:_eventTrackingSuccessCallback
-                              andMessage:jsonString];
+                                callback:_eventSuccessCallback
+                                 message:jsonString];
     }
 }
 
-- (void)adjustEventTrackingFailedWannabe:(ADJEventFailure *)eventFailureResponseData {
+- (void)adjustEventFailedWannabe:(ADJEventFailure *)eventFailureResponseData {
     if (nil == eventFailureResponseData) {
         return;
     }
 
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     [AdjustSdkDelegate addKey:KEY_MESSAGE andValue:eventFailureResponseData.message toDictionary:dictionary];
-    [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:eventFailureResponseData.timeStamp toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:KEY_TIMESTAMP andValue:eventFailureResponseData.timestamp toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_ADID andValue:eventFailureResponseData.adid toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_EVENT_TOKEN andValue:eventFailureResponseData.eventToken toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_CALLBACK_ID andValue:eventFailureResponseData.callbackId toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_WILL_RETRY andValue:(eventFailureResponseData.willRetry ? @"true" : @"false") toDictionary:dictionary];
     if (eventFailureResponseData.jsonResponse != nil) {
-        [dictionary setObject:eventFailureResponseData.jsonResponse forKey:KEY_JSON_RESPONSE];
+        NSError *writeError = nil;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:eventFailureResponseData.jsonResponse
+                                                           options:0
+                                                             error:&writeError];
+        NSString *strJsonResponse = [[NSString alloc] initWithData:jsonData
+                                                          encoding:NSUTF8StringEncoding];
+        [AdjustSdkDelegate addKey:KEY_JSON_RESPONSE andValue:strJsonResponse toDictionary:dictionary];
     }
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
-                                                       options:NSJSONWritingPrettyPrinted
+                                                       options:0
                                                          error:&error];
     if (!jsonData) {
-        NSLog(@"[Adjust][bridge]: Error while trying to convert event failure dictionary to JSON string: %@", error);
+        NSLog(@"[AdjustPlugin]: Error while trying to convert event failure dictionary to JSON string: %@", error);
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         [AdjustSdkDelegate dispatchEvent:ADJ_EVENT_TRACKING_FAILURE
                                withState:_luaState
-                                callback:_eventTrackingFailureCallback
-                              andMessage:jsonString];
+                                callback:_eventFailureCallback
+                                 message:jsonString];
     }
 }
 
-- (BOOL)adjustDeeplinkResponseWannabe:(NSURL *)deeplink {
+- (BOOL)adjustDeferredDeeplinkReceivedWannabe:(NSURL *)deeplink {
     NSString *strDeeplink = [deeplink absoluteString];
     [AdjustSdkDelegate dispatchEvent:ADJ_DEFERRED_DEEPLINK
                            withState:_luaState
                             callback:_deferredDeeplinkCallback
-                          andMessage:strDeeplink];
+                             message:strDeeplink];
     return _shouldLaunchDeferredDeeplink;
 }
 
-- (void)adjustConversionValueUpdatedWannabe:(NSNumber *)conversionValue {
-    NSString *strConversionValue = [conversionValue stringValue];
-    [AdjustSdkDelegate dispatchEvent:ADJ_CONVERSION_VALUE_UPDATED
-                           withState:_luaState
-                            callback:_conversionValueUpdatedCallback
-                          andMessage:strConversionValue];
-}
-
-- (void)adjustConversionValueUpdatedWannabe:(nullable NSNumber *)fineValue
-                                coarseValue:(nullable NSString *)coarseValue
-                                 lockWindow:(nullable NSNumber *)lockWindow {
+- (void)adjustSkanUpdatedWithConversionDataWannabe:(NSDictionary<NSString *,NSString *> *)data {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-    if (fineValue != nil) {
-        [AdjustSdkDelegate addKey:KEY_FINE_VALUE andValue:fineValue toDictionary:dictionary];
-    }
-    if (coarseValue != nil) {
-        [AdjustSdkDelegate addKey:KEY_COARSE_VALUE andValue:coarseValue toDictionary:dictionary];
-    }
-    if (lockWindow != nil) {
-        [AdjustSdkDelegate addKey:KEY_LOCK_WINDOW andValue:lockWindow toDictionary:dictionary];
-    }
+    [AdjustSdkDelegate addKey:@"conversionValue" andValue:data[@"conversion_value"] toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:@"coarseValue" andValue:data[@"coarse_value"] toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:@"lockWindow" andValue:data[@"lock_window"] toDictionary:dictionary];
+    [AdjustSdkDelegate addKey:@"error" andValue:data[@"error"] toDictionary:dictionary];
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
-                                                       options:NSJSONWritingPrettyPrinted
+                                                       options:0
                                                          error:&error];
     if (!jsonData) {
-        NSLog(@"[Adjust][bridge]: Error while trying to convert SKAN4 conversion value update dictionary to JSON string: %@", error);
+        NSLog(@"[AdjustPlugin]: Error while trying to update skan dictionary to JSON string: %@", error);
     } else {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-        [AdjustSdkDelegate dispatchEvent:ADJ_SKAN4_CONVERSION_VALUE_UPDATED
+        [AdjustSdkDelegate dispatchEvent:ADJ_SKAN_UPDATED
                                withState:_luaState
-                                callback:_skan4ConversionValueUpdatedCallback
-                              andMessage:jsonString];
+                                callback:_skanUpdatedCallback
+                                 message:jsonString];
     }
 }
 

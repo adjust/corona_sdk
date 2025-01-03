@@ -1,3 +1,17 @@
+### Version 5.0.0 (3rd January 2025)
+
+We're excited to release our major new SDK version (v5). Among many internal improvements, our spoofing protection solution is now included out of the box, reinforcing our commitment to accurate, actionable, and fraud-free data.
+
+To try out SDK v5 in your app, you can follow our new v4 to v5 [migration guide](./MIGRATION.md).
+
+If you are a current Adjust client and have questions about SDK v5, please email [sdk-v5@adjust.com](mailto:sdk-v5@adjust.com).
+
+#### Native SDKs
+- [Android@v5.0.2][android_sdk_v5.0.2]
+- [iOS@v5.0.1][ios_sdk_v5.0.1]
+
+---
+
 ### Version 4.33.0 (13th March 2023)
 #### Added
 - Added support for SKAN 4.0.
@@ -233,6 +247,7 @@
 [ios_sdk_v4.29.2]: https://github.com/adjust/ios_sdk/tree/v4.29.2
 [ios_sdk_v4.29.6]: https://github.com/adjust/ios_sdk/tree/v4.29.6
 [ios_sdk_v4.33.4]: https://github.com/adjust/ios_sdk/tree/v4.33.4
+[ios_sdk_v5.0.1]: https://github.com/adjust/ios_sdk/tree/v5.0.1
 
 [android_sdk_v4.12.0]: https://github.com/adjust/android_sdk/tree/v4.12.0
 [android_sdk_v4.12.1]: https://github.com/adjust/android_sdk/tree/v4.12.1
@@ -250,3 +265,4 @@
 [android_sdk_v4.28.8]: https://github.com/adjust/android_sdk/tree/v4.28.8
 [android_sdk_v4.28.9]: https://github.com/adjust/android_sdk/tree/v4.28.9
 [android_sdk_v4.33.3]: https://github.com/adjust/android_sdk/tree/v4.33.3
+[android_sdk_v5.0.1]: https://github.com/adjust/android_sdk/tree/v5.0.1

@@ -22,9 +22,5 @@ settings =
 			UILaunchStoryboardName = "LaunchScreen",
 		},
 	},
-    plugins =
-    {
-        ['plugin.adjust'] = { publisherId = 'com.adjust' },
-    }
 
 }

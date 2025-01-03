@@ -2,12 +2,13 @@
 //  AdjustSdkDelegate.h
 //  Adjust SDK
 //
-//  Created by Abdullah Obaied (@obaied) on 11th September 2017.
-//  Copyright (c) 2017-2022 Adjust GmbH. All rights reserved.
+//  Created by Abdullah Obaied on 11th September 2017.
+//  Copyright (c) 2017-Present Adjust GmbH. All rights reserved.
 //
 
 #include <CoronaLua.h>
 #import "Adjust.h"
+#import "ADJConfig.h"
 
 #define ADJ_ATTRIBUTION_CHANGED @"adjust_attributionChanged"
 #define ADJ_EVENT_TRACKING_SUCCESS @"adjust_eventTrackingSuccess"
@@ -15,8 +16,7 @@
 #define ADJ_SESSION_TRACKING_SUCCESS @"adjust_sessionTrackingSuccess"
 #define ADJ_SESSION_TRACKING_FAILURE @"adjust_sessionTrackingFailure"
 #define ADJ_DEFERRED_DEEPLINK @"adjust_deferredDeeplink"
-#define ADJ_CONVERSION_VALUE_UPDATED @"adjust_conversionValueUpdated"
-#define ADJ_SKAN4_CONVERSION_VALUE_UPDATED @"adjust_skan4ConversionValueUpdated"
+#define ADJ_SKAN_UPDATED @"adjust_skanUpdated"
 
 /**
  * @brief Adjust delegate singleton which takes care of bridging between native SDK and Lua callbacks.
@@ -36,37 +36,31 @@
 /**
  * @brief Event success callback reference.
  */
-@property (nonatomic) CoronaLuaRef eventTrackingSuccessCallback;
+@property (nonatomic) CoronaLuaRef eventSuccessCallback;
 
 /**
  * @brief Event failure callback reference.
  */
-@property (nonatomic) CoronaLuaRef eventTrackingFailureCallback;
+@property (nonatomic) CoronaLuaRef eventFailureCallback;
 
 /**
  * @brief Session success callback reference.
  */
-@property (nonatomic) CoronaLuaRef sessionTrackingSuccessCallback;
+@property (nonatomic) CoronaLuaRef sessionSuccessCallback;
 
 /**
  * @brief Session failure callback reference.
  */
-@property (nonatomic) CoronaLuaRef sessionTrackingFailureCallback;
+@property (nonatomic) CoronaLuaRef sessionFailureCallback;
 
 /**
  * @brief Deferred deep link callback reference.
  */
 @property (nonatomic) CoronaLuaRef deferredDeeplinkCallback;
-
 /**
- * @brief Conversion value updated callback reference.
+ * @brief SKAN updated callback reference.
  */
-@property (nonatomic) CoronaLuaRef conversionValueUpdatedCallback;
-
-/**
- * @brief Conversion value updated callback (SKAN4) reference.
- */
-@property (nonatomic) CoronaLuaRef skan4ConversionValueUpdatedCallback;
+@property (nonatomic) CoronaLuaRef skanUpdatedCallback;
 
 /**
  * @brief Should deferred deep link be opened or not.
@@ -76,29 +70,27 @@
 /**
  * @brief Obtain static instance of AdjustSdkDelegate.
  *
- * @param attributionCallback                   Attribution callback reference.
- * @param eventTrackingSuccessCallback          Event success callback reference.
- * @param eventTrackingFailureCallback          Event failure callback reference.
- * @param sessionTrackingSuccessCallback        Session success callback reference.
- * @param sessionTrackingFailureCallback        Session failure callback reference.
- * @param deferredDeeplinkCallback              Deferred deep link callback reference.
- * @param conversionValueUpdatedCallback        Conversion value updated callback reference.
- * @param skan4conversionValueUpdatedCallback   Conversion value updated callback reference.
- * @param shouldLaunchDeferredDeeplink          Should deferred deep link be opened or not.
- * @param luaState                              Lua state object.
+ * @param attributionCallback           Attribution callback reference.
+ * @param eventSuccessCallback          Event success callback reference.
+ * @param eventFailureCallback          Event failure callback reference.
+ * @param sessionSuccessCallback        Session success callback reference.
+ * @param sessionFailureCallback        Session failure callback reference.
+ * @param deferredDeeplinkCallback      Deferred deep link callback reference.
+ * @param skanUpdatedCallback           SKAN updated callback reference.
+ * @param shouldLaunchDeferredDeeplink  Should deferred deep link be opened or not.
+ * @param luaState                      Lua state object.
  *
  * @returns Static instance of AdjustSdkDelegate.
  */
 + (id)getInstanceWithSwizzleOfAttributionChangedCallback:(CoronaLuaRef)attributionCallback
-                            eventTrackingSuccessCallback:(CoronaLuaRef)eventTrackingSuccessCallback
-                            eventTrackingFailureCallback:(CoronaLuaRef)eventTrackingFailureCallback
-                          sessionTrackingSuccessCallback:(CoronaLuaRef)sessionTrackingSuccessCallback
-                          sessionTrackingFailureCallback:(CoronaLuaRef)sessionTrackingFailureCallback
+                                    eventSuccessCallback:(CoronaLuaRef)eventSuccessCallback
+                                    eventFailureCallback:(CoronaLuaRef)eventFailureCallback
+                                  sessionSuccessCallback:(CoronaLuaRef)sessionSuccessCallback
+                                  sessionFailureCallback:(CoronaLuaRef)sessionFailureCallback
                                 deferredDeeplinkCallback:(CoronaLuaRef)deferredDeeplinkCallback
-                          conversionValueUpdatedCallback:(CoronaLuaRef)conversionValueUpdatedCallback
-                     skan4ConversionValueUpdatedCallback:(CoronaLuaRef)skan4ConversionValueUpdatedCallback
+                                     skanUpdatedCallback:(CoronaLuaRef)skanUpdatedCallback
                             shouldLaunchDeferredDeeplink:(BOOL)shouldLaunchDeferredDeeplink
-                                             andLuaState:(lua_State *)luaState;
+                                                luaState:(lua_State *)luaState;
 
 /**
  * @brief Dispatch event from native bridge to Lua world.
@@ -111,7 +103,7 @@
 + (void)dispatchEvent:(NSString *)eventName
             withState:(lua_State *)luaState
              callback:(CoronaLuaRef)callback
-           andMessage:(NSString *)message;
+              message:(NSString *)message;
 
 /**
  * @brief Add key-value pair to dictionary. If value is nil, add empty string value.

@@ -124,7 +124,7 @@ val parsedBuildProperties: JsonObject = run {
 }
 
 val coronaMinSdkVersion = parsedBuildProperties.lookup<Any?>("buildSettings.android.minSdkVersion").firstOrNull()?.toString()?.toIntOrNull()
-        ?: 15
+        ?: 21
 
 val coronaBuilder = if (windows) {
     "$nativeDir/Corona/win/bin/CoronaBuilder.exe"
@@ -181,10 +181,10 @@ if (configureCoronaPlugins == "YES") {
 //</editor-fold>
 
 android {
-    compileSdkVersion(30)
+    compileSdkVersion(33)
     defaultConfig {
         applicationId = coronaAppPackage
-        targetSdkVersion(30)
+        targetSdkVersion(33)
         minSdkVersion(coronaMinSdkVersion)
         versionCode = coronaVersionCode
         versionName = coronaVersionName
@@ -257,6 +257,7 @@ android {
             }
         }
     }
+    namespace = "com.adjust.example"
 }
 
 //<editor-fold desc="Packaging Corona App" defaultstate="collapsed">
@@ -1086,4 +1087,6 @@ dependencies {
         implementation(project(":plugin"))
     }
     implementation("androidx.multidex:multidex:2.0.1")
+    implementation("com.adjust.sdk:adjust-android:5.0.2")
+    implementation("com.android.installreferrer:installreferrer:2.2")
 }
