@@ -162,7 +162,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
-                                                       options:NSJSONWritingPrettyPrinted
+                                                       options:0
                                                          error:&error];
     if (!jsonData) {
         NSLog(@"[AdjustPlugin]: Error while trying to convert attribution dictionary to JSON string: %@", error);
@@ -187,7 +187,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
     if (sessionSuccessResponseData.jsonResponse != nil) {
         NSError *writeError = nil;
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:sessionSuccessResponseData.jsonResponse
-                                                           options:NSJSONWritingPrettyPrinted
+                                                           options:0
                                                              error:&writeError];
         NSString *strJsonResponse = [[NSString alloc] initWithData:jsonData
                                                           encoding:NSUTF8StringEncoding];
@@ -196,7 +196,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
-                                                       options:NSJSONWritingPrettyPrinted
+                                                       options:0
                                                          error:&error];
     if (!jsonData) {
         NSLog(@"[AdjustPlugin]: Error while trying to convert session success dictionary to JSON string: %@", error);
@@ -222,7 +222,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
     if (sessionFailureResponseData.jsonResponse != nil) {
         NSError *writeError = nil;
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:sessionFailureResponseData.jsonResponse
-                                                           options:NSJSONWritingPrettyPrinted
+                                                           options:0
                                                              error:&writeError];
         NSString *strJsonResponse = [[NSString alloc] initWithData:jsonData
                                                           encoding:NSUTF8StringEncoding];
@@ -231,7 +231,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
-                                                       options:NSJSONWritingPrettyPrinted
+                                                       options:0
                                                          error:&error];
     if (!jsonData) {
         NSLog(@"[AdjustPlugin]: Error while trying to convert session failure dictionary to JSON string: %@", error);
@@ -258,7 +258,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
     if (eventSuccessResponseData.jsonResponse != nil) {
         NSError *writeError = nil;
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:eventSuccessResponseData.jsonResponse
-                                                           options:NSJSONWritingPrettyPrinted
+                                                           options:0
                                                              error:&writeError];
         NSString *strJsonResponse = [[NSString alloc] initWithData:jsonData
                                                           encoding:NSUTF8StringEncoding];
@@ -267,7 +267,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
-                                                       options:NSJSONWritingPrettyPrinted
+                                                       options:0
                                                          error:&error];
     if (!jsonData) {
         NSLog(@"[AdjustPlugin]: Error while trying to convert event success dictionary to JSON string: %@", error);
@@ -295,7 +295,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
     if (eventFailureResponseData.jsonResponse != nil) {
         NSError *writeError = nil;
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:eventFailureResponseData.jsonResponse
-                                                           options:NSJSONWritingPrettyPrinted
+                                                           options:0
                                                              error:&writeError];
         NSString *strJsonResponse = [[NSString alloc] initWithData:jsonData
                                                           encoding:NSUTF8StringEncoding];
@@ -304,7 +304,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
-                                                       options:NSJSONWritingPrettyPrinted
+                                                       options:0
                                                          error:&error];
     if (!jsonData) {
         NSLog(@"[AdjustPlugin]: Error while trying to convert event failure dictionary to JSON string: %@", error);
@@ -335,7 +335,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
 
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
-                                                       options:NSJSONWritingPrettyPrinted
+                                                       options:0
                                                          error:&error];
     if (!jsonData) {
         NSLog(@"[AdjustPlugin]: Error while trying to update skan dictionary to JSON string: %@", error);

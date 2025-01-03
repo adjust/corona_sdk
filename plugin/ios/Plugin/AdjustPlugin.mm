@@ -1043,7 +1043,7 @@ int AdjustPlugin::getAttribution(lua_State *L) {
                 [AdjustSdkDelegate addKey:@"costCurrency" andValue:attribution.costCurrency toDictionary:dictionary];
                 NSError *error;
                 NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
-                                                                   options:NSJSONWritingPrettyPrinted
+                                                                   options:0
                                                                      error:&error];
                 if (!jsonData) {
                     NSLog(@"[AdjustPlugin]: Error while trying to convert attribution dictionary to JSON string: %@", error);
@@ -1321,7 +1321,7 @@ int AdjustPlugin::verifyAppStorePurchase(lua_State *L) {
 \
                 NSError *error;
                 NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
-                                                                   options:NSJSONWritingPrettyPrinted
+                                                                   options:0
                                                                      error:&error];
                 if (!jsonData) {
                     NSLog(@"[AdjustPlugin]: Error while trying to convert purchase verification response dictionary to JSON string: %@", error);
@@ -1472,7 +1472,7 @@ int AdjustPlugin::verifyAndTrackAppStorePurchase(lua_State *L) {
 
                 NSError *error;
                 NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
-                                                                   options:NSJSONWritingPrettyPrinted
+                                                                   options:0
                                                                      error:&error];
                 if (!jsonData) {
                     NSLog(@"[AdjustPlugin]: Error while trying to convert purchase verification response dictionary to JSON string: %@", error);
@@ -1601,7 +1601,7 @@ int AdjustPlugin::verifyPlayStorePurchase(lua_State *L) {
         CoronaLuaRef callback = CoronaLuaNewRef(L, callbackIndex);
         NSError *error;
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[NSDictionary dictionary]
-                                                           options:NSJSONWritingPrettyPrinted
+                                                           options:0
                                                              error:&error];
         if (!jsonData) {
             NSLog(@"[AdjustPlugin]: Error while trying to convert purchase verification response dictionary to JSON string: %@", error);
@@ -1624,7 +1624,7 @@ int AdjustPlugin::verifyAndTrackPlayStorePurchase(lua_State *L) {
         CoronaLuaRef callback = CoronaLuaNewRef(L, callbackIndex);
         NSError *error;
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:[NSDictionary dictionary]
-                                                           options:NSJSONWritingPrettyPrinted
+                                                           options:0
                                                              error:&error];
         if (!jsonData) {
             NSLog(@"[AdjustPlugin]: Error while trying to convert purchase verification response dictionary to JSON string: %@", error);

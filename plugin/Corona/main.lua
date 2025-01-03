@@ -278,7 +278,7 @@ widget.newButton({
 local function handleGetAdid(event)
     if ("ended" == event.phase) then
         adjust.getAdid(function(event)
-            print("[Adjust]: adid = " .. event.message)
+            print("[Adjust]: Adjust ID = " .. event.message)
         end)
     end
 end
@@ -295,10 +295,7 @@ widget.newButton({
 local function handleGetGoogleAdid(event)
     if ("ended" == event.phase) then
         adjust.getGoogleAdId(function(event)
-            print("[Adjust]: googleAdId = " .. event.message)
-        end)
-        adjust.getAmazonAdId(function(event)
-            print("[Adjust]: amazonAdId = " .. event.message)
+            print("[Adjust]: Google advertising ID = " .. event.message)
         end)
     end
 end
@@ -314,12 +311,9 @@ widget.newButton({
 -- get idfa
 local function handleGetIdfa(event)
     if ("ended" == event.phase) then
-        -- adjust.getIdfa(function(event)
-        --     print("[Adjust]: idfa = " .. event.message)
-        -- end)
-        adjustDeeplink = {}
-        adjustDeeplink.deeplink = "adjust://test"
-        adjust.processDeeplink(adjustDeeplink)
+        adjust.getIdfa(function(event)
+            print("[Adjust]: idfa = " .. event.message)
+        end)
     end
 end
 
@@ -347,36 +341,6 @@ local function handleGetAttribution(event)
             print("Cost amount: " .. (json_attribution.costAmount or "N/A"))
             print("Cost currency: " .. (json_attribution.costCurrency or "N/A"))
             print("FB install referrer: " .. (json_attribution.fbInstallReferrer or "N/A"))
-        end)
-        adjust.getAdid(function(event)
-            print("Adid: " .. (event.message or "N/A"))
-        end)
-        adjust.getSdkVersion(function(event)
-            print("SDK version: " .. (event.message or "N/A"))
-        end)
-        adjust.getLastDeeplink(function(event)
-            print("Last deep link: " .. (event.message or "N/A"))
-        end)
-        adjust.getIdfa(function(event)
-            print("IDFA: " .. (event.message or "N/A"))
-        end)
-        adjust.getIdfv(function(event)
-            print("IDFV: " .. (event.message or "N/A"))
-        end)
-        adjust.getGoogleAdId(function(event)
-            print("Google Advertising ID: " .. (event.message or "N/A"))
-        end)
-        adjust.getAmazonAdId(function(event)
-            print("Amazon Advertising ID: " .. (event.message or "N/A"))
-        end)
-        adjust.getAppTrackingAuthorizationStatus(function(event)
-            print("ATT status: " .. (event.message or "N/A"))
-        end)
-        adjust.requestAppTrackingAuthorization(function(event)
-            print("ATT status from request: " .. (event.message or "N/A"))
-        end)
-        adjust.updateSkanConversionValue(6, "low", false, function(event)
-            print("Update SKAN conversion value error: " .. (event.message or "N/A"))
         end)
     end
 end

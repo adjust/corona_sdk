@@ -38,6 +38,7 @@ In Corona SDK v5, you can delete some or all from your manifest file, depending 
 - `android.permission.INTERNET` is bundled in the Adjust SDK for Android.
 - `android.permission.ACCESS_WIFI_STATE` is no longer required.
 - `android.permission.ACCESS_NETWORK_STATE` is optional. This allows the SDK to access information about the network a device is connected to, and send this information as part of the callbacks parameters.
+- `com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE` is automatically added once install referrer Gradle dependency is added.
 - `com.google.android.gms.permission.AD_ID` is bundled in the Adjust SDK for Android. You can remove it with the following snippet:
 
 ```xml

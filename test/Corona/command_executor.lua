@@ -287,17 +287,37 @@ function CommandExecutor:config()
         localBasePath = self.basePath
         adjust.setAttributionCallback(function(event)
             local json_attribution = json.decode(event.message)
-            testLib.addInfoToSend("tracker_token", json_attribution.trackerToken)
-            testLib.addInfoToSend("tracker_name", json_attribution.trackerName)
-            testLib.addInfoToSend("network", json_attribution.network)
-            testLib.addInfoToSend("campaign", json_attribution.campaign)
-            testLib.addInfoToSend("adgroup", json_attribution.adgroup)
-            testLib.addInfoToSend("creative", json_attribution.creative)
-            testLib.addInfoToSend("click_label", json_attribution.clickLabel)
-            testLib.addInfoToSend("cost_type", json_attribution.costType)
-            testLib.addInfoToSend("cost_amount", json_attribution.costAmount)
-            testLib.addInfoToSend("cost_currency", json_attribution.costCurrency)
-            if json_attribution.fbInstallReferrer ~= nil and json_attribution.fbInstallReferrer ~= "" then
+            if json_attribution.trackerToken ~= nil then
+                testLib.addInfoToSend("tracker_token", json_attribution.trackerToken)
+            end
+            if json_attribution.trackerName ~= nil then
+                testLib.addInfoToSend("tracker_name", json_attribution.trackerName)
+            end
+            if json_attribution.network ~= nil then
+                testLib.addInfoToSend("network", json_attribution.network)
+            end
+            if json_attribution.campaign ~= nil then
+                testLib.addInfoToSend("campaign", json_attribution.campaign)
+            end
+            if json_attribution.adgroup ~= nil then
+                testLib.addInfoToSend("adgroup", json_attribution.adgroup)
+            end
+            if json_attribution.creative ~= nil then
+                testLib.addInfoToSend("creative", json_attribution.creative)
+            end
+            if json_attribution.clickLabel ~= nil then
+                testLib.addInfoToSend("click_label", json_attribution.clickLabel)
+            end
+            if json_attribution.costType ~= nil then
+                testLib.addInfoToSend("cost_type", json_attribution.costType)
+            end
+            if json_attribution.costAmount ~= nil then
+                testLib.addInfoToSend("cost_amount", json_attribution.costAmount)
+            end
+            if json_attribution.costCurrency ~= nil then
+                testLib.addInfoToSend("cost_currency", json_attribution.costCurrency)
+            end
+            if json_attribution.fbInstallReferrer ~= nil then
                 testLib.addInfoToSend("fb_install_referrer", json_attribution.fbInstallReferrer)
             end
             testLib.sendInfoToServer(localBasePath)
@@ -308,12 +328,16 @@ function CommandExecutor:config()
         localBasePath = self.basePath
         adjust.setSessionSuccessCallback(function(event)
             local json_session_success = json.decode(event.message)
-            testLib.addInfoToSend("message", json_session_success.message)
-            testLib.addInfoToSend("timestamp", json_session_success.timestamp)
-            testLib.addInfoToSend("adid", json_session_success.adid)
-            if platformInfo == "ios" then
-                testLib.addInfoToSend("jsonResponse", json.encode(json_session_success.jsonResponse))
-            else
+            if json_session_success.message ~= nil then
+                testLib.addInfoToSend("message", json_session_success.message)
+            end
+            if json_session_success.timestamp ~= nil then
+                testLib.addInfoToSend("timestamp", json_session_success.timestamp)
+            end
+            if json_session_success.adid ~= nil then
+                testLib.addInfoToSend("adid", json_session_success.adid)
+            end
+            if json_session_success.jsonResponse ~= nil then
                 testLib.addInfoToSend("jsonResponse", json_session_success.jsonResponse)
             end
             testLib.sendInfoToServer(localBasePath)
@@ -324,13 +348,17 @@ function CommandExecutor:config()
         localBasePath = self.basePath
         adjust.setSessionFailureCallback(function(event)
             local json_session_failure = json.decode(event.message)
-            testLib.addInfoToSend("message", json_session_failure.message)
-            testLib.addInfoToSend("timestamp", json_session_failure.timestamp)
-            testLib.addInfoToSend("adid", json_session_failure.adid)
+            if json_session_failure.message ~= nil then
+                testLib.addInfoToSend("message", json_session_failure.message)
+            end
+            if json_session_failure.timestamp ~= nil then
+                testLib.addInfoToSend("timestamp", json_session_failure.timestamp)
+            end
+            if json_session_failure.adid ~= nil then
+                testLib.addInfoToSend("adid", json_session_failure.adid)
+            end
             testLib.addInfoToSend("willRetry", tostring(json_session_failure.willRetry))
-            if platformInfo == "ios" then
-                testLib.addInfoToSend("jsonResponse", json.encode(json_session_failure.jsonResponse))
-            else
+            if json_session_failure.jsonResponse ~= nil then
                 testLib.addInfoToSend("jsonResponse", json_session_failure.jsonResponse)
             end
             testLib.sendInfoToServer(localBasePath)
@@ -341,17 +369,22 @@ function CommandExecutor:config()
         localBasePath = self.basePath
         adjust.setEventSuccessCallback(function(event)
             local json_event_success = json.decode(event.message)
-            testLib.addInfoToSend("message", json_event_success.message)
-            testLib.addInfoToSend("timestamp", json_event_success.timestamp)
-            testLib.addInfoToSend("adid", json_event_success.adid)
-            testLib.addInfoToSend("eventToken", json_event_success.eventToken)
-            testLib.addInfoToSend("callbackId", json_event_success.callbackId)
-            if json_event_success.callbackId ~= nil and json_event_success.callbackId ~= "" then
+            if json_event_success.message ~= nil then
+                testLib.addInfoToSend("message", json_event_success.message)
+            end
+            if json_event_success.timestamp ~= nil then
+                testLib.addInfoToSend("timestamp", json_event_success.timestamp)
+            end
+            if json_event_success.adid ~= nil then
+                testLib.addInfoToSend("adid", json_event_success.adid)
+            end
+            if json_event_success.eventToken ~= nil then
+                testLib.addInfoToSend("eventToken", json_event_success.eventToken)
+            end
+            if json_event_success.callbackId ~= nil then
                 testLib.addInfoToSend("callbackId", json_event_success.callbackId)
             end
-            if platformInfo == "ios" then
-                testLib.addInfoToSend("jsonResponse", json.encode(json_event_success.jsonResponse))
-            else
+            if json_event_success.jsonResponse ~= nil then
                 testLib.addInfoToSend("jsonResponse", json_event_success.jsonResponse)
             end
             testLib.sendInfoToServer(localBasePath)
@@ -362,17 +395,23 @@ function CommandExecutor:config()
         localBasePath = self.basePath
         adjust.setEventFailureCallback(function(event)
             local json_event_failure = json.decode(event.message)
-            testLib.addInfoToSend("message", json_event_failure.message)
-            testLib.addInfoToSend("timestamp", json_event_failure.timestamp)
-            testLib.addInfoToSend("adid", json_event_failure.adid)
-            testLib.addInfoToSend("eventToken", json_event_failure.eventToken)
+            if json_event_failure.message ~= nil then
+                testLib.addInfoToSend("message", json_event_failure.message)
+            end
+            if json_event_failure.timestamp ~= nil then
+                testLib.addInfoToSend("timestamp", json_event_failure.timestamp)
+            end
+            if json_event_failure.adid ~= nil then
+                testLib.addInfoToSend("adid", json_event_failure.adid)
+            end
+            if json_event_failure.eventToken ~= nil then
+                testLib.addInfoToSend("eventToken", json_event_failure.eventToken)
+            end
             if json_event_failure.callbackId ~= nil and json_event_failure.callbackId ~= "" then
                 testLib.addInfoToSend("callbackId", json_event_failure.callbackId)
             end
             testLib.addInfoToSend("willRetry", tostring(json_event_failure.willRetry))
-            if platformInfo == "ios" then
-                testLib.addInfoToSend("jsonResponse", json.encode(json_event_failure.jsonResponse))
-            else
+            if json_event_failure.jsonResponse ~= nil then
                 testLib.addInfoToSend("jsonResponse", json_event_failure.jsonResponse)
             end
             testLib.sendInfoToServer(localBasePath)
@@ -824,19 +863,39 @@ function CommandExecutor:attributionGetter()
     local localBasePath = self.basePath
     adjust.getAttribution(function(event)
         local json_attribution = json.decode(event.message)
-        testLib.addInfoToSend("tracker_token", json_attribution.trackerToken)
-        testLib.addInfoToSend("tracker_name", json_attribution.trackerName)
-        testLib.addInfoToSend("network", json_attribution.network)
-        testLib.addInfoToSend("campaign", json_attribution.campaign)
-        testLib.addInfoToSend("adgroup", json_attribution.adgroup)
-        testLib.addInfoToSend("creative", json_attribution.creative)
-        testLib.addInfoToSend("click_label", json_attribution.clickLabel)
-        testLib.addInfoToSend("cost_type", json_attribution.costType)
-        testLib.addInfoToSend("cost_amount", json_attribution.costAmount)
-        testLib.addInfoToSend("cost_currency", json_attribution.costCurrency)
-        if json_attribution.fbInstallReferrer ~= nil and json_attribution.fbInstallReferrer ~= "" then
-            testLib.addInfoToSend("fb_install_referrer", json_attribution.fbInstallReferrer)
-        end
+        if json_attribution.trackerToken ~= nil then
+                testLib.addInfoToSend("tracker_token", json_attribution.trackerToken)
+            end
+            if json_attribution.trackerName ~= nil then
+                testLib.addInfoToSend("tracker_name", json_attribution.trackerName)
+            end
+            if json_attribution.network ~= nil then
+                testLib.addInfoToSend("network", json_attribution.network)
+            end
+            if json_attribution.campaign ~= nil then
+                testLib.addInfoToSend("campaign", json_attribution.campaign)
+            end
+            if json_attribution.adgroup ~= nil then
+                testLib.addInfoToSend("adgroup", json_attribution.adgroup)
+            end
+            if json_attribution.creative ~= nil then
+                testLib.addInfoToSend("creative", json_attribution.creative)
+            end
+            if json_attribution.clickLabel ~= nil then
+                testLib.addInfoToSend("click_label", json_attribution.clickLabel)
+            end
+            if json_attribution.costType ~= nil then
+                testLib.addInfoToSend("cost_type", json_attribution.costType)
+            end
+            if json_attribution.costAmount ~= nil then
+                testLib.addInfoToSend("cost_amount", json_attribution.costAmount)
+            end
+            if json_attribution.costCurrency ~= nil then
+                testLib.addInfoToSend("cost_currency", json_attribution.costCurrency)
+            end
+            if json_attribution.fbInstallReferrer ~= nil then
+                testLib.addInfoToSend("fb_install_referrer", json_attribution.fbInstallReferrer)
+            end
         testLib.sendInfoToServer(localBasePath)
     end);
 end
