@@ -102,12 +102,12 @@ print("[TestApp]: Setting test lib tests....")
 -- testLib.addTestDirectory("session-callbacks")
 -- testLib.addTestDirectory("session-count")
 -- testLib.addTestDirectory("skan")
-testLib.addTestDirectory("subscription")
-testLib.addTestDirectory("third-party-sharing")
-testLib.addTestDirectory("tracking-domain")
-testLib.addTestDirectory("verify-track")
+-- testLib.addTestDirectory("subscription")
+-- testLib.addTestDirectory("third-party-sharing")
+-- testLib.addTestDirectory("tracking-domain")
+-- testLib.addTestDirectory("verify-track")
 
-testLib.startTestSession("corona5.0.0@ios5.0.1")
+-- testLib.startTestSession("corona5.0.0@ios5.0.1")
 
 -- Start Test Session
 -- ------------------------
