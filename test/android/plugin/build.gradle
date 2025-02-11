@@ -1,12 +1,17 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 31
-
+    compileSdk =  34
+    namespace = "plugin.testlibrary"
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdk = 34
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
 }
 
 dependencies {
