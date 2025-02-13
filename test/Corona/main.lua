@@ -107,7 +107,7 @@ print("[TestApp]: Setting test lib tests....")
 -- testLib.addTestDirectory("tracking-domain")
 -- testLib.addTestDirectory("verify-track")
 
--- testLib.startTestSession("corona5.0.0@ios5.0.1")
+-- testLib.startTestSession("corona5.1.0@ios5.1.0")
 
 -- Start Test Session
 -- ------------------------
