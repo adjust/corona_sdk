@@ -2,7 +2,6 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        jcenter()
     }
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
@@ -14,10 +13,9 @@ buildscript {
 allprojects {
     repositories {
         google()
-        jcenter()
         mavenCentral()
         // maven(url = "https:// some custom repo")
-        val nativeDir = if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+        val nativeDir = if (System.getProperty("os.name").lowercase().contains("windows")) {
             System.getenv("CORONA_ROOT")
         } else {
             "${System.getenv("HOME")}/Library/Application Support/Corona/Native/"
@@ -29,5 +27,5 @@ allprojects {
 }
 
 tasks.register<Delete>("clean") {
-    delete(rootProject.buildDir)
+    delete(layout.buildDirectory)
 }
