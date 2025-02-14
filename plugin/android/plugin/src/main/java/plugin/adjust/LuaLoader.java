@@ -31,7 +31,7 @@ import java.util.List;
 @SuppressWarnings("WeakerAccess")
 public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private static final String TAG = "AdjustLuaLoader";
-    private static final String SDK_PREFIX = "corona5.0.0";
+    private static final String SDK_PREFIX = "corona5.0.1";
 
     // subscriptions
     public static final String EVENT_ATTRIBUTION_CHANGED = "adjust_attributionChanged";

@@ -1,3 +1,16 @@
+### Version 5.0.1 (14th February 2025)
+#### Added
+- Added sending of the additional parameter to improve troubleshooting of `SKAdNetwork` related issues.
+
+#### Fixed
+- Fixed occasional occurrences in which ATT waiting interval timer was not being started.
+
+#### Native SDKs
+- [Android@v5.1.0][android_sdk_v5.1.0]
+- [iOS@v5.1.0][ios_sdk_v5.1.0]
+
+---
+
 ### Version 5.0.0 (3rd January 2025)
 
 We're excited to release our major new SDK version (v5). Among many internal improvements, our spoofing protection solution is now included out of the box, reinforcing our commitment to accurate, actionable, and fraud-free data.
@@ -248,6 +261,7 @@ If you are a current Adjust client and have questions about SDK v5, please email
 [ios_sdk_v4.29.6]: https://github.com/adjust/ios_sdk/tree/v4.29.6
 [ios_sdk_v4.33.4]: https://github.com/adjust/ios_sdk/tree/v4.33.4
 [ios_sdk_v5.0.1]: https://github.com/adjust/ios_sdk/tree/v5.0.1
+[ios_sdk_v5.1.0]: https://github.com/adjust/ios_sdk/tree/v5.1.0
 
 [android_sdk_v4.12.0]: https://github.com/adjust/android_sdk/tree/v4.12.0
 [android_sdk_v4.12.1]: https://github.com/adjust/android_sdk/tree/v4.12.1
@@ -266,3 +280,4 @@ If you are a current Adjust client and have questions about SDK v5, please email
 [android_sdk_v4.28.9]: https://github.com/adjust/android_sdk/tree/v4.28.9
 [android_sdk_v4.33.3]: https://github.com/adjust/android_sdk/tree/v4.33.3
 [android_sdk_v5.0.1]: https://github.com/adjust/android_sdk/tree/v5.0.1
+[android_sdk_v5.1.0]: https://github.com/adjust/android_sdk/tree/v5.1.0

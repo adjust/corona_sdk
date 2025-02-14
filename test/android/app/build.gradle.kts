@@ -17,7 +17,7 @@ val coronaResourcesDir: String? by project
 val coronaDstDir: String? by project
 val coronaTmpDir: String? by project
 val coronaAppFileName: String? by project
-val coronaAppPackage = project.findProperty("coronaAppPackage") as? String ?: "com.mycompany.app"
+val coronaAppPackage = project.findProperty("coronaAppPackage") as? String ?: "com.adjust.testapp"
 val coronaKeystore: String? by project
 val coronaKeystorePassword: String? by project
 val coronaKeyAlias: String? by project
@@ -181,11 +181,11 @@ if (configureCoronaPlugins == "YES") {
 //</editor-fold>
 
 android {
-    compileSdkVersion(33)
+    compileSdk  = 34
     defaultConfig {
         applicationId = coronaAppPackage
-        targetSdkVersion(33)
-        minSdkVersion(coronaMinSdkVersion)
+        targetSdk = 34
+        minSdk = coronaMinSdkVersion
         versionCode = coronaVersionCode
         versionName = coronaVersionName
         multiDexEnabled = true
@@ -210,18 +210,18 @@ android {
         }
     }
 
-    applicationVariants.all {
-        generateBuildConfigProvider!!.configure {
-            enabled = false
-        }
-    }
-    testOptions {
-        testVariants.all {
-            generateBuildConfigProvider!!.configure {
-                enabled = false
-            }
-        }
-    }
+//    applicationVariants.all {
+//        generateBuildConfigProvider!!.configure {
+//            enabled = false
+//        }
+//    }
+//    testOptions {
+//        testVariants.all {
+//            generateBuildConfigProvider!!.configure {
+//                enabled = false
+//            }
+//        }
+//    }
     val mainSourceSet = sourceSets["main"]
     val pluginJniLibs = file(coronaPlugins).walk().maxDepth(2).filter { it.name == "jniLibs" }.toSet()
     mainSourceSet.jniLibs.srcDirs(pluginJniLibs)
@@ -259,6 +259,11 @@ android {
     }
 
     namespace = "com.adjust.testapp"
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_18
+        targetCompatibility = JavaVersion.VERSION_18
+    }
+
 }
 
 //<editor-fold desc="Packaging Corona App" defaultstate="collapsed">
@@ -785,7 +790,7 @@ tasks.register<Copy>("exportToNativeAppTemplate") {
     from(rootDir) {
         include("app/build.gradle.kts")
         filter {
-            it.replace("com.mycompany.app", "com.mycompany.app")
+            it.replace("com.adjust.testapp", "com.adjust.testapp")
         }
     }
 
@@ -1088,6 +1093,6 @@ dependencies {
         implementation(project(":plugin"))
     }
     implementation("androidx.multidex:multidex:2.0.1")
-    implementation("com.adjust.sdk:adjust-android:5.0.2")
+    implementation("com.adjust.sdk:adjust-android:5.1.0")
     implementation("com.android.installreferrer:installreferrer:2.2")
 }

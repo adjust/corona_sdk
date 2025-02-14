@@ -41,7 +41,7 @@ else
     protocol = "https"
     port = "8443"
 end
-local baseIp = "192.168.8.28"
+local baseIp = "192.168.86.88"
 local overwriteUrl = protocol .. "://" .. baseIp .. ":" .. port
 local controlUrl = "ws://" .. baseIp .. ":1987";
 print("[TestApp]: Using BaseUrl: [" .. overwriteUrl .. "]--")
@@ -107,7 +107,7 @@ print("[TestApp]: Setting test lib tests....")
 -- testLib.addTestDirectory("tracking-domain")
 -- testLib.addTestDirectory("verify-track")
 
--- testLib.startTestSession("corona5.0.0@ios5.0.1")
+testLib.startTestSession("corona5.0.1@ios5.1.0")
 
 -- Start Test Session
 -- ------------------------
