@@ -25,5 +25,5 @@ root="$(cd "$(dirname "$0")"; pwd)"
 	rm -rf ../dist_directory/plugins/$BUILD/iphone ../dist_directory/plugins/$BUILD/iphone-sim
 	cp -r ios/BuiltPlugin/iphone ios/BuiltPlugin/iphone-sim ../dist_directory/plugins/$BUILD
 	rm -f ../dist_directory/plugins/$BUILD/android/plugin.adjust.jar
-	cp android/plugin/build/outputs/plugin.adjust.jar ../dist_directory/plugins/$BUILD/android/
+	cp android/plugin/build/intermediates/aar_main_jar/release/syncReleaseLibJars/classes.jar ../dist_directory/plugins/$BUILD/android/plugin.adjust.jar
 )
