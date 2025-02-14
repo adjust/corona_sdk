@@ -1,14 +1,9 @@
-### Version 5.1.0 (12 February 2025)
-
+### Version 5.0.1 (14th February 2025)
 #### Added
 - Added sending of the additional parameter to improve troubleshooting of `SKAdNetwork` related issues.
 
 #### Fixed
 - Fixed occasional occurrences in which ATT waiting interval timer was not being started.
-- Pinned version 3.35.2 of the Adjust signature library, which addresses occasional crashes on iOS 18 (https://github.com/adjust/ios_sdk/issues/742).
-
-#### Changed
-- Switched to depending on a specific version of the signature library.
 
 #### Native SDKs
 - [Android@v5.1.0][android_sdk_v5.1.0]
