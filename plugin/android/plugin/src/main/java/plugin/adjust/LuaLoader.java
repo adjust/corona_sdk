@@ -31,7 +31,7 @@ import java.util.List;
 @SuppressWarnings("WeakerAccess")
 public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private static final String TAG = "AdjustLuaLoader";
-    private static final String SDK_PREFIX = "corona5.0.1";
+    private static final String SDK_PREFIX = "corona5.4.0";
 
     // subscriptions
     public static final String EVENT_ATTRIBUTION_CHANGED = "adjust_attributionChanged";
@@ -137,6 +137,12 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             new SetSessionSuccessCallbackWrapper(),
             new SetSessionFailureCallbackWrapper(),
             new SetDeferredDeeplinkCallbackWrapper(),
+            new EnablePlayStoreKidsComplianceInDelayWrapper(),
+            new DisablePlayStoreKidsComplianceInDelayWrapper(),
+            new EnableCoppaComplianceInDelayWrapper(),
+            new DisableCoppaComplianceInDelayWrapper(),
+            new EndFirstSessionDelayWrapper(),
+            new SetExternalDeviceIdInDelayWrapper(),
             // android only
             new TrackPlayStoreSubscriptionWrapper(),
             new VerifyPlayStorePurchaseWrapper(),
@@ -296,6 +302,10 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         boolean isDeviceIdsReadingOnceEnabled = false;
         boolean isCoppaComplianceEnabled = false;
         boolean isPlayStoreKidsComplianceEnabled = false;
+        boolean isFirstSessionDelayedEnabled = false;
+        boolean isAppTrackingTransparencyUsageEnabled = false;
+        String storeInfoName = null;
+        String storeInfoAppId = null;
         boolean isLogLevelSuppress = false;
         boolean useSubdomains = false;
         boolean isDataResidency = false;
@@ -375,6 +385,36 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 adjustConfig.enablePlayStoreKidsCompliance();
         }
         L.pop(1);
+
+        // First session is delayed
+        L.getField(1, "isFirstSessionDelayedEnabled");
+        if (!L.isNil(2)) {
+            isFirstSessionDelayedEnabled = L.checkBoolean(2);
+            if (isFirstSessionDelayedEnabled)
+                adjustConfig.enableFirstSessionDelay();
+        }
+        L.pop(1);
+
+        // Store info Name
+        AdjustStoreInfo storeInfo = null;
+        L.getField(1, "storeInfoName");
+        if (!L.isNil(2)) {
+            storeInfoName = L.checkString(2);
+            storeInfo = new AdjustStoreInfo(storeInfoName);
+        }
+        L.pop(1);
+
+        // First session is delayed
+        L.getField(1, "storeInfoAppId");
+        if (!L.isNil(2)) {
+            storeInfoAppId = L.checkString(2);
+            storeInfo.setStoreAppId(storeInfoAppId);
+        }
+        L.pop(1);
+
+        if (storeInfo != null){
+            adjustConfig.setStoreInfo(storeInfo);
+        }
 
         // send in background
         L.getField(1, "isSendingInBackgroundEnabled");
@@ -894,14 +934,14 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 String key = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
-                L.getField(3, "key");
+                L.getField(3, "value");
                 String value = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
                 adjustThirdPartySharing.addPartnerSharingSetting(
                     partnerName,
                     key,
-                    value == "true");
+                    value.toLowerCase().equals("true"));
                 L.pop(1);
             }
         }
@@ -929,14 +969,26 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
 
         String deeplink = null;
+        String referrer = null;
 
         // deeplink
         L.getField(1, "deeplink");
         deeplink = !L.isNil(2) ? L.checkString(2) : null;
         L.pop(1);
 
-        final Uri uri = Uri.parse(deeplink);
-        Adjust.processDeeplink(new AdjustDeeplink(uri), CoronaEnvironment.getApplicationContext());
+        // referrer
+        L.getField(1, "referrer");
+        referrer = !L.isNil(2) ? L.checkString(2) : null;
+        L.pop(1);
+
+        final Uri uriDeeplink = Uri.parse(deeplink);
+        final AdjustDeeplink adjustDeeplink = new AdjustDeeplink(uriDeeplink);
+        if (referrer != null) {
+            final Uri uriReferrer = Uri.parse(referrer);
+            adjustDeeplink.setReferrer(uriReferrer);
+        }
+
+        Adjust.processDeeplink(adjustDeeplink, CoronaEnvironment.getApplicationContext());
         return 0;
     }
 
@@ -947,18 +999,30 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
 
         String deeplink = null;
+        String referrer = null;
 
         // deeplink
         L.getField(1, "deeplink");
         deeplink = !L.isNil(3) ? L.checkString(3) : null;
         L.pop(1);
+        // referrer
+        L.getField(1, "referrer");
+        referrer = !L.isNil(3) ? L.checkString(2) : null;
+        L.pop(1);
+
+        final Uri uriDeeplink = Uri.parse(deeplink);
+        final AdjustDeeplink adjustDeeplink = new AdjustDeeplink(uriDeeplink);
+        if (referrer != null && !referrer.isEmpty()) {
+            final Uri uriReferrer = Uri.parse(referrer);
+            adjustDeeplink.setReferrer(uriReferrer);
+        }
 
         int callbackIndex = 2;
         int callback = CoronaLua.REFNIL;
         if (CoronaLua.isListener(L, callbackIndex, "ADJUST")) {
             callback = CoronaLua.newRef(L, callbackIndex);
             int finalCallback = callback;
-            Adjust.processAndResolveDeeplink(new AdjustDeeplink(Uri.parse(deeplink)), CoronaEnvironment.getApplicationContext(), new OnDeeplinkResolvedListener() {
+            Adjust.processAndResolveDeeplink(adjustDeeplink, CoronaEnvironment.getApplicationContext(), new OnDeeplinkResolvedListener() {
                 @Override
                 public void onDeeplinkResolved(String resolvedDeeplink) {
                     dispatchEvent(finalCallback, EVENT_PROCESS_AND_RESOLVE_DEEPLINK, resolvedDeeplink);
@@ -1145,6 +1209,37 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         if (CoronaLua.isListener(L, callbackIndex, "ADJUST")) {
             this.deferredDeeplinkCallback = CoronaLua.newRef(L, callbackIndex);
         }
+        return 0;
+    }
+
+    private int adjust_enablePlayStoreKidsComplianceInDelay(final LuaState L) {
+        Adjust.enablePlayStoreKidsComplianceInDelay();
+        return 0;
+    }
+
+    private int adjust_disablePlayStoreKidsComplianceInDelay(final LuaState L) {
+        Adjust.disablePlayStoreKidsComplianceInDelay();
+        return 0;
+    }
+
+    private int adjust_enableCoppaComplianceInDelay(final LuaState L) {
+        Adjust.enableCoppaComplianceInDelay();
+        return 0;
+    }
+
+    private int adjust_disableCoppaComplianceInDelay(final LuaState L) {
+        Adjust.disableCoppaComplianceInDelay();
+        return 0;
+    }
+
+    private int adjust_endFirstSessionDelay(final LuaState L) {
+        Adjust.endFirstSessionDelay();
+        return 0;
+    }
+
+    private int adjust_setExternalDeviceIdInDelay(final LuaState L) {
+        String externalDeviceId = L.checkString(1);
+        Adjust.setExternalDeviceIdInDelay(externalDeviceId);
         return 0;
     }
 
@@ -2086,6 +2181,78 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         @Override
         public int invoke(final LuaState L) {
             return adjust_setDeferredDeeplinkListener(L);
+        }
+    }
+
+    private class EnablePlayStoreKidsComplianceInDelayWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "enablePlayStoreKidsComplianceInDelay";
+        }
+
+        @Override
+        public int invoke(final LuaState L) {
+            return adjust_enablePlayStoreKidsComplianceInDelay(L);
+        }
+    }
+
+    private class DisablePlayStoreKidsComplianceInDelayWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "disablePlayStoreKidsComplianceInDelay";
+        }
+
+        @Override
+        public int invoke(final LuaState L) {
+            return adjust_disablePlayStoreKidsComplianceInDelay(L);
+        }
+    }
+
+    private class EnableCoppaComplianceInDelayWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "enableCoppaComplianceInDelay";
+        }
+
+        @Override
+        public int invoke(final LuaState L) {
+            return adjust_enableCoppaComplianceInDelay(L);
+        }
+    }
+
+    private class DisableCoppaComplianceInDelayWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "disableCoppaComplianceInDelay";
+        }
+
+        @Override
+        public int invoke(final LuaState L) {
+            return adjust_disableCoppaComplianceInDelay(L);
+        }
+    }
+
+    private class EndFirstSessionDelayWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "endFirstSessionDelay";
+        }
+
+        @Override
+        public int invoke(final LuaState L) {
+            return adjust_endFirstSessionDelay(L);
+        }
+    }
+
+    private class SetExternalDeviceIdInDelayWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "setExternalDeviceIdInDelay";
+        }
+
+        @Override
+        public int invoke(final LuaState L) {
+            return adjust_setExternalDeviceIdInDelay(L);
         }
     }
 

@@ -74,6 +74,10 @@ function CommandExecutor:executeCommand(command)
     elseif method == "processDeeplink" then self:processDeeplink()
     elseif method == "attributionGetter" then self:attributionGetter()
     elseif method == "getLastDeeplink" then self:getLastDeeplink()
+    elseif method == "endFirstSessionDelay" then self:endFirstSessionDelay()
+    elseif method == "coppaComplianceInDelay" then self:coppaComplianceInDelay()
+    elseif method == "playStoreKidsComplianceInDelay" then self:playStoreKidsComplianceInDelay()
+    elseif method == "externalDeviceIdInDelay" then self:externalDeviceIdInDelay()
     else print("CommandExecutor: unknown method name: " .. method)
     end
 end
@@ -283,6 +287,22 @@ function CommandExecutor:config()
         adjustConfig.isPlayStoreKidsComplianceEnabled = (self.command:getFirstParameterValue("playStoreKids") == "true")
     end
 
+    if self.command:containsParameter("firstSessionDelayEnabled") then
+        adjustConfig.isFirstSessionDelayedEnabled = (self.command:getFirstParameterValue("firstSessionDelayEnabled") == "true")
+    end
+
+    if self.command:containsParameter("allowAttUsage") then
+        adjustConfig.isAppTrackingTransparencyUsageEnabled = (self.command:getFirstParameterValue("allowAttUsage") == "true")
+    end
+
+    if self.command:containsParameter("storeName") then
+        adjustConfig.storeInfoName = self.command:getFirstParameterValue("storeName")
+    end
+
+    if self.command:containsParameter("storeAppId") then
+        adjustConfig.storeInfoAppId = self.command:getFirstParameterValue("storeAppId")
+    end
+
     if self.command:containsParameter("attributionCallbackSendAll") then
         localBasePath = self.basePath
         adjust.setAttributionCallback(function(event)
@@ -316,6 +336,16 @@ function CommandExecutor:config()
             end
             if json_attribution.costCurrency ~= nil then
                 testLib.addInfoToSend("cost_currency", json_attribution.costCurrency)
+            end
+            if json_attribution.jsonResponse ~= nil then
+                if platform == "ios" then
+                    local strJson = json.decode(json_attribution.jsonResponse)
+                    strJson.fb_install_referrer = nil
+                    json_attribution.jsonResponse = json.encode(strJson)
+                    testLib.addInfoToSend("json_response", json_attribution.jsonResponse)
+                else
+                    testLib.addInfoToSend("json_response", json_attribution.jsonResponse)
+                end
             end
             if json_attribution.fbInstallReferrer ~= nil then
                 testLib.addInfoToSend("fb_install_referrer", json_attribution.fbInstallReferrer)
@@ -623,8 +653,10 @@ end
 
 function CommandExecutor:openDeeplink()
     local deeplink = self.command:getFirstParameterValue("deeplink")
+    local referrer = self.command:getFirstParameterValue("referrer")
     local adjustDeeplink = {}
     adjustDeeplink.deeplink = deeplink
+    adjustDeeplink.referrer = referrer
     adjust.processDeeplink(adjustDeeplink)
 end
 
@@ -733,7 +765,7 @@ function CommandExecutor:thirdPartySharing()
     if self.command:containsParameter("granularOptions") then
         local granularOptions = self.command.parameters["granularOptions"]
         thirdPartySharing.granularOptions = {}
-        local k = 0
+        local k = 1
         for i=1, #granularOptions, 3 do
             thirdPartySharing.granularOptions[k] = {
                 partnerName = granularOptions[i],
@@ -747,7 +779,7 @@ function CommandExecutor:thirdPartySharing()
     if self.command:containsParameter("partnerSharingSettings") then
         local partnerSharingSettings = self.command.parameters["partnerSharingSettings"]
         thirdPartySharing.partnerSharingSettings = {}
-        local k = 0
+        local k = 1
         for i=1, #partnerSharingSettings, 3 do
             thirdPartySharing.partnerSharingSettings[k] = {
                 partnerName = partnerSharingSettings[i],
@@ -847,11 +879,40 @@ function CommandExecutor:getLastDeeplink()
     end)
 end
 
+function CommandExecutor:endFirstSessionDelay()
+    adjust.endFirstSessionDelay()
+end
+
+function CommandExecutor:coppaComplianceInDelay()
+    local enabled = (self.command:getFirstParameterValue("isEnabled") == "true")
+    if enabled then
+        adjust.enableCoppaComplianceInDelay()
+    else
+        adjust.disableCoppaComplianceInDelay()
+    end
+end
+
+function CommandExecutor:playStoreKidsComplianceInDelay()
+    local enabled = (self.command:getFirstParameterValue("isEnabled") == "true")
+    if enabled then
+        adjust.enablePlayStoreKidsComplianceInDelay()
+    else
+        adjust.disablePlayStoreKidsComplianceInDelay()
+    end
+end
+
+function CommandExecutor:externalDeviceIdInDelay()
+    local externalDeviceId = self.command:getFirstParameterValue("externalDeviceId")
+    adjust.setExternalDeviceIdInDelay(externalDeviceId)
+end
+
 function CommandExecutor:processDeeplink()
     local deeplink = self.command:getFirstParameterValue("deeplink")
+    local referrer = self.command:getFirstParameterValue("referrer")
     local localBasePath = self.basePath
     local adjustDeeplink = {}
     adjustDeeplink.deeplink = deeplink
+    adjustDeeplink.referrer = referrer
 
     adjust.processAndResolveDeeplink(adjustDeeplink, function(resolvedLink)
         testLib.addInfoToSend("resolved_link", tostring(resolvedLink.message));
@@ -892,6 +953,16 @@ function CommandExecutor:attributionGetter()
             end
             if json_attribution.costCurrency ~= nil then
                 testLib.addInfoToSend("cost_currency", json_attribution.costCurrency)
+            end
+            if json_attribution.jsonResponse ~= nil then
+                if platform == "ios" then
+                    local strJson = json.decode(json_attribution.jsonResponse)
+                    strJson.fb_install_referrer = nil
+                    json_attribution.jsonResponse = json.encode(strJson)
+                    testLib.addInfoToSend("json_response", json_attribution.jsonResponse)
+                else
+                    testLib.addInfoToSend("json_response", json_attribution.jsonResponse)
+                end
             end
             if json_attribution.fbInstallReferrer ~= nil then
                 testLib.addInfoToSend("fb_install_referrer", json_attribution.fbInstallReferrer)

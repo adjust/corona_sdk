@@ -23,6 +23,7 @@
 #import "ADJAppStorePurchase.h"
 #import "ADJPurchaseVerificationResult.h"
 #import "ADJDeeplink.h"
+#import "ADJStoreInfo.h"
 
 #define EVENT_PROCESS_AND_RESOLVE_DEEPLINK @"adjust_processAndResolveDeeplink"
 #define EVENT_IS_ENABLED @"adjust_isEnabled"
@@ -44,7 +45,7 @@
 #define EVENT_GET_GOOGLE_AD_ID @"adjust_getGoogleAdId"
 #define EVENT_GET_AMAZON_AD_ID @"adjust_getAmazonAdId"
 
-#define SDK_PREFIX @"corona5.0.1"
+#define SDK_PREFIX @"corona5.4.0"
 
 // ----------------------------------------------------------------------------
 
@@ -104,6 +105,10 @@ public:
     static int setSessionSuccessCallback(lua_State *L);
     static int setSessionFailureCallback(lua_State *L);
     static int setDeferredDeeplinkCallback(lua_State *L);
+    static int endFirstSessionDelay(lua_State *L);
+    static int enableCoppaComplianceInDelay(lua_State *L);
+    static int disableCoppaComplianceInDelay(lua_State *L);
+    static int setExternalDeviceIdInDelay(lua_State *L);
     // ios only
     static int trackAppStoreSubscription(lua_State *L);
     static int verifyAppStorePurchase(lua_State *L);
@@ -118,6 +123,8 @@ public:
     static int trackPlayStoreSubscription(lua_State *L);
     static int verifyPlayStorePurchase(lua_State *L);
     static int verifyAndTrackPlayStorePurchase(lua_State *L);
+    static int enablePlayStoreKidsComplianceInDelay(lua_State *L);
+    static int disablePlayStoreKidsComplianceInDelay(lua_State *L);
     static int getGoogleAdId(lua_State *L);
     static int getAmazonAdId(lua_State *L);
     // testing purposes only
@@ -223,6 +230,12 @@ AdjustPlugin::Open(lua_State *L) {
         { "setSessionSuccessCallback", setSessionSuccessCallback },
         { "setSessionFailureCallback", setSessionFailureCallback },
         { "setDeferredDeeplinkCallback", setDeferredDeeplinkCallback },
+        { "endFirstSessionDelay", endFirstSessionDelay },
+        { "enableCoppaComplianceInDelay", enableCoppaComplianceInDelay },
+        { "disableCoppaComplianceInDelay", disableCoppaComplianceInDelay },
+        { "enablePlayStoreKidsComplianceInDelay", enablePlayStoreKidsComplianceInDelay },
+        { "disablePlayStoreKidsComplianceInDelay", disablePlayStoreKidsComplianceInDelay },
+        { "setExternalDeviceIdInDelay", setExternalDeviceIdInDelay },
         // ios only
         { "trackAppStoreSubscription", trackAppStoreSubscription },
         { "verifyAppStorePurchase", verifyAppStorePurchase },
@@ -288,7 +301,11 @@ int AdjustPlugin::initSdk(lua_State *L) {
     NSString *logLevel = nil;
     NSString *defaultTracker = nil;
     NSString *externalDeviceId = nil;
+    NSString *storeInfoName = nil;
+    NSString *storeInfoAppId = nil;
     
+    BOOL isFirstSessionDelayedEnabled = NO;
+    BOOL isAppTrackingTransparencyUsageEnabled = YES;
     BOOL isSendingInBackgroundEnabled = NO;
     BOOL isCoppaComplianceEnabled = NO;
     BOOL isDeferredDeeplinkOpeningEnabled = YES;
@@ -392,6 +409,26 @@ int AdjustPlugin::initSdk(lua_State *L) {
     }
     lua_pop(L, 1);
     
+    // first session delay
+    lua_getfield(L, 1, "isFirstSessionDelayedEnabled");
+    if (!lua_isnil(L, 2)) {
+        isFirstSessionDelayedEnabled = lua_toboolean(L, 2);
+        if (isFirstSessionDelayedEnabled == YES) {
+            [adjustConfig enableFirstSessionDelay];
+        }
+    }
+    lua_pop(L, 1);
+    
+    // App Tracking transparency usage
+    lua_getfield(L, 1, "isAppTrackingTransparencyUsageEnabled");
+    if (!lua_isnil(L, 2)) {
+        isAppTrackingTransparencyUsageEnabled = lua_toboolean(L, 2);
+        if (isAppTrackingTransparencyUsageEnabled == NO) {
+            [adjustConfig disableAppTrackingTransparencyUsage];
+        }
+    }
+    lua_pop(L, 1);
+    
     // sendning from background
     lua_getfield(L, 1, "isSendingInBackgroundEnabled");
     if (!lua_isnil(L, 2)) {
@@ -488,6 +525,37 @@ int AdjustPlugin::initSdk(lua_State *L) {
         }
     }
     lua_pop(L, 1);
+    
+    ADJStoreInfo *adjStoreInfo = nil;
+    
+    // Store Info name
+    lua_getfield(L, 1, "storeInfoName");
+    if (!lua_isnil(L, 2)) {
+        const char *cstrStoreName = lua_tostring(L, 2);
+        if (cstrStoreName != nil) {
+            storeInfoName = [NSString stringWithUTF8String:cstrStoreName];
+            adjStoreInfo = [[ADJStoreInfo alloc] initWithStoreName:storeInfoName];
+        }
+    }
+    lua_pop(L, 1);
+    
+    // Store Info app id
+    lua_getfield(L, 1, "storeInfoAppId");
+    if (!lua_isnil(L, 2)) {
+        const char *cstrStoreAppId = lua_tostring(L, 2);
+        if (cstrStoreAppId != nil) {
+            storeInfoAppId = [NSString stringWithUTF8String:cstrStoreAppId];
+            if (adjStoreInfo != nil) {
+                [adjStoreInfo setStoreAppId:storeInfoAppId];
+            }
+        }
+    }
+    lua_pop(L, 1);
+    
+    if (adjStoreInfo != nil) {
+        [adjustConfig setStoreInfo:adjStoreInfo];
+    }
+    
     
     // URL strategy domains
     lua_getfield(L, 1, "urlStrategyDomains");
@@ -838,7 +906,10 @@ int AdjustPlugin::trackThirdPartySharing(lua_State *L) {
         for (id key in dict) {
             NSDictionary *granularOptions = [dict objectForKey:key];
             for (id keySetting in granularOptions) {
-                if (![keySetting isEqualToString:@"partnerName"]) {
+                NSLog(@"key setting is : %@", keySetting);
+                if ([keySetting isEqualToString:@"partnerName"]) {
+                    NSLog(@"key setting is chosen : %@", keySetting);
+                    NSLog(@"key setting is : %@", granularOptions);
                     [adjustThirdPartySharing addGranularOption:granularOptions[@"partnerName"]
                                                            key:granularOptions[@"key"]
                                                          value:granularOptions[@"value"]];
@@ -858,7 +929,7 @@ int AdjustPlugin::trackThirdPartySharing(lua_State *L) {
                 if (![keySetting isEqualToString:@"partnerName"]) {
                     [adjustThirdPartySharing addPartnerSharingSetting:partnerSharingSettings[@"partnerName"]
                                                                   key:partnerSharingSettings[@"key"]
-                                                                value:[[partnerSharingSettings objectForKey:keySetting] boolValue]];
+                                                                value:[partnerSharingSettings[@"value"] boolValue]];
                 }
             }
         }
@@ -896,17 +967,23 @@ int AdjustPlugin::processDeeplink(lua_State *L) {
     }
     lua_pop(L, 1);
 
-    if (deeplink != nil) {
-        NSURL *url;
-        if ([NSString instancesRespondToSelector:@selector(stringByAddingPercentEncodingWithAllowedCharacters:)]) {
-            url = [NSURL URLWithString:[deeplink stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLFragmentAllowedCharacterSet]]];
-        } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-            url = [NSURL URLWithString:[deeplink stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-#pragma clang diagnostic pop
+    NSString *referrer = nil;
+    lua_getfield(L, 1, "referrer");
+    if (!lua_isnil(L, 2)) {
+        const char *cstrReferrer = lua_tostring(L, 2);
+        if (cstrReferrer != NULL) {
+            referrer = [NSString stringWithUTF8String:cstrReferrer];
         }
-        ADJDeeplink *adjustDeeplink = [[ADJDeeplink alloc] initWithDeeplink:url];
+    }
+    lua_pop(L, 1);
+    
+    if (deeplink != nil) {
+        NSURL *deeplinkUrl = [NSURL URLWithString:deeplink];
+        ADJDeeplink *adjustDeeplink = [[ADJDeeplink alloc] initWithDeeplink:deeplinkUrl];
+        if (referrer != nil) {
+            NSURL *referrerUrl = [NSURL URLWithString:referrer];
+            [adjustDeeplink setReferrer:referrerUrl];
+        }
         [Adjust processDeeplink:adjustDeeplink];
     }
     return 0;
@@ -927,6 +1004,27 @@ int AdjustPlugin::processAndResolveDeeplink(lua_State *L){
         }
     }
     lua_pop(L, 1);
+    
+   
+    NSString *referrer = nil;
+    lua_getfield(L, 1, "referrer");
+    if (!lua_isnil(L, 2)) {
+        const char *cstrReferrer = lua_tostring(L, 2);
+        if (cstrReferrer != NULL) {
+            referrer = [NSString stringWithUTF8String:cstrReferrer];
+        }
+    }
+    lua_pop(L, 1);
+    
+    ADJDeeplink *adjustDeeplink = nil;
+    if (deeplink != nil) {
+        NSURL *deeplinkUrl = [NSURL URLWithString:deeplink];
+         adjustDeeplink = [[ADJDeeplink alloc] initWithDeeplink:deeplinkUrl];
+        if (referrer != nil) {
+            NSURL *referrerUrl = [NSURL URLWithString:referrer];
+            [adjustDeeplink setReferrer:referrerUrl];
+        }
+    }
 
     int callbackIndex = 2;
     if (CoronaLuaIsListener(L, callbackIndex, "ADJUST")) {
@@ -941,7 +1039,6 @@ int AdjustPlugin::processAndResolveDeeplink(lua_State *L){
                 url = [NSURL URLWithString:[deeplink stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
 #pragma clang diagnostic pop
             }
-            ADJDeeplink *adjustDeeplink = [[ADJDeeplink alloc] initWithDeeplink:url];
             [Adjust processAndResolveDeeplink:adjustDeeplink
                         withCompletionHandler:^(NSString * _Nullable resolvedLink) {
                 [AdjustSdkDelegate dispatchEvent:EVENT_PROCESS_AND_RESOLVE_DEEPLINK
@@ -1041,6 +1138,22 @@ int AdjustPlugin::getAttribution(lua_State *L) {
                 [AdjustSdkDelegate addKey:@"costType" andValue:attribution.costType toDictionary:dictionary];
                 [AdjustSdkDelegate addKey:@"costAmount" andValue:attribution.costAmount toDictionary:dictionary];
                 [AdjustSdkDelegate addKey:@"costCurrency" andValue:attribution.costCurrency toDictionary:dictionary];
+                NSLog(@"MAHDI : jsonresponse = is here first ");
+                if (attribution.jsonResponse != nil) {
+                    NSError *jsonResponseError;
+                    NSData *jsonResponseData = [NSJSONSerialization dataWithJSONObject:attribution.jsonResponse
+                                                                       options:0
+                                                                         error:&jsonResponseError];
+                    if (!jsonResponseData) {
+                        NSLog(@"[AdjustPlugin]: Error while trying to convert jsonResponse dictionary to JSON string: %@", jsonResponseError);
+                    } else {
+                        NSString *jsonResponseString = [[NSString alloc] initWithData:jsonResponseData encoding:NSUTF8StringEncoding];
+                        NSLog(@"[AdjustPlugin]: JSON string: %@", jsonResponseString);
+                        [AdjustSdkDelegate addKey:@"jsonResponse" andValue:jsonResponseString toDictionary:dictionary];
+
+                    }
+                }
+                
                 NSError *error;
                 NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
                                                                    options:0
@@ -1163,6 +1276,30 @@ int AdjustPlugin::setDeferredDeeplinkCallback(lua_State *L) {
         Self *library = ToLibrary(L);
         CoronaLuaRef callback = CoronaLuaNewRef(L, callbackIndex);
         library->InitializeDeferredDeeplinkCallback(callback);
+    }
+    return 0;
+}
+
+int AdjustPlugin::endFirstSessionDelay(lua_State *L){
+    [Adjust endFirstSessionDelay];
+    return 0;
+}
+
+int AdjustPlugin::enableCoppaComplianceInDelay(lua_State *L){
+    [Adjust enableCoppaComplianceInDelay];
+    return 0;
+}
+
+int AdjustPlugin::disableCoppaComplianceInDelay(lua_State *L){
+    [Adjust disableCoppaComplianceInDelay];
+    return 0;
+}
+
+int AdjustPlugin::setExternalDeviceIdInDelay(lua_State *L){
+    const char *cstrExternalDeviceId = lua_tostring(L, 1);
+    if (cstrExternalDeviceId != NULL) {
+        NSString *externalDeviceId =[NSString stringWithUTF8String:cstrExternalDeviceId];
+        [Adjust setExternalDeviceIdInDelay:externalDeviceId];
     }
     return 0;
 }
@@ -1590,6 +1727,16 @@ int AdjustPlugin::setSkanUpdatedCallback(lua_State *L) {
 
 // android only
 int AdjustPlugin::trackPlayStoreSubscription(lua_State *L) {
+    return 0;
+}
+
+// android only
+int AdjustPlugin::enablePlayStoreKidsComplianceInDelay(lua_State *L){
+    return 0;
+}
+
+// android only
+int AdjustPlugin::disablePlayStoreKidsComplianceInDelay(lua_State *L){
     return 0;
 }
 

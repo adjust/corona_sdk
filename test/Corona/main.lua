@@ -41,7 +41,7 @@ else
     protocol = "https"
     port = "8443"
 end
-local baseIp = "192.168.86.88"
+local baseIp = "192.168.0.34"
 local overwriteUrl = protocol .. "://" .. baseIp .. ":" .. port
 local controlUrl = "ws://" .. baseIp .. ":1987";
 print("[TestApp]: Using BaseUrl: [" .. overwriteUrl .. "]--")
@@ -69,6 +69,7 @@ print("[TestApp]: Setting test lib tests....")
 
 -- testLib.addTestDirectory("ad-revenue")
 -- testLib.addTestDirectory("ad-services")
+-- testLib.addTestDirectory("att")
 -- testLib.addTestDirectory("attribution-callback")
 -- testLib.addTestDirectory("attribution-getter")
 -- testLib.addTestDirectory("attribution-initiated-by")
@@ -83,6 +84,7 @@ print("[TestApp]: Setting test lib tests....")
 -- testLib.addTestDirectory("event-callbacks")
 -- testLib.addTestDirectory("event-tracking")
 -- testLib.addTestDirectory("external-device-id")
+-- testLib.addTestDirectory("first-session-delay")
 -- testLib.addTestDirectory("gdpr")
 -- testLib.addTestDirectory("global-parameters")
 -- testLib.addTestDirectory("google-kids")
@@ -102,12 +104,17 @@ print("[TestApp]: Setting test lib tests....")
 -- testLib.addTestDirectory("session-callbacks")
 -- testLib.addTestDirectory("session-count")
 -- testLib.addTestDirectory("skan")
+-- testLib.addTestDirectory("store-info")
 -- testLib.addTestDirectory("subscription")
 -- testLib.addTestDirectory("third-party-sharing")
 -- testLib.addTestDirectory("tracking-domain")
 -- testLib.addTestDirectory("verify-track")
 
-testLib.startTestSession("corona5.0.1@ios5.1.0")
+ --testLib.addTest("Test_ThirdPartySharing_after_install")
+ --testLib.addTest("Test_ThirdPartySharing_before_install")
+ --testLib.addTest("Test_ThirdPartySharing_second_start_new_session")
+ --testLib.addTest("Test_ThirdPartySharing_second_start_no_new_session")
+--testLib.startTestSession("corona5.4.0@ios5.4.0")
 
 -- Start Test Session
 -- ------------------------
@@ -116,6 +123,7 @@ local function handleStartTestSession(event)
         print("start test")
         adjust.getSdkVersion(function(event)
             print("[TestApp]: starting test session with sdk version = " .. event.message)
+            --testLib.addTest("Test_FirstSessionDelay_coppa_delayed")
             testLib.startTestSession(event.message)
         end)
     end

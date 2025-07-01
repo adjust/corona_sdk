@@ -159,7 +159,22 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
     [AdjustSdkDelegate addKey:KEY_COST_TYPE andValue:attribution.costType toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_COST_AMOUNT andValue:attribution.costAmount toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_COST_CURRENCY andValue:attribution.costCurrency toDictionary:dictionary];
+    NSLog(@"MAHDI : jsonresponse = is here first ");
+    if (attribution.jsonResponse != nil) {
+        NSError *jsonResponseError;
+        NSData *jsonResponseData = [NSJSONSerialization dataWithJSONObject:attribution.jsonResponse
+                                                           options:0
+                                                             error:&jsonResponseError];
+        if (!jsonResponseData) {
+            NSLog(@"[AdjustPlugin]: Error while trying to convert jsonResponse dictionary to JSON string: %@", jsonResponseError);
+        } else {
+            NSString *jsonResponseString = [[NSString alloc] initWithData:jsonResponseData encoding:NSUTF8StringEncoding];
+            NSLog(@"[AdjustPlugin]: JSON string: %@", jsonResponseString);
+            [AdjustSdkDelegate addKey:KEY_JSON_RESPONSE andValue:jsonResponseString toDictionary:dictionary];
 
+        }
+    }
+    
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
                                                        options:0
