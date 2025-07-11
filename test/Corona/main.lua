@@ -67,8 +67,8 @@ command_executor.setPlatform(platformInfo)
 
 print("[TestApp]: Setting test lib tests....")
 
--- testLib.addTestDirectory("ad-revenue")
--- testLib.addTestDirectory("ad-services")
+ --testLib.addTestDirectory("ad-revenue")
+ --testLib.addTestDirectory("ad-services")
 -- testLib.addTestDirectory("att")
 -- testLib.addTestDirectory("attribution-callback")
 -- testLib.addTestDirectory("attribution-getter")
@@ -110,11 +110,11 @@ print("[TestApp]: Setting test lib tests....")
 -- testLib.addTestDirectory("tracking-domain")
 -- testLib.addTestDirectory("verify-track")
 
- --testLib.addTest("Test_ThirdPartySharing_after_install")
- --testLib.addTest("Test_ThirdPartySharing_before_install")
- --testLib.addTest("Test_ThirdPartySharing_second_start_new_session")
- --testLib.addTest("Test_ThirdPartySharing_second_start_no_new_session")
---testLib.startTestSession("corona5.4.0@ios5.4.0")
+-- testLib.addTest("Test_ThirdPartySharing_after_install")
+-- testLib.addTest("Test_ThirdPartySharing_before_install")
+-- testLib.addTest("Test_ThirdPartySharing_second_start_new_session")
+-- testLib.addTest("Test_ThirdPartySharing_second_start_no_new_session")
+-- testLib.startTestSession("corona5.4.0@ios5.4.1")
 
 -- Start Test Session
 -- ------------------------
