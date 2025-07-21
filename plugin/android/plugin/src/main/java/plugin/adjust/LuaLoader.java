@@ -425,6 +425,14 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
+        // fb App Id
+        L.getField(1, "fbAppId");
+        if (!L.isNil(2)) {
+            fbAppId = L.checkString(2);
+            adjustConfig.setFbAppId(fbAppId);
+        }
+        L.pop(1);
+
         // should open deferred deep link
         L.getField(1, "isDeferredDeeplinkOpeningEnabled");
         if (!L.isNil(2)) {
