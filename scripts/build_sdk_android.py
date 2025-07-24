@@ -15,7 +15,7 @@ def build_plugin(dir_root, dir_dist):
     ## ------------------------------------------------------------------
     ## Copy Adjust Corona plugin JAR to dist folder into VERSION subfolder.
     debug_green('Copying Adjust Corona plugin JAR library to dist directory ...')
-    copy_file('{0}/build/intermediates/aar_main_jar/release/classes.jar'.format(dir_android_plugin), '{0}/plugin.adjust.jar'.format(dir_dist))
+    copy_file('{0}/build/intermediates/aar_main_jar/release/syncReleaseLibJars/classes.jar'.format(dir_android_plugin), '{0}/plugin.adjust.jar'.format(dir_dist))
     # change_dir(dir_dist)
     # extract_plugin_jar_from_aar()
 
