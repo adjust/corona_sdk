@@ -395,20 +395,27 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
-        // store info name
+        // store info
         AdjustStoreInfo storeInfo = null;
-        L.getField(1, "storeInfoName");
+        L.getField(1, "storeInfo");
         if (!L.isNil(2)) {
-            storeInfoName = L.checkString(2);
-            storeInfo = new AdjustStoreInfo(storeInfoName);
-        }
-        L.pop(1);
-
-        // store info app ID
-        L.getField(1, "storeInfoAppId");
-        if (!L.isNil(2)) {
-            storeInfoAppId = L.checkString(2);
-            storeInfo.setStoreAppId(storeInfoAppId);
+            // store name
+            L.getField(2, "storeName");
+            if (!L.isNil(3)) {
+                storeInfoName = L.checkString(3);
+                storeInfo = new AdjustStoreInfo(storeInfoName);
+            }
+            L.pop(1);
+            
+            // store app ID
+            L.getField(2, "storeAppId");
+            if (!L.isNil(3)) {
+                storeInfoAppId = L.checkString(3);
+                if (storeInfo != null) {
+                    storeInfo.setStoreAppId(storeInfoAppId);
+                }
+            }
+            L.pop(1);
         }
         L.pop(1);
 

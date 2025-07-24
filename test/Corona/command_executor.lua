@@ -295,12 +295,14 @@ function CommandExecutor:config()
         adjustConfig.isAppTrackingTransparencyUsageEnabled = (self.command:getFirstParameterValue("allowAttUsage") == "true")
     end
 
-    if self.command:containsParameter("storeName") then
-        adjustConfig.storeInfoName = self.command:getFirstParameterValue("storeName")
-    end
-
-    if self.command:containsParameter("storeAppId") then
-        adjustConfig.storeInfoAppId = self.command:getFirstParameterValue("storeAppId")
+    if self.command:containsParameter("storeName") or self.command:containsParameter("storeAppId") then
+        adjustConfig.storeInfo = {}
+        if self.command:containsParameter("storeName") then
+            adjustConfig.storeInfo.storeName = self.command:getFirstParameterValue("storeName")
+        end
+        if self.command:containsParameter("storeAppId") then
+            adjustConfig.storeInfo.storeAppId = self.command:getFirstParameterValue("storeAppId")
+        end
     end
 
     if self.command:containsParameter("attributionCallbackSendAll") then
