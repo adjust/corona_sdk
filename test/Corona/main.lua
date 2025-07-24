@@ -10,13 +10,12 @@ local platformInfo = system.getInfo("platform")
 print("[TestApp]: Running on [" .. platformInfo .. "]--")
 print("------------------------------------------------------------")
 
--- Setting up a system event listener for deeplink support
--- ---------------------------------------------------------
+-- setting up a system event listener for deeplink support
 local function onSystemEvent(event)
     if event.type == "applicationOpen" and event.url then
         print("[TestApp]: applicationOpen event. url = " .. event.url)
         -- Capture app event opened from deep link
-        -- adjust.appWillOpenUrl(event.url)
+        -- adjust.processDeeplink(event.url)
     end
 end
 
@@ -25,26 +24,58 @@ Runtime:addEventListener("system", onSystemEvent)
 local launchArgs = ...
 if launchArgs and launchArgs.url then
     print("[TestApp]: launchArgs.url = (" .. launchArgs.url .. ")")
-    -- adjust.appWillOpenUrl(launchArgs.url)
+    -- adjust.processDeeplink(launchArgs.url)
 end
 
--- Setting up assets
--- ------------------------
-display.setDefault("background", 1, 1, 1)
+-- screen setup
+local screenW = display.contentWidth
+local screenH = display.contentHeight
+local centerX = display.contentCenterX
+local centerY = display.contentCenterY
 
-local protocol
-local port
-if platformInfo == "ios" then
-    protocol = "http"
-    port = "8080"
-else
-    protocol = "https"
-    port = "8443"
-end
-local baseIp = "192.168.0.34"
+-- Dark blue background (same as original design)
+local background = display.newRect(centerX, centerY, screenW, screenH)
+background:setFillColor(0.16, 0.25, 0.45)
+
+-- App title at top
+local titleText = display.newText({
+    text = "Adjust Test App",
+    x = centerX,
+    y = 50,
+    font = native.systemFontBold,
+    fontSize = 18
+})
+titleText:setFillColor(1, 1, 1)
+
+-- test session title
+local testSessionTitle = display.newText({
+    text = "Test Session",
+    x = centerX,
+    y = centerY - 80,
+    font = native.systemFontBold,
+    fontSize = 15
+})
+testSessionTitle:setFillColor(1, 1, 1)
+
+-- subtitle text
+local subtitleText = display.newText({
+    text = "Tap the button below to start testing\nthe Adjust SDK functionality",
+    x = centerX,
+    y = centerY - 30,
+    font = native.systemFont,
+    fontSize = 10,
+    align = "center"
+})
+subtitleText:setFillColor(0.8, 0.85, 0.9)
+
+-- network configuration
+local protocol = platformInfo == "ios" and "http" or "https"
+local port = platformInfo == "ios" and "8080" or "8443"
+local baseIp = "192.168.86.248"
 local overwriteUrl = protocol .. "://" .. baseIp .. ":" .. port
-local controlUrl = "ws://" .. baseIp .. ":1987";
-print("[TestApp]: Using BaseUrl: [" .. overwriteUrl .. "]--")
+local controlUrl = "ws://" .. baseIp .. ":1987"
+
+-- command executor setup
 local commandExecutor = command_executor.CommandExecutor:new(nil, overwriteUrl)
 
 local function executeCommand(event)
@@ -55,20 +86,16 @@ local function executeCommand(event)
     else
         commandObj = command.Command:new(nil, rawCommand.className, rawCommand.methodName, rawCommand.parameters)
     end
-    --commandObj:printCommand()
     print("[TestApp]: Executing command: " .. commandObj.className .. "." .. commandObj.methodName .. " <<<<<")
     commandExecutor:executeCommand(commandObj)
 end
 
-print("[TestApp]: Create and init test lib....")
+-- initialize test library
 testLib.initTestLibrary(overwriteUrl, controlUrl, executeCommand)
 command_executor.setTestLib(testLib)
 command_executor.setPlatform(platformInfo)
-
-print("[TestApp]: Setting test lib tests....")
-
- --testLib.addTestDirectory("ad-revenue")
- --testLib.addTestDirectory("ad-services")
+-- testLib.addTestDirectory("ad-revenue")
+-- testLib.addTestDirectory("ad-services")
 -- testLib.addTestDirectory("att")
 -- testLib.addTestDirectory("attribution-callback")
 -- testLib.addTestDirectory("attribution-getter")
@@ -116,29 +143,25 @@ print("[TestApp]: Setting test lib tests....")
 -- testLib.addTest("Test_ThirdPartySharing_second_start_no_new_session")
 -- testLib.startTestSession("corona5.4.0@ios5.4.1")
 
--- Start Test Session
--- ------------------------
-local function handleStartTestSession(event)
-    if ("ended" == event.phase) then
-        print("start test")
-        adjust.getSdkVersion(function(event)
-            print("[TestApp]: starting test session with sdk version = " .. event.message)
-            --testLib.addTest("Test_FirstSessionDelay_coppa_delayed")
-            testLib.startTestSession(event.message)
-        end)
-    end
+-- button functionality
+local function startTestSession()
+    adjust.getSdkVersion(function(event)
+        print("[TestApp]: starting test session with sdk version = " .. event.message)
+        testLib.startTestSession(event.message)
+    end)
 end
 
-widget.newButton({
-    left = display.contentCenterX - 85,
-    top = 40 + (0 * 30),
-    id = "button0",
+-- simple start button
+local startButton = widget.newButton({
+    x = centerX,
+    y = centerY + 50,
+    width = 150,
+    height = 35,
     label = "Start Test Session",
-    onEvent = handleStartTestSession
+    fontSize = 10,
+    fillColor = { default = {1,1,1}, over = {0.9,0.9,0.9} },
+    labelColor = { default = {0.16,0.25,0.45}, over = {0.12,0.2,0.4} },
+    shape = "roundedRect",
+    cornerRadius = 12,
+    onRelease = startTestSession
 })
-
--- START TEST SESSION AUTIMATICALLY
--- adjust.getSdkVersion(function(event)
---     print("[TestApp]: starting test session with sdk version = " .. event.message)
---     testLib.startTestSession(event.message)
--- end)
