@@ -71,7 +71,7 @@ subtitleText:setFillColor(0.8, 0.85, 0.9)
 -- network configuration
 local protocol = platformInfo == "ios" and "http" or "https"
 local port = platformInfo == "ios" and "8080" or "8443"
-local baseIp = "192.168.86.248"
+local baseIp = "192.168.0.34"
 local overwriteUrl = protocol .. "://" .. baseIp .. ":" .. port
 local controlUrl = "ws://" .. baseIp .. ":1987"
 
@@ -131,7 +131,7 @@ command_executor.setPlatform(platformInfo)
 -- testLib.addTestDirectory("session-callbacks")
 -- testLib.addTestDirectory("session-count")
 -- testLib.addTestDirectory("skan")
--- testLib.addTestDirectory("store-info")
+ testLib.addTestDirectory("store-info")
 -- testLib.addTestDirectory("subscription")
 -- testLib.addTestDirectory("third-party-sharing")
 -- testLib.addTestDirectory("tracking-domain")
@@ -141,7 +141,7 @@ command_executor.setPlatform(platformInfo)
 -- testLib.addTest("Test_ThirdPartySharing_before_install")
 -- testLib.addTest("Test_ThirdPartySharing_second_start_new_session")
 -- testLib.addTest("Test_ThirdPartySharing_second_start_no_new_session")
--- testLib.startTestSession("corona5.4.0@ios5.4.1")
+ testLib.startTestSession("corona5.4.0@ios5.4.1")
 
 -- button functionality
 local function startTestSession()

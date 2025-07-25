@@ -528,29 +528,54 @@ int AdjustPlugin::initSdk(lua_State *L) {
     
     ADJStoreInfo *adjStoreInfo = nil;
     
-    // Store Info name
-    lua_getfield(L, 1, "storeInfoName");
+     // Store Info name
+     lua_getfield(L, 1, "storeInfo");
+    
     if (!lua_isnil(L, 2)) {
-        const char *cstrStoreName = lua_tostring(L, 2);
-        if (cstrStoreName != nil) {
+        // store name
+        lua_getfield(L, 2, "storeName");
+        if (!lua_isnil(L, 3)) {
+            const char *cstrStoreName = lua_tostring(L, 3);
             storeInfoName = [NSString stringWithUTF8String:cstrStoreName];
             adjStoreInfo = [[ADJStoreInfo alloc] initWithStoreName:storeInfoName];
         }
-    }
-    lua_pop(L, 1);
-    
-    // Store Info app id
-    lua_getfield(L, 1, "storeInfoAppId");
-    if (!lua_isnil(L, 2)) {
-        const char *cstrStoreAppId = lua_tostring(L, 2);
-        if (cstrStoreAppId != nil) {
-            storeInfoAppId = [NSString stringWithUTF8String:cstrStoreAppId];
-            if (adjStoreInfo != nil) {
-                [adjStoreInfo setStoreAppId:storeInfoAppId];
+        lua_pop(L, 1);
+        
+        // store app ID
+        lua_getfield(L, 2, "storeAppId");
+        if (!lua_isnil(L, 3)) {
+            const char *cstrStoreAppId = lua_tostring(L, 3);
+            if (cstrStoreAppId != nil) {
+                storeInfoAppId = [NSString stringWithUTF8String:cstrStoreAppId];
+                if (storeInfoAppId != nil) {
+                    [adjStoreInfo setStoreAppId:storeInfoAppId];
+                }
             }
         }
+        lua_pop(L, 1);
     }
     lua_pop(L, 1);
+//     if (!lua_isnil(L, 2)) {
+//         const char *cstrStoreName = lua_tostring(L, 2);
+//         if (cstrStoreName != nil) {
+//             storeInfoName = [NSString stringWithUTF8String:cstrStoreName];
+//             adjStoreInfo = [[ADJStoreInfo alloc] initWithStoreName:storeInfoName];
+//         }
+//     }
+//     lua_pop(L, 1);
+//
+//     // Store Info app id
+//     lua_getfield(L, 1, "storeInfoAppId");
+//     if (!lua_isnil(L, 2)) {
+//         const char *cstrStoreAppId = lua_tostring(L, 2);
+//         if (cstrStoreAppId != nil) {
+//             storeInfoAppId = [NSString stringWithUTF8String:cstrStoreAppId];
+//             if (adjStoreInfo != nil) {
+//                 [adjStoreInfo setStoreAppId:storeInfoAppId];
+//             }
+//         }
+//     }
+//     lua_pop(L, 1);
     
     if (adjStoreInfo != nil) {
         [adjustConfig setStoreInfo:adjStoreInfo];
