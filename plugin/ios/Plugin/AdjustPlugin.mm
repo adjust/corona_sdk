@@ -906,19 +906,49 @@ int AdjustPlugin::trackThirdPartySharing(lua_State *L) {
     // granular options
     lua_getfield(L, 1, "granularOptions");
     if (!lua_isnil(L, 2) && lua_istable(L, 2)) {
-        NSDictionary *dict = CoronaLuaCreateDictionary(L, 2);
-        for (id key in dict) {
-            NSDictionary *granularOptions = [dict objectForKey:key];
-            for (id keySetting in granularOptions) {
-                NSLog(@"key setting is : %@", keySetting);
-                if ([keySetting isEqualToString:@"partnerName"]) {
-                    NSLog(@"key setting is chosen : %@", keySetting);
-                    NSLog(@"key setting is : %@", granularOptions);
-                    [adjustThirdPartySharing addGranularOption:granularOptions[@"partnerName"]
-                                                           key:granularOptions[@"key"]
-                                                         value:granularOptions[@"value"]];
+        // get array length to process in original order
+        size_t arrayLength = lua_objlen(L, 2);
+        for (int i = 1; i <= arrayLength; i++) {
+            lua_rawgeti(L, 2, i);
+            if (!lua_istable(L, 3)) {
+                lua_pop(L, 1);
+                continue;
+            }
+
+            lua_getfield(L, 3, "partnerName");
+            NSString *partnerName = nil;
+            if (!lua_isnil(L, 4)) {
+                const char *cPartnerName = lua_tostring(L, 4);
+                if (cPartnerName != nil) {
+                    partnerName = [NSString stringWithUTF8String:cPartnerName];
                 }
             }
+            lua_pop(L, 1);
+
+            lua_getfield(L, 3, "key");
+            NSString *optionKey = nil;
+            if (!lua_isnil(L, 4)) {
+                const char *cOptionKey = lua_tostring(L, 4);
+                if (cOptionKey != nil) {
+                    optionKey = [NSString stringWithUTF8String:cOptionKey];
+                }
+            }
+            lua_pop(L, 1);
+
+            lua_getfield(L, 3, "value");
+            NSString *value = nil;
+            if (!lua_isnil(L, 4)) {
+                const char *cValue = lua_tostring(L, 4);
+                if (cValue != nil) {
+                    value = [NSString stringWithUTF8String:cValue];
+                }
+            }
+            lua_pop(L, 1);
+            
+            [adjustThirdPartySharing addGranularOption:partnerName
+                                                   key:optionKey
+                                                 value:value];
+            lua_pop(L, 1);
         }
     }
     lua_pop(L, 1);
@@ -926,21 +956,56 @@ int AdjustPlugin::trackThirdPartySharing(lua_State *L) {
     // partner sharing settings
     lua_getfield(L, 1, "partnerSharingSettings");
     if (!lua_isnil(L, 2) && lua_istable(L, 2)) {
-        NSDictionary *dict = CoronaLuaCreateDictionary(L, 2);
-        for (id key in dict) {
-            NSDictionary *partnerSharingSettings = [dict objectForKey:key];
-            for (id keySetting in partnerSharingSettings) {
-                if (![keySetting isEqualToString:@"partnerName"]) {
-                    [adjustThirdPartySharing addPartnerSharingSetting:partnerSharingSettings[@"partnerName"]
-                                                                  key:partnerSharingSettings[@"key"]
-                                                                value:[partnerSharingSettings[@"value"] boolValue]];
+        // get array length to process in original order
+        size_t arrayLength = lua_objlen(L, 2);
+        for (int i = 1; i <= arrayLength; i++) {
+            lua_rawgeti(L, 2, i);
+            if (!lua_istable(L, 3)) {
+                lua_pop(L, 1);
+                continue;
+            }
+
+            lua_getfield(L, 3, "partnerName");
+            NSString *partnerName = nil;
+            if (!lua_isnil(L, 4)) {
+                const char *cPartnerName = lua_tostring(L, 4);
+                if (cPartnerName != nil) {
+                    partnerName = [NSString stringWithUTF8String:cPartnerName];
                 }
             }
+            lua_pop(L, 1);
+
+            lua_getfield(L, 3, "key");
+            NSString *settingKey = nil;
+            if (!lua_isnil(L, 4)) {
+                const char *cSettingKey = lua_tostring(L, 4);
+                if (cSettingKey != nil) {
+                    settingKey = [NSString stringWithUTF8String:cSettingKey];
+                }
+            }
+            lua_pop(L, 1);
+
+            lua_getfield(L, 3, "value");
+            NSString *valueString = nil;
+            if (!lua_isnil(L, 4)) {
+                const char *cValue = lua_tostring(L, 4);
+                if (cValue != nil) {
+                    valueString = [NSString stringWithUTF8String:cValue];
+                }
+            }
+            lua_pop(L, 1);
+
+            BOOL value = [valueString boolValue];
+            [adjustThirdPartySharing addPartnerSharingSetting:partnerName
+                                                          key:settingKey
+                                                        value:value];
+            lua_pop(L, 1);
         }
     }
     lua_pop(L, 1);
 
     [Adjust trackThirdPartySharing:adjustThirdPartySharing];
+
     return 0;
 }
 
