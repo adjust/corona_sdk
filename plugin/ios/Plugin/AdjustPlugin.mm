@@ -1209,7 +1209,7 @@ int AdjustPlugin::getSdkVersion(lua_State *L) {
         [Adjust sdkVersionWithCompletionHandler:^(NSString * _Nullable sdkVersion) {
             NSString *sdkVersionFormatted = nil;
             if (sdkVersion != nil) {
-                sdkVersion = [NSString stringWithFormat:@"%@@%@", SDK_PREFIX, sdkVersion];
+                sdkVersionFormatted = [NSString stringWithFormat:@"%@@%@", SDK_PREFIX, sdkVersion];
             }
             [AdjustSdkDelegate dispatchEvent:EVENT_GET_SDK_VERSION
                                    withState:L
