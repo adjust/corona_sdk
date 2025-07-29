@@ -1997,7 +1997,7 @@ int AdjustPlugin::onPause(lua_State *L) {
 
 // testing purposes only
 int AdjustPlugin::teardown(lua_State *L) {
-    Self *library = (Self *)CoronaLuaToUserdata(L, 1);
+    Self *library = ToLibrary(L);
     library->attributionChangedCallback = nil;
     library->eventSuccessCallback = nil;
     library->eventFailureCallback = nil;
@@ -2006,7 +2006,6 @@ int AdjustPlugin::teardown(lua_State *L) {
     library->deferredDeeplinkCallback = nil;
     library->skanUpdatedCallback = nil;
 
-    delete library;
     return 0;
 }
 
