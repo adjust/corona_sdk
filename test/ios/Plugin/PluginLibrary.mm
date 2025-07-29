@@ -20,7 +20,7 @@ const char PluginLibrary::kName[] = "plugin.adjust.test";
 // This corresponds to the event name, e.g. [Lua] event.name
 const char PluginLibrary::kEvent[] = "pluginlibraryevent";
 
-PluginLibrary::PluginLibrary() : executeCommandListener(NULL) { }
+PluginLibrary::PluginLibrary() : executeCommandListener(NULL), testLibrary(nil) { }
 
 void PluginLibrary::InitExecuteCommandListener(CoronaLuaRef listener) {
     // Can only initialize listener once
@@ -59,6 +59,13 @@ int PluginLibrary::Open(lua_State *L) {
 int PluginLibrary::Finalizer(lua_State *L) {
     Self *library = (Self *)CoronaLuaToUserdata(L, 1);
     CoronaLuaDeleteRef(L, library->GetExecuteCommandListener());
+    
+    // Release the retained testLibrary object
+    if (library->testLibrary) {
+        [library->testLibrary release];
+        library->testLibrary = nil;
+    }
+    
     delete library;
     return 0;
 }
@@ -91,7 +98,7 @@ int PluginLibrary::initTestLibrary(lua_State *L) {
     }
     
     TestLibCommandExecutor *commandExecutor = [[TestLibCommandExecutor alloc] initWithPluginLibrary:library];
-    library->testLibrary = [ATLTestLibrary testLibraryWithBaseUrl:baseUrl andControlUrl:controlUrl andCommandDelegate:commandExecutor];
+    library->testLibrary = [[ATLTestLibrary testLibraryWithBaseUrl:baseUrl andControlUrl:controlUrl andCommandDelegate:commandExecutor] retain];
     
     NSLog(@"[TestLibrary][bridge]: Test library initialization completed.");
     return 0;
