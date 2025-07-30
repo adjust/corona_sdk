@@ -116,6 +116,9 @@
       andValue:(NSObject *)value
   toDictionary:(NSMutableDictionary *)dictionary;
 
+/**
+ * @brief Method for tearing down state between the subsequent test runs.
+ */
 + (void)teardown;
 
 @end

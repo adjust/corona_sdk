@@ -12,8 +12,9 @@
 #include <CoronaLua.h>
 #include <CoronaMacros.h>
 
-// This corresponds to the name of the library, e.g. [Lua] require "plugin.library" where the '.' is replaced with '_'.
-// Adjust SDK is named "plugin.adjust".
+// this corresponds to the name of the library
+// e.g. [Lua] require "plugin.library" where the '.' is replaced with '_'
+// Adjust SDK is named "plugin.adjust"
 CORONA_EXPORT int luaopen_plugin_adjust(lua_State *L);
 
 #endif // _AdjustPlugin_H__

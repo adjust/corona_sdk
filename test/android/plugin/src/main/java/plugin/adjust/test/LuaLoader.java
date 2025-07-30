@@ -6,7 +6,7 @@
 //  Copyright (c) 2018-2022 Adjust GmbH. All rights reserved.
 //
 
-// This corresponds to the name of the Lua library,
+// this corresponds to the name of the Lua library
 // e.g. [Lua] require "plugin.testlibrary"
 package plugin.adjust.test;
 
@@ -34,7 +34,6 @@ import com.google.gson.Gson;
 
 /**
  * Implements the Lua interface for a Corona plugin.
- * <p>
  * Only one instance of this class will be created by Corona for the lifetime of the application.
  * This instance will be re-used for every new Corona activity that gets created.
  */
@@ -47,7 +46,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 	/**
 	 * Creates a new Lua interface to this plugin.
-	 * <p>
 	 * Note that a new LuaLoader instance will not be created for every CoronaActivity instance.
 	 * That is, only one instance of this class will be created for the lifetime of the application process.
 	 * This gives a plugin the option to do operations in the background while the CoronaActivity is destroyed.
@@ -63,14 +61,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 	/**
 	 * Called when this plugin is being loaded via the Lua require() function.
-	 * <p>
 	 * Note that this method will be called every time a new CoronaActivity has been launched.
 	 * This means that you'll need to re-initialize this plugin here.
-	 * <p>
 	 * Warning! This method is not called on the main UI thread.
 	 * @param L Reference to the Lua state that the require() function was called from.
 	 * @return Returns the number of values that the require() function will return.
-	 *         <p>
 	 *         Expected to return 1, the library that the require() function is loading.
 	 */
 	@Override
@@ -89,13 +84,12 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		String libName = L.toString( 1 );
 		L.register(libName, luaFunctions);
 
-		// Returning 1 indicates that the Lua require() function will return the above Lua library.
+		// returning 1 indicates that the Lua require() function will return the above Lua library
 		return 1;
 	}
 
 	/**
 	 * Called after the Corona runtime has been created and just before executing the "main.lua" file.
-	 * <p>
 	 * Warning! This method is not called on the main thread.
 	 * @param runtime Reference to the CoronaRuntime object that has just been loaded/initialized.
 	 *                Provides a LuaState object that allows the application to extend the Lua API.
@@ -111,7 +105,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 	/**
 	 * Called just after the Corona runtime has executed the "main.lua" file.
-	 * <p>
 	 * Warning! This method is not called on the main thread.
 	 * @param runtime Reference to the CoronaRuntime object that has just been started.
 	 */
@@ -123,7 +116,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 	 * Called just after the Corona runtime has been suspended which pauses all rendering, audio, timers,
 	 * and other Corona related operations. This can happen when another Android activity (ie: window) has
 	 * been displayed, when the screen has been powered off, or when the screen lock is shown.
-	 * <p>
 	 * Warning! This method is not called on the main thread.
 	 * @param runtime Reference to the CoronaRuntime object that has just been suspended.
 	 */
@@ -133,7 +125,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 	/**
 	 * Called just after the Corona runtime has been resumed after a suspend.
-	 * <p>
 	 * Warning! This method is not called on the main thread.
 	 * @param runtime Reference to the CoronaRuntime object that has just been resumed.
 	 */
@@ -143,11 +134,9 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
 	/**
 	 * Called just before the Corona runtime terminates.
-	 * <p>
 	 * This happens when the Corona activity is being destroyed which happens when the user presses the Back button
 	 * on the activity, when the native.requestExit() method is called in Lua, or when the activity's finish()
 	 * method is called. This does not mean that the application is exiting.
-	 * <p>
 	 * Warning! This method is not called on the main thread.
 	 * @param runtime Reference to the CoronaRuntime object that is being terminated.
 	 */
@@ -170,7 +159,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 				luaState.pushString(message);
 				luaState.setField(-2, "message");
 
-				// Dispatch event to library's listener.
+				// dispatch event to library's listener
 				try {
 					CoronaLua.dispatchEvent(luaState, listener, 0);
 				} catch (Exception e) {
@@ -181,7 +170,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 	}
 
 	public int testLib_initTestLibrary(final LuaState L) {
-		Log.d(TAG, "Initialisation of test library started...");
+		Log.d(TAG, "Test library initialization started");
 		String baseUrl = L.checkString(1);
 		String controlUrl = L.checkString(2);
 		if (CoronaLua.isListener(L, 3, "ADJUST")) {
@@ -196,7 +185,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 				commandMap.put("className", className);
 				commandMap.put("methodName", methodName);
 				commandMap.put("parameters", parameters);
-				dispatchEvent(L,
+				dispatchEvent(
+					L,
 					LuaLoader.this.executeCommandListener,
 					"testLibrary_executeCommand",
 					new JSONObject(commandMap).toString());
@@ -204,7 +194,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 		});
 
 		this.testLibrary = new TestLibrary(baseUrl, controlUrl, CoronaEnvironment.getCoronaActivity(), coronaCommandJsonListener);
-		Log.d(TAG, "Test library initialisation finished.");
+		Log.d(TAG, "Test library initialization finished");
 		return 0;
 	}
 
@@ -238,8 +228,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 	}
 
 	private int testLib_startTestSession(LuaState L) {
-		Log.d(TAG, "StartTestSession called.");
-
 		String clientSdk = L.checkString(1);
 		this.testLibrary.startTestSession(clientSdk);
 		return 0;

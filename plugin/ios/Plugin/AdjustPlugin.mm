@@ -47,7 +47,7 @@
 
 #define SDK_PREFIX @"corona5.4.0"
 
-// ----------------------------------------------------------------------------
+#pragma mark - Bootstraping
 
 class AdjustPlugin {
 public:
@@ -76,24 +76,28 @@ public:
     static Self *ToLibrary(lua_State *L);
 
     static int initSdk(lua_State *L);
-    static int enable(lua_State *L);
-    static int disable(lua_State *L);
-    static int switchToOfflineMode(lua_State *L);
-    static int switchBackToOnlineMode(lua_State *L);
     static int trackEvent(lua_State *L);
     static int trackAdRevenue(lua_State *L);
     static int trackThirdPartySharing(lua_State *L);
     static int trackMeasurementConsent(lua_State *L);
-    static int gdprForgetMe(lua_State *L);
     static int processDeeplink(lua_State *L);
     static int processAndResolveDeeplink(lua_State *L);
     static int setPushToken(lua_State *L);
+    static int gdprForgetMe(lua_State *L);
+    static int enable(lua_State *L);
+    static int disable(lua_State *L);
+    static int switchToOfflineMode(lua_State *L);
+    static int switchBackToOnlineMode(lua_State *L);
     static int addGlobalCallbackParameter(lua_State *L);
     static int addGlobalPartnerParameter(lua_State *L);
     static int removeGlobalCallbackParameter(lua_State *L);
     static int removeGlobalPartnerParameter(lua_State *L);
     static int removeGlobalCallbackParameters(lua_State *L);
     static int removeGlobalPartnerParameters(lua_State *L);
+    static int endFirstSessionDelay(lua_State *L);
+    static int enableCoppaComplianceInDelay(lua_State *L);
+    static int disableCoppaComplianceInDelay(lua_State *L);
+    static int setExternalDeviceIdInDelay(lua_State *L);
     static int isEnabled(lua_State *L);
     static int getAttribution(lua_State *L);
     static int getAdid(lua_State *L);
@@ -105,10 +109,6 @@ public:
     static int setSessionSuccessCallback(lua_State *L);
     static int setSessionFailureCallback(lua_State *L);
     static int setDeferredDeeplinkCallback(lua_State *L);
-    static int endFirstSessionDelay(lua_State *L);
-    static int enableCoppaComplianceInDelay(lua_State *L);
-    static int disableCoppaComplianceInDelay(lua_State *L);
-    static int setExternalDeviceIdInDelay(lua_State *L);
     // ios only
     static int trackAppStoreSubscription(lua_State *L);
     static int verifyAppStorePurchase(lua_State *L);
@@ -147,11 +147,12 @@ private:
     CoronaLuaRef skanUpdatedCallback;
 };
 
-// ----------------------------------------------------------------------------
-
-// This corresponds to the name of the library, e.g. [Lua] require "plugin.library".
-// Adjust SDK is named "plugin.adjust".
+// this corresponds to the name of the library
+// e.g. [Lua] require "plugin.library"
+// Adjust SDK is named "plugin.adjust"
 const char AdjustPlugin::kName[] = "plugin.adjust";
+
+#pragma mark - Initialization & lifecycle
 
 AdjustPlugin::AdjustPlugin()
 : attributionChangedCallback(NULL),
@@ -160,7 +161,7 @@ eventFailureCallback(NULL),
 sessionSuccessCallback(NULL),
 sessionFailureCallback(NULL),
 deferredDeeplinkCallback(NULL),
-skanUpdatedCallback(NULL){}
+skanUpdatedCallback(NULL) {}
 
 
 void AdjustPlugin::InitializeAttributionCallback(CoronaLuaRef callback) {
@@ -193,32 +194,36 @@ void AdjustPlugin::InitializeSkanUpdatedCallback(CoronaLuaRef callback) {
 
 int
 AdjustPlugin::Open(lua_State *L) {
-    // Register __gc callback.
-    // Globally unique string to prevent collision.
+    // register __gc callback.
+    // globally unique string to prevent collision
     const char kMetatableName[] = __FILE__;
     CoronaLuaInitializeGCMetatable(L, kMetatableName, Finalizer);
 
-    // Functions in library
+    // methods in library
     const luaL_Reg kVTable[] = {
         { "initSdk", initSdk },
-        { "enable", enable },
-        { "disable", disable },
-        { "switchToOfflineMode", switchToOfflineMode },
-        { "switchBackToOnlineMode", switchBackToOnlineMode },
         { "trackEvent", trackEvent },
         { "trackAdRevenue", trackAdRevenue },
         { "trackThirdPartySharing", trackThirdPartySharing },
         { "trackMeasurementConsent", trackMeasurementConsent },
-        { "gdprForgetMe", gdprForgetMe },
         { "processDeeplink", processDeeplink},
         { "processAndResolveDeeplink", processAndResolveDeeplink},
         { "setPushToken", setPushToken },
+        { "gdprForgetMe", gdprForgetMe },
+        { "enable", enable },
+        { "disable", disable },
+        { "switchToOfflineMode", switchToOfflineMode },
+        { "switchBackToOnlineMode", switchBackToOnlineMode },
         { "addGlobalCallbackParameter", addGlobalCallbackParameter },
         { "addGlobalPartnerParameter", addGlobalPartnerParameter },
         { "removeGlobalCallbackParameter", removeGlobalCallbackParameter },
         { "removeGlobalPartnerParameter", removeGlobalPartnerParameter },
         { "removeGlobalCallbackParameters", removeGlobalCallbackParameters },
         { "removeGlobalPartnerParameters", removeGlobalPartnerParameters },
+        { "endFirstSessionDelay", endFirstSessionDelay },
+        { "enableCoppaComplianceInDelay", enableCoppaComplianceInDelay },
+        { "disableCoppaComplianceInDelay", disableCoppaComplianceInDelay },
+        { "setExternalDeviceIdInDelay", setExternalDeviceIdInDelay },
         { "isEnabled", isEnabled },
         { "getAttribution", getAttribution },
         { "getAdid", getAdid },
@@ -230,12 +235,6 @@ AdjustPlugin::Open(lua_State *L) {
         { "setSessionSuccessCallback", setSessionSuccessCallback },
         { "setSessionFailureCallback", setSessionFailureCallback },
         { "setDeferredDeeplinkCallback", setDeferredDeeplinkCallback },
-        { "endFirstSessionDelay", endFirstSessionDelay },
-        { "enableCoppaComplianceInDelay", enableCoppaComplianceInDelay },
-        { "disableCoppaComplianceInDelay", disableCoppaComplianceInDelay },
-        { "enablePlayStoreKidsComplianceInDelay", enablePlayStoreKidsComplianceInDelay },
-        { "disablePlayStoreKidsComplianceInDelay", disablePlayStoreKidsComplianceInDelay },
-        { "setExternalDeviceIdInDelay", setExternalDeviceIdInDelay },
         // ios only
         { "trackAppStoreSubscription", trackAppStoreSubscription },
         { "verifyAppStorePurchase", verifyAppStorePurchase },
@@ -250,6 +249,8 @@ AdjustPlugin::Open(lua_State *L) {
         { "trackPlayStoreSubscription", trackPlayStoreSubscription },
         { "verifyPlayStorePurchase", verifyPlayStorePurchase },
         { "verifyAndTrackPlayStorePurchase", verifyAndTrackPlayStorePurchase },
+        { "enablePlayStoreKidsComplianceInDelay", enablePlayStoreKidsComplianceInDelay },
+        { "disablePlayStoreKidsComplianceInDelay", disablePlayStoreKidsComplianceInDelay },
         { "getGoogleAdId", getGoogleAdId },
         { "getAmazonAdId", getAmazonAdId },
         // testing purposes only
@@ -260,11 +261,11 @@ AdjustPlugin::Open(lua_State *L) {
         { NULL, NULL }
     };
 
-    // Set library as upvalue for each library function.
+    // set library as upvalue for each library function
     Self *library = new Self;
     CoronaLuaPushUserdata(L, library, kMetatableName);
 
-    // Leave "library" on top of stack.
+    // leave "library" on top of stack
     luaL_openlib(L, kName, kVTable, 1);
 
     return 1;
@@ -285,10 +286,12 @@ int AdjustPlugin::Finalizer(lua_State *L) {
 }
 
 AdjustPlugin * AdjustPlugin::ToLibrary(lua_State *L) {
-    // Library is pushed as part of the closure.
+    // library is pushed as part of the closure
     Self *library = (Self *)CoronaLuaToUserdata(L, lua_upvalueindex(1));
     return library;
 }
+
+#pragma mark - Common methods
 
 int AdjustPlugin::initSdk(lua_State *L) {
     if (!lua_istable(L, 1)) {
@@ -419,7 +422,7 @@ int AdjustPlugin::initSdk(lua_State *L) {
     }
     lua_pop(L, 1);
     
-    // App Tracking transparency usage
+    // AppTrackingTransparency.framework usage
     lua_getfield(L, 1, "isAppTrackingTransparencyUsageEnabled");
     if (!lua_isnil(L, 2)) {
         isAppTrackingTransparencyUsageEnabled = lua_toboolean(L, 2);
@@ -456,7 +459,7 @@ int AdjustPlugin::initSdk(lua_State *L) {
     }
     lua_pop(L, 1);
 
-    // AdServices info reading
+    // AdServices.framework info reading
     lua_getfield(L, 1, "isAdServicesEnabled");
     if (!lua_isnil(L, 2)) {
         isAdServicesEnabled = lua_toboolean(L, 2);
@@ -635,26 +638,6 @@ int AdjustPlugin::initSdk(lua_State *L) {
     }
 
     [Adjust initSdk:adjustConfig];
-    return 0;
-}
-
-int AdjustPlugin::enable(lua_State *L) {
-    [Adjust enable];
-    return 0;
-}
-
-int AdjustPlugin::disable(lua_State *L) {
-    [Adjust disable];
-    return 0;
-}
-
-int AdjustPlugin::switchToOfflineMode(lua_State *L) {
-    [Adjust switchToOfflineMode];
-    return 0;
-}
-
-int AdjustPlugin::switchBackToOnlineMode(lua_State *L) {
-    [Adjust switchBackToOnlineMode];
     return 0;
 }
 
@@ -1015,11 +998,6 @@ int AdjustPlugin::trackMeasurementConsent(lua_State *L) {
     return 0;
 }
 
-int AdjustPlugin::gdprForgetMe(lua_State *L) {
-    [Adjust gdprForgetMe];
-    return 0;
-}
-
 int AdjustPlugin::processDeeplink(lua_State *L) {
     if (!lua_istable(L, 1)) {
         NSLog(@"[AdjustPlugin]: processDeeplink must be supplied with a table");
@@ -1055,10 +1033,11 @@ int AdjustPlugin::processDeeplink(lua_State *L) {
         }
         [Adjust processDeeplink:adjustDeeplink];
     }
+
     return 0;
 }
 
-int AdjustPlugin::processAndResolveDeeplink(lua_State *L){
+int AdjustPlugin::processAndResolveDeeplink(lua_State *L) {
     if (!lua_istable(L, 1)) {
         NSLog(@"[AdjustPlugin]: processAndResolveDeeplink must be supplied with a table");
         return 0;
@@ -1117,6 +1096,7 @@ int AdjustPlugin::processAndResolveDeeplink(lua_State *L){
             }];
         }
     }
+
     return 0;
 }
 
@@ -1126,6 +1106,31 @@ int AdjustPlugin::setPushToken(lua_State *L) {
         NSString *pushToken =[NSString stringWithUTF8String:cstrPushToken];
         [Adjust setPushTokenAsString:pushToken];
     }
+    return 0;
+}
+
+int AdjustPlugin::gdprForgetMe(lua_State *L) {
+    [Adjust gdprForgetMe];
+    return 0;
+}
+
+int AdjustPlugin::enable(lua_State *L) {
+    [Adjust enable];
+    return 0;
+}
+
+int AdjustPlugin::disable(lua_State *L) {
+    [Adjust disable];
+    return 0;
+}
+
+int AdjustPlugin::switchToOfflineMode(lua_State *L) {
+    [Adjust switchToOfflineMode];
+    return 0;
+}
+
+int AdjustPlugin::switchBackToOnlineMode(lua_State *L) {
+    [Adjust switchBackToOnlineMode];
     return 0;
 }
 
@@ -1175,6 +1180,30 @@ int AdjustPlugin::removeGlobalPartnerParameters(lua_State *L) {
     return 0;
 }
 
+int AdjustPlugin::endFirstSessionDelay(lua_State *L) {
+    [Adjust endFirstSessionDelay];
+    return 0;
+}
+
+int AdjustPlugin::enableCoppaComplianceInDelay(lua_State *L) {
+    [Adjust enableCoppaComplianceInDelay];
+    return 0;
+}
+
+int AdjustPlugin::disableCoppaComplianceInDelay(lua_State *L) {
+    [Adjust disableCoppaComplianceInDelay];
+    return 0;
+}
+
+int AdjustPlugin::setExternalDeviceIdInDelay(lua_State *L) {
+    const char *cstrExternalDeviceId = lua_tostring(L, 1);
+    if (cstrExternalDeviceId != NULL) {
+        NSString *externalDeviceId =[NSString stringWithUTF8String:cstrExternalDeviceId];
+        [Adjust setExternalDeviceIdInDelay:externalDeviceId];
+    }
+    return 0;
+}
+
 int AdjustPlugin::isEnabled(lua_State *L) {
     int callbackIndex = 1;
     if (CoronaLuaIsListener(L, callbackIndex, "ADJUST")) {
@@ -1207,7 +1236,6 @@ int AdjustPlugin::getAttribution(lua_State *L) {
                 [AdjustSdkDelegate addKey:@"costType" andValue:attribution.costType toDictionary:dictionary];
                 [AdjustSdkDelegate addKey:@"costAmount" andValue:attribution.costAmount toDictionary:dictionary];
                 [AdjustSdkDelegate addKey:@"costCurrency" andValue:attribution.costCurrency toDictionary:dictionary];
-                NSLog(@"MAHDI : jsonresponse = is here first ");
                 if (attribution.jsonResponse != nil) {
                     NSError *jsonResponseError;
                     NSData *jsonResponseData = [NSJSONSerialization dataWithJSONObject:attribution.jsonResponse
@@ -1219,7 +1247,6 @@ int AdjustPlugin::getAttribution(lua_State *L) {
                         NSString *jsonResponseString = [[NSString alloc] initWithData:jsonResponseData encoding:NSUTF8StringEncoding];
                         NSLog(@"[AdjustPlugin]: JSON string: %@", jsonResponseString);
                         [AdjustSdkDelegate addKey:@"jsonResponse" andValue:jsonResponseString toDictionary:dictionary];
-
                     }
                 }
                 
@@ -1239,6 +1266,7 @@ int AdjustPlugin::getAttribution(lua_State *L) {
             }
         }];
     }
+
     return 0;
 }
 
@@ -1349,31 +1377,8 @@ int AdjustPlugin::setDeferredDeeplinkCallback(lua_State *L) {
     return 0;
 }
 
-int AdjustPlugin::endFirstSessionDelay(lua_State *L){
-    [Adjust endFirstSessionDelay];
-    return 0;
-}
+#pragma mark - iOS only methods
 
-int AdjustPlugin::enableCoppaComplianceInDelay(lua_State *L){
-    [Adjust enableCoppaComplianceInDelay];
-    return 0;
-}
-
-int AdjustPlugin::disableCoppaComplianceInDelay(lua_State *L){
-    [Adjust disableCoppaComplianceInDelay];
-    return 0;
-}
-
-int AdjustPlugin::setExternalDeviceIdInDelay(lua_State *L){
-    const char *cstrExternalDeviceId = lua_tostring(L, 1);
-    if (cstrExternalDeviceId != NULL) {
-        NSString *externalDeviceId =[NSString stringWithUTF8String:cstrExternalDeviceId];
-        [Adjust setExternalDeviceIdInDelay:externalDeviceId];
-    }
-    return 0;
-}
-
-// ios only
 int AdjustPlugin::trackAppStoreSubscription(lua_State *L) {
     if (!lua_istable(L, 1)) {
         NSLog(@"[AdjustPlugin]: trackAppStoreSubscription must be supplied with a table");
@@ -1473,7 +1478,6 @@ int AdjustPlugin::trackAppStoreSubscription(lua_State *L) {
     return 0;
 }
 
-// ios only
 int AdjustPlugin::verifyAppStorePurchase(lua_State *L) {
     if (!lua_istable(L, 1)) {
         NSLog(@"[AdjustPlugin]: verifyAppStorePurchase must be supplied with a table");
@@ -1524,7 +1528,7 @@ int AdjustPlugin::verifyAppStorePurchase(lua_State *L) {
                 [AdjustSdkDelegate addKey:@"message"
                                  andValue:verificationResult.message
                              toDictionary:dictionary];
-\
+
                 NSError *error;
                 NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
                                                                    options:0
@@ -1541,10 +1545,10 @@ int AdjustPlugin::verifyAppStorePurchase(lua_State *L) {
             }
         }];
     }
+
     return 0;
 }
 
-// ios only
 int AdjustPlugin::verifyAndTrackAppStorePurchase(lua_State *L) {
     if (!lua_istable(L, 1)) {
         NSLog(@"[AdjustPlugin]: verifyAndTrackAppStorePurchase must be supplied with a table");
@@ -1692,10 +1696,10 @@ int AdjustPlugin::verifyAndTrackAppStorePurchase(lua_State *L) {
             }
         }];
     }
+
     return 0;
 }
 
-// ios only
 int AdjustPlugin::requestAppTrackingAuthorization(lua_State *L) {
     int callbackIndex = 1;
     if (CoronaLuaIsListener(L, callbackIndex, "ADJUST")) {
@@ -1711,7 +1715,6 @@ int AdjustPlugin::requestAppTrackingAuthorization(lua_State *L) {
     return 0;
 }
 
-// ios only
 int AdjustPlugin::updateSkanConversionValue(lua_State *L) {
     NSInteger conversionValue = lua_tointeger(L, 1);
     NSString *coarseValue = nil;
@@ -1736,10 +1739,10 @@ int AdjustPlugin::updateSkanConversionValue(lua_State *L) {
             }];
         }
     }
+
     return 0;
 }
 
-// ios only
 int AdjustPlugin::getIdfa(lua_State *L) {
     int callbackIndex = 1;
     if (CoronaLuaIsListener(L, callbackIndex, "ADJUST")) {
@@ -1754,7 +1757,6 @@ int AdjustPlugin::getIdfa(lua_State *L) {
     return 0;
 }
 
-// ios only
 int AdjustPlugin::getIdfv(lua_State *L) {
     int callbackIndex = 1;
     if (CoronaLuaIsListener(L, callbackIndex, "ADJUST")) {
@@ -1769,7 +1771,6 @@ int AdjustPlugin::getIdfv(lua_State *L) {
     return 0;
 }
 
-// ios only
 int AdjustPlugin::getAppTrackingAuthorizationStatus(lua_State *L) {
     int status = [Adjust appTrackingAuthorizationStatus];
     int callbackIndex = 1;
@@ -1783,7 +1784,6 @@ int AdjustPlugin::getAppTrackingAuthorizationStatus(lua_State *L) {
     return 0;
 }
 
-// ios only
 int AdjustPlugin::setSkanUpdatedCallback(lua_State *L) {
     int callbackIndex = 1;
     if (CoronaLuaIsListener(L, callbackIndex, "ADJUST")) {
@@ -1794,22 +1794,20 @@ int AdjustPlugin::setSkanUpdatedCallback(lua_State *L) {
     return 0;
 }
 
-// android only
+#pragma mark - Android only methods
+
 int AdjustPlugin::trackPlayStoreSubscription(lua_State *L) {
     return 0;
 }
 
-// android only
-int AdjustPlugin::enablePlayStoreKidsComplianceInDelay(lua_State *L){
+int AdjustPlugin::enablePlayStoreKidsComplianceInDelay(lua_State *L) {
     return 0;
 }
 
-// android only
-int AdjustPlugin::disablePlayStoreKidsComplianceInDelay(lua_State *L){
+int AdjustPlugin::disablePlayStoreKidsComplianceInDelay(lua_State *L) {
     return 0;
 }
 
-// android only
 int AdjustPlugin::verifyPlayStorePurchase(lua_State *L) {
     // verification callback
     int callbackIndex = 1;
@@ -1829,10 +1827,10 @@ int AdjustPlugin::verifyPlayStorePurchase(lua_State *L) {
                                      message:jsonString];
         }
     }
+
     return 0;
 }
 
-// android only
 int AdjustPlugin::verifyAndTrackPlayStorePurchase(lua_State *L) {
     // verification callback
     int callbackIndex = 1;
@@ -1852,10 +1850,10 @@ int AdjustPlugin::verifyAndTrackPlayStorePurchase(lua_State *L) {
                                      message:jsonString];
         }
     }
+
     return 0;
 }
 
-// android only
 int AdjustPlugin::getGoogleAdId(lua_State *L) {
     int callbackIndex = 1;
     if (CoronaLuaIsListener(L, callbackIndex, "ADJUST")) {
@@ -1868,7 +1866,6 @@ int AdjustPlugin::getGoogleAdId(lua_State *L) {
     return 0;
 }
 
-// android only
 int AdjustPlugin::getAmazonAdId(lua_State *L) {
     int callbackIndex = 1;
     if (CoronaLuaIsListener(L, callbackIndex, "ADJUST")) {
@@ -1881,7 +1878,8 @@ int AdjustPlugin::getAmazonAdId(lua_State *L) {
     return 0;
 }
 
-// testing purposes only
+#pragma mark - Testing only methods
+
 int AdjustPlugin::setTestOptions(lua_State *L) {
     NSMutableDictionary *testOptions = [[NSMutableDictionary alloc] init];
 
@@ -2052,19 +2050,16 @@ int AdjustPlugin::setTestOptions(lua_State *L) {
     return 0;
 }
 
-// testing purposes only
 int AdjustPlugin::onResume(lua_State *L) {
     [Adjust trackSubsessionStart];
     return 0;
 }
 
-// testing purposes only
 int AdjustPlugin::onPause(lua_State *L) {
     [Adjust trackSubsessionEnd];
     return 0;
 }
 
-// testing purposes only
 int AdjustPlugin::teardown(lua_State *L) {
     Self *library = ToLibrary(L);
     library->attributionChangedCallback = nil;
@@ -2077,8 +2072,6 @@ int AdjustPlugin::teardown(lua_State *L) {
 
     return 0;
 }
-
-// ----------------------------------------------------------------------------
 
 CORONA_EXPORT int luaopen_plugin_adjust(lua_State *L) {
     return AdjustPlugin::Open(L);

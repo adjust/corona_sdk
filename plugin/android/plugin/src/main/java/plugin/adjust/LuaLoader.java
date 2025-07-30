@@ -6,8 +6,9 @@
 //  Copyright (c) 2017-Present Adjust GmbH. All rights reserved.
 //
 
-// This corresponds to the name of the Lua library, e.g. [Lua] require "plugin.library".
-// Adjust SDK is named "plugin.adjust".
+// this corresponds to the name of the Lua library
+// e.g. [Lua] require "plugin.library"
+// Adjust SDK is named "plugin.adjust"
 
 package plugin.adjust;
 
@@ -33,14 +34,13 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private static final String TAG = "AdjustLuaLoader";
     private static final String SDK_PREFIX = "corona5.4.0";
 
-    // subscriptions
+    // common
     public static final String EVENT_ATTRIBUTION_CHANGED = "adjust_attributionChanged";
     public static final String EVENT_SESSION_TRACKING_SUCCESS = "adjust_sessionTrackingSuccess";
     public static final String EVENT_SESSION_TRACKING_FAILURE = "adjust_sessionTrackingFailure";
     public static final String EVENT_EVENT_TRACKING_SUCCESS = "adjust_eventTrackingSuccess";
     public static final String EVENT_EVENT_TRACKING_FAILURE = "adjust_eventTrackingFailure";
     public static final String EVENT_DEFERRED_DEEPLINK = "adjust_deferredDeeplink";
-    // one time callbacks
     public static final String EVENT_PROCESS_AND_RESOLVE_DEEPLINK = "adjust_processAndResolveDeeplink";
     public static final String EVENT_IS_ADJUST_ENABLED = "adjust_isEnabled";
     public static final String EVENT_GET_ATTRIBUTION = "adjust_getAttribution";
@@ -159,7 +159,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             new GetIdfvWrapper(),
             new GetAppTrackingAuthorizationStatusWrapper(),
             new SetSkanUpdatedCallbackWrapper(),
-            // for testing purposes only
+            // testing purposes only
             new SetTestOptionsWrapper(),
             new OnResumeWrapper(),
             new OnPauseWrapper(),
@@ -168,7 +168,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         String libName = L.toString(1);
         L.register(libName, luaFunctions);
 
-        // Returning 1 indicates that the Lua require() function will return the above Lua library.
+        // returning 1 indicates that the Lua require() function will return the above Lua library
         return 1;
     }
 
