@@ -64,6 +64,7 @@ local subtitleText = display.newText({
 subtitleText:setFillColor(0.8, 0.85, 0.9)
 
 -- network configuration
+local platformInfo = system.getInfo("platform")
 local protocol = platformInfo == "ios" and "http" or "https"
 local port = platformInfo == "ios" and "8080" or "8443"
 local baseIp = "192.168.86.20"
