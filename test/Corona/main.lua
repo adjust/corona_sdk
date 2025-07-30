@@ -5,15 +5,10 @@ local json = require ("json")
 local command = require ("command")
 local command_executor = require ("command_executor")
 
-print("------------------------------------------------------------")
-local platformInfo = system.getInfo("platform")
-print("[TestApp]: Running on [" .. platformInfo .. "]--")
-print("------------------------------------------------------------")
-
 -- setting up a system event listener for deeplink support
 local function onSystemEvent(event)
     if event.type == "applicationOpen" and event.url then
-        print("[TestApp]: applicationOpen event. url = " .. event.url)
+        print("[TestApp]: applicationOpen event.url = " .. event.url)
         -- Capture app event opened from deep link
         -- adjust.processDeeplink(event.url)
     end
@@ -23,7 +18,7 @@ Runtime:addEventListener("system", onSystemEvent)
 
 local launchArgs = ...
 if launchArgs and launchArgs.url then
-    print("[TestApp]: launchArgs.url = (" .. launchArgs.url .. ")")
+    print("[TestApp]: launchArgs.url = " .. launchArgs.url .. "")
     -- adjust.processDeeplink(launchArgs.url)
 end
 
@@ -71,7 +66,7 @@ subtitleText:setFillColor(0.8, 0.85, 0.9)
 -- network configuration
 local protocol = platformInfo == "ios" and "http" or "https"
 local port = platformInfo == "ios" and "8080" or "8443"
-local baseIp = "192.168.86.248"
+local baseIp = "192.168.86.20"
 local overwriteUrl = protocol .. "://" .. baseIp .. ":" .. port
 local controlUrl = "ws://" .. baseIp .. ":1987"
 
@@ -94,59 +89,14 @@ end
 testLib.initTestLibrary(overwriteUrl, controlUrl, executeCommand)
 command_executor.setTestLib(testLib)
 command_executor.setPlatform(platformInfo)
--- testLib.addTestDirectory("ad-revenue")
--- testLib.addTestDirectory("ad-services")
--- testLib.addTestDirectory("att")
--- testLib.addTestDirectory("attribution-callback")
--- testLib.addTestDirectory("attribution-getter")
--- testLib.addTestDirectory("attribution-initiated-by")
--- testLib.addTestDirectory("continue-in")
--- testLib.addTestDirectory("coppa")
--- testLib.addTestDirectory("deeplink")
--- testLib.addTestDirectory("deeplink-deferred")
--- testLib.addTestDirectory("deeplink-getter")
--- testLib.addTestDirectory("default-tracker")
--- testLib.addTestDirectory("disable-enable")
--- testLib.addTestDirectory("error-responses")
--- testLib.addTestDirectory("event-callbacks")
--- testLib.addTestDirectory("event-tracking")
--- testLib.addTestDirectory("external-device-id")
--- testLib.addTestDirectory("first-session-delay")
--- testLib.addTestDirectory("gdpr")
--- testLib.addTestDirectory("global-parameters")
--- testLib.addTestDirectory("google-kids")
--- testLib.addTestDirectory("init-malformed")
--- testLib.addTestDirectory("lifecycle")
--- testLib.addTestDirectory("link-shortener")
--- testLib.addTestDirectory("measurement-consent")
--- testLib.addTestDirectory("offline-mode")
--- testLib.addTestDirectory("parameters")
--- testLib.addTestDirectory("pasteboard")
--- testLib.addTestDirectory("purchase-verification")
--- testLib.addTestDirectory("push-token")
--- testLib.addTestDirectory("queue-size")
--- testLib.addTestDirectory("retry-in")
--- testLib.addTestDirectory("sdk-prefix")
--- testLib.addTestDirectory("send-in-background")
--- testLib.addTestDirectory("session-callbacks")
--- testLib.addTestDirectory("session-count")
--- testLib.addTestDirectory("skan")
--- testLib.addTestDirectory("store-info")
--- testLib.addTestDirectory("subscription")
--- testLib.addTestDirectory("third-party-sharing")
--- testLib.addTestDirectory("tracking-domain")
--- testLib.addTestDirectory("verify-track")
 
+-- testLib.addTestDirectory("ad-revenue")
 -- testLib.addTest("Test_ThirdPartySharing_after_install")
--- testLib.addTest("Test_ThirdPartySharing_before_install")
--- testLib.addTest("Test_ThirdPartySharing_second_start_new_session")
--- testLib.addTest("Test_ThirdPartySharing_second_start_no_new_session")
--- testLib.startTestSession("corona5.4.0@ios5.4.1")
 
 -- button functionality
 local function startTestSession()
     adjust.getSdkVersion(function(event)
-        print("[TestApp]: starting test session with sdk version = " .. event.message)
+        print("[TestApp]: Starting test session with SDK version = " .. event.message)
         testLib.startTestSession(event.message)
     end)
 end
