@@ -826,7 +826,9 @@ function CommandExecutor:verifyPurchase()
             local json_verificationResult = json.decode(result.message)
             testLib.addInfoToSend("verification_status", json_verificationResult.verificationStatus);
             testLib.addInfoToSend("code", tostring(json_verificationResult.code));
-            testLib.addInfoToSend("message", json_verificationResult.message);
+            if json_verificationResult.message ~= nil then
+                testLib.addInfoToSend("message", json_verificationResult.message);
+            end
             testLib.sendInfoToServer(localBasePath)
         end)
     end
@@ -864,7 +866,9 @@ function CommandExecutor:verifyTrack()
             local json_verificationResult = json.decode(result.message)
             testLib.addInfoToSend("verification_status", json_verificationResult.verificationStatus);
             testLib.addInfoToSend("code", tostring(json_verificationResult.code));
-            testLib.addInfoToSend("message", json_verificationResult.message);
+            if json_verificationResult.message ~= nil then
+                testLib.addInfoToSend("message", json_verificationResult.message);
+            end
             testLib.sendInfoToServer(localBasePath)
         end)
         self.savedEvents[eventNumber] = nil
