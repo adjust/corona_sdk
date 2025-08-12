@@ -67,7 +67,7 @@ subtitleText:setFillColor(0.8, 0.85, 0.9)
 local platformInfo = system.getInfo("platform")
 local protocol = platformInfo == "ios" and "http" or "https"
 local port = platformInfo == "ios" and "8080" or "8443"
-local baseIp = "192.168.86.20"
+local baseIp = "192.168.86.211"
 local overwriteUrl = protocol .. "://" .. baseIp .. ":" .. port
 local controlUrl = "ws://" .. baseIp .. ":1987"
 
