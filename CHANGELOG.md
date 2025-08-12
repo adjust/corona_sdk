@@ -1,17 +1,20 @@
-### Version 5.4.0 (31st July 2025)
+### Version 5.4.0 (13th August 2025)
 #### Added
 - Added support store information through the SDK’s configuration object. This enables the SDK to record the intended app store source during initialization. For more details about this feature, refer to the [official documentation](https://dev.adjust.com/en/sdk/corona/setup/store-type).
 - Added ability to initialize the SDK for the first session in delayed mode. You can start the SDK in the delayed mode by setting the `isFirstSessionDelayEnabled` key of your configuration table to `true`. To end the delay, make sure to call `endFirstSessionDelay` method of `Adjust` instance. For more details about this feature, refer to the [official documentation](https://dev.adjust.com/en/sdk/corona/features/first-session-delay).
 - Added ability to send organic search referrer together with deep link. You can send it via `referrer` key of your deep link table. For more details about this feature, refer to the [official documentation](https://dev.adjust.com/en/sdk/corona/features/deep-links#handling-deeplinks-with-referrer).
 - Added ability to disable SDK's interaction with `AppTrackingTransparency.framework` API. You can disable it by setting the value of `isAppTrackingTransparencyUsageEnabled` key to `false` inside of the configuration table. For more details about this feature, refer to the [official documentation](https://dev.adjust.com/en/sdk/corona/features/att#disable-att-framework).
 - Added `jsonResponse` field (JSON string) to attribution table where every key-value pair sent by the backend as part of the attribution response can be found.
+- Optimized the logic behind the `processAndResolveDeeplink` method to immediately return links that have already been resolved.
 
 #### Changed
 - Moved official docs to https://dev.adjust.com/en/sdk/corona.
+- Updated the Adjust Android Signature library version to 3.47.0.
+- Updated purchase verification handler (internal changes).
 
 #### Native SDKs
-- [iOS@v5.4.2][ios_sdk_v5.4.2]
-- [Android@v5.4.1][android_sdk_v5.4.1]
+- [iOS@v5.4.3][ios_sdk_v5.4.3]
+- [Android@v5.4.2][android_sdk_v5.4.2]
 
 ---
 
@@ -279,7 +282,7 @@ If you are a current Adjust client and have questions about SDK v5, please email
 [ios_sdk_v4.33.4]: https://github.com/adjust/ios_sdk/tree/v4.33.4
 [ios_sdk_v5.0.1]: https://github.com/adjust/ios_sdk/tree/v5.0.1
 [ios_sdk_v5.1.0]: https://github.com/adjust/ios_sdk/tree/v5.1.0
-[ios_sdk_v5.4.2]: https://github.com/adjust/ios_sdk/tree/v5.4.2
+[ios_sdk_v5.4.3]: https://github.com/adjust/ios_sdk/tree/v5.4.3
 
 [android_sdk_v4.12.0]: https://github.com/adjust/android_sdk/tree/v4.12.0
 [android_sdk_v4.12.1]: https://github.com/adjust/android_sdk/tree/v4.12.1
@@ -299,4 +302,4 @@ If you are a current Adjust client and have questions about SDK v5, please email
 [android_sdk_v4.33.3]: https://github.com/adjust/android_sdk/tree/v4.33.3
 [android_sdk_v5.0.1]: https://github.com/adjust/android_sdk/tree/v5.0.1
 [android_sdk_v5.1.0]: https://github.com/adjust/android_sdk/tree/v5.1.0
-[android_sdk_v5.4.1]: https://github.com/adjust/android_sdk/tree/v5.4.1
+[android_sdk_v5.4.2]: https://github.com/adjust/android_sdk/tree/v5.4.2
