@@ -6,8 +6,9 @@
 //  Copyright (c) 2017-Present Adjust GmbH. All rights reserved.
 //
 
-// This corresponds to the name of the Lua library, e.g. [Lua] require "plugin.library".
-// Adjust SDK is named "plugin.adjust".
+// this corresponds to the name of the Lua library
+// e.g. [Lua] require "plugin.library"
+// Adjust SDK is named "plugin.adjust"
 
 package plugin.adjust;
 
@@ -31,16 +32,15 @@ import java.util.List;
 @SuppressWarnings("WeakerAccess")
 public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private static final String TAG = "AdjustLuaLoader";
-    private static final String SDK_PREFIX = "corona5.0.1";
+    private static final String SDK_PREFIX = "corona5.4.0";
 
-    // subscriptions
+    // common
     public static final String EVENT_ATTRIBUTION_CHANGED = "adjust_attributionChanged";
     public static final String EVENT_SESSION_TRACKING_SUCCESS = "adjust_sessionTrackingSuccess";
     public static final String EVENT_SESSION_TRACKING_FAILURE = "adjust_sessionTrackingFailure";
     public static final String EVENT_EVENT_TRACKING_SUCCESS = "adjust_eventTrackingSuccess";
     public static final String EVENT_EVENT_TRACKING_FAILURE = "adjust_eventTrackingFailure";
     public static final String EVENT_DEFERRED_DEEPLINK = "adjust_deferredDeeplink";
-    // one time callbacks
     public static final String EVENT_PROCESS_AND_RESOLVE_DEEPLINK = "adjust_processAndResolveDeeplink";
     public static final String EVENT_IS_ADJUST_ENABLED = "adjust_isEnabled";
     public static final String EVENT_GET_ATTRIBUTION = "adjust_getAttribution";
@@ -108,24 +108,28 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         // Register this plugin into Lua with the following functions.
         NamedJavaFunction[] luaFunctions = new NamedJavaFunction[]{
             new InitSdkWrapper(),
-            new EnableWrapper(),
-            new DisableWrapper(),
-            new SwitchToOfflineModeWrapper(),
-            new SwitchBackToOnlineModeWrapper(),
             new TrackEventWrapper(),
             new TrackAdRevenueWrapper(),
             new TrackThirdPartySharingWrapper(),
             new TrackMeasurementConsentWrapper(),
-            new GdprForgetMeWrapper(),
             new ProcessDeeplinkWrapper(),
             new ProcessAndResolveDeeplinkWrapper(),
             new SetPushTokenWrapper(),
+            new GdprForgetMeWrapper(),
+            new EnableWrapper(),
+            new DisableWrapper(),
+            new SwitchToOfflineModeWrapper(),
+            new SwitchBackToOnlineModeWrapper(),
             new AddGlobalCallbackParameterWrapper(),
             new AddGlobalPartnerParameterWrapper(),
             new RemoveGlobalCallbackParameterWrapper(),
             new RemoveGlobalPartnerParameterWrapper(),
             new RemoveGlobalCallbackParametersWrapper(),
             new RemoveGlobalPartnerParametersWrapper(),
+            new EndFirstSessionDelayWrapper(),
+            new EnableCoppaComplianceInDelayWrapper(),
+            new DisableCoppaComplianceInDelayWrapper(),
+            new SetExternalDeviceIdInDelayWrapper(),
             new IsEnabledWrapper(),
             new GetAttributionWrapper(),
             new GetAdidWrapper(),
@@ -141,6 +145,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             new TrackPlayStoreSubscriptionWrapper(),
             new VerifyPlayStorePurchaseWrapper(),
             new VerifyAndTrackPlayStorePurchaseWrapper(),
+            new EnablePlayStoreKidsComplianceInDelayWrapper(),
+            new DisablePlayStoreKidsComplianceInDelayWrapper(),
             new GetGoogleAdIdWrapper(),
             new GetAmazonAdIdWrapper(),
             // ios only
@@ -153,7 +159,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
             new GetIdfvWrapper(),
             new GetAppTrackingAuthorizationStatusWrapper(),
             new SetSkanUpdatedCallbackWrapper(),
-            // for testing purposes only
+            // testing purposes only
             new SetTestOptionsWrapper(),
             new OnResumeWrapper(),
             new OnPauseWrapper(),
@@ -162,7 +168,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         String libName = L.toString(1);
         L.register(libName, luaFunctions);
 
-        // Returning 1 indicates that the Lua require() function will return the above Lua library.
+        // returning 1 indicates that the Lua require() function will return the above Lua library
         return 1;
     }
 
@@ -290,18 +296,22 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         String preinstallFilePath = null;
         String fbAppId = null;
         String processName = null;
+        String storeInfoName = null;
+        String storeInfoAppId = null;
         boolean isSendingInBackgroundEnabled = false;
         boolean isPreinstallTrackingEnabled = false;
         boolean isCostDataInAttributionEnabled = false;
         boolean isDeviceIdsReadingOnceEnabled = false;
         boolean isCoppaComplianceEnabled = false;
         boolean isPlayStoreKidsComplianceEnabled = false;
+        boolean isFirstSessionDelayedEnabled = false;
+        boolean isAppTrackingTransparencyUsageEnabled = false;
         boolean isLogLevelSuppress = false;
         boolean useSubdomains = false;
         boolean isDataResidency = false;
         List<String> urlStrategyDomains = new ArrayList<>();
 
-        // app token.
+        // app token
         L.getField(1, "appToken");
         appToken = L.checkString(2);
         L.pop(1);
@@ -376,12 +386,57 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
         L.pop(1);
 
+        // first session delayed
+        L.getField(1, "isFirstSessionDelayedEnabled");
+        if (!L.isNil(2)) {
+            isFirstSessionDelayedEnabled = L.checkBoolean(2);
+            if (isFirstSessionDelayedEnabled)
+                adjustConfig.enableFirstSessionDelay();
+        }
+        L.pop(1);
+
+        // store info
+        AdjustStoreInfo storeInfo = null;
+        L.getField(1, "storeInfo");
+        if (!L.isNil(2)) {
+            // store name
+            L.getField(2, "storeName");
+            if (!L.isNil(3)) {
+                storeInfoName = L.checkString(3);
+                storeInfo = new AdjustStoreInfo(storeInfoName);
+            }
+            L.pop(1);
+            
+            // store app ID
+            L.getField(2, "storeAppId");
+            if (!L.isNil(3)) {
+                storeInfoAppId = L.checkString(3);
+                if (storeInfo != null) {
+                    storeInfo.setStoreAppId(storeInfoAppId);
+                }
+            }
+            L.pop(1);
+        }
+        L.pop(1);
+
+        if (storeInfo != null) {
+            adjustConfig.setStoreInfo(storeInfo);
+        }
+
         // send in background
         L.getField(1, "isSendingInBackgroundEnabled");
         if (!L.isNil(2)) {
             isSendingInBackgroundEnabled = L.checkBoolean(2);
             if (isSendingInBackgroundEnabled)
                 adjustConfig.enableSendingInBackground();
+        }
+        L.pop(1);
+
+        // FB app ID
+        L.getField(1, "fbAppId");
+        if (!L.isNil(2)) {
+            fbAppId = L.checkString(2);
+            adjustConfig.setFbAppId(fbAppId);
         }
         L.pop(1);
 
@@ -598,26 +653,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
 
         Adjust.initSdk(adjustConfig);
-        return 0;
-    }
-
-    private int adjust_enable() {
-        Adjust.enable();
-        return 0;
-    }
-
-    private int adjust_disable() {
-        Adjust.disable();
-        return 0;
-    }
-
-    private int adjust_switchToOfflineMode() {
-        Adjust.switchToOfflineMode();
-        return 0;
-    }
-
-    private int adjust_switchBackToOnlineMode() {
-        Adjust.switchBackToOnlineMode();
         return 0;
     }
 
@@ -894,14 +929,14 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
                 String key = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
-                L.getField(3, "key");
+                L.getField(3, "value");
                 String value = !L.isNil(4) ? L.checkString(4) : null;
                 L.pop(1);
 
                 adjustThirdPartySharing.addPartnerSharingSetting(
                     partnerName,
                     key,
-                    value == "true");
+                    value.toLowerCase().equals("true"));
                 L.pop(1);
             }
         }
@@ -917,11 +952,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
-    private int adjust_gdprForgetMe(final LuaState L) {
-        Adjust.gdprForgetMe(CoronaEnvironment.getApplicationContext());
-        return 0;
-    }
-
     private int adjust_processDeeplink(final LuaState L) {
         if (!L.isTable(1)) {
             Log.e(TAG, "adjust_processDeeplink must be supplied with a table");
@@ -929,14 +959,26 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
 
         String deeplink = null;
+        String referrer = null;
 
         // deeplink
         L.getField(1, "deeplink");
         deeplink = !L.isNil(2) ? L.checkString(2) : null;
         L.pop(1);
 
-        final Uri uri = Uri.parse(deeplink);
-        Adjust.processDeeplink(new AdjustDeeplink(uri), CoronaEnvironment.getApplicationContext());
+        // referrer
+        L.getField(1, "referrer");
+        referrer = !L.isNil(2) ? L.checkString(2) : null;
+        L.pop(1);
+
+        final Uri uriDeeplink = Uri.parse(deeplink);
+        final AdjustDeeplink adjustDeeplink = new AdjustDeeplink(uriDeeplink);
+        if (referrer != null) {
+            final Uri uriReferrer = Uri.parse(referrer);
+            adjustDeeplink.setReferrer(uriReferrer);
+        }
+
+        Adjust.processDeeplink(adjustDeeplink, CoronaEnvironment.getApplicationContext());
         return 0;
     }
 
@@ -947,18 +989,30 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
 
         String deeplink = null;
+        String referrer = null;
 
         // deeplink
         L.getField(1, "deeplink");
         deeplink = !L.isNil(3) ? L.checkString(3) : null;
         L.pop(1);
+        // referrer
+        L.getField(1, "referrer");
+        referrer = !L.isNil(3) ? L.checkString(2) : null;
+        L.pop(1);
+
+        final Uri uriDeeplink = Uri.parse(deeplink);
+        final AdjustDeeplink adjustDeeplink = new AdjustDeeplink(uriDeeplink);
+        if (referrer != null && !referrer.isEmpty()) {
+            final Uri uriReferrer = Uri.parse(referrer);
+            adjustDeeplink.setReferrer(uriReferrer);
+        }
 
         int callbackIndex = 2;
         int callback = CoronaLua.REFNIL;
         if (CoronaLua.isListener(L, callbackIndex, "ADJUST")) {
             callback = CoronaLua.newRef(L, callbackIndex);
             int finalCallback = callback;
-            Adjust.processAndResolveDeeplink(new AdjustDeeplink(Uri.parse(deeplink)), CoronaEnvironment.getApplicationContext(), new OnDeeplinkResolvedListener() {
+            Adjust.processAndResolveDeeplink(adjustDeeplink, CoronaEnvironment.getApplicationContext(), new OnDeeplinkResolvedListener() {
                 @Override
                 public void onDeeplinkResolved(String resolvedDeeplink) {
                     dispatchEvent(finalCallback, EVENT_PROCESS_AND_RESOLVE_DEEPLINK, resolvedDeeplink);
@@ -971,6 +1025,31 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     private int adjust_setPushToken(final LuaState L) {
         String pushToken = L.checkString(1);
         Adjust.setPushToken(pushToken, CoronaEnvironment.getApplicationContext());
+        return 0;
+    }
+
+    private int adjust_gdprForgetMe(final LuaState L) {
+        Adjust.gdprForgetMe(CoronaEnvironment.getApplicationContext());
+        return 0;
+    }
+
+    private int adjust_enable() {
+        Adjust.enable();
+        return 0;
+    }
+
+    private int adjust_disable() {
+        Adjust.disable();
+        return 0;
+    }
+
+    private int adjust_switchToOfflineMode() {
+        Adjust.switchToOfflineMode();
+        return 0;
+    }
+
+    private int adjust_switchBackToOnlineMode() {
+        Adjust.switchBackToOnlineMode();
         return 0;
     }
 
@@ -1007,6 +1086,27 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
 
     private int adjust_removeGlobalPartnerParameters(final LuaState L) {
         Adjust.removeGlobalPartnerParameters();
+        return 0;
+    }
+
+    private int adjust_endFirstSessionDelay(final LuaState L) {
+        Adjust.endFirstSessionDelay();
+        return 0;
+    }
+
+    private int adjust_enableCoppaComplianceInDelay(final LuaState L) {
+        Adjust.enableCoppaComplianceInDelay();
+        return 0;
+    }
+
+    private int adjust_disableCoppaComplianceInDelay(final LuaState L) {
+        Adjust.disableCoppaComplianceInDelay();
+        return 0;
+    }
+
+    private int adjust_setExternalDeviceIdInDelay(final LuaState L) {
+        String externalDeviceId = L.checkString(1);
+        Adjust.setExternalDeviceIdInDelay(externalDeviceId);
         return 0;
     }
 
@@ -1149,6 +1249,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     }
 
     // android only
+
     private int adjust_trackPlayStoreSubscription(final LuaState L) {
         if (!L.isTable(1)) {
             Log.e(TAG, "adjust_trackPlayStoreSubscription must be supplied with a table");
@@ -1266,7 +1367,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
-    // android only
     private int adjust_verifyPlayStorePurchase(final LuaState L) {
         if (!L.isTable(1)) {
             Log.e(TAG, "adjust_verifyPlayStorePurchase must be supplied with a table");
@@ -1316,7 +1416,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
-    // android only
     private int adjust_verifyAndTrackPlayStorePurchase(final LuaState L) {
         if (!L.isTable(1)) {
             Log.e(TAG, "adjust_verifyAndTrackPlayStorePurchase must be supplied with a table");
@@ -1446,7 +1545,16 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
-    // android only
+    private int adjust_enablePlayStoreKidsComplianceInDelay(final LuaState L) {
+        Adjust.enablePlayStoreKidsComplianceInDelay();
+        return 0;
+    }
+
+    private int adjust_disablePlayStoreKidsComplianceInDelay(final LuaState L) {
+        Adjust.disablePlayStoreKidsComplianceInDelay();
+        return 0;
+    }
+
     private int adjust_getGoogleAdId(final LuaState L) {
         int callbackIndex = 1;
         int callback = CoronaLua.REFNIL;
@@ -1466,7 +1574,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
-    // android only
     private int adjust_getAmazonAdId(final LuaState L) {
         int callbackIndex = 1;
         int callback = CoronaLua.REFNIL;
@@ -1487,11 +1594,11 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     }
 
     // ios only
+
     private int adjust_trackAppStoreSubscription(final LuaState L) {
         return 0;
     }
 
-    // ios only
     private int adjust_verifyAppStorePurchase(final LuaState L) {
         int callbackIndex = 2;
         int callback = CoronaLua.REFNIL;
@@ -1506,7 +1613,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
-    // ios only
     private int adjust_verifyAndTrackAppStorePurchase(final LuaState L) {
         int callbackIndex = 2;
         int callback = CoronaLua.REFNIL;
@@ -1521,7 +1627,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
-    // ios only
     private int adjust_requestAppTrackingAuthorization(final LuaState L) {
         int callbackIndex = 1;
         int callback = CoronaLua.REFNIL;
@@ -1532,7 +1637,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
-    // ios only
     private int adjust_updateSkanConversionValue(final LuaState L) {
         int callbackIndex = 1;
         int callback = CoronaLua.REFNIL;
@@ -1546,7 +1650,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
-    // ios only
     private int adjust_getIdfa(final LuaState L) {
         int callbackIndex = 1;
         int callback = CoronaLua.REFNIL;
@@ -1557,7 +1660,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
-    // ios only
     private int adjust_getIdfv(final LuaState L) {
         int callbackIndex = 1;
         int callback = CoronaLua.REFNIL;
@@ -1568,18 +1670,16 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
-    // ios only
     private int adjust_getAppTrackingAuthorizationStatus(final LuaState L) {
         int callbackIndex = 1;
         int callback = CoronaLua.REFNIL;
         if (CoronaLua.isListener(L, callbackIndex, "ADJUST")) {
             callback = CoronaLua.newRef(L, callbackIndex);
-            dispatchEvent(callback, EVENT_REQUEST_APP_TRACKING_AUTHORIZATION_STATUS, "-1");
+            dispatchEvent(callback, EVENT_GET_APP_TRACKING_AUTHORIZATION_STATUS, "-1");
         }
         return 0;
     }
 
-    // ios only
     private int adjust_setSkanUpdatedListener(final LuaState L) {
         int callbackIndex = 1;
         if (CoronaLua.isListener(L, callbackIndex, "ADJUST")) {
@@ -1589,6 +1689,7 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
     }
 
     // for testing purposes only
+
     private int adjust_setTestOptions(final LuaState L) {
         AdjustTestOptions adjustTestOptions = new AdjustTestOptions();
 
@@ -1705,19 +1806,16 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
-    // for testing purposes only
     private int adjust_onResume(final LuaState L) {
         Adjust.onResume();
         return 0;
     }
 
-    // for testing purposes only
     private int adjust_onPause(final LuaState L) {
         Adjust.onPause();
         return 0;
     }
 
-    // for testing purposes only
     private int adjust_teardown(final LuaState L) {
         attributionChangedCallback = CoronaLua.REFNIL;
         eventSuccessCallback = CoronaLua.REFNIL;
@@ -1729,6 +1827,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         return 0;
     }
 
+    // common wrappers
+
     private class InitSdkWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -1738,54 +1838,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         @Override
         public int invoke(final LuaState L) {
             return adjust_initSdk(L);
-        }
-    }
-
-    private class EnableWrapper implements NamedJavaFunction {
-        @Override
-        public String getName() {
-            return "enable";
-        }
-
-        @Override
-        public int invoke(final LuaState L) {
-            return adjust_enable();
-        }
-    }
-
-    private class DisableWrapper implements NamedJavaFunction {
-        @Override
-        public String getName() {
-            return "disable";
-        }
-
-        @Override
-        public int invoke(final LuaState L) {
-            return adjust_disable();
-        }
-    }
-
-    private class SwitchToOfflineModeWrapper implements NamedJavaFunction {
-        @Override
-        public String getName() {
-            return "switchToOfflineMode";
-        }
-
-        @Override
-        public int invoke(final LuaState L) {
-            return adjust_switchToOfflineMode();
-        }
-    }
-
-    private class SwitchBackToOnlineModeWrapper implements NamedJavaFunction {
-        @Override
-        public String getName() {
-            return "switchBackToOnlineMode";
-        }
-
-        @Override
-        public int invoke(final LuaState L) {
-            return adjust_switchBackToOnlineMode();
         }
     }
 
@@ -1837,18 +1889,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    private class GdprForgetMeWrapper implements NamedJavaFunction {
-        @Override
-        public String getName() {
-            return "gdprForgetMe";
-        }
-
-        @Override
-        public int invoke(final LuaState L) {
-            return adjust_gdprForgetMe(L);
-        }
-    }
-
     private class ProcessDeeplinkWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -1882,6 +1922,66 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         @Override
         public int invoke(final LuaState L) {
             return adjust_setPushToken(L);
+        }
+    }
+
+    private class GdprForgetMeWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "gdprForgetMe";
+        }
+
+        @Override
+        public int invoke(final LuaState L) {
+            return adjust_gdprForgetMe(L);
+        }
+    }
+
+    private class EnableWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "enable";
+        }
+
+        @Override
+        public int invoke(final LuaState L) {
+            return adjust_enable();
+        }
+    }
+
+    private class DisableWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "disable";
+        }
+
+        @Override
+        public int invoke(final LuaState L) {
+            return adjust_disable();
+        }
+    }
+
+    private class SwitchToOfflineModeWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "switchToOfflineMode";
+        }
+
+        @Override
+        public int invoke(final LuaState L) {
+            return adjust_switchToOfflineMode();
+        }
+    }
+
+    private class SwitchBackToOnlineModeWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "switchBackToOnlineMode";
+        }
+
+        @Override
+        public int invoke(final LuaState L) {
+            return adjust_switchBackToOnlineMode();
         }
     }
 
@@ -1954,6 +2054,54 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         @Override
         public int invoke(final LuaState L) {
             return adjust_removeGlobalPartnerParameters(L);
+        }
+    }
+
+    private class EndFirstSessionDelayWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "endFirstSessionDelay";
+        }
+
+        @Override
+        public int invoke(final LuaState L) {
+            return adjust_endFirstSessionDelay(L);
+        }
+    }
+
+    private class EnableCoppaComplianceInDelayWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "enableCoppaComplianceInDelay";
+        }
+
+        @Override
+        public int invoke(final LuaState L) {
+            return adjust_enableCoppaComplianceInDelay(L);
+        }
+    }
+
+    private class DisableCoppaComplianceInDelayWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "disableCoppaComplianceInDelay";
+        }
+
+        @Override
+        public int invoke(final LuaState L) {
+            return adjust_disableCoppaComplianceInDelay(L);
+        }
+    }
+
+    private class SetExternalDeviceIdInDelayWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "setExternalDeviceIdInDelay";
+        }
+
+        @Override
+        public int invoke(final LuaState L) {
+            return adjust_setExternalDeviceIdInDelay(L);
         }
     }
 
@@ -2089,7 +2237,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    // android only
+    // android only wrappers
+
     private class TrackPlayStoreSubscriptionWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -2102,7 +2251,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    // android only
     private class VerifyPlayStorePurchaseWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -2115,7 +2263,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    // android only
     private class VerifyAndTrackPlayStorePurchaseWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -2128,7 +2275,30 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    // android only
+    private class EnablePlayStoreKidsComplianceInDelayWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "enablePlayStoreKidsComplianceInDelay";
+        }
+
+        @Override
+        public int invoke(final LuaState L) {
+            return adjust_enablePlayStoreKidsComplianceInDelay(L);
+        }
+    }
+
+    private class DisablePlayStoreKidsComplianceInDelayWrapper implements NamedJavaFunction {
+        @Override
+        public String getName() {
+            return "disablePlayStoreKidsComplianceInDelay";
+        }
+
+        @Override
+        public int invoke(final LuaState L) {
+            return adjust_disablePlayStoreKidsComplianceInDelay(L);
+        }
+    }
+
     private class GetGoogleAdIdWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -2141,7 +2311,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    // android only
     private class GetAmazonAdIdWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -2154,7 +2323,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    // ios only
+    // ios only wrappers
+
     private class TrackAppStoreSubscriptionWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -2167,7 +2337,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    // ios only
     private class VerifyAppStorePurchaseWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -2180,7 +2349,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    // ios only
     private class VerifyAndTrackAppStorePurchaseWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -2193,7 +2361,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    // ios only
     private class RequestAppTrackingAuthorizationWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -2206,7 +2373,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    // ios only
     private class UpdateSkanConversionValueWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -2219,7 +2385,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    // ios only
     private class GetIdfaWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -2232,7 +2397,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    // ios only
     private class GetIdfvWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -2245,7 +2409,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    // ios only
     private class GetAppTrackingAuthorizationStatusWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -2258,7 +2421,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    // ios only
     private class SetSkanUpdatedCallbackWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -2271,7 +2433,8 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    // for testing purposes only
+    // testing purposes only wrappers
+
     private class SetTestOptionsWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -2284,7 +2447,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    // for testing purposes only
     private class OnResumeWrapper implements NamedJavaFunction {
         @Override
         public String getName() {
@@ -2297,7 +2459,6 @@ public class LuaLoader implements JavaFunction, CoronaRuntimeListener {
         }
     }
 
-    // for testing purposes only
     private class OnPauseWrapper implements NamedJavaFunction {
         @Override
         public String getName() {

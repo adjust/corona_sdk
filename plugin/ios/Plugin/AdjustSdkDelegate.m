@@ -110,11 +110,6 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
     return defaultInstance;
 }
 
-+ (void)teardown {
-    defaultInstance = nil;
-    onceToken = 0;
-}
-
 + (void)dispatchEvent:(NSString *)eventName
             withState:(lua_State *)luaState
              callback:(CoronaLuaRef)callback
@@ -124,7 +119,7 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
         lua_pushstring(luaState, [message UTF8String]);
         lua_setfield(luaState, -2, "message");
         
-        // Dispatch event to library's listener
+        // dispatch event to library's listener
         CoronaLuaDispatchEvent(luaState, callback, 0);
     } @catch (NSException *exception) {
         NSLog(@"[AdjustPlugin]: Error while dispatching event %@ with message %@", eventName, message);
@@ -139,6 +134,11 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
     } else {
         [dictionary setObject:[NSNull null] forKey:key];
     }
+}
+
++ (void)teardown {
+    defaultInstance = nil;
+    onceToken = 0;
 }
 
 #pragma mark - AdjustDelegate swizzle methods
@@ -159,7 +159,21 @@ NSString * const KEY_LOCK_WINDOW = @"lockWindow";
     [AdjustSdkDelegate addKey:KEY_COST_TYPE andValue:attribution.costType toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_COST_AMOUNT andValue:attribution.costAmount toDictionary:dictionary];
     [AdjustSdkDelegate addKey:KEY_COST_CURRENCY andValue:attribution.costCurrency toDictionary:dictionary];
+    if (attribution.jsonResponse != nil) {
+        NSError *jsonResponseError;
+        NSData *jsonResponseData = [NSJSONSerialization dataWithJSONObject:attribution.jsonResponse
+                                                           options:0
+                                                             error:&jsonResponseError];
+        if (!jsonResponseData) {
+            NSLog(@"[AdjustPlugin]: Error while trying to convert jsonResponse dictionary to JSON string: %@", jsonResponseError);
+        } else {
+            NSString *jsonResponseString = [[NSString alloc] initWithData:jsonResponseData encoding:NSUTF8StringEncoding];
+            NSLog(@"[AdjustPlugin]: JSON string: %@", jsonResponseString);
+            [AdjustSdkDelegate addKey:KEY_JSON_RESPONSE andValue:jsonResponseString toDictionary:dictionary];
 
+        }
+    }
+    
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
                                                        options:0

@@ -27,6 +27,7 @@ final public class LuaUtil {
     private static final String ATTRIBUTION_COST_TYPE = "costType";
     private static final String ATTRIBUTION_COST_AMOUNT = "costAmount";
     private static final String ATTRIBUTION_COST_CURRENCY = "costCurrency";
+    private static final String ATTRIBUTION_JSON_RESPONSE = "jsonResponse";
     private static final String ATTRIBUTION_FB_INSTALL_REFERRER = "fbInstallReferrer";
 
     private static final String EVENT_SUCCESS_MESSAGE = "message";
@@ -89,6 +90,7 @@ final public class LuaUtil {
         map.put(ATTRIBUTION_COST_TYPE, getMapValue(attribution.costType));
         map.put(ATTRIBUTION_COST_AMOUNT, attribution.costAmount.isNaN() ? null : attribution.costAmount);
         map.put(ATTRIBUTION_COST_CURRENCY, getMapValue(attribution.costCurrency));
+        map.put(ATTRIBUTION_JSON_RESPONSE, getMapValue(attribution.jsonResponse));
         map.put(ATTRIBUTION_FB_INSTALL_REFERRER, getMapValue(attribution.fbInstallReferrer));
         return map;
     }

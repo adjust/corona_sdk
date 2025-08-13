@@ -181,10 +181,10 @@ if (configureCoronaPlugins == "YES") {
 //</editor-fold>
 
 android {
-    compileSdk  = 34
+    compileSdk  = 36
     defaultConfig {
         applicationId = coronaAppPackage
-        targetSdk = 34
+        targetSdk = 36
         minSdk = coronaMinSdkVersion
         versionCode = coronaVersionCode
         versionName = coronaVersionName
@@ -1093,6 +1093,6 @@ dependencies {
         implementation(project(":plugin"))
     }
     implementation("androidx.multidex:multidex:2.0.1")
-    implementation("com.adjust.sdk:adjust-android:5.1.0")
+    implementation("com.adjust.sdk:adjust-android:5.4.2")
     implementation("com.android.installreferrer:installreferrer:2.2")
 }
