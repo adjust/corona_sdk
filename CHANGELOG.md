@@ -1,3 +1,17 @@
+### Version 5.4.1 (13th October 2025)
+#### Added
+- Added support for processing deferred deep links in session responses.
+- Added support for Google License Verification (LVL). For more details about this feature, refer to the [official documentation](https://dev.adjust.com/en/sdk/corona/plugins/google-lvl-plugin).
+
+#### Changed
+- Updated Gradle version of the plugin, example and test Android apps to `8.14.0` and `compileSdk` and `targetSdk` to `36`.
+
+#### Native SDKs
+- [iOS@v5.4.5][ios_sdk_v5.4.5]
+- [Android@v5.4.4][android_sdk_v5.4.4]
+
+---
+
 ### Version 5.4.0 (13th August 2025)
 #### Added
 - Added support store information through the SDK’s configuration object. This enables the SDK to record the intended app store source during initialization. For more details about this feature, refer to the [official documentation](https://dev.adjust.com/en/sdk/corona/setup/store-type).
@@ -283,6 +297,7 @@ If you are a current Adjust client and have questions about SDK v5, please email
 [ios_sdk_v5.0.1]: https://github.com/adjust/ios_sdk/tree/v5.0.1
 [ios_sdk_v5.1.0]: https://github.com/adjust/ios_sdk/tree/v5.1.0
 [ios_sdk_v5.4.3]: https://github.com/adjust/ios_sdk/tree/v5.4.3
+[ios_sdk_v5.4.5]: https://github.com/adjust/ios_sdk/tree/v5.4.5
 
 [android_sdk_v4.12.0]: https://github.com/adjust/android_sdk/tree/v4.12.0
 [android_sdk_v4.12.1]: https://github.com/adjust/android_sdk/tree/v4.12.1
@@ -303,3 +318,4 @@ If you are a current Adjust client and have questions about SDK v5, please email
 [android_sdk_v5.0.1]: https://github.com/adjust/android_sdk/tree/v5.0.1
 [android_sdk_v5.1.0]: https://github.com/adjust/android_sdk/tree/v5.1.0
 [android_sdk_v5.4.2]: https://github.com/adjust/android_sdk/tree/v5.4.2
+[android_sdk_v5.4.4]: https://github.com/adjust/android_sdk/tree/v5.4.4
