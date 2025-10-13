@@ -45,7 +45,7 @@
 #define EVENT_GET_GOOGLE_AD_ID @"adjust_getGoogleAdId"
 #define EVENT_GET_AMAZON_AD_ID @"adjust_getAmazonAdId"
 
-#define SDK_PREFIX @"corona5.4.0"
+#define SDK_PREFIX @"corona5.4.1"
 
 #pragma mark - Bootstraping
 
