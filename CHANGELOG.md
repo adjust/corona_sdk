@@ -1,4 +1,4 @@
-### Version 5.4.1 (1st October 2025)
+### Version 5.4.1 (13th October 2025)
 #### Added
 - Added support for processing deferred deep links in session responses.
 - Added support for Google License Verification (LVL). For more details about this feature, refer to the [official documentation](https://dev.adjust.com/en/sdk/corona/plugins/google-lvl-plugin).
@@ -9,6 +9,7 @@
 #### Native SDKs
 - [iOS@v5.4.5][ios_sdk_v5.4.5]
 - [Android@v5.4.4][android_sdk_v5.4.4]
+
 ---
 
 ### Version 5.4.0 (13th August 2025)
